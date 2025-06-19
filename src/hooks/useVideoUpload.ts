@@ -1,0 +1,205 @@
+import { useCallback, useState } from 'react';
+import { useProjectStore } from '../stores/projectStore';
+import { useTimelineStore } from '../stores/timelineStore';
+import { useToast } from './useToast';
+
+interface VideoUploadState {
+  isUploading: boolean;
+  uploadProgress: number;
+  uploadStage: string;
+}
+
+export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
+  const [uploadState, setUploadState] = useState<VideoUploadState>({
+    isUploading: false,
+    uploadProgress: 0,
+    uploadStage: ''
+  });
+
+  const { setVideoMeta, currentProject } = useProjectStore();
+  const { setDuration, setFPS, setCurrentTime } = useTimelineStore();
+  const { success, error, info } = useToast();
+
+  const processVideoFile = useCallback(async (file: File) => {
+    setUploadState({
+      isUploading: true,
+      uploadProgress: 0,
+      uploadStage: 'Validating file...'
+    });
+
+    try {
+      // Stage 1: File validation
+      if (!file.type.startsWith('video/')) {
+        throw new Error('Please select a valid video file');
+      }
+
+      const maxSize = 500 * 1024 * 1024; // 500MB
+      if (file.size > maxSize) {
+        throw new Error('Video file is too large. Maximum size is 500MB');
+      }
+
+      setUploadState(prev => ({ 
+        ...prev, 
+        uploadProgress: 20,
+        uploadStage: 'Creating video URL...'
+      }));
+
+      // Stage 2: Create object URL and clean up previous one
+      if (currentProject?.videoMeta?.url) {
+        URL.revokeObjectURL(currentProject.videoMeta.url);
+      }
+      
+      const url = URL.createObjectURL(file);
+      
+      setUploadState(prev => ({ 
+        ...prev, 
+        uploadProgress: 40,
+        uploadStage: 'Loading video...'
+      }));
+
+      // Stage 3: Load video metadata
+      const video = videoRef.current;
+      if (!video) {
+        throw new Error('Video element not available');
+      }
+
+      // Reset video element
+      video.src = '';
+      video.load();
+
+      // Set up video loading promise
+      const videoLoadPromise = new Promise<{
+        duration: number;
+        width: number;
+        height: number;
+      }>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('Video loading timed out after 30 seconds'));
+        }, 30000);
+
+        const handleLoadedMetadata = () => {
+          cleanup();
+          
+          const duration = video.duration;
+          const width = video.videoWidth;
+          const height = video.videoHeight;
+
+          if (duration <= 0) {
+            reject(new Error('Invalid video duration'));
+            return;
+          }
+
+          if (width <= 0 || height <= 0) {
+            reject(new Error('Invalid video dimensions'));
+            return;
+          }
+
+          resolve({
+            duration: duration * 1000, // Convert to milliseconds
+            width,
+            height
+          });
+        };
+
+        const handleError = (e: Event) => {
+          cleanup();
+          console.error('Video loading error:', e);
+          reject(new Error('Failed to load video. The file may be corrupted or in an unsupported format.'));
+        };
+
+        const cleanup = () => {
+          clearTimeout(timeout);
+          video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+          video.removeEventListener('error', handleError);
+        };
+
+        // Add event listeners
+        video.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
+        video.addEventListener('error', handleError, { once: true });
+
+        // Start loading
+        video.src = url;
+        video.preload = 'metadata';
+        video.load();
+      });
+
+      setUploadState(prev => ({ 
+        ...prev, 
+        uploadProgress: 60,
+        uploadStage: 'Processing metadata...'
+      }));
+      
+      const metadata = await videoLoadPromise;
+      
+      setUploadState(prev => ({ 
+        ...prev, 
+        uploadProgress: 80,
+        uploadStage: 'Setting up timeline...'
+      }));
+
+      // Stage 4: Update stores with metadata
+      const detectedFPS = 30; // Default FPS - could be enhanced with better detection
+      
+      setVideoMeta({
+        filename: file.name,
+        duration: metadata.duration,
+        fps: detectedFPS,
+        width: metadata.width,
+        height: metadata.height,
+        url
+      });
+
+      setDuration(metadata.duration);
+      setFPS(detectedFPS);
+      setCurrentTime(0); // Reset to beginning
+
+      setUploadState(prev => ({ 
+        ...prev, 
+        uploadProgress: 100,
+        uploadStage: 'Complete!'
+      }));
+
+      // Show success toast
+      success({
+        title: 'Video loaded successfully!',
+        message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height})`
+      });
+
+      // Reset upload state after a brief delay
+      setTimeout(() => {
+        setUploadState({
+          isUploading: false,
+          uploadProgress: 0,
+          uploadStage: ''
+        });
+      }, 1500);
+
+    } catch (uploadError) {
+      console.error('Video upload error:', uploadError);
+      
+      const errorMessage = uploadError instanceof Error ? uploadError.message : 'Failed to process video file';
+      
+      // Clean up on error
+      if (videoRef.current) {
+        videoRef.current.src = '';
+      }
+      
+      // Show error toast
+      error({
+        title: 'Video upload failed',
+        message: errorMessage
+      });
+
+      setUploadState({
+        isUploading: false,
+        uploadProgress: 0,
+        uploadStage: ''
+      });
+    }
+  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, currentProject, videoRef]);
+
+  return {
+    uploadState,
+    processVideoFile
+  };
+};
