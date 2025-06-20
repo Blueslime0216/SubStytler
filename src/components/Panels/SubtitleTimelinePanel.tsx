@@ -102,9 +102,10 @@ export const SubtitleTimelinePanel: React.FC = () => {
       lines.push(
         <div
           key={frame}
-          className="absolute w-px h-full neu-text-secondary opacity-20"
+          className="absolute w-px h-full neu-frame-grid-line"
           style={{ 
             left: x,
+            background: 'var(--neu-text-muted)',
             transition: 'none'
           }}
         />
@@ -116,46 +117,49 @@ export const SubtitleTimelinePanel: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col neu-timeline">
-      {/* Neumorphism Toolbar */}
-      <div className="neu-timeline-ruler flex items-center justify-between p-3">
-        <div className="flex items-center space-x-3">
+      {/* Enhanced Toolbar */}
+      <div className="neu-timeline-ruler flex items-center justify-between p-4">
+        <div className="flex items-center space-x-4">
           <motion.button
             onClick={addNewSubtitle}
-            className="neu-btn-primary flex items-center space-x-2"
+            className="neu-btn-primary flex items-center space-x-2 neu-interactive"
+            title="Add new subtitle at current time"
           >
-            <Plus className="w-3.5 h-3.5" />
-            <span className="text-xs">Add Subtitle</span>
+            <Plus className="w-4 h-4" />
+            <span className="font-semibold">Add Subtitle</span>
           </motion.button>
           
-          <div className="flex items-center space-x-2">
-            <Grid className="w-3.5 h-3.5 neu-text-secondary" />
-            <span className="neu-caption">Frame Grid</span>
+          <div className="flex items-center space-x-3 neu-card-small px-3 py-2">
+            <Grid className="w-4 h-4 neu-text-secondary" />
+            <span className="neu-caption font-semibold">Frame Grid</span>
           </div>
         </div>
         
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2">
-            <Layers className="w-3.5 h-3.5 neu-text-secondary" />
-            <span className="neu-caption">Track 1</span>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3 neu-card-small px-3 py-2">
+            <Layers className="w-4 h-4 neu-text-secondary" />
+            <span className="neu-caption font-semibold neu-clickable" title="Track settings">Track 1</span>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <motion.button
               onClick={() => handleZoom('out')}
-              className="neu-btn-icon p-1.5"
+              className="neu-btn-icon p-2 neu-interactive"
+              title="Zoom out timeline"
             >
-              <ZoomOut className="w-3.5 h-3.5" />
+              <ZoomOut className="w-4 h-4" />
             </motion.button>
             
-            <div className="neu-card-small px-2 py-1 neu-caption font-mono">
+            <div className="neu-card-small px-3 py-2 neu-caption font-mono font-semibold min-w-[60px] text-center">
               {zoom.toFixed(1)}x
             </div>
             
             <motion.button
               onClick={() => handleZoom('in')}
-              className="neu-btn-icon p-1.5"
+              className="neu-btn-icon p-2 neu-interactive"
+              title="Zoom in timeline"
             >
-              <ZoomIn className="w-3.5 h-3.5" />
+              <ZoomIn className="w-4 h-4" />
             </motion.button>
           </div>
         </div>
@@ -163,7 +167,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
       
       <div className="flex-1 flex flex-col">
         {/* Time Ruler */}
-        <div className="h-12 neu-timeline-ruler relative overflow-hidden">
+        <div className="h-14 neu-timeline-ruler relative overflow-hidden">
           {renderTimeRuler()}
         </div>
         
@@ -171,11 +175,12 @@ export const SubtitleTimelinePanel: React.FC = () => {
         <div className="neu-timeline-track flex-1 relative overflow-hidden">
           <div
             ref={containerRef}
-            className="h-full relative cursor-pointer"
+            className="h-full relative cursor-pointer neu-interactive"
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
+            title="Click to seek, drag to scrub"
           >
             {renderFrameGrid()}
             
@@ -191,11 +196,11 @@ export const SubtitleTimelinePanel: React.FC = () => {
               return (
                 <motion.div
                   key={subtitle.id}
-                  className="neu-subtitle-block absolute h-8 cursor-move flex items-center px-3"
+                  className="neu-subtitle-block absolute h-10 cursor-move flex items-center px-4 neu-interactive"
                   style={{
                     left: Math.max(0, left),
-                    width: Math.max(24, width),
-                    top: 50,
+                    width: Math.max(32, width),
+                    top: 60,
                     transition: 'none'
                   }}
                   drag="x"
@@ -204,8 +209,10 @@ export const SubtitleTimelinePanel: React.FC = () => {
                     right: (containerRef.current?.clientWidth || 0) - left - width 
                   }}
                   dragTransition={{ power: 0, timeConstant: 0 }}
+                  title={`${subtitle.spans[0]?.text || 'Empty subtitle'} - Click and drag to move`}
+                  tabIndex={0}
                 >
-                  <div className="text-xs text-white font-medium truncate">
+                  <div className="text-sm text-white font-semibold truncate">
                     {subtitle.spans[0]?.text || 'Empty subtitle'}
                   </div>
                 </motion.div>
@@ -214,7 +221,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
             
             {/* Enhanced Playhead */}
             <motion.div
-              className="absolute top-0 w-0.5 h-full pointer-events-none z-20"
+              className="absolute top-0 w-1 h-full pointer-events-none z-20 neu-playhead"
               style={{ 
                 left: timeToPixel(currentTime),
                 background: 'var(--neu-primary)',
@@ -224,7 +231,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
               transition={{ duration: 2, repeat: Infinity }}
             >
               <div 
-                className="absolute -top-2 -left-2 w-4 h-4 rotate-45 neu-shadow-1"
+                className="absolute -top-3 -left-3 w-6 h-6 rotate-45 neu-shadow-1"
                 style={{ 
                   background: 'var(--neu-primary)',
                   transition: 'none'

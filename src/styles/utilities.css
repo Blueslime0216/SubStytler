@@ -1,57 +1,78 @@
-/* Utility Classes and Animations */
+/* Utility Classes and Animations - Enhanced Accessibility */
 
-/* Text Utilities */
-.neu-text-primary { color: var(--neu-text-primary); }
-.neu-text-secondary { color: var(--neu-text-secondary); }
-.neu-text-muted { color: var(--neu-text-muted); }
-.neu-text-accent { color: var(--neu-text-accent); }
+/* Text Utilities - Enhanced Contrast */
+.neu-text-primary { 
+  color: var(--neu-text-primary); 
+  font-weight: 600;
+}
+.neu-text-secondary { 
+  color: var(--neu-text-secondary); 
+  font-weight: 500;
+}
+.neu-text-muted { 
+  color: var(--neu-text-muted); 
+  font-weight: 400;
+}
+.neu-text-accent { 
+  color: var(--neu-text-accent); 
+  font-weight: 600;
+}
 
 /* Background Utilities */
 .neu-bg-base { background: var(--neu-base); }
 .neu-bg-surface { background: var(--neu-surface); }
 .neu-bg-accent { background: var(--neu-accent); }
 
-/* Shadow Utilities */
+/* Shadow Utilities - Enhanced */
 .neu-shadow-1 { box-shadow: var(--neu-shadow-1); }
 .neu-shadow-2 { box-shadow: var(--neu-shadow-2); }
 .neu-shadow-3 { box-shadow: var(--neu-shadow-3); }
 .neu-shadow-4 { box-shadow: var(--neu-shadow-4); }
 .neu-shadow-inset { box-shadow: var(--neu-shadow-inset); }
 .neu-shadow-pressed { box-shadow: var(--neu-shadow-pressed); }
+.neu-shadow-hover { box-shadow: var(--neu-shadow-hover); }
+.neu-shadow-active { box-shadow: var(--neu-shadow-active); }
 
-/* Typography */
+/* Typography - Enhanced Readability */
 .neu-heading-primary {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--neu-text-primary);
   letter-spacing: -0.025em;
+  line-height: 1.3;
 }
 
 .neu-heading-secondary {
   font-size: 1.125rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--neu-text-primary);
   letter-spacing: -0.015em;
+  line-height: 1.4;
 }
 
 .neu-body-primary {
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--neu-text-primary);
+  line-height: 1.5;
 }
 
 .neu-body-secondary {
   font-size: 0.875rem;
+  font-weight: 500;
   color: var(--neu-text-secondary);
+  line-height: 1.5;
 }
 
 .neu-caption {
   font-size: 0.75rem;
+  font-weight: 500;
   color: var(--neu-text-muted);
   font-family: 'JetBrains Mono', monospace;
+  line-height: 1.4;
 }
 
-/* Animations */
+/* Enhanced Animations */
 @keyframes neu-pulse {
   0%, 100% {
     box-shadow: var(--neu-shadow-1);
@@ -63,10 +84,10 @@
 
 @keyframes neu-glow {
   0%, 100% {
-    box-shadow: var(--neu-shadow-2), 0 0 4px rgba(99, 179, 237, 0.2);
+    box-shadow: var(--neu-shadow-2), 0 0 6px rgba(99, 179, 237, 0.3);
   }
   50% {
-    box-shadow: var(--neu-shadow-3), 0 0 8px rgba(99, 179, 237, 0.4);
+    box-shadow: var(--neu-shadow-3), 0 0 12px rgba(99, 179, 237, 0.6);
   }
 }
 
@@ -76,6 +97,15 @@
   }
   100% {
     background-position: 200% 0;
+  }
+}
+
+@keyframes neu-breathe {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(var(--neu-hover-brightness));
   }
 }
 
@@ -91,22 +121,168 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(99, 179, 237, 0.1),
+    rgba(99, 179, 237, 0.15),
     transparent
   );
   background-size: 200% 100%;
   animation: neu-shimmer 2s infinite;
 }
 
-/* Focus Management */
-.neu-focus:focus {
-  outline: none;
-  box-shadow: var(--neu-shadow-1), 0 0 0 3px rgba(99, 179, 237, 0.2);
+.neu-breathe {
+  animation: neu-breathe 3s ease-in-out infinite;
 }
 
-/* Loading States */
+/* Enhanced Hover Effects */
+.neu-hover-interactive:hover {
+  box-shadow: var(--neu-shadow-hover);
+  border-color: var(--neu-interactive-border);
+  filter: brightness(var(--neu-hover-brightness));
+  transition: all 0.2s ease;
+}
+
+.neu-hover-glow:hover {
+  box-shadow: var(--neu-shadow-2), 0 0 8px rgba(99, 179, 237, 0.4);
+  filter: brightness(var(--neu-hover-brightness));
+}
+
+.neu-hover-tactile:hover {
+  box-shadow: var(--neu-shadow-inset-soft);
+  filter: brightness(0.95);
+}
+
+.neu-hover-tactile:active {
+  box-shadow: var(--neu-shadow-active);
+  filter: brightness(0.9);
+}
+
+/* Focus Management - Enhanced */
+.neu-focus:focus {
+  outline: none;
+  box-shadow: var(--neu-shadow-1), 0 0 0 3px var(--neu-interactive-border);
+  border-color: var(--neu-primary);
+}
+
+.neu-focus-ring:focus-visible {
+  outline: none;
+  box-shadow: var(--neu-shadow-1), 0 0 0 3px var(--neu-interactive-border);
+}
+
+/* Loading States - Enhanced */
 .neu-loading {
   background: linear-gradient(90deg, var(--neu-base), var(--neu-accent), var(--neu-base));
   background-size: 200% 100%;
   animation: neu-shimmer 2s infinite;
+  position: relative;
+}
+
+.neu-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--neu-interactive-bg);
+  opacity: 0.5;
+  border-radius: inherit;
+}
+
+/* Interactive State Classes */
+.neu-clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.neu-draggable {
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.neu-draggable:active {
+  cursor: grabbing;
+}
+
+.neu-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Accessibility Helpers */
+.neu-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.neu-high-contrast {
+  border: 2px solid var(--neu-text-primary);
+  background: var(--neu-base);
+  color: var(--neu-text-primary);
+}
+
+/* Mobile Responsive Enhancements */
+@media (max-width: 768px) {
+  .neu-shadow-1,
+  .neu-shadow-2,
+  .neu-shadow-3,
+  .neu-shadow-4 {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .neu-panel,
+  .neu-card {
+    background: var(--neu-base);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .neu-btn,
+  .neu-btn-primary,
+  .neu-btn-icon {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .neu-pulse,
+  .neu-glow,
+  .neu-shimmer,
+  .neu-breathe {
+    animation: none;
+  }
+  
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  :root {
+    --neu-text-primary: #000000;
+    --neu-text-secondary: #333333;
+    --neu-interactive-border: #0066CC;
+  }
+  
+  [data-theme="dark"] {
+    --neu-text-primary: #FFFFFF;
+    --neu-text-secondary: #CCCCCC;
+    --neu-interactive-border: #66B3FF;
+  }
+  
+  .neu-btn,
+  .neu-card,
+  .neu-panel {
+    border: 2px solid var(--neu-text-primary);
+  }
 }

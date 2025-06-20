@@ -148,13 +148,14 @@ export const VideoController: React.FC<VideoControllerProps> = ({
 
   return (
     <div className="neu-video-controller">
-      <div className="px-8 pt-6 pb-4">
+      <div className="px-10 pt-8 pb-6">
         <div 
           ref={progressBarRef}
-          className={`neu-progress-container relative h-8 flex items-center group ${
-            isVideoLoaded ? 'cursor-pointer' : 'cursor-not-allowed'
+          className={`neu-progress-container relative h-10 flex items-center group ${
+            isVideoLoaded ? 'cursor-pointer neu-interactive' : 'cursor-not-allowed'
           }`}
           onMouseDown={handleProgressBarMouseDown}
+          title={isVideoLoaded ? "Click to seek video position" : "Load a video to enable seeking"}
         >
           <div className="neu-progress-track" />
           <div 
@@ -173,7 +174,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           
           {isDragging && (
             <motion.div 
-              className="neu-card-micro absolute -top-12 text-xs neu-text-primary font-mono"
+              className="neu-card-micro absolute -top-14 text-sm neu-text-primary font-mono font-semibold"
               style={{ 
                 left: `${progressPercentage}%`, 
                 transform: 'translateX(-50%)'
@@ -187,13 +188,13 @@ export const VideoController: React.FC<VideoControllerProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center justify-between px-8 pb-6">
-        <div className="flex items-center space-x-4">
+      <div className="flex items-center justify-between px-10 pb-8">
+        <div className="flex items-center space-x-5">
           <motion.button
             onClick={handleFrameBack}
             disabled={!isVideoLoaded}
-            className="neu-btn-icon disabled:opacity-40"
-            title="Previous Frame"
+            className="neu-btn-icon disabled:opacity-40 neu-interactive"
+            title="Previous Frame (Left Arrow)"
           >
             <SkipBack className="w-5 h-5" />
           </motion.button>
@@ -201,21 +202,21 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           <motion.button
             onClick={handlePlayPause}
             disabled={!isVideoLoaded}
-            className="neu-btn-primary p-4 disabled:opacity-40"
-            title={isPlaying ? 'Pause' : 'Play'}
+            className="neu-btn-primary p-5 disabled:opacity-40 neu-interactive"
+            title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
           >
             {isPlaying ? (
-              <Pause className="w-6 h-6" />
+              <Pause className="w-7 h-7" />
             ) : (
-              <Play className="w-6 h-6" />
+              <Play className="w-7 h-7" />
             )}
           </motion.button>
           
           <motion.button
             onClick={handleFrameForward}
             disabled={!isVideoLoaded}
-            className="neu-btn-icon disabled:opacity-40"
-            title="Next Frame"
+            className="neu-btn-icon disabled:opacity-40 neu-interactive"
+            title="Next Frame (Right Arrow)"
           >
             <SkipForward className="w-5 h-5" />
           </motion.button>
@@ -227,7 +228,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           >
             <motion.button
               onClick={onMuteToggle}
-              className="neu-btn-icon"
+              className="neu-btn-icon neu-interactive"
               title={isMuted ? 'Unmute' : 'Mute'}
             >
               {isMuted ? (
@@ -241,16 +242,17 @@ export const VideoController: React.FC<VideoControllerProps> = ({
               className="overflow-visible"
               initial={{ width: 0, opacity: 0 }}
               animate={{ 
-                width: isVolumeHovered || isDraggingVolume ? 96 : 0,
+                width: isVolumeHovered || isDraggingVolume ? 120 : 0,
                 opacity: isVolumeHovered || isDraggingVolume ? 1 : 0
               }}
               transition={{ duration: 0.2, ease: "easeOut" }}
             >
               <div 
                 ref={volumeBarRef}
-                className="neu-volume-container relative h-8 flex items-center cursor-pointer"
+                className="neu-volume-container relative h-10 flex items-center cursor-pointer neu-interactive"
                 onMouseDown={handleVolumeBarMouseDown}
-                style={{ width: '96px' }}
+                style={{ width: '120px' }}
+                title="Adjust volume"
               >
                 <div className="neu-volume-track" />
                 <div 
@@ -258,9 +260,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
                   style={{ width: `${volumePercentage}%` }}
                 />
                 <div 
-                  className={`neu-volume-thumb ${
-                    isDraggingVolume ? '' : ''
-                  }`}
+                  className="neu-volume-thumb"
                   style={{ 
                     left: `${volumePercentage}%`,
                     transition: isDraggingVolume ? 'none' : 'transform 0.1s ease'
@@ -269,7 +269,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
                 
                 {isDraggingVolume && (
                   <motion.div 
-                    className="neu-card-micro absolute -top-10 text-xs neu-text-primary font-mono whitespace-nowrap"
+                    className="neu-card-micro absolute -top-12 text-sm neu-text-primary font-mono font-semibold whitespace-nowrap"
                     style={{ 
                       left: `${volumePercentage}%`, 
                       transform: 'translateX(-50%)'
@@ -285,23 +285,23 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           </div>
         </div>
         
-        <div className="text-center space-y-2">
-          <div className="font-mono text-lg font-medium neu-text-primary">
+        <div className="text-center space-y-3">
+          <div className="font-mono text-xl font-bold neu-text-primary">
             {formatTime(currentTime, fps)} / {formatTime(duration, fps)}
           </div>
-          <div className="flex items-center justify-center space-x-4 neu-caption">
-            <span>Frame {getCurrentFrame()} / {getTotalFrames()}</span>
-            <span>@{fps}fps</span>
-            {isVideoLoaded && <span className="neu-text-accent">● Ready</span>}
-            {isDragging && <span style={{ color: 'var(--neu-primary)' }}>● Seeking</span>}
+          <div className="flex items-center justify-center space-x-6 neu-caption">
+            <span className="font-semibold">Frame {getCurrentFrame()} / {getTotalFrames()}</span>
+            <span className="font-semibold">@{fps}fps</span>
+            {isVideoLoaded && <span className="neu-text-accent font-semibold">● Ready</span>}
+            {isDragging && <span style={{ color: 'var(--neu-primary)' }} className="font-semibold">● Seeking</span>}
           </div>
         </div>
         
         <div className="flex items-center">
           <motion.button
             onClick={onSettings}
-            className="neu-btn-icon"
-            title="Settings"
+            className="neu-btn-icon neu-interactive"
+            title="Video Settings"
           >
             <Settings className="w-5 h-5" />
           </motion.button>

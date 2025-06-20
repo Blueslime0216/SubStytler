@@ -60,17 +60,18 @@ export const Toolbar: React.FC = () => {
   };
 
   return (
-    <div className="neu-toolbar h-14 flex items-center justify-between">
+    <div className="neu-toolbar h-16 flex items-center justify-between">
       <div className="flex items-center space-x-6">
         <div className="flex items-center space-x-4">
           <motion.div 
-            className="w-10 h-10 rounded-2xl neu-shadow-2 flex items-center justify-center"
+            className="w-12 h-12 rounded-2xl neu-shadow-2 flex items-center justify-center neu-interactive"
             style={{ 
               background: 'linear-gradient(145deg, var(--neu-primary), var(--neu-primary-dark))',
-              boxShadow: 'var(--neu-shadow-2), 0 0 8px rgba(99, 179, 237, 0.3)'
+              boxShadow: 'var(--neu-shadow-2), 0 0 12px rgba(99, 179, 237, 0.4)'
             }}
+            title="Sub-Stytler Professional"
           >
-            <Sparkles className="w-5 h-5 text-white" />
+            <Sparkles className="w-6 h-6 text-white" />
           </motion.div>
           <div>
             <h1 className="neu-heading-primary neu-text-accent">Sub-Stytler</h1>
@@ -81,7 +82,8 @@ export const Toolbar: React.FC = () => {
         <div className="flex items-center space-x-4">
           <motion.button
             onClick={handleSave}
-            className="neu-btn-primary flex items-center space-x-2"
+            className="neu-btn-primary flex items-center space-x-2 neu-interactive"
+            title="Save Project (Ctrl+S)"
           >
             <Save className="w-4 h-4" />
             <span>Save Project</span>
@@ -89,7 +91,8 @@ export const Toolbar: React.FC = () => {
           
           <motion.button
             onClick={handleExportYTT}
-            className="neu-btn flex items-center space-x-2"
+            className="neu-btn flex items-center space-x-2 neu-interactive"
+            title="Export as YTT file"
           >
             <Download className="w-4 h-4" />
             <span>Export YTT</span>
@@ -109,7 +112,7 @@ export const Toolbar: React.FC = () => {
         
         <motion.button
           onClick={toggleTheme}
-          className="neu-theme-toggle"
+          className="neu-theme-toggle neu-interactive"
           title={`Switch to ${isDarkMode ? 'Light' : 'Dark'} Mode`}
         >
           <motion.div
@@ -128,7 +131,8 @@ export const Toolbar: React.FC = () => {
         </motion.button>
         
         <motion.button
-          className="neu-btn-icon"
+          className="neu-btn-icon neu-interactive"
+          title="Application Settings"
         >
           <Settings className="w-5 h-5" />
         </motion.button>
