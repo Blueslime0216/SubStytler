@@ -67,7 +67,8 @@ export const PanelActionsDropdown: React.FC<PanelActionsDropdownProps> = ({
             
             <motion.button
               onClick={() => onSplitPanel('horizontal', 'text-editor')}
-              className="neu-dropdown-item w-full flex items-center space-x-2 px-2 py-2 rounded-md text-left"
+              className="neu-dropdown-item w-full flex items-center space-x-2 px-2 py-2 rounded-md text-left cursor-pointer neu-interactive"
+              title="Split panel horizontally"
             >
               <svg className="w-3 h-3 neu-text-secondary rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -77,7 +78,8 @@ export const PanelActionsDropdown: React.FC<PanelActionsDropdownProps> = ({
             
             <motion.button
               onClick={() => onSplitPanel('vertical', 'text-editor')}
-              className="neu-dropdown-item w-full flex items-center space-x-2 px-2 py-2 rounded-md text-left"
+              className="neu-dropdown-item w-full flex items-center space-x-2 px-2 py-2 rounded-md text-left cursor-pointer neu-interactive"
+              title="Split panel vertically"
             >
               <svg className="w-3 h-3 neu-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />

@@ -76,10 +76,11 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                   <motion.button
                     key={panelType}
                     onClick={() => onPanelChange(panelType as PanelType)}
-                    className="neu-dropdown-item w-full flex items-center space-x-3 p-3 text-left"
+                    className="neu-dropdown-item w-full flex items-center space-x-3 p-3 text-left cursor-pointer neu-interactive"
+                    title={`Switch to ${panelConfig.title}`}
                   >
                     <motion.div 
-                      className="p-1.5 rounded-lg neu-shadow-1"
+                      className="p-1.5 rounded-lg neu-shadow-1 cursor-pointer"
                       style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
                     >
                       <PanelIcon className="w-3.5 h-3.5 neu-text-accent" />

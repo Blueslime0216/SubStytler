@@ -67,8 +67,9 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
       <div className="neu-panel-header flex items-center justify-between">
         <div className="flex items-center space-x-3 flex-1">
           <motion.div 
-            className="p-1.5 rounded-lg neu-shadow-1"
+            className="p-1.5 rounded-lg neu-shadow-1 cursor-pointer"
             style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
+            title={`${config.title} Panel`}
           >
             <IconComponent className="w-3.5 h-3.5 neu-text-accent" />
           </motion.div>
@@ -76,7 +77,8 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
           <motion.button
             ref={titleButtonRef}
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center space-x-2 group"
+            className="flex items-center space-x-2 group cursor-pointer neu-interactive"
+            title="Change panel type"
           >
             <div className="text-left">
               <div className="neu-body-primary text-xs">{config.title}</div>
@@ -99,7 +101,7 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
           <motion.button
             ref={actionsButtonRef}
             onClick={() => setIsActionsOpen(!isActionsOpen)}
-            className="neu-btn-icon p-1.5"
+            className="neu-btn-icon p-1.5 cursor-pointer neu-interactive"
             title="Panel Actions"
           >
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +115,7 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
             disabled={!canRemove}
             className={`neu-btn-icon p-1.5 ${
               canRemove 
-                ? '' 
+                ? 'cursor-pointer neu-interactive' 
                 : 'opacity-40 cursor-not-allowed'
             }`}
             title={canRemove ? "Close Panel" : "Cannot close the last panel"}

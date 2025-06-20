@@ -138,21 +138,25 @@
   border-color: var(--neu-interactive-border);
   filter: brightness(var(--neu-hover-brightness));
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .neu-hover-glow:hover {
   box-shadow: var(--neu-shadow-2), 0 0 8px rgba(99, 179, 237, 0.4);
   filter: brightness(var(--neu-hover-brightness));
+  cursor: pointer;
 }
 
 .neu-hover-tactile:hover {
   box-shadow: var(--neu-shadow-inset-soft);
   filter: brightness(0.95);
+  cursor: pointer;
 }
 
 .neu-hover-tactile:active {
   box-shadow: var(--neu-shadow-active);
   filter: brightness(0.9);
+  cursor: pointer;
 }
 
 /* Focus Management - Enhanced */
@@ -189,24 +193,36 @@
 
 /* Interactive State Classes */
 .neu-clickable {
-  cursor: pointer;
+  cursor: pointer !important;
   transition: all 0.2s ease;
   user-select: none;
 }
 
+.neu-clickable:hover {
+  cursor: pointer !important;
+}
+
 .neu-draggable {
-  cursor: grab;
+  cursor: grab !important;
   transition: all 0.2s ease;
 }
 
+.neu-draggable:hover {
+  cursor: grab !important;
+}
+
 .neu-draggable:active {
-  cursor: grabbing;
+  cursor: grabbing !important;
 }
 
 .neu-disabled {
   opacity: 0.5;
-  cursor: not-allowed;
+  cursor: not-allowed !important;
   pointer-events: none;
+}
+
+.neu-disabled:hover {
+  cursor: not-allowed !important;
 }
 
 /* Accessibility Helpers */
@@ -251,4 +267,145 @@
   .neu-bg-base { background: #1A202C; }
   .neu-bg-surface { background: #2D3748; }
   .neu-bg-accent { background: #374151; }
+}
+
+/* Critical: Cursor Pointer Overrides */
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.cursor-pointer:hover {
+  cursor: pointer !important;
+}
+
+/* Motion component cursor fixes */
+.motion-button,
+.motion-div[role="button"],
+[data-motion="button"] {
+  cursor: pointer !important;
+}
+
+.motion-button:hover,
+.motion-div[role="button"]:hover,
+[data-motion="button"]:hover {
+  cursor: pointer !important;
+}
+
+/* Global cursor pointer for interactive elements */
+button,
+[role="button"],
+[tabindex]:not([tabindex="-1"]),
+.neu-interactive,
+.neu-clickable,
+.clickable {
+  cursor: pointer !important;
+}
+
+button:hover,
+[role="button"]:hover,
+[tabindex]:not([tabindex="-1"]):hover,
+.neu-interactive:hover,
+.neu-clickable:hover,
+.clickable:hover {
+  cursor: pointer !important;
+}
+
+/* Specific overrides for form elements */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="url"],
+input[type="tel"],
+textarea {
+  cursor: text !important;
+}
+
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="number"]:hover,
+input[type="search"]:hover,
+input[type="url"]:hover,
+input[type="tel"]:hover,
+textarea:hover {
+  cursor: text !important;
+}
+
+input[type="checkbox"],
+input[type="radio"],
+input[type="color"],
+input[type="range"],
+input[type="file"],
+select {
+  cursor: pointer !important;
+}
+
+input[type="checkbox"]:hover,
+input[type="radio"]:hover,
+input[type="color"]:hover,
+input[type="range"]:hover,
+input[type="file"]:hover,
+select:hover {
+  cursor: pointer !important;
+}
+
+/* Labels */
+label {
+  cursor: pointer !important;
+}
+
+label:hover {
+  cursor: pointer !important;
+}
+
+/* Links */
+a {
+  cursor: pointer !important;
+}
+
+a:hover {
+  cursor: pointer !important;
+}
+
+/* Override any help cursors globally */
+*:not(input[type="text"]):not(input[type="email"]):not(input[type="password"]):not(input[type="number"]):not(input[type="search"]):not(input[type="url"]):not(input[type="tel"]):not(textarea) {
+  cursor: inherit;
+}
+
+/* Ensure interactive elements always show pointer */
+*[onclick],
+*[onmousedown],
+*[onmouseup],
+*[data-clickable="true"] {
+  cursor: pointer !important;
+}
+
+*[onclick]:hover,
+*[onmousedown]:hover,
+*[onmouseup]:hover,
+*[data-clickable="true"]:hover {
+  cursor: pointer !important;
+}
+
+/* Remove help cursor from title attributes on interactive elements */
+button[title],
+[role="button"][title],
+.neu-btn[title],
+.neu-btn-primary[title],
+.neu-btn-small[title],
+.neu-btn-icon[title],
+.neu-interactive[title] {
+  cursor: pointer !important;
+}
+
+button[title]:hover,
+[role="button"][title]:hover,
+.neu-btn[title]:hover,
+.neu-btn-primary[title]:hover,
+.neu-btn-small[title]:hover,
+.neu-btn-icon[title]:hover,
+.neu-interactive[title]:hover {
+  cursor: pointer !important;
 }

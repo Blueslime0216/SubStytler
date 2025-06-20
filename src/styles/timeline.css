@@ -44,6 +44,11 @@
   background: var(--neu-base);
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+}
+
+.neu-timeline-track:hover {
+  cursor: pointer;
 }
 
 .neu-subtitle-block {
@@ -74,11 +79,17 @@
 .neu-subtitle-block:hover {
   box-shadow: var(--neu-shadow-3), 0 0 12px rgba(99, 179, 237, 0.5);
   filter: brightness(1.1);
+  cursor: move;
+}
+
+.neu-subtitle-block:active {
+  cursor: grabbing;
 }
 
 .neu-subtitle-block:focus {
   outline: none;
   box-shadow: var(--neu-shadow-2), 0 0 0 3px rgba(255, 255, 255, 0.5);
+  cursor: move;
 }
 
 /* Progress Bar System - Enhanced Visibility */
@@ -109,6 +120,7 @@
 .neu-progress-container:hover {
   box-shadow: var(--neu-shadow-inset-deep);
   border-color: var(--neu-interactive-border);
+  cursor: pointer;
 }
 
 .neu-progress-track {
@@ -180,6 +192,7 @@
   border-color: var(--neu-primary-light);
   box-shadow: var(--neu-shadow-3), 0 0 8px rgba(99, 179, 237, 0.6);
   filter: brightness(1.1);
+  cursor: grab;
 }
 
 .neu-progress-thumb:active {
@@ -202,6 +215,7 @@
 .neu-volume-container:hover {
   box-shadow: var(--neu-shadow-inset-deep);
   border-color: var(--neu-interactive-border);
+  cursor: pointer;
 }
 
 .neu-volume-track {
@@ -246,6 +260,7 @@
   border-color: var(--neu-primary-light);
   box-shadow: var(--neu-shadow-1), 0 0 4px rgba(99, 179, 237, 0.4);
   filter: brightness(1.1);
+  cursor: grab;
 }
 
 .neu-volume-thumb:active {
@@ -266,4 +281,55 @@
 .neu-playhead {
   filter: drop-shadow(0 0 4px rgba(99, 179, 237, 0.6));
   z-index: 100;
+}
+
+/* Cursor overrides for timeline elements */
+.neu-timeline * {
+  cursor: inherit;
+}
+
+.neu-timeline button {
+  cursor: pointer !important;
+}
+
+.neu-timeline button:hover {
+  cursor: pointer !important;
+}
+
+.neu-timeline .neu-btn,
+.neu-timeline .neu-btn-primary,
+.neu-timeline .neu-btn-small,
+.neu-timeline .neu-btn-icon {
+  cursor: pointer !important;
+}
+
+.neu-timeline .neu-btn:hover,
+.neu-timeline .neu-btn-primary:hover,
+.neu-timeline .neu-btn-small:hover,
+.neu-timeline .neu-btn-icon:hover {
+  cursor: pointer !important;
+}
+
+/* Timeline specific interactive elements */
+.neu-timeline-ruler button,
+.neu-timeline-ruler .neu-interactive {
+  cursor: pointer !important;
+}
+
+.neu-timeline-ruler button:hover,
+.neu-timeline-ruler .neu-interactive:hover {
+  cursor: pointer !important;
+}
+
+/* Zoom controls */
+.neu-timeline .neu-card-small {
+  cursor: default;
+}
+
+.neu-timeline .neu-clickable {
+  cursor: pointer !important;
+}
+
+.neu-timeline .neu-clickable:hover {
+  cursor: pointer !important;
 }

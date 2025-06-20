@@ -62,14 +62,16 @@ export const PanelRemoveConfirmation: React.FC<PanelRemoveConfirmationProps> = (
           <div className="flex space-x-2">
             <motion.button
               onClick={onConfirm}
-              className="neu-btn-small px-2 py-1 text-xs"
+              className="neu-btn-small px-2 py-1 text-xs cursor-pointer neu-interactive"
               style={{ color: 'var(--neu-error)' }}
+              title="Confirm panel removal"
             >
               Remove
             </motion.button>
             <motion.button
               onClick={onClose}
-              className="neu-btn-small px-2 py-1 text-xs"
+              className="neu-btn-small px-2 py-1 text-xs cursor-pointer neu-interactive"
+              title="Cancel panel removal"
             >
               Cancel
             </motion.button>
