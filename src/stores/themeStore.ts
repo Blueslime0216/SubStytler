@@ -7,7 +7,8 @@ interface ThemeState {
 }
 
 export const useThemeStore = create<ThemeState>((set) => ({
-  isDarkMode: false,
+  // 다크 모드를 기본값으로 설정
+  isDarkMode: true,
   
   toggleTheme: () => set((state) => ({ 
     isDarkMode: !state.isDarkMode 

@@ -23,7 +23,7 @@ function App() {
     }
   }, [currentProject, createProject]);
 
-  // Apply theme to document
+  // Apply theme to document - 다크 모드가 기본값
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
