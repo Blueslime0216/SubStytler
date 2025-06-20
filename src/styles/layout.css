@@ -112,7 +112,5 @@
 }
 
 .neu-theme-toggle:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--neu-shadow-2);
   color: var(--neu-text-primary);
 }

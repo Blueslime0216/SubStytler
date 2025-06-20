@@ -64,9 +64,7 @@ export const Toolbar: React.FC = () => {
       <div className="flex items-center space-x-6">
         <div className="flex items-center space-x-4">
           <motion.div 
-            className="w-10 h-10 rounded-2xl neu-shadow-2 flex items-center justify-center neu-hover-lift"
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
+            className="w-10 h-10 rounded-2xl neu-shadow-2 flex items-center justify-center"
             style={{ 
               background: 'linear-gradient(145deg, var(--neu-primary), var(--neu-primary-dark))',
               boxShadow: 'var(--neu-shadow-2), 0 0 8px rgba(99, 179, 237, 0.3)'
@@ -82,20 +80,16 @@ export const Toolbar: React.FC = () => {
         
         <div className="flex items-center space-x-4">
           <motion.button
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
             onClick={handleSave}
-            className="neu-btn-primary flex items-center space-x-2 neu-hover-lift"
+            className="neu-btn-primary flex items-center space-x-2"
           >
             <Save className="w-4 h-4" />
             <span>Save Project</span>
           </motion.button>
           
           <motion.button
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
             onClick={handleExportYTT}
-            className="neu-btn flex items-center space-x-2 neu-hover-lift"
+            className="neu-btn flex items-center space-x-2"
           >
             <Download className="w-4 h-4" />
             <span>Export YTT</span>
@@ -114,8 +108,6 @@ export const Toolbar: React.FC = () => {
         </div>
         
         <motion.button
-          whileHover={{ y: -1 }}
-          whileTap={{ y: 0 }}
           onClick={toggleTheme}
           className="neu-theme-toggle"
           title={`Switch to ${isDarkMode ? 'Light' : 'Dark'} Mode`}
@@ -136,9 +128,7 @@ export const Toolbar: React.FC = () => {
         </motion.button>
         
         <motion.button
-          whileHover={{ y: -1 }}
-          whileTap={{ y: 0 }}
-          className="neu-btn-icon neu-hover-glow"
+          className="neu-btn-icon"
         >
           <Settings className="w-5 h-5" />
         </motion.button>

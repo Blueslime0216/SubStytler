@@ -84,8 +84,6 @@ export const TextEditorPanel: React.FC = () => {
       <div className="space-y-3">
         <div className="flex items-center space-x-2">
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
             onClick={() => applyTextStyle('bold')}
             className="neu-btn-icon p-2"
           >
@@ -93,8 +91,6 @@ export const TextEditorPanel: React.FC = () => {
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
             onClick={() => applyTextStyle('italic')}
             className="neu-btn-icon p-2"
           >
@@ -102,8 +98,6 @@ export const TextEditorPanel: React.FC = () => {
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
             onClick={() => applyTextStyle('underline')}
             className="neu-btn-icon p-2"
           >

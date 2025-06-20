@@ -190,22 +190,18 @@ export const VideoController: React.FC<VideoControllerProps> = ({
       <div className="flex items-center justify-between px-8 pb-6">
         <div className="flex items-center space-x-4">
           <motion.button
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
             onClick={handleFrameBack}
             disabled={!isVideoLoaded}
-            className="neu-btn-icon disabled:opacity-40 neu-hover-lift"
+            className="neu-btn-icon disabled:opacity-40"
             title="Previous Frame"
           >
             <SkipBack className="w-5 h-5" />
           </motion.button>
           
           <motion.button
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
             onClick={handlePlayPause}
             disabled={!isVideoLoaded}
-            className="neu-btn-primary p-4 disabled:opacity-40 neu-hover-glow"
+            className="neu-btn-primary p-4 disabled:opacity-40"
             title={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (
@@ -216,11 +212,9 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           </motion.button>
           
           <motion.button
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
             onClick={handleFrameForward}
             disabled={!isVideoLoaded}
-            className="neu-btn-icon disabled:opacity-40 neu-hover-lift"
+            className="neu-btn-icon disabled:opacity-40"
             title="Next Frame"
           >
             <SkipForward className="w-5 h-5" />
@@ -232,10 +226,8 @@ export const VideoController: React.FC<VideoControllerProps> = ({
             onMouseLeave={() => setIsVolumeHovered(false)}
           >
             <motion.button
-              whileHover={{ y: -1 }}
-              whileTap={{ y: 0 }}
               onClick={onMuteToggle}
-              className="neu-btn-icon neu-hover-lift"
+              className="neu-btn-icon"
               title={isMuted ? 'Unmute' : 'Mute'}
             >
               {isMuted ? (
@@ -307,10 +299,8 @@ export const VideoController: React.FC<VideoControllerProps> = ({
         
         <div className="flex items-center">
           <motion.button
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
             onClick={onSettings}
-            className="neu-btn-icon neu-hover-glow"
+            className="neu-btn-icon"
             title="Settings"
           >
             <Settings className="w-5 h-5" />

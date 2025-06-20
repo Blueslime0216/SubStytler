@@ -120,9 +120,8 @@ export const SubtitleTimelinePanel: React.FC = () => {
       <div className="neu-timeline-ruler flex items-center justify-between p-3">
         <div className="flex items-center space-x-3">
           <motion.button
-            whileTap={{ y: 0 }}
             onClick={addNewSubtitle}
-            className="neu-btn-primary flex items-center space-x-2 neu-hover-lift"
+            className="neu-btn-primary flex items-center space-x-2"
           >
             <Plus className="w-3.5 h-3.5" />
             <span className="text-xs">Add Subtitle</span>
@@ -142,7 +141,6 @@ export const SubtitleTimelinePanel: React.FC = () => {
           
           <div className="flex items-center space-x-2">
             <motion.button
-              whileTap={{ y: 0 }}
               onClick={() => handleZoom('out')}
               className="neu-btn-icon p-1.5"
             >
@@ -154,7 +152,6 @@ export const SubtitleTimelinePanel: React.FC = () => {
             </div>
             
             <motion.button
-              whileTap={{ y: 0 }}
               onClick={() => handleZoom('in')}
               className="neu-btn-icon p-1.5"
             >
@@ -182,7 +179,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
           >
             {renderFrameGrid()}
             
-            {/* Subtitles - 드래그 시 트랜지션 제거 */}
+            {/* Subtitles */}
             {currentProject?.subtitles.map((subtitle) => {
               const left = timeToPixel(subtitle.startTime);
               const width = timeToPixel(subtitle.endTime) - left;
@@ -199,15 +196,14 @@ export const SubtitleTimelinePanel: React.FC = () => {
                     left: Math.max(0, left),
                     width: Math.max(24, width),
                     top: 50,
-                    transition: 'none' // 모든 트랜지션 제거 (드래그 가능한 요소)
+                    transition: 'none'
                   }}
-                  whileHover={{ y: -2 }}
                   drag="x"
                   dragConstraints={{ 
                     left: -left, 
                     right: (containerRef.current?.clientWidth || 0) - left - width 
                   }}
-                  dragTransition={{ power: 0, timeConstant: 0 }} // 드래그 트랜지션 완전 제거
+                  dragTransition={{ power: 0, timeConstant: 0 }}
                 >
                   <div className="text-xs text-white font-medium truncate">
                     {subtitle.spans[0]?.text || 'Empty subtitle'}
@@ -216,13 +212,13 @@ export const SubtitleTimelinePanel: React.FC = () => {
               );
             })}
             
-            {/* Enhanced Playhead - 트랜지션 제거 */}
+            {/* Enhanced Playhead */}
             <motion.div
               className="absolute top-0 w-0.5 h-full pointer-events-none z-20"
               style={{ 
                 left: timeToPixel(currentTime),
                 background: 'var(--neu-primary)',
-                transition: 'none' // 플레이헤드 트랜지션 제거 (실시간 업데이트)
+                transition: 'none'
               }}
               animate={{ opacity: [0.8, 1, 0.8] }}
               transition={{ duration: 2, repeat: Infinity }}
@@ -231,7 +227,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
                 className="absolute -top-2 -left-2 w-4 h-4 rotate-45 neu-shadow-1"
                 style={{ 
                   background: 'var(--neu-primary)',
-                  transition: 'none' // 플레이헤드 헤드 트랜지션 제거
+                  transition: 'none'
                 }}
               />
             </motion.div>

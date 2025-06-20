@@ -83,8 +83,6 @@ export const NotesPanel: React.FC = () => {
             rows={3}
           />
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
             onClick={addNote}
             className="neu-btn-primary flex items-center space-x-2"
           >
@@ -107,7 +105,7 @@ export const NotesPanel: React.FC = () => {
           notes.map((note, index) => (
             <motion.div
               key={note.id}
-              className="neu-card p-3 neu-hover-lift"
+              className="neu-card p-3"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
@@ -138,16 +136,12 @@ export const NotesPanel: React.FC = () => {
                     style={{ backgroundColor: note.color }}
                   />
                   <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     onClick={() => setEditingId(editingId === note.id ? null : note.id)}
                     className="neu-btn-icon p-1"
                   >
                     <Edit className="w-3 h-3" />
                   </motion.button>
                   <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     onClick={() => deleteNote(note.id)}
                     className="neu-btn-icon p-1"
                     style={{ color: 'var(--neu-error)' }}

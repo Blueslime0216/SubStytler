@@ -90,7 +90,7 @@ export const ScriptViewerPanel: React.FC = () => {
             {filteredSubtitles.map((subtitle, index) => (
               <motion.div
                 key={subtitle.id}
-                className="neu-card p-3 neu-hover-lift"
+                className="neu-card p-3"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
@@ -114,8 +114,6 @@ export const ScriptViewerPanel: React.FC = () => {
                         className="neu-input text-xs w-16"
                       />
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
                         onClick={() => jumpToSubtitle(subtitle.startTime)}
                         className="neu-btn-small px-2 py-1 text-xs"
                       >
@@ -135,8 +133,6 @@ export const ScriptViewerPanel: React.FC = () => {
                   {/* Actions */}
                   <div className="flex items-center space-x-1 ml-3">
                     <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
                       onClick={() => setSelectedSubtitleId(
                         selectedSubtitleId === subtitle.id ? null : subtitle.id
                       )}
@@ -146,8 +142,6 @@ export const ScriptViewerPanel: React.FC = () => {
                     </motion.button>
                     
                     <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
                       onClick={() => deleteSubtitle(subtitle.id)}
                       className="neu-btn-icon p-1"
                       style={{ color: 'var(--neu-error)' }}

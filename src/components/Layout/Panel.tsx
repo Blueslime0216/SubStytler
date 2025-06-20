@@ -68,7 +68,6 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
         <div className="flex items-center space-x-3 flex-1">
           <motion.div 
             className="p-1.5 rounded-lg neu-shadow-1"
-            whileHover={{ y: -1 }}
             style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
           >
             <IconComponent className="w-3.5 h-3.5 neu-text-accent" />
@@ -76,8 +75,6 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
           
           <motion.button
             ref={titleButtonRef}
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center space-x-2 group"
           >
@@ -101,8 +98,6 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
         <div className="flex items-center space-x-1">
           <motion.button
             ref={actionsButtonRef}
-            whileHover={{ y: -1 }}
-            whileTap={{ y: 0 }}
             onClick={() => setIsActionsOpen(!isActionsOpen)}
             className="neu-btn-icon p-1.5"
             title="Panel Actions"
@@ -114,15 +109,11 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
           
           <motion.button
             ref={removeButtonRef}
-            whileHover={{ 
-              y: canRemove ? -1 : 0,
-            }}
-            whileTap={{ y: canRemove ? 0 : 0 }}
             onClick={onRemoveClick}
             disabled={!canRemove}
             className={`neu-btn-icon p-1.5 ${
               canRemove 
-                ? 'neu-hover-lift' 
+                ? '' 
                 : 'opacity-40 cursor-not-allowed'
             }`}
             title={canRemove ? "Close Panel" : "Cannot close the last panel"}

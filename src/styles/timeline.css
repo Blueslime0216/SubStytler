@@ -64,11 +64,6 @@
   opacity: 0.6;
 }
 
-.neu-subtitle-block:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--neu-shadow-2), 0 0 6px rgba(99, 179, 237, 0.3);
-}
-
 /* Progress Bar System */
 .neu-progress-container {
   background: var(--neu-base);
@@ -155,8 +150,6 @@
 }
 
 .neu-progress-thumb:hover {
-  transform: translate(-50%, -50%);
-  box-shadow: var(--neu-shadow-2), 0 0 6px rgba(99, 179, 237, 0.5);
   border-color: var(--neu-primary-light);
 }
 
@@ -205,9 +198,4 @@
   top: 50%;
   transform: translate(-50%, -50%);
   transition: transform 0.3s ease;
-}
-
-.neu-volume-thumb:hover {
-  transform: translate(-50%, -50%);
-  box-shadow: var(--neu-shadow-1);
 }

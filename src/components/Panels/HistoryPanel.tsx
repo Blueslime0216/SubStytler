@@ -27,8 +27,6 @@ export const HistoryPanel: React.FC = () => {
       <div className="neu-panel-header">
         <div className="flex items-center space-x-2">
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
             className="neu-btn flex items-center space-x-1"
           >
             <Undo className="w-3.5 h-3.5" />
@@ -36,8 +34,6 @@ export const HistoryPanel: React.FC = () => {
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
             className="neu-btn flex items-center space-x-1"
           >
             <Redo className="w-3.5 h-3.5" />
@@ -51,11 +47,10 @@ export const HistoryPanel: React.FC = () => {
         {historyItems.map((item, index) => (
           <motion.div
             key={item.id}
-            className="neu-card p-3 neu-hover-lift cursor-pointer"
+            className="neu-card p-3 cursor-pointer"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
-            whileHover={{ x: 4 }}
           >
             <div className="flex items-center space-x-3">
               <span className="text-base">{getActionIcon(item.type)}</span>

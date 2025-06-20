@@ -75,14 +75,11 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                 return (
                   <motion.button
                     key={panelType}
-                    whileHover={{ y: -1 }}
-                    whileTap={{ y: 0 }}
                     onClick={() => onPanelChange(panelType as PanelType)}
                     className="neu-dropdown-item w-full flex items-center space-x-3 p-3 text-left"
                   >
                     <motion.div 
                       className="p-1.5 rounded-lg neu-shadow-1"
-                      whileHover={{ y: -1 }}
                       style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
                     >
                       <PanelIcon className="w-3.5 h-3.5 neu-text-accent" />
@@ -100,7 +97,6 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                       fill="none" 
                       stroke="currentColor" 
                       viewBox="0 0 24 24"
-                      whileHover={{ x: 2 }}
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </motion.svg>

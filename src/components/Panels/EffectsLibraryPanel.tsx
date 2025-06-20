@@ -51,8 +51,7 @@ export const EffectsLibraryPanel: React.FC = () => {
             key={effect.id}
             draggable
             onDragStart={(e) => handleDragStart(e, effect.id)}
-            className="neu-card p-3 cursor-move neu-hover-lift"
-            whileHover={{ scale: 1.02 }}
+            className="neu-card p-3 cursor-move"
             whileDrag={{ scale: 1.05 }}
           >
             <div className="flex items-center space-x-3">
@@ -92,8 +91,6 @@ export const EffectsLibraryPanel: React.FC = () => {
       <div className="mt-4">
         <h4 className="font-medium neu-text-primary mb-3 text-sm">Custom Keyframes</h4>
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
           className="w-full neu-card p-3 neu-text-secondary hover:neu-text-primary transition-colors text-center text-xs"
         >
           + Create Custom Animation

@@ -49,8 +49,6 @@ export const StyleManagerPanel: React.FC = () => {
       {/* Toolbar */}
       <div className="neu-panel-header">
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
           onClick={createNewStyle}
           className="neu-btn-primary flex items-center space-x-2"
         >
@@ -68,7 +66,6 @@ export const StyleManagerPanel: React.FC = () => {
               selectedStyleId === style.id ? 'neu-shadow-inset' : ''
             }`}
             onClick={() => setSelectedStyleId(style.id)}
-            whileHover={{ scale: 1.01 }}
           >
             <div className="flex items-center justify-between">
               <div className="flex-1">
@@ -85,8 +82,6 @@ export const StyleManagerPanel: React.FC = () => {
               
               <div className="flex items-center space-x-1">
                 <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
                   onClick={(e) => {
                     e.stopPropagation();
                     duplicateStyle(style);
@@ -98,8 +93,6 @@ export const StyleManagerPanel: React.FC = () => {
                 
                 {style.id !== 'default' && (
                   <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     onClick={(e) => {
                       e.stopPropagation();
                       removeStyle(style.id);

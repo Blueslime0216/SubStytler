@@ -66,7 +66,6 @@ export const PanelActionsDropdown: React.FC<PanelActionsDropdownProps> = ({
             </div>
             
             <motion.button
-              whileHover={{ scale: 1.01 }}
               onClick={() => onSplitPanel('horizontal', 'text-editor')}
               className="neu-dropdown-item w-full flex items-center space-x-2 px-2 py-2 rounded-md text-left"
             >
@@ -77,7 +76,6 @@ export const PanelActionsDropdown: React.FC<PanelActionsDropdownProps> = ({
             </motion.button>
             
             <motion.button
-              whileHover={{ scale: 1.01 }}
               onClick={() => onSplitPanel('vertical', 'text-editor')}
               className="neu-dropdown-item w-full flex items-center space-x-2 px-2 py-2 rounded-md text-left"
             >

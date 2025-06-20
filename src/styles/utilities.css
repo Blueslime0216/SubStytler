@@ -98,21 +98,6 @@
   animation: neu-shimmer 2s infinite;
 }
 
-/* Hover Effects - No Scale Changes */
-.neu-hover-lift:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--neu-shadow-2);
-}
-
-.neu-hover-press:active {
-  transform: translateY(1px);
-  box-shadow: var(--neu-shadow-pressed);
-}
-
-.neu-hover-glow:hover {
-  box-shadow: var(--neu-shadow-2), 0 0 6px rgba(99, 179, 237, 0.3);
-}
-
 /* Focus Management */
 .neu-focus:focus {
   outline: none;
