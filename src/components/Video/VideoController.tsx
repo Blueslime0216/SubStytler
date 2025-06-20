@@ -320,10 +320,10 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           </div>
         </div>
         
-        {/* Right Controls */}
+        {/* Right Controls - Settings 버튼 회전 애니메이션 제거 */}
         <div className="flex items-center">
           <motion.button
-            whileHover={{ scale: 1.05, rotate: 90 }}
+            whileHover={{ scale: 1.05, y: -1 }}
             whileTap={{ scale: 0.95 }}
             onClick={onSettings}
             className="neu-btn-icon neu-hover-glow"
