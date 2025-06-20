@@ -7,14 +7,16 @@ interface ThemeState {
 }
 
 export const useThemeStore = create<ThemeState>((set) => ({
-  // 다크 모드를 기본값으로 설정
+  // 다크 모드 고정 - 항상 true
   isDarkMode: true,
   
-  toggleTheme: () => set((state) => ({ 
-    isDarkMode: !state.isDarkMode 
-  })),
+  // 토글 기능 비활성화 - 항상 다크 모드 유지
+  toggleTheme: () => {
+    // 아무것도 하지 않음 - 다크 모드 고정
+  },
   
-  setTheme: (isDark: boolean) => set({ 
-    isDarkMode: isDark 
-  })
+  // 테마 설정 비활성화 - 항상 다크 모드 유지
+  setTheme: (isDark: boolean) => {
+    // 아무것도 하지 않음 - 다크 모드 고정
+  }
 }));

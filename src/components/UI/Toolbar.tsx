@@ -1,12 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Save, Download, Settings, Sparkles, Sun, Moon } from 'lucide-react';
+import { Save, Download, Settings, Sparkles } from 'lucide-react';
 import { useProjectStore } from '../../stores/projectStore';
-import { useThemeStore } from '../../stores/themeStore';
 
 export const Toolbar: React.FC = () => {
   const { saveProject, currentProject } = useProjectStore();
-  const { isDarkMode, toggleTheme } = useThemeStore();
 
   const handleSave = () => {
     saveProject();
@@ -109,26 +107,6 @@ export const Toolbar: React.FC = () => {
             {currentProject?.subtitles.length || 0} subtitles
           </div>
         </div>
-        
-        <motion.button
-          onClick={toggleTheme}
-          className="neu-theme-toggle neu-interactive"
-          title={`Switch to ${isDarkMode ? 'Light' : 'Dark'} Mode`}
-        >
-          <motion.div
-            key={isDarkMode ? 'dark' : 'light'}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-          >
-            {isDarkMode ? (
-              <Sun className="w-5 h-5" />
-            ) : (
-              <Moon className="w-5 h-5" />
-            )}
-          </motion.div>
-        </motion.button>
         
         <motion.button
           className="neu-btn-icon neu-interactive"

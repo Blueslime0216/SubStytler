@@ -5,14 +5,12 @@ import { AreaRenderer } from './components/Layout/AreaRenderer';
 import { ToastContainer } from './components/UI/ToastContainer';
 import { useLayoutStore } from './stores/layoutStore';
 import { useProjectStore } from './stores/projectStore';
-import { useThemeStore } from './stores/themeStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useToast } from './hooks/useToast';
 
 function App() {
   const { areas, resizeArea } = useLayoutStore();
   const { createProject, currentProject } = useProjectStore();
-  const { isDarkMode } = useThemeStore();
   const { toasts, removeToast } = useToast();
   
   useKeyboardShortcuts();
@@ -23,10 +21,10 @@ function App() {
     }
   }, [currentProject, createProject]);
 
-  // Apply theme to document - 다크 모드가 기본값
+  // Force dark theme always
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-  }, [isDarkMode]);
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }, []);
 
   return (
     <div className="h-screen neu-text-primary flex flex-col neu-bg-base">
@@ -76,7 +74,7 @@ function App() {
           <span>•</span>
           <span className="font-medium">Professional Edition</span>
           <span>•</span>
-          <span className="neu-text-accent font-semibold">{isDarkMode ? 'Dark' : 'Light'} Mode</span>
+          <span className="neu-text-accent font-semibold">Dark Mode</span>
         </div>
       </motion.div>
 

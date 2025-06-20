@@ -1,4 +1,4 @@
-/* Utility Classes and Animations - Enhanced Accessibility */
+/* Utility Classes and Animations - Dark Mode Only */
 
 /* Text Utilities - Enhanced Contrast */
 .neu-text-primary { 
@@ -228,30 +228,6 @@
   color: var(--neu-text-primary);
 }
 
-/* Mobile Responsive Enhancements */
-@media (max-width: 768px) {
-  .neu-shadow-1,
-  .neu-shadow-2,
-  .neu-shadow-3,
-  .neu-shadow-4 {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .neu-panel,
-  .neu-card {
-    background: var(--neu-base);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .neu-btn,
-  .neu-btn-primary,
-  .neu-btn-icon {
-    min-height: 44px;
-    min-width: 44px;
-  }
-}
-
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
   .neu-pulse,
@@ -266,23 +242,13 @@
   }
 }
 
-/* High Contrast Mode Support */
-@media (prefers-contrast: high) {
-  :root {
-    --neu-text-primary: #000000;
-    --neu-text-secondary: #333333;
-    --neu-interactive-border: #0066CC;
-  }
-  
-  [data-theme="dark"] {
-    --neu-text-primary: #FFFFFF;
-    --neu-text-secondary: #CCCCCC;
-    --neu-interactive-border: #66B3FF;
-  }
-  
-  .neu-btn,
-  .neu-card,
-  .neu-panel {
-    border: 2px solid var(--neu-text-primary);
-  }
+/* Force dark theme in all scenarios */
+@media (prefers-color-scheme: light) {
+  .neu-text-primary { color: #F7FAFC; }
+  .neu-text-secondary { color: #E2E8F0; }
+  .neu-text-muted { color: #CBD5E0; }
+  .neu-text-accent { color: #90CDF4; }
+  .neu-bg-base { background: #1A202C; }
+  .neu-bg-surface { background: #2D3748; }
+  .neu-bg-accent { background: #374151; }
 }
