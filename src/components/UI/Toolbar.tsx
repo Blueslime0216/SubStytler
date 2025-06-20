@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Save, Download, Settings, Sparkles } from 'lucide-react';
+import { Save, Download, Settings, Zap, Satellite } from 'lucide-react';
 import { useProjectStore } from '../../stores/projectStore';
 
 export const Toolbar: React.FC = () => {
@@ -58,66 +58,69 @@ export const Toolbar: React.FC = () => {
   };
 
   return (
-    <div className="toolbar h-16 flex items-center px-8 space-x-2">
-      <div className="flex items-center space-x-8">
-        {/* Brand Section */}
-        <div className="flex items-center space-x-4">
+    <div className="station-toolbar h-20 flex items-center px-10 space-x-2">
+      <div className="flex items-center space-x-10">
+        {/* 우주 정거장 브랜드 섹션 */}
+        <div className="flex items-center space-x-5">
           <motion.div 
-            className="w-10 h-10 rounded-xl bg-gradient flex items-center justify-center shadow-purple"
+            className="w-12 h-12 rounded-xl bg-energy flex items-center justify-center shadow-energy"
             whileHover={{ scale: 1.05, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Sparkles className="w-5 h-5 text-white" />
+            <Satellite className="w-6 h-6 text-white cosmic-rotation" />
           </motion.div>
           <div>
-            <h1 className="heading-primary text-gradient">Sub-Stytler</h1>
-            <p className="caption">Professional Subtitle Editor</p>
+            <h1 className="heading-station-primary text-energy-gradient">Sub-Stytler</h1>
+            <p className="caption-station">Deep Space Subtitle Station</p>
           </div>
         </div>
         
-        {/* Action Buttons */}
-        <div className="flex items-center space-x-4">
+        {/* 우주 정거장 액션 버튼들 */}
+        <div className="flex items-center space-x-5">
           <motion.button
-            whileHover={{ scale: 1.02, y: -1 }}
+            whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleSave}
-            className="btn-primary flex items-center space-x-2 hover-lift"
+            className="btn-station-primary flex items-center space-x-3 hover-station"
           >
-            <Save className="w-4 h-4" />
-            <span className="body-primary">Save Project</span>
+            <Save className="w-5 h-5" />
+            <span className="body-station-primary">Save Mission</span>
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.02, y: -1 }}
+            whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleExportYTT}
-            className="btn-secondary flex items-center space-x-2 hover-lift"
+            className="btn-station-secondary flex items-center space-x-3 hover-station"
           >
-            <Download className="w-4 h-4" />
-            <span className="body-primary">Export YTT</span>
+            <Download className="w-5 h-5" />
+            <span className="body-station-primary">Export Data</span>
           </motion.button>
         </div>
       </div>
       
       <div className="flex-1" />
       
-      {/* Project Info & Settings */}
-      <div className="flex items-center space-x-6">
-        <div className="text-right">
-          <div className="body-primary">
-            {currentProject?.name || 'Untitled Project'}
-          </div>
-          <div className="caption">
-            {currentProject?.subtitles.length || 0} subtitles
+      {/* 우주 정거장 프로젝트 정보 & 설정 */}
+      <div className="flex items-center space-x-8">
+        <div className="flex items-center space-x-4">
+          <Zap className="w-5 h-5 text-plasma energy-pulse" />
+          <div className="text-right">
+            <div className="body-station-primary">
+              {currentProject?.name || 'Mission Alpha-7'}
+            </div>
+            <div className="caption-station">
+              {currentProject?.subtitles.length || 0} sequences • Station ready
+            </div>
           </div>
         </div>
         
         <motion.button
           whileHover={{ scale: 1.05, rotate: 90 }}
           whileTap={{ scale: 0.95 }}
-          className="btn-icon hover-glow"
+          className="btn-station-icon hover-energy"
         >
-          <Settings className="w-5 h-5" />
+          <Settings className="w-6 h-6" />
         </motion.button>
       </div>
     </div>

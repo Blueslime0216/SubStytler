@@ -2,493 +2,647 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Professional Color System */
+/* 🚀 우주 정거장 컨셉 디자인 시스템 */
 :root {
-  /* Primary Background Layers */
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --bg-tertiary: #1a1a26;
-  --bg-panel: #1e1e2e;
-  --bg-surface: #252538;
-  --bg-hover: #2d2d44;
-  --bg-active: #363650;
+  /* Deep Space 배경 레이어 */
+  --space-void: #050508;
+  --space-deep: #0a0a0f;
+  --space-medium: #12121a;
+  --space-surface: #1a1a26;
+  --space-panel: #1e1e2e;
+  --space-elevated: #252538;
+  --space-hover: #2d2d44;
+  --space-active: #363650;
   
-  /* Border System */
-  --border-primary: #2a2a3e;
-  --border-secondary: #363650;
-  --border-accent: #5b5bd6;
-  --border-subtle: #1f1f2f;
+  /* 성운 블루 시스템 */
+  --nebula-primary: #2563eb;
+  --nebula-light: #60a5fa;
+  --nebula-bright: #93c5fd;
+  --nebula-glow: #3b82f6;
   
-  /* Text Hierarchy */
-  --text-primary: #e4e4e7;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --text-accent: #8b5cf6;
-  --text-inverse: #0a0a0f;
+  /* 코스믹 퍼플 시스템 */
+  --cosmic-primary: #7c3aed;
+  --cosmic-light: #a78bfa;
+  --cosmic-bright: #c4b5fd;
+  --cosmic-glow: #8b5cf6;
   
-  /* Accent Colors */
-  --accent-primary: #8b5cf6;
-  --accent-secondary: #a78bfa;
-  --accent-hover: #7c3aed;
-  --accent-active: #6d28d9;
-  --accent-light: #c4b5fd;
+  /* 오로라 그린 시스템 */
+  --aurora-primary: #10b981;
+  --aurora-light: #34d399;
+  --aurora-bright: #6ee7b7;
+  --aurora-glow: #059669;
   
-  /* Semantic Colors */
-  --success: #10b981;
-  --success-light: #34d399;
-  --warning: #f59e0b;
-  --warning-light: #fbbf24;
-  --error: #ef4444;
-  --error-light: #f87171;
-  --info: #3b82f6;
-  --info-light: #60a5fa;
+  /* 플라즈마 오렌지 시스템 */
+  --plasma-primary: #f59e0b;
+  --plasma-light: #fbbf24;
+  --plasma-bright: #fcd34d;
+  --plasma-glow: #d97706;
   
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
-  --shadow-purple: 0 4px 16px rgba(139, 92, 246, 0.3);
-  --shadow-purple-lg: 0 8px 32px rgba(139, 92, 246, 0.4);
+  /* 스텔라 화이트 시스템 */
+  --stellar-primary: #e4e4e7;
+  --stellar-secondary: #d4d4d8;
+  --stellar-muted: #a1a1aa;
+  --stellar-dim: #71717a;
   
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  --gradient-surface: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
-  --gradient-panel: linear-gradient(180deg, var(--bg-panel), var(--bg-surface));
+  /* 홀로그램 보더 */
+  --holo-border-primary: #2d2d44;
+  --holo-border-secondary: #363650;
+  --holo-border-accent: var(--nebula-primary);
+  --holo-border-glow: var(--cosmic-primary);
+  
+  /* 에너지 그라데이션 */
+  --energy-flow: linear-gradient(135deg, var(--nebula-primary), var(--cosmic-primary));
+  --plasma-flow: linear-gradient(135deg, var(--cosmic-primary), var(--plasma-primary));
+  --aurora-flow: linear-gradient(135deg, var(--aurora-primary), var(--nebula-primary));
+  --stellar-flow: linear-gradient(135deg, var(--space-surface), var(--space-elevated));
+  --void-flow: linear-gradient(180deg, var(--space-deep), var(--space-medium));
+  
+  /* 홀로그램 섀도우 */
+  --holo-shadow-sm: 0 2px 8px rgba(37, 99, 235, 0.15);
+  --holo-shadow-md: 0 4px 16px rgba(37, 99, 235, 0.2);
+  --holo-shadow-lg: 0 8px 32px rgba(37, 99, 235, 0.25);
+  --holo-shadow-xl: 0 16px 48px rgba(37, 99, 235, 0.3);
+  --cosmic-shadow: 0 8px 32px rgba(124, 58, 237, 0.4);
+  --aurora-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+  --plasma-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+  
+  /* 에너지 글로우 */
+  --energy-glow: 0 0 20px rgba(37, 99, 235, 0.6);
+  --cosmic-glow: 0 0 24px rgba(124, 58, 237, 0.7);
+  --aurora-glow: 0 0 20px rgba(16, 185, 129, 0.5);
+  --plasma-glow: 0 0 20px rgba(245, 158, 11, 0.6);
+  --stellar-glow: 0 0 16px rgba(228, 228, 231, 0.4);
 }
 
-/* Typography System */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* 우주 정거장 폰트 시스템 */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--accent-primary) var(--bg-secondary);
+  scrollbar-color: var(--nebula-primary) var(--space-medium);
 }
 
 body {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--space-void);
+  color: var(--stellar-primary);
+  font-family: 'Exo 2', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.6;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
-/* Enhanced Scrollbars */
+/* 우주 배경 효과 */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 홀로그램 스크롤바 */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-  border-radius: 4px;
+  background: var(--space-medium);
+  border-radius: 5px;
+  border: 1px solid var(--holo-border-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--gradient-primary);
-  border-radius: 4px;
-  border: 1px solid var(--bg-secondary);
+  background: var(--energy-flow);
+  border-radius: 5px;
+  border: 1px solid var(--space-medium);
+  box-shadow: var(--holo-shadow-sm);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-hover);
+  background: var(--plasma-flow);
+  box-shadow: var(--energy-glow);
 }
 
 ::-webkit-scrollbar-corner {
-  background: var(--bg-secondary);
+  background: var(--space-medium);
 }
 
-/* Professional Button System */
-.btn-primary {
-  @apply font-medium px-4 py-2.5 rounded-xl transition-all duration-200 relative overflow-hidden;
-  background: var(--gradient-primary);
-  color: white;
-  border: 1px solid var(--accent-hover);
-  box-shadow: var(--shadow-purple);
+/* 🚀 우주 정거장 버튼 시스템 */
+.btn-station-primary {
+  @apply font-medium px-6 py-3 rounded-xl transition-all duration-300 relative overflow-hidden;
+  background: var(--energy-flow);
+  color: var(--stellar-primary);
+  border: 2px solid var(--nebula-glow);
+  box-shadow: var(--holo-shadow-md);
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-purple-lg);
-  border-color: var(--accent-light);
-}
-
-.btn-primary:active {
-  transform: translateY(0);
-  box-shadow: var(--shadow-sm);
-}
-
-.btn-secondary {
-  @apply font-medium px-4 py-2.5 rounded-xl transition-all duration-200;
-  background: var(--bg-surface);
-  color: var(--text-primary);
-  border: 1px solid var(--border-secondary);
-  box-shadow: var(--shadow-sm);
-}
-
-.btn-secondary:hover {
-  background: var(--bg-hover);
-  border-color: var(--border-accent);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.btn-ghost {
-  @apply font-medium px-3 py-2 rounded-lg transition-all duration-200;
-  background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid transparent;
-}
-
-.btn-ghost:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-  border-color: var(--border-primary);
-}
-
-.btn-icon {
-  @apply p-2.5 rounded-lg transition-all duration-200;
-  background: var(--bg-surface);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-primary);
-}
-
-.btn-icon:hover {
-  background: var(--bg-hover);
-  color: var(--accent-primary);
-  border-color: var(--border-accent);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-/* Professional Panel System */
-.panel-container {
-  background: var(--gradient-panel);
-  border: 1px solid var(--border-primary);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(8px);
-}
-
-.panel-header {
-  background: var(--gradient-surface);
-  border-bottom: 1px solid var(--border-primary);
-  padding: 16px 20px;
-  backdrop-filter: blur(12px);
-}
-
-.panel-content {
-  background: var(--bg-panel);
-  overflow: hidden;
-}
-
-/* Enhanced Dropdown System */
-.dropdown-portal {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-secondary);
-  border-radius: 12px;
-  box-shadow: var(--shadow-xl);
-  backdrop-filter: blur(16px);
-  z-index: 9999;
-}
-
-.dropdown-item {
-  @apply px-4 py-3 rounded-lg transition-all duration-150;
-  color: var(--text-secondary);
-  border: 1px solid transparent;
-}
-
-.dropdown-item:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-  border-color: var(--border-accent);
-  transform: translateX(4px);
-}
-
-/* Professional Timeline System */
-.timeline-container {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-}
-
-.timeline-ruler {
-  background: var(--gradient-surface);
-  border-bottom: 1px solid var(--border-primary);
-  backdrop-filter: blur(8px);
-}
-
-.timeline-track {
-  background: var(--bg-panel);
-}
-
-.subtitle-block {
-  background: var(--gradient-primary);
-  border: 1px solid var(--accent-hover);
-  border-radius: 8px;
-  box-shadow: var(--shadow-purple);
-  backdrop-filter: blur(4px);
-}
-
-.subtitle-block:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-purple-lg);
-  border-color: var(--accent-light);
-}
-
-/* Professional Video Controller */
-.video-controller {
-  background: linear-gradient(to top, 
-    rgba(10, 10, 15, 0.98) 0%, 
-    rgba(18, 18, 26, 0.95) 50%,
-    rgba(26, 26, 38, 0.9) 100%);
-  backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border-primary);
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
-}
-
-/* Enhanced Progress Bar System */
-.progress-bar-container {
-  background: var(--bg-tertiary);
-  border-radius: 6px;
-  position: relative;
-  padding: 8px 0;
-  margin: 0 12px;
-  border: 1px solid var(--border-subtle);
-}
-
-.progress-bar-track {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--bg-tertiary);
-  border-radius: 2px;
-  transform: translateY(-50%);
-}
-
-.progress-bar-fill {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  height: 3px;
-  background: var(--gradient-primary);
-  border-radius: 2px;
-  transform: translateY(-50%);
-  transition: width 0.1s ease-out;
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
-}
-
-.progress-bar-thumb {
-  background: var(--accent-primary);
-  border: 3px solid white;
-  box-shadow: var(--shadow-purple);
-  z-index: 10;
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.progress-bar-thumb:hover {
-  transform: translate(-50%, -50%) scale(1.2);
-  box-shadow: var(--shadow-purple-lg);
-  border-color: var(--accent-light);
-}
-
-/* Enhanced Volume Control */
-.volume-container {
-  background: var(--bg-tertiary);
-  border-radius: 6px;
-  padding: 8px 0;
-  position: relative;
-  border: 1px solid var(--border-subtle);
-}
-
-.volume-track {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--bg-tertiary);
-  border-radius: 1px;
-  transform: translateY(-50%);
-}
-
-.volume-fill {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  height: 2px;
-  background: var(--gradient-primary);
-  border-radius: 1px;
-  transform: translateY(-50%);
-  transition: width 0.1s ease-out;
-  box-shadow: 0 0 6px rgba(139, 92, 246, 0.3);
-}
-
-.volume-thumb {
-  background: var(--accent-primary);
-  border: 2px solid white;
-  box-shadow: var(--shadow-purple);
-  z-index: 10;
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease;
-}
-
-.volume-thumb:hover {
-  transform: translate(-50%, -50%) scale(1.2);
-  box-shadow: var(--shadow-purple-lg);
-}
-
-/* Professional Toolbar */
-.toolbar {
-  background: var(--gradient-surface);
-  border-bottom: 1px solid var(--border-primary);
-  backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-md);
-}
-
-/* Status Bar */
-.status-bar {
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border-primary);
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-/* Professional Toast System */
-.toast-success {
-  background: linear-gradient(135deg, 
-    rgba(16, 185, 129, 0.95), 
-    rgba(5, 150, 105, 0.95));
-  border: 1px solid var(--success);
-  backdrop-filter: blur(12px);
-}
-
-.toast-error {
-  background: linear-gradient(135deg, 
-    rgba(239, 68, 68, 0.95), 
-    rgba(220, 38, 38, 0.95));
-  border: 1px solid var(--error);
-  backdrop-filter: blur(12px);
-}
-
-.toast-info {
-  background: linear-gradient(135deg, 
-    rgba(139, 92, 246, 0.95), 
-    rgba(124, 58, 237, 0.95));
-  border: 1px solid var(--accent-primary);
-  backdrop-filter: blur(12px);
-}
-
-.toast-warning {
-  background: linear-gradient(135deg, 
-    rgba(245, 158, 11, 0.95), 
-    rgba(217, 119, 6, 0.95));
-  border: 1px solid var(--warning);
-  backdrop-filter: blur(12px);
-}
-
-/* Professional Form Controls */
-.input-primary {
-  @apply px-4 py-3 rounded-xl border transition-all duration-200 font-medium;
-  background: var(--bg-surface);
-  border-color: var(--border-primary);
-  color: var(--text-primary);
-  box-shadow: var(--shadow-sm);
-}
-
-.input-primary:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
-  background: var(--bg-panel);
-}
-
-.input-primary::placeholder {
-  color: var(--text-muted);
-  font-weight: 400;
-}
-
-.select-primary {
-  @apply px-4 py-3 rounded-xl border transition-all duration-200 font-medium;
-  background: var(--bg-surface);
-  border-color: var(--border-primary);
-  color: var(--text-primary);
-  box-shadow: var(--shadow-sm);
-}
-
-.select-primary:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
-}
-
-/* Enhanced Resize Handles */
-.resize-handle {
-  background: var(--border-primary);
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.resize-handle:hover {
-  background: var(--accent-primary);
-  box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
-}
-
-.resize-handle.dragging {
-  background: var(--accent-hover);
-  box-shadow: 0 0 16px rgba(139, 92, 246, 0.6);
-}
-
-.resize-handle::before {
+.btn-station-primary::before {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(circle, var(--accent-primary) 2px, transparent 2px);
-  background-size: 6px 6px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
 }
 
-.resize-handle:hover::before {
+.btn-station-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--energy-glow), var(--holo-shadow-lg);
+  border-color: var(--nebula-bright);
+}
+
+.btn-station-primary:hover::before {
+  left: 100%;
+}
+
+.btn-station-primary:active {
+  transform: translateY(0);
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-station-secondary {
+  @apply font-medium px-5 py-2.5 rounded-lg transition-all duration-300 relative;
+  background: var(--stellar-flow);
+  color: var(--stellar-primary);
+  border: 1px solid var(--holo-border-secondary);
+  box-shadow: var(--holo-shadow-sm);
+  font-family: 'Exo 2', sans-serif;
+  backdrop-filter: blur(8px);
+}
+
+.btn-station-secondary:hover {
+  background: var(--aurora-flow);
+  border-color: var(--aurora-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--aurora-shadow);
+  color: white;
+}
+
+.btn-station-icon {
+  @apply p-3 rounded-lg transition-all duration-300 relative;
+  background: var(--space-elevated);
+  color: var(--stellar-secondary);
+  border: 1px solid var(--holo-border-primary);
+  box-shadow: var(--holo-shadow-sm);
+  backdrop-filter: blur(6px);
+}
+
+.btn-station-icon:hover {
+  background: var(--cosmic-flow);
+  color: white;
+  border-color: var(--cosmic-primary);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--cosmic-glow);
+}
+
+/* 🛸 홀로그램 패널 시스템 */
+.holo-panel {
+  background: linear-gradient(145deg, 
+    rgba(26, 26, 38, 0.95), 
+    rgba(30, 30, 46, 0.9));
+  border: 2px solid var(--holo-border-primary);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--holo-shadow-lg);
+  backdrop-filter: blur(16px);
+  position: relative;
+}
+
+.holo-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--energy-flow);
+  opacity: 0.8;
+}
+
+.holo-panel::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, 
+    rgba(37, 99, 235, 0.03), 
+    rgba(124, 58, 237, 0.02));
+  pointer-events: none;
+}
+
+.holo-header {
+  background: linear-gradient(135deg, 
+    rgba(45, 45, 68, 0.9), 
+    rgba(54, 54, 80, 0.8));
+  border-bottom: 2px solid var(--holo-border-secondary);
+  padding: 20px 24px;
+  backdrop-filter: blur(12px);
+  position: relative;
+}
+
+.holo-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--energy-flow);
   opacity: 0.6;
 }
 
-/* Professional Animations */
-@keyframes pulse-glow {
+/* 🌌 우주 정거장 타임라인 */
+.station-timeline {
+  background: var(--space-medium);
+  border: 2px solid var(--holo-border-primary);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--holo-shadow-lg);
+  position: relative;
+}
+
+.station-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--nebula-primary) 0px,
+    var(--nebula-primary) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  opacity: 0.6;
+}
+
+.timeline-ruler-station {
+  background: var(--stellar-flow);
+  border-bottom: 2px solid var(--holo-border-secondary);
+  backdrop-filter: blur(8px);
+  position: relative;
+}
+
+.timeline-ruler-station::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--energy-flow);
+  opacity: 0.7;
+}
+
+.subtitle-block-station {
+  background: var(--energy-flow);
+  border: 2px solid var(--nebula-glow);
+  border-radius: 10px;
+  box-shadow: var(--energy-glow);
+  backdrop-filter: blur(4px);
+  position: relative;
+  overflow: hidden;
+}
+
+.subtitle-block-station::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(45deg, 
+    transparent 30%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.subtitle-block-station:hover::before {
+  transform: translateX(100%);
+}
+
+.subtitle-block-station:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--cosmic-glow), var(--holo-shadow-xl);
+  border-color: var(--cosmic-bright);
+}
+
+/* 🎮 우주 정거장 비디오 컨트롤러 */
+.station-controller {
+  background: linear-gradient(to top, 
+    rgba(5, 5, 8, 0.98) 0%, 
+    rgba(10, 10, 15, 0.95) 50%,
+    rgba(18, 18, 26, 0.9) 100%);
+  backdrop-filter: blur(20px);
+  border-top: 2px solid var(--holo-border-primary);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+.station-controller::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--energy-flow);
+  opacity: 0.8;
+}
+
+/* 🌟 홀로그램 프로그레스 바 */
+.holo-progress {
+  background: var(--space-elevated);
+  border-radius: 10px;
+  position: relative;
+  padding: 12px 0;
+  margin: 0 20px;
+  border: 2px solid var(--holo-border-primary);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.holo-progress-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--stellar-flow);
+  border-radius: 2px;
+  transform: translateY(-50%);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.holo-progress-fill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 4px;
+  background: var(--energy-flow);
+  border-radius: 2px;
+  transform: translateY(-50%);
+  transition: width 0.1s ease-out;
+  box-shadow: var(--energy-glow);
+}
+
+.holo-progress-thumb {
+  background: var(--energy-flow);
+  border: 3px solid var(--stellar-primary);
+  box-shadow: var(--energy-glow);
+  z-index: 10;
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s ease;
+}
+
+.holo-progress-thumb:hover {
+  transform: translate(-50%, -50%) scale(1.3);
+  box-shadow: var(--cosmic-glow), var(--holo-shadow-xl);
+  border-color: var(--cosmic-bright);
+}
+
+/* 🔊 홀로그램 볼륨 컨트롤 */
+.holo-volume {
+  background: var(--space-elevated);
+  border-radius: 8px;
+  padding: 10px 0;
+  position: relative;
+  border: 1px solid var(--holo-border-primary);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.holo-volume-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--stellar-flow);
+  border-radius: 2px;
+  transform: translateY(-50%);
+}
+
+.holo-volume-fill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 3px;
+  background: var(--aurora-flow);
+  border-radius: 2px;
+  transform: translateY(-50%);
+  transition: width 0.1s ease-out;
+  box-shadow: var(--aurora-glow);
+}
+
+.holo-volume-thumb {
+  background: var(--aurora-flow);
+  border: 2px solid var(--stellar-primary);
+  box-shadow: var(--aurora-shadow);
+  z-index: 10;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.1s ease;
+}
+
+.holo-volume-thumb:hover {
+  transform: translate(-50%, -50%) scale(1.25);
+  box-shadow: var(--aurora-glow);
+}
+
+/* 🚀 우주 정거장 툴바 */
+.station-toolbar {
+  background: var(--stellar-flow);
+  border-bottom: 2px solid var(--holo-border-primary);
+  backdrop-filter: blur(15px);
+  box-shadow: var(--holo-shadow-lg);
+  position: relative;
+}
+
+.station-toolbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--energy-flow);
+  opacity: 0.7;
+}
+
+/* 📡 우주 정거장 상태바 */
+.station-status {
+  background: var(--space-medium);
+  border-top: 2px solid var(--holo-border-primary);
+  color: var(--stellar-muted);
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  position: relative;
+}
+
+.station-status::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--energy-flow);
+  opacity: 0.5;
+}
+
+/* 🌠 홀로그램 토스트 시스템 */
+.toast-station-success {
+  background: linear-gradient(135deg, 
+    rgba(16, 185, 129, 0.95), 
+    rgba(5, 150, 105, 0.95));
+  border: 2px solid var(--aurora-primary);
+  backdrop-filter: blur(15px);
+  box-shadow: var(--aurora-shadow);
+}
+
+.toast-station-error {
+  background: linear-gradient(135deg, 
+    rgba(239, 68, 68, 0.95), 
+    rgba(220, 38, 38, 0.95));
+  border: 2px solid #ef4444;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.4);
+}
+
+.toast-station-info {
+  background: linear-gradient(135deg, 
+    rgba(37, 99, 235, 0.95), 
+    rgba(59, 130, 246, 0.95));
+  border: 2px solid var(--nebula-primary);
+  backdrop-filter: blur(15px);
+  box-shadow: var(--holo-shadow-lg);
+}
+
+.toast-station-warning {
+  background: linear-gradient(135deg, 
+    rgba(245, 158, 11, 0.95), 
+    rgba(217, 119, 6, 0.95));
+  border: 2px solid var(--plasma-primary);
+  backdrop-filter: blur(15px);
+  box-shadow: var(--plasma-shadow);
+}
+
+/* 🛰️ 홀로그램 폼 컨트롤 */
+.input-station {
+  @apply px-4 py-3 rounded-xl border-2 transition-all duration-300 font-medium;
+  background: var(--stellar-flow);
+  border-color: var(--holo-border-primary);
+  color: var(--stellar-primary);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+}
+
+.input-station:focus {
+  outline: none;
+  border-color: var(--nebula-primary);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2), inset 0 2px 6px rgba(0, 0, 0, 0.3);
+  background: var(--space-elevated);
+}
+
+.input-station::placeholder {
+  color: var(--stellar-muted);
+  font-weight: 400;
+}
+
+/* 🌌 홀로그램 드롭다운 */
+.dropdown-station {
+  background: var(--stellar-flow);
+  border: 2px solid var(--holo-border-secondary);
+  border-radius: 16px;
+  box-shadow: var(--holo-shadow-xl);
+  backdrop-filter: blur(20px);
+  z-index: 9999;
+}
+
+.dropdown-item-station {
+  @apply px-5 py-4 rounded-lg transition-all duration-200;
+  color: var(--stellar-secondary);
+  border: 1px solid transparent;
+}
+
+.dropdown-item-station:hover {
+  background: var(--energy-flow);
+  color: white;
+  border-color: var(--nebula-primary);
+  transform: translateX(8px);
+  box-shadow: var(--energy-glow);
+}
+
+/* 🔧 홀로그램 리사이즈 핸들 */
+.resize-handle-station {
+  background: var(--holo-border-primary);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.resize-handle-station:hover {
+  background: var(--energy-flow);
+  box-shadow: var(--energy-glow);
+}
+
+.resize-handle-station.dragging {
+  background: var(--cosmic-primary);
+  box-shadow: var(--cosmic-glow), var(--holo-shadow-xl);
+}
+
+/* 🌟 우주 정거장 애니메이션 */
+@keyframes energy-pulse {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(139, 92, 246, 0.3);
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
   }
   50% {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+    box-shadow: 0 0 30px rgba(37, 99, 235, 0.7);
   }
 }
 
-@keyframes shimmer {
+@keyframes cosmic-rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes stellar-shimmer {
   0% {
     background-position: -200% 0;
   }
@@ -497,107 +651,153 @@ body {
   }
 }
 
-.pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+@keyframes plasma-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
-.shimmer {
+.energy-pulse {
+  animation: energy-pulse 3s ease-in-out infinite;
+}
+
+.cosmic-rotation {
+  animation: cosmic-rotation 20s linear infinite;
+}
+
+.stellar-shimmer {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(139, 92, 246, 0.1),
+    rgba(228, 228, 231, 0.2),
     transparent
   );
   background-size: 200% 100%;
-  animation: shimmer 2s infinite;
+  animation: stellar-shimmer 2s infinite;
 }
 
-/* Professional Utility Classes */
-.text-accent { color: var(--accent-primary); }
-.text-success { color: var(--success); }
-.text-warning { color: var(--warning); }
-.text-error { color: var(--error); }
-.text-info { color: var(--info); }
+.plasma-flow {
+  background: var(--plasma-flow);
+  background-size: 400% 400%;
+  animation: plasma-flow 4s ease infinite;
+}
 
-.bg-accent { background: var(--accent-primary); }
-.bg-gradient { background: var(--gradient-primary); }
-.bg-surface { background: var(--bg-surface); }
+/* 🚀 우주 정거장 유틸리티 클래스 */
+.text-nebula { color: var(--nebula-primary); }
+.text-cosmic { color: var(--cosmic-primary); }
+.text-aurora { color: var(--aurora-primary); }
+.text-plasma { color: var(--plasma-primary); }
+.text-stellar { color: var(--stellar-primary); }
 
-.border-accent { border-color: var(--accent-primary); }
+.bg-nebula { background: var(--nebula-primary); }
+.bg-cosmic { background: var(--cosmic-primary); }
+.bg-aurora { background: var(--aurora-primary); }
+.bg-plasma { background: var(--plasma-primary); }
+.bg-energy { background: var(--energy-flow); }
+.bg-stellar { background: var(--stellar-flow); }
 
-.shadow-professional { box-shadow: var(--shadow-lg); }
-.shadow-purple { box-shadow: var(--shadow-purple); }
-.shadow-purple-lg { box-shadow: var(--shadow-purple-lg); }
+.border-nebula { border-color: var(--nebula-primary); }
+.border-cosmic { border-color: var(--cosmic-primary); }
+.border-aurora { border-color: var(--aurora-primary); }
+.border-plasma { border-color: var(--plasma-primary); }
 
-/* Professional Typography */
-.font-mono {
+.shadow-holo { box-shadow: var(--holo-shadow-lg); }
+.shadow-energy { box-shadow: var(--energy-glow); }
+.shadow-cosmic { box-shadow: var(--cosmic-glow); }
+.shadow-aurora { box-shadow: var(--aurora-glow); }
+.shadow-plasma { box-shadow: var(--plasma-glow); }
+
+/* 🛸 우주 정거장 타이포그래피 */
+.font-station {
+  font-family: 'Orbitron', monospace;
+}
+
+.font-tech {
+  font-family: 'Exo 2', sans-serif;
+}
+
+.font-mono-station {
   font-family: 'JetBrains Mono', monospace;
 }
 
-.text-gradient {
-  background: var(--gradient-primary);
+.text-energy-gradient {
+  background: var(--energy-flow);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Enhanced Tooltips */
-.tooltip {
-  @apply absolute z-50 px-3 py-2 text-xs font-medium rounded-lg pointer-events-none;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-primary);
-  color: var(--text-primary);
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(8px);
+.text-cosmic-gradient {
+  background: var(--cosmic-flow);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.tooltip::before {
+/* 🌌 홀로그램 툴팁 */
+.tooltip-station {
+  @apply absolute z-50 px-4 py-2 text-sm font-medium rounded-lg pointer-events-none;
+  background: var(--stellar-flow);
+  border: 1px solid var(--holo-border-primary);
+  color: var(--stellar-primary);
+  box-shadow: var(--holo-shadow-lg);
+  backdrop-filter: blur(10px);
+  font-family: 'Exo 2', sans-serif;
+}
+
+.tooltip-station::before {
   content: '';
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  border: 4px solid transparent;
-  border-top-color: var(--border-primary);
+  border: 6px solid transparent;
+  border-top-color: var(--holo-border-primary);
 }
 
-/* Responsive Design */
+/* 📱 반응형 디자인 */
 @media (max-width: 768px) {
-  .panel-header {
-    padding: 12px 16px;
+  .holo-header {
+    padding: 16px 20px;
   }
   
-  .btn-primary, .btn-secondary {
-    @apply px-3 py-2 text-sm;
+  .btn-station-primary, .btn-station-secondary {
+    @apply px-4 py-2 text-sm;
   }
   
-  .dropdown-portal {
+  .dropdown-station {
     max-width: calc(100vw - 32px);
     margin: 0 16px;
   }
   
-  .progress-bar-container {
-    margin: 0 8px;
-    padding: 10px 0;
+  .holo-progress {
+    margin: 0 12px;
+    padding: 12px 0;
   }
   
-  .progress-bar-thumb {
-    width: 20px;
-    height: 20px;
+  .holo-progress-thumb {
+    width: 24px;
+    height: 24px;
   }
 }
 
-/* High Contrast Mode */
+/* 🌟 고대비 모드 */
 @media (prefers-contrast: high) {
   :root {
-    --border-primary: #4a4a6a;
-    --border-secondary: #5a5a7a;
-    --text-primary: #ffffff;
-    --text-secondary: #d1d1d6;
+    --holo-border-primary: #4a4a6a;
+    --holo-border-secondary: #5a5a7a;
+    --stellar-primary: #ffffff;
+    --stellar-secondary: #f0f0f6;
   }
 }
 
-/* Reduced Motion */
+/* ⚡ 모션 감소 */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -606,87 +806,124 @@ body {
   }
 }
 
-/* Focus Management */
-.focus-ring:focus {
-  outline: 2px solid var(--accent-primary);
+/* 🎯 포커스 관리 */
+.focus-station:focus {
+  outline: 3px solid var(--nebula-primary);
   outline-offset: 2px;
   border-radius: 8px;
 }
 
-/* Loading States */
-.loading-spinner {
-  border: 3px solid var(--bg-tertiary);
-  border-top: 3px solid var(--accent-primary);
+/* ⏳ 로딩 상태 */
+.loading-station {
+  border: 4px solid var(--space-elevated);
+  border-top: 4px solid var(--nebula-primary);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: cosmic-rotation 1s linear infinite;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Glass Effects */
-.glass-effect {
-  background: rgba(30, 30, 46, 0.8);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(139, 92, 246, 0.2);
-}
-
-.glass-panel {
-  background: rgba(26, 26, 38, 0.9);
+/* 🔮 글래스 효과 */
+.glass-station {
+  background: rgba(26, 26, 38, 0.8);
   backdrop-filter: blur(20px);
-  border: 1px solid var(--border-primary);
+  border: 2px solid rgba(37, 99, 235, 0.3);
 }
 
-/* Professional Hover States */
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+/* 🚀 우주 정거장 호버 상태 */
+.hover-station:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--holo-shadow-xl);
 }
 
-.hover-glow:hover {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+.hover-energy:hover {
+  box-shadow: var(--energy-glow);
 }
 
-/* Enhanced Visual Hierarchy */
-.heading-primary {
-  @apply text-2xl font-semibold;
-  color: var(--text-primary);
-  letter-spacing: -0.025em;
+.hover-cosmic:hover {
+  box-shadow: var(--cosmic-glow);
 }
 
-.heading-secondary {
-  @apply text-lg font-medium;
-  color: var(--text-primary);
-  letter-spacing: -0.015em;
+/* 🌌 우주 정거장 비주얼 계층 */
+.heading-station-primary {
+  @apply text-3xl font-bold;
+  font-family: 'Orbitron', monospace;
+  color: var(--stellar-primary);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-.body-primary {
-  @apply text-sm font-medium;
-  color: var(--text-primary);
+.heading-station-secondary {
+  @apply text-xl font-semibold;
+  font-family: 'Orbitron', monospace;
+  color: var(--stellar-primary);
+  letter-spacing: 0.025em;
 }
 
-.body-secondary {
+.body-station-primary {
+  @apply text-base font-medium;
+  font-family: 'Exo 2', sans-serif;
+  color: var(--stellar-primary);
+}
+
+.body-station-secondary {
   @apply text-sm;
-  color: var(--text-secondary);
+  font-family: 'Exo 2', sans-serif;
+  color: var(--stellar-secondary);
 }
 
-.caption {
+.caption-station {
   @apply text-xs;
-  color: var(--text-muted);
+  color: var(--stellar-muted);
   font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
 }
 
-/* Professional Spacing System */
-.space-professional > * + * {
-  margin-top: 1.5rem;
-}
-
-.space-tight > * + * {
-  margin-top: 0.75rem;
-}
-
-.space-loose > * + * {
+/* 🌟 우주 정거장 스페이싱 시스템 */
+.space-station > * + * {
   margin-top: 2rem;
+}
+
+.space-station-tight > * + * {
+  margin-top: 1rem;
+}
+
+.space-station-loose > * + * {
+  margin-top: 3rem;
+}
+
+/* 🛰️ 특수 효과 */
+.hologram-flicker {
+  animation: hologram-flicker 0.15s infinite linear alternate;
+}
+
+@keyframes hologram-flicker {
+  0% { opacity: 1; }
+  100% { opacity: 0.98; }
+}
+
+.energy-circuit {
+  background-image: 
+    linear-gradient(90deg, var(--nebula-primary) 1px, transparent 1px),
+    linear-gradient(var(--cosmic-primary) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.1;
+}
+
+.stellar-particles::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, var(--stellar-primary), transparent),
+    radial-gradient(1px 1px at 40px 70px, var(--nebula-light), transparent),
+    radial-gradient(1px 1px at 90px 40px, var(--cosmic-light), transparent),
+    radial-gradient(1px 1px at 130px 80px, var(--aurora-light), transparent);
+  background-repeat: repeat;
+  background-size: 150px 100px;
+  opacity: 0.6;
+  pointer-events: none;
 }

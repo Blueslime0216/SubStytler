@@ -2,13 +2,13 @@ import { Monitor, Clock, AudioWaveform as Waveform, Type, Palette, FileText, Zap
 import { PanelType } from '../types/project';
 
 export const panelConfig: Record<PanelType, { title: string; icon: React.ComponentType<any>; description: string }> = {
-  'video-preview': { title: 'Video Preview', icon: Monitor, description: 'Video playback and preview' },
-  'subtitle-timeline': { title: 'Timeline', icon: Clock, description: 'Subtitle timeline editor' },
-  'audio-waveform': { title: 'Audio Waveform', icon: Waveform, description: 'Audio waveform visualization' },
-  'text-editor': { title: 'Text Editor', icon: Type, description: 'Subtitle text editing' },
-  'style-manager': { title: 'Style Manager', icon: Palette, description: 'Subtitle style management' },
-  'script-viewer': { title: 'Script Viewer', icon: FileText, description: 'Script and subtitle list' },
-  'effects-library': { title: 'Effects Library', icon: Zap, description: 'Animation effects library' },
-  'history': { title: 'History', icon: History, description: 'Undo/redo history' },
-  'notes': { title: 'Notes', icon: StickyNote, description: 'Project notes and comments' },
+  'video-preview': { title: 'Visual Display', icon: Monitor, description: 'Primary video monitoring station' },
+  'subtitle-timeline': { title: 'Sequence Timeline', icon: Clock, description: 'Temporal sequence control matrix' },
+  'audio-waveform': { title: 'Audio Spectrum', icon: Waveform, description: 'Acoustic wave analysis display' },
+  'text-editor': { title: 'Text Processor', icon: Type, description: 'Linguistic data input terminal' },
+  'style-manager': { title: 'Style Matrix', icon: Palette, description: 'Visual formatting control hub' },
+  'script-viewer': { title: 'Script Database', icon: FileText, description: 'Complete sequence archive' },
+  'effects-library': { title: 'FX Arsenal', icon: Zap, description: 'Animation effects repository' },
+  'history': { title: 'Mission Log', icon: History, description: 'Operation history database' },
+  'notes': { title: 'Command Notes', icon: StickyNote, description: 'Mission briefing terminal' },
 };
