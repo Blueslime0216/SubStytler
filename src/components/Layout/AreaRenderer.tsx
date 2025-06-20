@@ -12,11 +12,13 @@ interface AreaRendererProps {
 export const AreaRenderer: React.FC<AreaRendererProps> = ({ area, onResize }) => {
   if (area.type === 'panel' && area.panelType) {
     return (
-      <CustomPanel 
-        type={area.panelType} 
-        className="h-full" 
-        areaId={area.id}
-      />
+      <div className="h-full p-2">
+        <CustomPanel 
+          type={area.panelType} 
+          className="h-full" 
+          areaId={area.id}
+        />
+      </div>
     );
   }
 
@@ -34,10 +36,6 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ area, onResize }) =>
               maxSize={child.maxSize || 85}
               onResize={(size) => onResize?.(child.id, size)}
               className="relative"
-              style={{
-                // 패널 간 간격을 최소화하여 자연스럽게 연결
-                margin: '2px'
-              }}
             >
               <AreaRenderer area={child} onResize={onResize} />
             </Panel>
@@ -50,7 +48,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ area, onResize }) =>
     );
   }
 
-  return <div className="h-full neu-bg-base flex items-center justify-center neu-text-secondary">
+  return <div className="h-full neu-bg-base flex items-center justify-center neu-text-secondary p-2">
     Invalid area configuration
   </div>;
 };

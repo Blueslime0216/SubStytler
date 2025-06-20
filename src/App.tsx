@@ -29,16 +29,17 @@ function App() {
   }, [isDarkMode]);
 
   return (
-    <div className="h-screen neu-text-primary flex flex-col overflow-hidden neu-bg-base">
+    <div className="h-screen neu-text-primary flex flex-col neu-bg-base">
       <Toolbar />
       
-      {/* 패널 컨테이너 - 패딩을 줄여서 패널들이 더 자연스럽게 연결되도록 */}
-      <div className="flex-1 overflow-hidden p-1">
+      {/* Enhanced Panel Container - Increased padding for shadow visibility */}
+      <div className="flex-1 p-4" style={{ overflow: 'visible' }}>
         <motion.div
           className="h-full"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
+          style={{ overflow: 'visible' }}
         >
           {areas.map(area => (
             <AreaRenderer
@@ -52,30 +53,30 @@ function App() {
       
       {/* Enhanced Status Bar */}
       <motion.div 
-        className="neu-status-bar h-7 flex items-center space-x-6"
+        className="neu-status-bar h-8 flex items-center space-x-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
         <div className="flex items-center space-x-2">
           <div className="w-2 h-2 rounded-full neu-glow" style={{ background: 'var(--neu-success)' }} />
-          <span>Ready</span>
+          <span className="font-semibold">Ready</span>
         </div>
         
         <div className="flex items-center space-x-4">
-          <span>{currentProject?.subtitles.length || 0} subtitles</span>
+          <span className="font-medium">{currentProject?.subtitles.length || 0} subtitles</span>
           <span>•</span>
-          <span>{currentProject?.name || 'Untitled Project'}</span>
+          <span className="font-medium">{currentProject?.name || 'Untitled Project'}</span>
         </div>
         
         <div className="flex-1" />
         
         <div className="flex items-center space-x-4">
-          <span>Sub-Stytler v2.0</span>
+          <span className="font-medium">Sub-Stytler v2.0</span>
           <span>•</span>
-          <span>Professional Edition</span>
+          <span className="font-medium">Professional Edition</span>
           <span>•</span>
-          <span className="neu-text-accent">{isDarkMode ? 'Dark' : 'Light'} Mode</span>
+          <span className="neu-text-accent font-semibold">{isDarkMode ? 'Dark' : 'Light'} Mode</span>
         </div>
       </motion.div>
 

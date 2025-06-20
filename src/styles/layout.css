@@ -1,4 +1,4 @@
-/* Layout and Structure Styles - Enhanced Accessibility */
+/* Layout and Structure Styles - Enhanced Accessibility & Shadow Visibility */
 
 .neu-toolbar {
   background: var(--neu-base);
@@ -6,6 +6,7 @@
   box-shadow: var(--neu-shadow-2);
   padding: 12px 20px;
   position: relative;
+  z-index: 10;
 }
 
 .neu-toolbar::after {
@@ -29,6 +30,7 @@
   padding: 8px 20px;
   position: relative;
   box-shadow: var(--neu-shadow-1);
+  z-index: 10;
 }
 
 .neu-status-bar::before {
@@ -48,6 +50,7 @@
   border-top: 2px solid rgba(163, 168, 196, 0.2);
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1), var(--neu-shadow-2);
   position: relative;
+  z-index: 10;
 }
 
 .neu-video-controller::before {
@@ -67,6 +70,7 @@
   position: relative;
   opacity: 0;
   border-radius: 4px;
+  z-index: 20;
 }
 
 .neu-resize-handle:hover {
@@ -132,10 +136,16 @@
   box-shadow: var(--neu-shadow-1), 0 0 0 3px var(--neu-interactive-border);
 }
 
-/* Enhanced Panel Separation */
+/* Enhanced Panel Separation with Shadow Visibility */
+.neu-panel-container {
+  padding: 8px;
+  overflow: visible;
+}
+
 .neu-panel-group {
-  gap: 8px;
-  padding: 4px;
+  gap: 12px;
+  padding: 8px;
+  overflow: visible;
 }
 
 .neu-panel-separator {
@@ -145,7 +155,7 @@
     rgba(163, 168, 196, 0.3) 20%, 
     rgba(163, 168, 196, 0.3) 80%, 
     transparent 100%);
-  margin: 8px 0;
+  margin: 12px 0;
 }
 
 /* Interactive State Indicators */
@@ -175,4 +185,29 @@
 .neu-clickable:focus::before {
   border-color: var(--neu-primary);
   box-shadow: 0 0 0 2px var(--neu-interactive-border);
+}
+
+/* Panel Layout Enhancements */
+.neu-layout-container {
+  overflow: visible !important;
+  padding: 16px;
+}
+
+.neu-layout-panel {
+  overflow: visible !important;
+  margin: 4px;
+}
+
+/* Ensure shadows are not clipped */
+.neu-shadow-container {
+  overflow: visible !important;
+  padding: 8px;
+}
+
+/* Panel wrapper for proper shadow display */
+.neu-panel-wrapper {
+  padding: 8px;
+  overflow: visible;
+  height: 100%;
+  box-sizing: border-box;
 }

@@ -1,4 +1,4 @@
-/* Professional Neumorphism Component System - Enhanced Accessibility */
+/* Professional Neumorphism Component System - Enhanced Accessibility & Shadow Visibility */
 
 /* Button System - Enhanced Interactive Feedback */
 .neu-btn {
@@ -149,14 +149,16 @@
   box-shadow: var(--neu-shadow-1), 0 0 0 3px var(--neu-interactive-border);
 }
 
-/* Panel System - Enhanced Separation */
+/* Panel System - Enhanced Separation & Shadow Visibility */
 .neu-panel {
   background: var(--neu-base);
   border-radius: 18px;
   position: relative;
   box-shadow: var(--neu-shadow-2);
-  overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.05);
+  /* Ensure shadows are visible */
+  margin: 8px;
+  overflow: visible;
 }
 
 .neu-panel::before {
@@ -181,6 +183,7 @@
   position: relative;
   font-weight: 600;
   color: var(--neu-text-primary);
+  border-radius: 18px 18px 0 0;
 }
 
 .neu-panel-header::after {
@@ -206,6 +209,7 @@
   transition: all 0.2s ease;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  margin: 2px; /* Small margin to prevent shadow clipping */
 }
 
 .neu-card::before {
@@ -239,6 +243,7 @@
   padding: 10px;
   transition: all 0.2s ease;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  margin: 2px;
 }
 
 .neu-card-micro {
@@ -248,6 +253,7 @@
   padding: 8px;
   transition: all 0.2s ease;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  margin: 1px;
 }
 
 /* Input System - Enhanced Contrast */
@@ -310,6 +316,7 @@
   border: 2px solid rgba(255, 255, 255, 0.15);
   position: relative;
   overflow: hidden;
+  z-index: 1000; /* Ensure dropdowns appear above other elements */
 }
 
 .neu-dropdown::before {
@@ -419,4 +426,12 @@
 .neu-tooltip:hover::before {
   opacity: 1;
   visibility: visible;
+}
+
+/* Shadow Container for Proper Display */
+.neu-shadow-safe {
+  overflow: visible !important;
+  padding: 12px;
+  margin: -12px;
+  box-sizing: content-box;
 }
