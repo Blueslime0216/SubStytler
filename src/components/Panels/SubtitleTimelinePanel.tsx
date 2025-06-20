@@ -116,60 +116,54 @@ export const SubtitleTimelinePanel: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col neu-timeline">
-      {/* Enhanced Toolbar with Better Accessibility */}
+      {/* Neumorphism Toolbar */}
       <div className="neu-timeline-ruler flex items-center justify-between p-3">
         <div className="flex items-center space-x-3">
-          <button
+          <motion.button
             onClick={addNewSubtitle}
-            className="neu-btn-primary flex items-center space-x-2 neu-tactile neu-focus"
-            data-tooltip="Add new subtitle at current time"
-            aria-label="Add Subtitle"
+            className="neu-btn-primary flex items-center space-x-2"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Add Subtitle</span>
-          </button>
+            <span className="text-xs">Add Subtitle</span>
+          </motion.button>
           
-          <div className="flex items-center space-x-2 neu-interactive-element" role="group" aria-label="Frame Grid Toggle">
-            <Grid className="w-3.5 h-3.5 neu-text-secondary" aria-hidden="true" />
+          <div className="flex items-center space-x-2">
+            <Grid className="w-3.5 h-3.5 neu-text-secondary" />
             <span className="neu-caption">Frame Grid</span>
           </div>
         </div>
         
         <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2 neu-interactive-element" role="group" aria-label="Track Information">
-            <Layers className="w-3.5 h-3.5 neu-text-secondary" aria-hidden="true" />
+          <div className="flex items-center space-x-2">
+            <Layers className="w-3.5 h-3.5 neu-text-secondary" />
             <span className="neu-caption">Track 1</span>
           </div>
           
-          <div className="flex items-center space-x-2" role="group" aria-label="Zoom Controls">
-            <button
+          <div className="flex items-center space-x-2">
+            <motion.button
               onClick={() => handleZoom('out')}
-              className="neu-btn-icon p-1.5 neu-tactile neu-focus"
-              data-tooltip="Zoom Out"
-              aria-label="Zoom Out"
+              className="neu-btn-icon p-1.5"
             >
               <ZoomOut className="w-3.5 h-3.5" />
-            </button>
+            </motion.button>
             
-            <div className="neu-card-small px-2 py-1 neu-caption font-mono" aria-label={`Zoom level: ${zoom.toFixed(1)}x`}>
+            <div className="neu-card-small px-2 py-1 neu-caption font-mono">
               {zoom.toFixed(1)}x
             </div>
             
-            <button
+            <motion.button
               onClick={() => handleZoom('in')}
-              className="neu-btn-icon p-1.5 neu-tactile neu-focus"
-              data-tooltip="Zoom In"
-              aria-label="Zoom In"
+              className="neu-btn-icon p-1.5"
             >
               <ZoomIn className="w-3.5 h-3.5" />
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
       
       <div className="flex-1 flex flex-col">
         {/* Time Ruler */}
-        <div className="h-12 neu-timeline-ruler relative overflow-hidden" role="img" aria-label="Timeline ruler">
+        <div className="h-12 neu-timeline-ruler relative overflow-hidden">
           {renderTimeRuler()}
         </div>
         
@@ -177,22 +171,16 @@ export const SubtitleTimelinePanel: React.FC = () => {
         <div className="neu-timeline-track flex-1 relative overflow-hidden">
           <div
             ref={containerRef}
-            className="h-full relative cursor-pointer neu-focus"
+            className="h-full relative cursor-pointer"
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
-            role="slider"
-            aria-label="Timeline scrubber"
-            aria-valuemin={0}
-            aria-valuemax={duration}
-            aria-valuenow={currentTime}
-            tabIndex={0}
           >
             {renderFrameGrid()}
             
-            {/* Subtitles with Enhanced Accessibility */}
-            {currentProject?.subtitles.map((subtitle, index) => {
+            {/* Subtitles */}
+            {currentProject?.subtitles.map((subtitle) => {
               const left = timeToPixel(subtitle.startTime);
               const width = timeToPixel(subtitle.endTime) - left;
               
@@ -203,7 +191,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
               return (
                 <motion.div
                   key={subtitle.id}
-                  className="neu-subtitle-block absolute h-8 cursor-move flex items-center px-3 neu-interactive-element neu-focus"
+                  className="neu-subtitle-block absolute h-8 cursor-move flex items-center px-3"
                   style={{
                     left: Math.max(0, left),
                     width: Math.max(24, width),
@@ -216,10 +204,6 @@ export const SubtitleTimelinePanel: React.FC = () => {
                     right: (containerRef.current?.clientWidth || 0) - left - width 
                   }}
                   dragTransition={{ power: 0, timeConstant: 0 }}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Subtitle ${index + 1}: ${subtitle.spans[0]?.text || 'Empty subtitle'}`}
-                  data-tooltip={subtitle.spans[0]?.text || 'Empty subtitle'}
                 >
                   <div className="text-xs text-white font-medium truncate">
                     {subtitle.spans[0]?.text || 'Empty subtitle'}
@@ -238,8 +222,6 @@ export const SubtitleTimelinePanel: React.FC = () => {
               }}
               animate={{ opacity: [0.8, 1, 0.8] }}
               transition={{ duration: 2, repeat: Infinity }}
-              role="img"
-              aria-label={`Playhead at ${formatTime(currentTime, fps)}`}
             >
               <div 
                 className="absolute -top-2 -left-2 w-4 h-4 rotate-45 neu-shadow-1"

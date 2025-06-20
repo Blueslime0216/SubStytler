@@ -1,22 +1,10 @@
-/* Utility Classes and Animations with Enhanced Accessibility */
+/* Utility Classes and Animations */
 
-/* Text Utilities with Enhanced Contrast */
-.neu-text-primary { 
-  color: var(--neu-text-primary); 
-  font-weight: 500;
-}
-.neu-text-secondary { 
-  color: var(--neu-text-secondary); 
-  font-weight: 500;
-}
-.neu-text-muted { 
-  color: var(--neu-text-muted); 
-  font-weight: 400;
-}
-.neu-text-accent { 
-  color: var(--neu-text-accent); 
-  font-weight: 600;
-}
+/* Text Utilities */
+.neu-text-primary { color: var(--neu-text-primary); }
+.neu-text-secondary { color: var(--neu-text-secondary); }
+.neu-text-muted { color: var(--neu-text-muted); }
+.neu-text-accent { color: var(--neu-text-accent); }
 
 /* Background Utilities */
 .neu-bg-base { background: var(--neu-base); }
@@ -30,148 +18,37 @@
 .neu-shadow-4 { box-shadow: var(--neu-shadow-4); }
 .neu-shadow-inset { box-shadow: var(--neu-shadow-inset); }
 .neu-shadow-pressed { box-shadow: var(--neu-shadow-pressed); }
-.neu-shadow-hover { box-shadow: var(--neu-shadow-hover); }
 
-/* Typography with Enhanced Readability */
+/* Typography */
 .neu-heading-primary {
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--neu-text-primary);
   letter-spacing: -0.025em;
-  line-height: 1.3;
 }
 
 .neu-heading-secondary {
   font-size: 1.125rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--neu-text-primary);
   letter-spacing: -0.015em;
-  line-height: 1.3;
 }
 
 .neu-body-primary {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--neu-text-primary);
-  line-height: 1.5;
 }
 
 .neu-body-secondary {
   font-size: 0.875rem;
-  font-weight: 400;
   color: var(--neu-text-secondary);
-  line-height: 1.5;
 }
 
 .neu-caption {
   font-size: 0.75rem;
-  font-weight: 500;
   color: var(--neu-text-muted);
   font-family: 'JetBrains Mono', monospace;
-  line-height: 1.4;
-}
-
-/* Enhanced Interactive States */
-.neu-interactive-element {
-  position: relative;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.neu-interactive-element::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  right: -1px;
-  bottom: -1px;
-  border: 1px solid transparent;
-  border-radius: inherit;
-  transition: border-color 0.2s ease;
-  pointer-events: none;
-}
-
-.neu-interactive-element:hover::before {
-  border-color: var(--neu-border-interactive);
-}
-
-.neu-interactive-element:focus::before {
-  border-color: var(--neu-primary);
-}
-
-/* Tactile Feedback States */
-.neu-tactile {
-  transition: all 0.15s ease;
-  position: relative;
-}
-
-.neu-tactile:hover {
-  box-shadow: var(--neu-shadow-hover);
-  background: linear-gradient(145deg, var(--neu-base), var(--neu-surface));
-}
-
-.neu-tactile:active {
-  box-shadow: var(--neu-shadow-pressed);
-  background: var(--neu-base);
-}
-
-/* Focus Management with Enhanced Visibility */
-.neu-focus:focus {
-  outline: none;
-  box-shadow: var(--neu-shadow-1), var(--neu-shadow-focus);
-  border-color: var(--neu-primary);
-}
-
-.neu-focus-visible:focus-visible {
-  outline: none;
-  box-shadow: var(--neu-shadow-1), var(--neu-shadow-focus);
-  border-color: var(--neu-primary);
-}
-
-/* Keyboard Navigation Indicators */
-.neu-keyboard-nav:focus {
-  outline: 2px solid var(--neu-primary);
-  outline-offset: 2px;
-}
-
-/* Tooltip Support */
-.neu-tooltip {
-  position: relative;
-}
-
-.neu-tooltip::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--neu-base);
-  color: var(--neu-text-primary);
-  padding: 6px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  white-space: nowrap;
-  box-shadow: var(--neu-shadow-2);
-  border: 1px solid var(--neu-border-subtle);
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  z-index: 1000;
-  pointer-events: none;
-}
-
-.neu-tooltip:hover::after {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(-4px);
-}
-
-/* Loading States */
-.neu-loading {
-  background: linear-gradient(90deg, var(--neu-base), var(--neu-accent), var(--neu-base));
-  background-size: 200% 100%;
-  animation: neu-shimmer 2s infinite;
 }
 
 /* Animations */
@@ -221,47 +98,15 @@
   animation: neu-shimmer 2s infinite;
 }
 
-/* Mobile Responsive Degradation */
-@media (max-width: 768px) {
-  .neu-panel {
-    box-shadow: none;
-    border: 2px solid var(--neu-border-subtle);
-    background: rgba(var(--neu-base), 0.95);
-  }
-  
-  .neu-card {
-    box-shadow: none;
-    border: 1px solid var(--neu-border-subtle);
-    background: rgba(var(--neu-base), 0.9);
-  }
-  
-  .neu-btn, .neu-btn-primary {
-    box-shadow: none;
-    border: 2px solid var(--neu-border-interactive);
-  }
-  
-  .neu-btn-primary {
-    border-color: var(--neu-primary);
-  }
+/* Focus Management */
+.neu-focus:focus {
+  outline: none;
+  box-shadow: var(--neu-shadow-1), 0 0 0 3px rgba(99, 179, 237, 0.2);
 }
 
-/* High Contrast Mode Support */
-@media (prefers-contrast: high) {
-  .neu-text-primary { color: var(--neu-text-primary); }
-  .neu-text-secondary { color: var(--neu-text-primary); }
-  .neu-border-subtle { opacity: 1; }
-  .neu-border-interactive { opacity: 1; }
-}
-
-/* Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  
-  .neu-tooltip::after {
-    transition: none;
-  }
+/* Loading States */
+.neu-loading {
+  background: linear-gradient(90deg, var(--neu-base), var(--neu-accent), var(--neu-base));
+  background-size: 200% 100%;
+  animation: neu-shimmer 2s infinite;
 }

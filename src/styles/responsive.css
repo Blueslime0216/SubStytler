@@ -1,25 +1,24 @@
-/* Responsive Design and Media Queries with Enhanced Accessibility */
+/* Responsive Design and Media Queries */
 
-/* Enhanced Scrollbar Styling */
+/* Scrollbar Styling */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--neu-dark) var(--neu-base);
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
   background: var(--neu-base);
-  border-radius: 5px;
-  border: 1px solid var(--neu-border-subtle);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--neu-dark);
-  border-radius: 5px;
+  border-radius: 4px;
   border: 1px solid var(--neu-base);
   box-shadow: var(--neu-shadow-micro);
 }
@@ -27,212 +26,56 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--neu-darker);
   box-shadow: var(--neu-shadow-subtle);
-  border-color: var(--neu-border-interactive);
 }
 
 ::-webkit-scrollbar-corner {
   background: var(--neu-base);
 }
 
-/* Mobile Responsive with Graceful Degradation */
+/* Mobile Responsive */
 @media (max-width: 768px) {
-  /* Simplify neumorphic effects for mobile */
   .neu-panel {
     border-radius: 12px;
-    box-shadow: none;
-    border: 2px solid var(--neu-border-subtle);
-    background: rgba(45, 55, 72, 0.95);
   }
   
   .neu-panel-header {
-    padding: 8px 12px;
-    font-size: 0.875rem;
+    padding: 6px 12px;
   }
   
   .neu-btn, .neu-btn-primary {
-    padding: 10px 14px;
-    font-size: 0.8rem;
-    box-shadow: none;
-    border: 2px solid var(--neu-border-interactive);
-  }
-  
-  .neu-btn-primary {
-    border-color: var(--neu-primary);
-    background: var(--neu-primary);
-  }
-  
-  .neu-btn-icon {
-    padding: 8px;
-    box-shadow: none;
-    border: 1px solid var(--neu-border-subtle);
-  }
-  
-  .neu-card {
-    box-shadow: none;
-    border: 1px solid var(--neu-border-subtle);
-    background: rgba(45, 55, 72, 0.9);
+    padding: 8px 12px;
+    font-size: 0.75rem;
   }
   
   .neu-dropdown {
     max-width: calc(100vw - 32px);
     margin: 0 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 2px solid var(--neu-border-interactive);
   }
   
   .neu-progress-container {
     margin: 0 6px;
-    padding: 10px 0;
-  }
-  
-  /* Increase touch targets */
-  .neu-btn, .neu-btn-primary, .neu-btn-icon {
-    min-height: 44px;
-    min-width: 44px;
-  }
-  
-  /* Simplify tooltips for mobile */
-  .neu-tooltip::after {
-    display: none;
+    padding: 8px 0;
   }
 }
 
-@media (max-width: 480px) {
-  .neu-toolbar {
-    padding: 6px 12px;
-  }
-  
-  .neu-heading-primary {
-    font-size: 1rem;
-  }
-  
-  .neu-btn span {
-    display: none;
-  }
-  
-  .neu-panel-header {
-    padding: 6px 10px;
-  }
-}
-
-/* Tablet Responsive */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .neu-panel {
-    border-radius: 14px;
-  }
-  
-  .neu-dropdown {
-    max-width: 320px;
-  }
-}
-
-/* High Contrast Mode Support */
+/* High Contrast Mode */
 @media (prefers-contrast: high) {
   :root {
-    --neu-text-primary: #000000;
-    --neu-text-secondary: #333333;
-    --neu-text-muted: #666666;
-    --neu-border-subtle: rgba(0, 0, 0, 0.5);
-    --neu-border-interactive: rgba(0, 0, 0, 0.8);
+    --neu-shadow-1: 8px 8px 16px rgba(0, 0, 0, 0.4), -4px -4px 12px rgba(255, 255, 255, 0.9);
+    --neu-shadow-2: 10px 10px 20px rgba(0, 0, 0, 0.5), -5px -5px 15px rgba(255, 255, 255, 1);
   }
   
   [data-theme="dark"] {
-    --neu-text-primary: #FFFFFF;
-    --neu-text-secondary: #CCCCCC;
-    --neu-text-muted: #999999;
-    --neu-border-subtle: rgba(255, 255, 255, 0.3);
-    --neu-border-interactive: rgba(255, 255, 255, 0.6);
-  }
-  
-  .neu-btn, .neu-card, .neu-panel {
-    border-width: 2px;
-  }
-  
-  .neu-focus:focus {
-    outline: 3px solid var(--neu-primary);
-    outline-offset: 2px;
+    --neu-shadow-1: 8px 8px 16px rgba(0, 0, 0, 0.7), -4px -4px 12px rgba(255, 255, 255, 0.15);
+    --neu-shadow-2: 10px 10px 20px rgba(0, 0, 0, 0.8), -5px -5px 15px rgba(255, 255, 255, 0.2);
   }
 }
 
-/* Reduced Motion Support */
+/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-  
-  .neu-tooltip::after {
-    transition: none;
-  }
-  
-  .motion-safe\:animate-none {
-    animation: none;
-  }
-}
-
-/* Dark Mode Specific Mobile Adjustments */
-@media (max-width: 768px) {
-  [data-theme="dark"] .neu-panel {
-    background: rgba(45, 55, 72, 0.95);
-    backdrop-filter: blur(10px);
-  }
-  
-  [data-theme="dark"] .neu-card {
-    background: rgba(45, 55, 72, 0.9);
-    backdrop-filter: blur(8px);
-  }
-}
-
-/* Light Mode Specific Mobile Adjustments */
-@media (max-width: 768px) {
-  [data-theme="light"] .neu-panel {
-    background: rgba(230, 231, 238, 0.95);
-    backdrop-filter: blur(10px);
-  }
-  
-  [data-theme="light"] .neu-card {
-    background: rgba(230, 231, 238, 0.9);
-    backdrop-filter: blur(8px);
-  }
-}
-
-/* Print Styles */
-@media print {
-  .neu-panel, .neu-card {
-    box-shadow: none;
-    border: 1px solid #000;
-  }
-  
-  .neu-btn, .neu-btn-primary {
-    border: 1px solid #000;
-    background: white;
-    color: black;
-  }
-}
-
-/* Focus Visible Support */
-@supports selector(:focus-visible) {
-  .neu-focus:focus:not(:focus-visible) {
-    outline: none;
-    box-shadow: var(--neu-shadow-1);
-  }
-  
-  .neu-focus:focus-visible {
-    outline: none;
-    box-shadow: var(--neu-shadow-1), var(--neu-shadow-focus);
-  }
-}
-
-/* Hover Support Detection */
-@media (hover: hover) and (pointer: fine) {
-  .neu-hover-only:hover {
-    box-shadow: var(--neu-shadow-hover);
-  }
-}
-
-@media (hover: none) {
-  .neu-tooltip::after {
-    display: none;
   }
 }

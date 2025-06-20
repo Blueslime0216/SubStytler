@@ -1,9 +1,9 @@
-/* Layout and Structure Styles with Enhanced Accessibility */
+/* Layout and Structure Styles */
 
 .neu-toolbar {
   background: var(--neu-base);
-  border-bottom: 1px solid var(--neu-border-subtle);
-  box-shadow: var(--neu-shadow-2);
+  border-bottom: 1px solid rgba(163, 168, 196, 0.1);
+  box-shadow: var(--neu-shadow-1);
   padding: 8px 16px;
   position: relative;
 }
@@ -15,17 +15,16 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--neu-border-interactive), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0.4;
 }
 
 .neu-status-bar {
   background: var(--neu-base);
-  border-top: 1px solid var(--neu-border-subtle);
-  color: var(--neu-text-secondary);
+  border-top: 1px solid rgba(163, 168, 196, 0.1);
+  color: var(--neu-text-muted);
   font-size: 0.75rem;
   font-family: 'JetBrains Mono', monospace;
-  font-weight: 500;
   padding: 4px 16px;
   position: relative;
 }
@@ -37,15 +36,15 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--neu-border-interactive), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0.3;
 }
 
 .neu-video-controller {
   background: var(--neu-base);
   backdrop-filter: blur(20px);
-  border-top: 1px solid var(--neu-border-subtle);
-  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05), var(--neu-shadow-2);
+  border-top: 1px solid rgba(163, 168, 196, 0.1);
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05), var(--neu-shadow-1);
   position: relative;
 }
 
@@ -56,46 +55,37 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--neu-border-interactive), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0.4;
 }
 
 .neu-resize-handle {
   background: transparent;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   position: relative;
   opacity: 0;
-  border: 1px solid transparent;
 }
 
 .neu-resize-handle:hover {
   opacity: 1;
   background: linear-gradient(145deg, var(--neu-accent), var(--neu-surface));
   box-shadow: var(--neu-shadow-subtle);
-  border-color: var(--neu-border-interactive);
-}
-
-.neu-resize-handle:focus {
-  outline: none;
-  opacity: 1;
-  box-shadow: var(--neu-shadow-subtle), var(--neu-shadow-focus);
 }
 
 .neu-resize-handle.dragging {
   opacity: 1;
   background: var(--neu-primary);
-  box-shadow: var(--neu-shadow-2), 0 0 4px rgba(99, 179, 237, 0.3);
-  border-color: var(--neu-primary);
+  box-shadow: var(--neu-shadow-1), 0 0 4px rgba(99, 179, 237, 0.3);
 }
 
 .neu-theme-toggle {
   padding: 10px;
   border-radius: 12px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   background: var(--neu-base);
   color: var(--neu-text-secondary);
   box-shadow: var(--neu-shadow-1);
-  border: 1px solid var(--neu-border-subtle);
+  border: none;
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -111,14 +101,8 @@
   background: radial-gradient(circle, var(--neu-primary), transparent);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   opacity: 0;
-}
-
-.neu-theme-toggle:hover {
-  color: var(--neu-text-primary);
-  box-shadow: var(--neu-shadow-hover);
-  border-color: var(--neu-border-interactive);
 }
 
 .neu-theme-toggle:hover::after {
@@ -127,29 +111,6 @@
   opacity: 0.1;
 }
 
-.neu-theme-toggle:focus {
-  outline: none;
-  box-shadow: var(--neu-shadow-1), var(--neu-shadow-focus);
-}
-
-/* Panel Grouping and Separation */
-.neu-panel-group {
-  border: 1px solid var(--neu-border-subtle);
-  border-radius: 18px;
-  background: linear-gradient(145deg, var(--neu-base), var(--neu-surface));
-  box-shadow: var(--neu-shadow-1);
-  overflow: hidden;
-}
-
-.neu-panel-separator {
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, var(--neu-border-subtle), transparent);
-  margin: 8px 0;
-}
-
-.neu-panel-separator.horizontal {
-  height: 1px;
-  width: auto;
-  background: linear-gradient(to right, transparent, var(--neu-border-subtle), transparent);
-  margin: 0 8px;
+.neu-theme-toggle:hover {
+  color: var(--neu-text-primary);
 }
