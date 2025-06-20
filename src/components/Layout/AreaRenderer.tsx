@@ -34,6 +34,10 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ area, onResize }) =>
               maxSize={child.maxSize || 85}
               onResize={(size) => onResize?.(child.id, size)}
               className="relative"
+              style={{
+                // 패널 간 간격을 최소화하여 자연스럽게 연결
+                margin: '2px'
+              }}
             >
               <AreaRenderer area={child} onResize={onResize} />
             </Panel>
@@ -46,7 +50,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ area, onResize }) =>
     );
   }
 
-  return <div className="h-full bg-gray-800 flex items-center justify-center text-gray-400">
+  return <div className="h-full neu-bg-base flex items-center justify-center neu-text-secondary">
     Invalid area configuration
   </div>;
 };

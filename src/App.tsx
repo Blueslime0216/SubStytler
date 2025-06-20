@@ -32,7 +32,8 @@ function App() {
     <div className="h-screen neu-text-primary flex flex-col overflow-hidden neu-bg-base">
       <Toolbar />
       
-      <div className="flex-1 overflow-hidden p-3">
+      {/* 패널 컨테이너 - 패딩을 줄여서 패널들이 더 자연스럽게 연결되도록 */}
+      <div className="flex-1 overflow-hidden p-1">
         <motion.div
           className="h-full"
           initial={{ opacity: 0, y: 20 }}
