@@ -30,7 +30,7 @@ export const PanelContent: React.FC<PanelContentProps> = ({ type }) => {
   const PanelComponent = panelComponents[type];
   
   return (
-    <div className="flex-1 overflow-hidden">
+    <div className="neu-panel-content">
       <PanelComponent />
     </div>
   );

@@ -64,7 +64,7 @@ export const NotesPanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="neu-notes-panel h-full flex flex-col">
       {/* Add Note */}
       <div className="neu-panel-header">
         <div className="space-y-2">

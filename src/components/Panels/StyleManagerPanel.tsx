@@ -45,7 +45,7 @@ export const StyleManagerPanel: React.FC = () => {
   const selectedStyle = currentProject?.styles.find(s => s.id === selectedStyleId);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="neu-style-manager-panel h-full flex flex-col">
       {/* Toolbar */}
       <div className="neu-panel-header">
         <motion.button

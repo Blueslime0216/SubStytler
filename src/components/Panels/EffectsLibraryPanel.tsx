@@ -39,7 +39,7 @@ export const EffectsLibraryPanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full p-3">
+    <div className="neu-effects-library-panel h-full p-3">
       <div className="mb-3">
         <h3 className="text-base font-semibold neu-text-primary mb-2">Animation Effects</h3>
         <p className="text-xs neu-text-secondary">Drag effects to subtitle spans</p>

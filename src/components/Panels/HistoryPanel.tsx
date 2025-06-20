@@ -22,7 +22,7 @@ export const HistoryPanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="neu-history-panel h-full flex flex-col">
       {/* Controls */}
       <div className="neu-panel-header">
         <div className="flex items-center space-x-2">

@@ -56,7 +56,7 @@ export const TextEditorPanel: React.FC = () => {
 
   if (!currentSubtitle) {
     return (
-      <div className="h-full flex items-center justify-center neu-text-secondary">
+      <div className="neu-text-editor-panel h-full flex items-center justify-center neu-text-secondary">
         <div className="text-center">
           <Type className="w-10 h-10 mx-auto mb-3 opacity-50" />
           <p className="text-sm">Select a subtitle to edit</p>
@@ -66,7 +66,7 @@ export const TextEditorPanel: React.FC = () => {
   }
 
   return (
-    <div className="h-full flex flex-col p-3 space-y-3">
+    <div className="neu-text-editor-panel h-full flex flex-col p-3 space-y-3">
       {/* Text Editor */}
       <div className="flex-1">
         <label className="block text-xs font-medium neu-text-primary mb-2">

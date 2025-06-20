@@ -67,14 +67,14 @@ export const AudioWaveformPanel: React.FC = () => {
 
   if (!currentProject?.videoMeta) {
     return (
-      <div className="h-full flex items-center justify-center neu-text-secondary">
+      <div className="neu-audio-waveform-panel h-full flex items-center justify-center neu-text-secondary">
         <p className="text-sm">Load a video to see the audio waveform</p>
       </div>
     );
   }
 
   return (
-    <div className="h-full neu-bg-base p-3">
+    <div className="neu-audio-waveform-panel h-full neu-bg-base p-3">
       <canvas
         ref={canvasRef}
         onClick={handleCanvasClick}

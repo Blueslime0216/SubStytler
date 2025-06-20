@@ -64,7 +64,7 @@ export const ScriptViewerPanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="neu-script-viewer-panel h-full flex flex-col">
       {/* Search Bar */}
       <div className="neu-panel-header">
         <div className="relative">
