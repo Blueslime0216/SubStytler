@@ -253,7 +253,7 @@ body {
   box-shadow: var(--neu-shadow-2);
 }
 
-/* Neumorphism Progress Bar */
+/* Neumorphism Progress Bar - 드래그 요소 트랜지션 제거 */
 .neu-progress-container {
   background: var(--neu-base);
   border-radius: 8px;
@@ -273,6 +273,7 @@ body {
   transform: translateY(-50%);
 }
 
+/* 진행 바 fill - 트랜지션 제거 */
 .neu-progress-fill {
   position: absolute;
   top: 50%;
@@ -281,10 +282,11 @@ body {
   background: linear-gradient(90deg, var(--neu-primary), var(--neu-primary-light));
   border-radius: 1px;
   transform: translateY(-50%);
-  transition: width 0.1s ease-out;
+  transition: none; /* 트랜지션 제거 - 즉각적인 반응 */
   box-shadow: 0 0 4px var(--neu-primary);
 }
 
+/* 진행 바 thumb - 드래그 시에만 트랜지션 제거 */
 .neu-progress-thumb {
   background: var(--neu-base);
   border: 2px solid var(--neu-primary);
@@ -295,12 +297,18 @@ body {
   border-radius: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+  /* 기본 트랜지션은 유지, 드래그 시에만 인라인으로 제거 */
   transition: all 0.2s ease;
 }
 
 .neu-progress-thumb:hover {
   transform: translate(-50%, -50%) scale(1.2);
   box-shadow: var(--neu-shadow-2);
+}
+
+/* 드래그 가능한 요소들의 트랜지션 제거 클래스 */
+.neu-dragging {
+  transition: none !important;
 }
 
 /* Neumorphism Toolbar */

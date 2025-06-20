@@ -148,7 +148,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
 
   return (
     <div className="neu-video-controller">
-      {/* Neumorphism Progress Bar */}
+      {/* Neumorphism Progress Bar - 트랜지션 제거 */}
       <div className="px-6 pt-4 pb-3">
         <div 
           ref={progressBarRef}
@@ -166,26 +166,28 @@ export const VideoController: React.FC<VideoControllerProps> = ({
             }}
           />
           
-          {/* Progress Fill */}
+          {/* Progress Fill - 트랜지션 제거 */}
           <div 
-            className="absolute top-1/2 left-0 h-1 rounded-full transform -translate-y-1/2 transition-all duration-100"
+            className="absolute top-1/2 left-0 h-1 rounded-full transform -translate-y-1/2"
             style={{ 
               width: `${progressPercentage}%`,
               background: 'linear-gradient(90deg, var(--neu-primary), var(--neu-primary-light))',
-              boxShadow: '0 0 4px var(--neu-primary)'
+              boxShadow: '0 0 4px var(--neu-primary)',
+              transition: 'none' // 트랜지션 완전 제거
             }}
           />
           
-          {/* Progress Thumb */}
+          {/* Progress Thumb - 드래그 중일 때만 트랜지션 제거 */}
           <div 
-            className={`absolute top-1/2 w-4 h-4 rounded-full transform -translate-y-1/2 -translate-x-1/2 transition-all duration-200 ${
-              isDragging ? 'opacity-100 scale-125' : 'opacity-0 group-hover:opacity-100'
+            className={`absolute top-1/2 w-4 h-4 rounded-full transform -translate-y-1/2 -translate-x-1/2 ${
+              isDragging ? 'opacity-100 scale-125' : 'opacity-0 group-hover:opacity-100 transition-all duration-200'
             }`}
             style={{ 
               left: `${progressPercentage}%`,
               background: 'var(--neu-base)',
               border: '2px solid var(--neu-primary)',
-              boxShadow: 'var(--neu-shadow-1)'
+              boxShadow: 'var(--neu-shadow-1)',
+              transition: isDragging ? 'none' : 'opacity 0.2s ease, transform 0.2s ease' // 드래그 중에만 트랜지션 제거
             }}
           />
           
@@ -246,7 +248,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
             <SkipForward className="w-4 h-4" />
           </motion.button>
 
-          {/* Neumorphism Volume Control */}
+          {/* Neumorphism Volume Control - 트랜지션 제거 */}
           <div 
             className="flex items-center space-x-3"
             onMouseEnter={() => setIsVolumeHovered(true)}
@@ -290,26 +292,28 @@ export const VideoController: React.FC<VideoControllerProps> = ({
                   }}
                 />
                 
-                {/* Volume Fill */}
+                {/* Volume Fill - 트랜지션 제거 */}
                 <div 
-                  className="absolute top-1/2 left-0 h-0.5 rounded-full transform -translate-y-1/2 transition-all duration-100"
+                  className="absolute top-1/2 left-0 h-0.5 rounded-full transform -translate-y-1/2"
                   style={{ 
                     width: `${volumePercentage}%`,
                     background: 'linear-gradient(90deg, var(--neu-primary), var(--neu-primary-light))',
-                    boxShadow: '0 0 3px var(--neu-primary)'
+                    boxShadow: '0 0 3px var(--neu-primary)',
+                    transition: 'none' // 트랜지션 완전 제거
                   }}
                 />
                 
-                {/* Volume Thumb */}
+                {/* Volume Thumb - 드래그 중일 때만 트랜지션 제거 */}
                 <div 
-                  className={`absolute top-1/2 w-3 h-3 rounded-full transform -translate-y-1/2 -translate-x-1/2 transition-transform duration-100 ${
+                  className={`absolute top-1/2 w-3 h-3 rounded-full transform -translate-y-1/2 -translate-x-1/2 ${
                     isDraggingVolume ? 'scale-125' : ''
                   }`}
                   style={{ 
                     left: `${volumePercentage}%`,
                     background: 'var(--neu-base)',
                     border: '2px solid var(--neu-primary)',
-                    boxShadow: 'var(--neu-shadow-1)'
+                    boxShadow: 'var(--neu-shadow-1)',
+                    transition: isDraggingVolume ? 'none' : 'transform 0.1s ease' // 드래그 중에만 트랜지션 제거
                   }}
                 />
                 
