@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { AlertTriangle, RotateCcw } from 'lucide-react';
 
 interface VideoErrorOverlayProps {
   error: string | null;
@@ -14,22 +14,37 @@ export const VideoErrorOverlay: React.FC<VideoErrorOverlayProps> = ({
   if (!error) return null;
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="text-center p-6">
-        <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-          <X className="w-8 h-8 text-white" />
-        </div>
-        <p className="text-white text-lg font-medium mb-2">Video Error</p>
-        <p className="text-gray-300 text-sm mb-4">{error}</p>
+    <div className="absolute inset-0 flex items-center justify-center neu-bg-base/70 backdrop-blur-sm">
+      <motion.div 
+        className="neu-card text-center p-6 max-w-md mx-4"
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.div 
+          className="w-16 h-16 mx-auto mb-4 rounded-2xl neu-shadow-1 flex items-center justify-center"
+          style={{ background: 'linear-gradient(145deg, var(--neu-error), #dc2626)' }}
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <AlertTriangle className="w-8 h-8 text-white" />
+        </motion.div>
+        
+        <h3 className="neu-heading-secondary mb-2" style={{ color: 'var(--neu-error)' }}>
+          Video Error
+        </h3>
+        <p className="neu-body-secondary text-sm mb-4">{error}</p>
+        
         <motion.button
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.05, y: -1 }}
           whileTap={{ scale: 0.95 }}
           onClick={onRetry}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
+          className="neu-btn-primary flex items-center space-x-2 mx-auto"
         >
-          Retry
+          <RotateCcw className="w-4 h-4" />
+          <span>Retry</span>
         </motion.button>
-      </div>
+      </motion.div>
     </div>
   );
 };
