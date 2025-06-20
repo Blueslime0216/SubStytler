@@ -67,16 +67,22 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
       <div className="neu-panel-header flex items-center justify-between">
         <div className="flex items-center space-x-3 flex-1">
           <motion.div 
-            className="p-1.5 rounded-lg neu-shadow-1"
+            className="p-1.5 rounded-lg neu-shadow-1 neu-interactive"
             style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
+            tabIndex={0}
+            role="button"
+            aria-label={`${config.title} Panel Icon`}
           >
             <IconComponent className="w-3.5 h-3.5 neu-text-accent" />
           </motion.div>
           
-          <motion.button
+          <button
             ref={titleButtonRef}
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center space-x-2 group"
+            className="flex items-center space-x-2 group neu-interactive-element neu-focus"
+            aria-label={`Change panel type from ${config.title}`}
+            aria-expanded={isDropdownOpen}
+            aria-haspopup="menu"
           >
             <div className="text-left">
               <div className="neu-body-primary text-xs">{config.title}</div>
@@ -89,45 +95,50 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
               viewBox="0 0 24 24"
               animate={{ rotate: isDropdownOpen ? 180 : 0 }}
               transition={{ duration: 0.2 }}
+              aria-hidden="true"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </motion.svg>
-          </motion.button>
+          </button>
         </div>
         
         <div className="flex items-center space-x-1">
-          <motion.button
+          <button
             ref={actionsButtonRef}
             onClick={() => setIsActionsOpen(!isActionsOpen)}
-            className="neu-btn-icon p-1.5"
-            title="Panel Actions"
+            className="neu-btn-icon p-1.5 neu-tactile neu-focus"
+            data-tooltip="Panel Actions"
+            aria-label="Panel Actions"
+            aria-expanded={isActionsOpen}
+            aria-haspopup="menu"
           >
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-          </motion.button>
+          </button>
           
-          <motion.button
+          <button
             ref={removeButtonRef}
             onClick={onRemoveClick}
             disabled={!canRemove}
-            className={`neu-btn-icon p-1.5 ${
+            className={`neu-btn-icon p-1.5 neu-focus ${
               canRemove 
-                ? '' 
+                ? 'neu-tactile' 
                 : 'opacity-40 cursor-not-allowed'
             }`}
-            title={canRemove ? "Close Panel" : "Cannot close the last panel"}
+            data-tooltip={canRemove ? "Close Panel" : "Cannot close the last panel"}
+            aria-label={canRemove ? "Close Panel" : "Cannot close the last panel"}
           >
             {canRemove ? (
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             )}
-          </motion.button>
+          </button>
         </div>
       </div>
       

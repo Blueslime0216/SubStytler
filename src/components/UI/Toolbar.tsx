@@ -64,11 +64,14 @@ export const Toolbar: React.FC = () => {
       <div className="flex items-center space-x-6">
         <div className="flex items-center space-x-4">
           <motion.div 
-            className="w-10 h-10 rounded-2xl neu-shadow-2 flex items-center justify-center"
+            className="w-10 h-10 rounded-2xl neu-shadow-2 flex items-center justify-center neu-interactive"
             style={{ 
               background: 'linear-gradient(145deg, var(--neu-primary), var(--neu-primary-dark))',
               boxShadow: 'var(--neu-shadow-2), 0 0 8px rgba(99, 179, 237, 0.3)'
             }}
+            tabIndex={0}
+            role="button"
+            aria-label="Sub-Stytler Logo"
           >
             <Sparkles className="w-5 h-5 text-white" />
           </motion.div>
@@ -79,21 +82,25 @@ export const Toolbar: React.FC = () => {
         </div>
         
         <div className="flex items-center space-x-4">
-          <motion.button
+          <button
             onClick={handleSave}
-            className="neu-btn-primary flex items-center space-x-2"
+            className="neu-btn-primary flex items-center space-x-2 neu-tactile neu-focus"
+            data-tooltip="Save Project (Ctrl+S)"
+            aria-label="Save Project"
           >
             <Save className="w-4 h-4" />
             <span>Save Project</span>
-          </motion.button>
+          </button>
           
-          <motion.button
+          <button
             onClick={handleExportYTT}
-            className="neu-btn flex items-center space-x-2"
+            className="neu-btn flex items-center space-x-2 neu-tactile neu-focus"
+            data-tooltip="Export as YTT file"
+            aria-label="Export YTT"
           >
             <Download className="w-4 h-4" />
             <span>Export YTT</span>
-          </motion.button>
+          </button>
         </div>
       </div>
       
@@ -107,10 +114,11 @@ export const Toolbar: React.FC = () => {
           </div>
         </div>
         
-        <motion.button
+        <button
           onClick={toggleTheme}
-          className="neu-theme-toggle"
-          title={`Switch to ${isDarkMode ? 'Light' : 'Dark'} Mode`}
+          className="neu-theme-toggle neu-focus"
+          data-tooltip={`Switch to ${isDarkMode ? 'Light' : 'Dark'} Mode`}
+          aria-label={`Switch to ${isDarkMode ? 'Light' : 'Dark'} Mode`}
         >
           <motion.div
             key={isDarkMode ? 'dark' : 'light'}
@@ -125,13 +133,15 @@ export const Toolbar: React.FC = () => {
               <Moon className="w-5 h-5" />
             )}
           </motion.div>
-        </motion.button>
+        </button>
         
-        <motion.button
-          className="neu-btn-icon"
+        <button
+          className="neu-btn-icon neu-focus"
+          data-tooltip="Settings"
+          aria-label="Open Settings"
         >
           <Settings className="w-5 h-5" />
-        </motion.button>
+        </button>
       </div>
     </div>
   );
