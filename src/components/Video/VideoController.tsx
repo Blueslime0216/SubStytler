@@ -152,29 +152,40 @@ export const VideoController: React.FC<VideoControllerProps> = ({
       <div className="px-6 pt-4 pb-3">
         <div 
           ref={progressBarRef}
-          className={`neu-progress-container group ${
+          className={`relative h-6 flex items-center group ${
             isVideoLoaded ? 'cursor-pointer' : 'cursor-not-allowed'
           }`}
           onMouseDown={handleProgressBarMouseDown}
         >
-          <div className="neu-progress-track" />
-          
+          {/* Progress Track */}
           <div 
-            className="neu-progress-fill"
-            style={{ width: `${progressPercentage}%` }}
+            className="absolute top-1/2 left-0 right-0 h-1 rounded-full transform -translate-y-1/2"
+            style={{ 
+              background: 'var(--neu-dark)',
+              boxShadow: 'inset 2px 2px 4px var(--neu-dark), inset -2px -2px 4px var(--neu-light)'
+            }}
           />
           
-          <div className={`absolute inset-0 rounded-lg transition-all duration-200 ${
-            isDragging ? 'neu-shadow-inset' : 'bg-transparent'
-          }`} />
-          
+          {/* Progress Fill */}
           <div 
-            className={`neu-progress-thumb ${
+            className="absolute top-1/2 left-0 h-1 rounded-full transform -translate-y-1/2 transition-all duration-100"
+            style={{ 
+              width: `${progressPercentage}%`,
+              background: 'linear-gradient(90deg, var(--neu-primary), var(--neu-primary-light))',
+              boxShadow: '0 0 4px var(--neu-primary)'
+            }}
+          />
+          
+          {/* Progress Thumb */}
+          <div 
+            className={`absolute top-1/2 w-4 h-4 rounded-full transform -translate-y-1/2 -translate-x-1/2 transition-all duration-200 ${
               isDragging ? 'opacity-100 scale-125' : 'opacity-0 group-hover:opacity-100'
             }`}
             style={{ 
               left: `${progressPercentage}%`,
-              transition: isDragging ? 'none' : 'opacity 0.2s ease, transform 0.2s ease'
+              background: 'var(--neu-base)',
+              border: '2px solid var(--neu-primary)',
+              boxShadow: 'var(--neu-shadow-1)'
             }}
           />
           
