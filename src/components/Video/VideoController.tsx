@@ -266,29 +266,45 @@ export const VideoController: React.FC<VideoControllerProps> = ({
             >
               <div 
                 ref={volumeBarRef}
-                className="neu-volume-container flex items-center cursor-pointer"
+                className="relative h-6 flex items-center cursor-pointer"
                 onMouseDown={handleVolumeBarMouseDown}
+                style={{ width: '80px' }}
               >
-                <div className="neu-volume-track" />
-                
+                {/* Volume Track */}
                 <div 
-                  className="neu-volume-fill"
-                  style={{ width: `${volumePercentage}%` }}
+                  className="absolute top-1/2 left-0 right-0 h-0.5 rounded-full transform -translate-y-1/2"
+                  style={{ 
+                    background: 'var(--neu-dark)',
+                    boxShadow: 'inset 1px 1px 2px var(--neu-dark), inset -1px -1px 2px var(--neu-light)'
+                  }}
                 />
                 
+                {/* Volume Fill */}
                 <div 
-                  className={`neu-volume-thumb ${
+                  className="absolute top-1/2 left-0 h-0.5 rounded-full transform -translate-y-1/2 transition-all duration-100"
+                  style={{ 
+                    width: `${volumePercentage}%`,
+                    background: 'linear-gradient(90deg, var(--neu-primary), var(--neu-primary-light))',
+                    boxShadow: '0 0 3px var(--neu-primary)'
+                  }}
+                />
+                
+                {/* Volume Thumb */}
+                <div 
+                  className={`absolute top-1/2 w-3 h-3 rounded-full transform -translate-y-1/2 -translate-x-1/2 transition-transform duration-100 ${
                     isDraggingVolume ? 'scale-125' : ''
                   }`}
                   style={{ 
                     left: `${volumePercentage}%`,
-                    transition: isDraggingVolume ? 'none' : 'transform 0.1s ease'
+                    background: 'var(--neu-base)',
+                    border: '2px solid var(--neu-primary)',
+                    boxShadow: 'var(--neu-shadow-1)'
                   }}
                 />
                 
                 {isDraggingVolume && (
                   <motion.div 
-                    className="neu-card-small absolute -top-8 text-xs neu-text-primary"
+                    className="neu-card-small absolute -top-8 text-xs neu-text-primary whitespace-nowrap"
                     style={{ 
                       left: `${volumePercentage}%`, 
                       transform: 'translateX(-50%)'
