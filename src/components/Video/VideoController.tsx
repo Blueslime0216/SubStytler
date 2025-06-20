@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Settings, Film } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Settings } from 'lucide-react';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { formatTime } from '../../utils/timeUtils';
 
@@ -147,40 +147,40 @@ export const VideoController: React.FC<VideoControllerProps> = ({
   const volumePercentage = (isMuted ? 0 : volume) * 100;
 
   return (
-    <div className="video-controller-cinematic">
-      {/* 시네마틱 프로그레스 바 */}
-      <div className="px-10 pt-8 pb-6">
+    <div className="video-controller">
+      {/* Enhanced Progress Bar */}
+      <div className="px-8 pt-6 pb-4">
         <div 
           ref={progressBarRef}
-          className={`progress-cinematic group ${
+          className={`progress-bar-container group ${
             isVideoLoaded ? 'cursor-pointer' : 'cursor-not-allowed'
           }`}
           onMouseDown={handleProgressBarMouseDown}
         >
-          <div className="progress-track-cinematic" />
+          <div className="progress-bar-track" />
           
           <div 
-            className="progress-fill-cinematic"
+            className="progress-bar-fill"
             style={{ width: `${progressPercentage}%` }}
           />
           
-          <div className={`absolute inset-0 rounded-lg transition-all duration-300 ${
-            isDragging ? 'bg-cinematic-gold/10' : 'bg-transparent group-hover:bg-cinematic-gold/5'
+          <div className={`absolute inset-0 rounded-lg transition-all duration-200 ${
+            isDragging ? 'bg-accent/10' : 'bg-transparent group-hover:bg-accent/5'
           }`} />
           
           <div 
-            className={`progress-thumb-cinematic ${
+            className={`progress-bar-thumb ${
               isDragging ? 'opacity-100 scale-125' : 'opacity-0 group-hover:opacity-100'
             }`}
             style={{ 
               left: `${progressPercentage}%`,
-              transition: isDragging ? 'none' : 'opacity 0.3s ease, transform 0.3s ease'
+              transition: isDragging ? 'none' : 'opacity 0.2s ease, transform 0.2s ease'
             }}
           />
           
           {isDragging && (
             <motion.div 
-              className="tooltip-cinematic absolute -top-16"
+              className="tooltip absolute -top-12"
               style={{ 
                 left: `${progressPercentage}%`, 
                 transform: 'translateX(-50%)'
@@ -194,50 +194,50 @@ export const VideoController: React.FC<VideoControllerProps> = ({
         </div>
       </div>
 
-      {/* 시네마틱 컨트롤들 */}
-      <div className="flex items-center justify-between px-10 pb-8">
-        {/* 왼쪽 컨트롤들 */}
-        <div className="flex items-center space-x-6">
+      {/* Enhanced Controls */}
+      <div className="flex items-center justify-between px-8 pb-6">
+        {/* Left Controls */}
+        <div className="flex items-center space-x-5">
           <motion.button
-            whileHover={{ scale: 1.05, y: -2 }}
+            whileHover={{ scale: 1.05, y: -1 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleFrameBack}
             disabled={!isVideoLoaded}
-            className="btn-cinematic-icon disabled:opacity-40"
+            className="btn-icon disabled:opacity-40"
             title="Previous Frame"
           >
-            <SkipBack className="w-6 h-6" />
+            <SkipBack className="w-5 h-5" />
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.05, y: -2 }}
+            whileHover={{ scale: 1.05, y: -1 }}
             whileTap={{ scale: 0.95 }}
             onClick={handlePlayPause}
             disabled={!isVideoLoaded}
-            className="btn-cinematic-primary p-5 disabled:opacity-40"
+            className="btn-primary p-4 disabled:opacity-40"
             title={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (
-              <Pause className="w-7 h-7" />
+              <Pause className="w-6 h-6" />
             ) : (
-              <Play className="w-7 h-7" />
+              <Play className="w-6 h-6" />
             )}
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.05, y: -2 }}
+            whileHover={{ scale: 1.05, y: -1 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleFrameForward}
             disabled={!isVideoLoaded}
-            className="btn-cinematic-icon disabled:opacity-40"
+            className="btn-icon disabled:opacity-40"
             title="Next Frame"
           >
-            <SkipForward className="w-6 h-6" />
+            <SkipForward className="w-5 h-5" />
           </motion.button>
 
-          {/* 시네마틱 볼륨 컨트롤 */}
+          {/* Enhanced Volume Control */}
           <div 
-            className="flex items-center space-x-5"
+            className="flex items-center space-x-4"
             onMouseEnter={() => setIsVolumeHovered(true)}
             onMouseLeave={() => setIsVolumeHovered(false)}
           >
@@ -245,13 +245,13 @@ export const VideoController: React.FC<VideoControllerProps> = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onMuteToggle}
-              className="btn-cinematic-icon"
+              className="btn-icon"
               title={isMuted ? 'Unmute' : 'Mute'}
             >
               {isMuted ? (
-                <VolumeX className="w-6 h-6" />
+                <VolumeX className="w-5 h-5" />
               ) : (
-                <Volume2 className="w-6 h-6" />
+                <Volume2 className="w-5 h-5" />
               )}
             </motion.button>
             
@@ -259,25 +259,25 @@ export const VideoController: React.FC<VideoControllerProps> = ({
               className="overflow-visible"
               initial={{ width: 0, opacity: 0 }}
               animate={{ 
-                width: isVolumeHovered || isDraggingVolume ? 120 : 0,
+                width: isVolumeHovered || isDraggingVolume ? 96 : 0,
                 opacity: isVolumeHovered || isDraggingVolume ? 1 : 0
               }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
             >
               <div 
                 ref={volumeBarRef}
-                className="volume-cinematic flex items-center cursor-pointer"
+                className="volume-container flex items-center cursor-pointer"
                 onMouseDown={handleVolumeBarMouseDown}
               >
-                <div className="volume-track-cinematic" />
+                <div className="volume-track" />
                 
                 <div 
-                  className="volume-fill-cinematic"
+                  className="volume-fill"
                   style={{ width: `${volumePercentage}%` }}
                 />
                 
                 <div 
-                  className={`volume-thumb-cinematic ${
+                  className={`volume-thumb ${
                     isDraggingVolume ? 'scale-125' : ''
                   }`}
                   style={{ 
@@ -288,7 +288,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
                 
                 {isDraggingVolume && (
                   <motion.div 
-                    className="tooltip-cinematic absolute -top-12"
+                    className="tooltip absolute -top-10"
                     style={{ 
                       left: `${volumePercentage}%`, 
                       transform: 'translateX(-50%)'
@@ -304,30 +304,29 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           </div>
         </div>
         
-        {/* 시네마틱 타임 디스플레이 */}
-        <div className="text-center space-y-2">
-          <div className="font-mono text-xl font-semibold text-cinematic-gold">
+        {/* Enhanced Time Display */}
+        <div className="text-center space-y-1">
+          <div className="font-mono text-lg font-medium text-primary">
             {formatTime(currentTime, fps)} / {formatTime(duration, fps)}
           </div>
-          <div className="flex items-center justify-center space-x-6 caption-cinematic">
+          <div className="flex items-center justify-center space-x-4 caption">
             <span>Frame {getCurrentFrame()} / {getTotalFrames()}</span>
-            <span className="text-cinematic-gold">@{fps}fps</span>
-            {isVideoLoaded && <span className="text-cinematic-gold">● Studio Ready</span>}
-            {isDragging && <span className="text-cinematic-silver">● Seeking</span>}
+            <span>@{fps}fps</span>
+            {isVideoLoaded && <span className="text-success">● Ready</span>}
+            {isDragging && <span className="text-accent">● Seeking</span>}
           </div>
         </div>
         
-        {/* 오른쪽 컨트롤들 */}
-        <div className="flex items-center space-x-4">
-          <Film className="w-6 h-6 text-cinematic-gold" />
+        {/* Right Controls */}
+        <div className="flex items-center">
           <motion.button
             whileHover={{ scale: 1.05, rotate: 90 }}
             whileTap={{ scale: 0.95 }}
             onClick={onSettings}
-            className="btn-cinematic-icon hover-cinematic-glow"
+            className="btn-icon hover-glow"
             title="Settings"
           >
-            <Settings className="w-6 h-6" />
+            <Settings className="w-5 h-5" />
           </motion.button>
         </div>
       </div>

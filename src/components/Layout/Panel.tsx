@@ -59,86 +59,86 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
 
   return (
     <motion.div
-      className={`panel-cinematic flex flex-col ${className}`}
+      className={`panel-container flex flex-col ${className}`}
       initial={{ opacity: 0, scale: 0.98, y: 10 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      {/* 시네마틱 패널 헤더 */}
-      <div className="panel-header-cinematic flex items-center justify-between">
-        <div className="flex items-center space-x-5 flex-1">
-          {/* 시네마틱 아이콘 컨테이너 */}
+      {/* Enhanced Panel Header */}
+      <div className="panel-header flex items-center justify-between">
+        <div className="flex items-center space-x-4 flex-1">
+          {/* Icon Container */}
           <motion.div 
-            className="p-3 rounded-xl bg-cinematic-gold border-2 border-cinematic-gold shadow-cinematic-gold"
-            whileHover={{ scale: 1.05, rotate: 5 }}
+            className="p-2.5 rounded-xl bg-surface border border-accent/20"
+            whileHover={{ scale: 1.05, backgroundColor: 'var(--bg-hover)' }}
           >
-            <IconComponent className="w-6 h-6 text-black" />
+            <IconComponent className="w-5 h-5 text-accent" />
           </motion.div>
           
-          {/* 시네마틱 패널 타이틀 & 셀렉터 */}
+          {/* Panel Title & Selector */}
           <motion.button
             ref={titleButtonRef}
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center space-x-4 group"
+            className="flex items-center space-x-3 group"
           >
             <div className="text-left">
-              <div className="heading-cinematic-secondary text-cinematic-gold">{config.title}</div>
-              <div className="caption-cinematic">{config.description}</div>
+              <div className="heading-secondary">{config.title}</div>
+              <div className="caption">{config.description}</div>
             </div>
             <motion.svg 
-              className="w-5 h-5 text-cinematic-silver"
+              className="w-4 h-4 text-muted"
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
               animate={{ rotate: isDropdownOpen ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.2 }}
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </motion.svg>
           </motion.button>
         </div>
         
-        {/* 시네마틱 패널 액션들 */}
-        <div className="flex items-center space-x-3">
-          {/* 액션 버튼 */}
+        {/* Panel Actions */}
+        <div className="flex items-center space-x-2">
+          {/* Actions Button */}
           <motion.button
             ref={actionsButtonRef}
-            whileHover={{ scale: 1.05, rotate: 90 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsActionsOpen(!isActionsOpen)}
-            className="btn-cinematic-icon"
+            className="btn-icon"
             title="Panel Actions"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
           </motion.button>
           
-          {/* 제거 버튼 */}
+          {/* Remove Button */}
           <motion.button
             ref={removeButtonRef}
             whileHover={{ 
               scale: canRemove ? 1.05 : 1,
-              backgroundColor: canRemove ? 'rgba(220, 38, 38, 0.2)' : undefined
+              backgroundColor: canRemove ? 'rgba(239, 68, 68, 0.15)' : undefined
             }}
             whileTap={{ scale: canRemove ? 0.95 : 1 }}
             onClick={onRemoveClick}
             disabled={!canRemove}
-            className={`btn-cinematic-icon ${
+            className={`btn-icon ${
               canRemove 
-                ? 'hover:border-cinema-red hover:text-cinema-red' 
+                ? 'hover:border-error hover:text-error' 
                 : 'opacity-40 cursor-not-allowed'
             }`}
             title={canRemove ? "Close Panel" : "Cannot close the last panel"}
           >
             {canRemove ? (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             )}
@@ -146,10 +146,10 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
         </div>
       </div>
       
-      {/* 패널 콘텐츠 */}
+      {/* Panel Content */}
       <PanelContent type={type} />
 
-      {/* 시네마틱 드롭다운들 */}
+      {/* Enhanced Dropdowns */}
       <PanelDropdown
         isOpen={isDropdownOpen}
         onClose={() => setIsDropdownOpen(false)}

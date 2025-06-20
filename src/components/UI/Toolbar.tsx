@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Save, Download, Settings, Film, Clapperboard, Camera } from 'lucide-react';
+import { Save, Download, Settings, Sparkles } from 'lucide-react';
 import { useProjectStore } from '../../stores/projectStore';
 
 export const Toolbar: React.FC = () => {
@@ -58,69 +58,66 @@ export const Toolbar: React.FC = () => {
   };
 
   return (
-    <div className="toolbar-cinematic h-20 flex items-center px-10 space-x-2">
-      <div className="flex items-center space-x-10">
-        {/* 시네마틱 브랜드 섹션 */}
-        <div className="flex items-center space-x-5">
+    <div className="toolbar h-16 flex items-center px-8 space-x-2">
+      <div className="flex items-center space-x-8">
+        {/* Brand Section */}
+        <div className="flex items-center space-x-4">
           <motion.div 
-            className="w-12 h-12 rounded-xl bg-cinematic-gold flex items-center justify-center shadow-cinematic-gold"
+            className="w-10 h-10 rounded-xl bg-gradient flex items-center justify-center shadow-purple"
             whileHover={{ scale: 1.05, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Film className="w-6 h-6 text-black" />
+            <Sparkles className="w-5 h-5 text-white" />
           </motion.div>
           <div>
-            <h1 className="heading-cinematic-primary text-cinematic-gradient">Sub-Stytler</h1>
-            <p className="caption-cinematic">Professional Cinematic Editor</p>
+            <h1 className="heading-primary text-gradient">Sub-Stytler</h1>
+            <p className="caption">Professional Subtitle Editor</p>
           </div>
         </div>
         
-        {/* 시네마틱 액션 버튼들 */}
-        <div className="flex items-center space-x-5">
+        {/* Action Buttons */}
+        <div className="flex items-center space-x-4">
           <motion.button
-            whileHover={{ scale: 1.02, y: -2 }}
+            whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleSave}
-            className="btn-cinematic-primary flex items-center space-x-3 hover-cinematic"
+            className="btn-primary flex items-center space-x-2 hover-lift"
           >
-            <Save className="w-5 h-5" />
-            <span className="body-cinematic-primary">Save Project</span>
+            <Save className="w-4 h-4" />
+            <span className="body-primary">Save Project</span>
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.02, y: -2 }}
+            whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleExportYTT}
-            className="btn-cinematic-secondary flex items-center space-x-3 hover-cinematic"
+            className="btn-secondary flex items-center space-x-2 hover-lift"
           >
-            <Download className="w-5 h-5" />
-            <span className="body-cinematic-primary">Export YTT</span>
+            <Download className="w-4 h-4" />
+            <span className="body-primary">Export YTT</span>
           </motion.button>
         </div>
       </div>
       
       <div className="flex-1" />
       
-      {/* 시네마틱 프로젝트 정보 & 설정 */}
-      <div className="flex items-center space-x-8">
-        <div className="flex items-center space-x-4">
-          <Clapperboard className="w-5 h-5 text-cinematic-gold" />
-          <div className="text-right">
-            <div className="body-cinematic-primary">
-              {currentProject?.name || 'Untitled Project'}
-            </div>
-            <div className="caption-cinematic">
-              {currentProject?.subtitles.length || 0} scenes • Ready for action
-            </div>
+      {/* Project Info & Settings */}
+      <div className="flex items-center space-x-6">
+        <div className="text-right">
+          <div className="body-primary">
+            {currentProject?.name || 'Untitled Project'}
+          </div>
+          <div className="caption">
+            {currentProject?.subtitles.length || 0} subtitles
           </div>
         </div>
         
         <motion.button
           whileHover={{ scale: 1.05, rotate: 90 }}
           whileTap={{ scale: 0.95 }}
-          className="btn-cinematic-icon hover-cinematic-glow"
+          className="btn-icon hover-glow"
         >
-          <Settings className="w-6 h-6" />
+          <Settings className="w-5 h-5" />
         </motion.button>
       </div>
     </div>

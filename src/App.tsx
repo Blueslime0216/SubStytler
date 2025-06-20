@@ -17,7 +17,7 @@ function App() {
 
   useEffect(() => {
     if (!currentProject) {
-      createProject('Untitled Cinematic Project');
+      createProject('Untitled Project');
     }
   }, [currentProject, createProject]);
 
@@ -30,7 +30,7 @@ function App() {
           className="h-full"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
           {areas.map(area => (
             <AreaRenderer
@@ -42,34 +42,34 @@ function App() {
         </motion.div>
       </div>
       
-      {/* 시네마틱 상태바 */}
+      {/* Enhanced Status Bar */}
       <motion.div 
-        className="status-bar-cinematic h-8 flex items-center px-10 space-x-8"
+        className="status-bar h-7 flex items-center px-8 space-x-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
+        transition={{ delay: 0.3 }}
       >
-        <div className="flex items-center space-x-3">
-          <div className="w-2 h-2 rounded-full bg-cinematic-gold cinematic-glow" />
-          <span className="caption-cinematic">Studio Ready</span>
+        <div className="flex items-center space-x-2">
+          <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+          <span>Ready</span>
         </div>
         
-        <div className="flex items-center space-x-6">
-          <span className="caption-cinematic">{currentProject?.subtitles.length || 0} scenes</span>
-          <span className="text-cinematic-gold">•</span>
-          <span className="caption-cinematic">{currentProject?.name || 'Untitled Project'}</span>
+        <div className="flex items-center space-x-4">
+          <span>{currentProject?.subtitles.length || 0} subtitles</span>
+          <span>•</span>
+          <span>{currentProject?.name || 'Untitled Project'}</span>
         </div>
         
         <div className="flex-1" />
         
-        <div className="flex items-center space-x-6">
-          <span className="caption-cinematic">Sub-Stytler Studio v2.0</span>
-          <span className="text-cinematic-gold">•</span>
-          <span className="caption-cinematic text-cinematic-gold">Cinematic Edition</span>
+        <div className="flex items-center space-x-4">
+          <span>Sub-Stytler v2.0</span>
+          <span>•</span>
+          <span>Professional Edition</span>
         </div>
       </motion.div>
 
-      {/* 시네마틱 토스트 컨테이너 */}
+      {/* Enhanced Toast Container */}
       <ToastContainer toasts={toasts} onClose={removeToast} />
     </div>
   );
