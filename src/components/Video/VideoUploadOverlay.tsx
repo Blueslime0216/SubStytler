@@ -28,13 +28,13 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
             : 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))',
           border: `2px dashed ${isDragActive ? 'var(--neu-primary)' : 'var(--neu-dark)'}`
         }}
-        whileHover={{ scale: isDragActive ? 1.05 : 1.02 }}
+
         transition={{ duration: 0.2 }}
       >
         <input {...getInputProps()} />
         
         <motion.div
-          animate={isDragActive ? { scale: 1.1, y: -5 } : { scale: 1, y: 0 }}
+
           transition={{ duration: 0.2 }}
           className="text-center"
         >

@@ -34,7 +34,7 @@
 }
 
 .neu-btn:hover {
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); */
   box-shadow: var(--neu-shadow-2);
   color: var(--neu-text-primary);
 }
@@ -63,7 +63,7 @@
   background: linear-gradient(145deg, var(--neu-primary-light), var(--neu-primary));
   box-shadow: var(--neu-shadow-3), 0 0 12px rgba(99, 179, 237, 0.4);
   color: white;
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); */
 }
 
 .neu-btn-primary:active {
@@ -83,7 +83,7 @@
 }
 
 .neu-btn-small:hover {
-  transform: translateY(-1px);
+  /* transform: translateY(-1px); */
   box-shadow: var(--neu-shadow-1);
 }
 
@@ -117,9 +117,9 @@
 }
 
 .neu-btn-icon:hover {
-  transform: translateY(-1px);
+  /* transform: translateY(-1px);
   box-shadow: var(--neu-shadow-2);
-  color: var(--neu-text-primary);
+  color: var(--neu-text-primary); */
 }
 
 .neu-btn-icon:active {
@@ -153,8 +153,6 @@
 }
 
 .neu-panel:hover {
-  box-shadow: var(--neu-shadow-1);
-  transform: translateY(-1px);
   transition: all 0.3s ease;
 }
 

@@ -120,8 +120,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
       <div className="neu-timeline-ruler flex items-center justify-between p-3">
         <div className="flex items-center space-x-3">
           <motion.button
-            whileHover={{ scale: 1.02, y: -1 }}
-            whileTap={{ scale: 0.98 }}
+            whileTap={{ y: 0 }}
             onClick={addNewSubtitle}
             className="neu-btn-primary flex items-center space-x-2 neu-hover-lift"
           >
@@ -143,8 +142,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
           
           <div className="flex items-center space-x-2">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ y: 0 }}
               onClick={() => handleZoom('out')}
               className="neu-btn-icon p-1.5"
             >
@@ -156,8 +154,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
             </div>
             
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ y: 0 }}
               onClick={() => handleZoom('in')}
               className="neu-btn-icon p-1.5"
             >

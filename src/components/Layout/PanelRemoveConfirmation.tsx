@@ -61,8 +61,6 @@ export const PanelRemoveConfirmation: React.FC<PanelRemoveConfirmationProps> = (
           <p className="text-xs neu-text-primary mb-2">Remove this panel?</p>
           <div className="flex space-x-2">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               onClick={onConfirm}
               className="neu-btn-small px-2 py-1 text-xs"
               style={{ color: 'var(--neu-error)' }}
@@ -70,8 +68,6 @@ export const PanelRemoveConfirmation: React.FC<PanelRemoveConfirmationProps> = (
               Remove
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               onClick={onClose}
               className="neu-btn-small px-2 py-1 text-xs"
             >
