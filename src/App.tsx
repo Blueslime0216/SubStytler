@@ -22,10 +22,10 @@ function App() {
   }, [currentProject, createProject]);
 
   return (
-    <div className="h-screen text-white flex flex-col overflow-hidden bg-primary">
+    <div className="h-screen neu-text-primary flex flex-col overflow-hidden neu-bg-base">
       <Toolbar />
       
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden p-2">
         <motion.div
           className="h-full"
           initial={{ opacity: 0, y: 20 }}
@@ -42,19 +42,19 @@ function App() {
         </motion.div>
       </div>
       
-      {/* Enhanced Status Bar */}
+      {/* Compact Status Bar */}
       <motion.div 
-        className="status-bar h-7 flex items-center px-8 space-x-6"
+        className="neu-status-bar h-6 flex items-center space-x-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
         <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+          <div className="w-1.5 h-1.5 rounded-full neu-pulse" style={{ background: 'var(--neu-success)' }} />
           <span>Ready</span>
         </div>
         
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <span>{currentProject?.subtitles.length || 0} subtitles</span>
           <span>•</span>
           <span>{currentProject?.name || 'Untitled Project'}</span>
@@ -62,14 +62,14 @@ function App() {
         
         <div className="flex-1" />
         
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <span>Sub-Stytler v2.0</span>
           <span>•</span>
           <span>Professional Edition</span>
         </div>
       </motion.div>
 
-      {/* Enhanced Toast Container */}
+      {/* Toast Container */}
       <ToastContainer toasts={toasts} onClose={removeToast} />
     </div>
   );

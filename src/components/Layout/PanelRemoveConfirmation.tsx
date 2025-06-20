@@ -21,20 +21,17 @@ export const PanelRemoveConfirmation: React.FC<PanelRemoveConfirmationProps> = (
     if (isOpen && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const confirmationHeight = 100; // Estimated confirmation height
+      const confirmationHeight = 80;
       
-      // Calculate optimal position
-      let top = rect.bottom + 4; // 4px gap below trigger
-      let left = rect.right - 192; // Align right edge (w-48 = 192px)
+      let top = rect.bottom + 4;
+      let left = rect.right - 160;
       
-      // Check if confirmation would go below viewport
       if (top + confirmationHeight > viewportHeight) {
-        top = rect.top - confirmationHeight - 4; // Position above trigger
+        top = rect.top - confirmationHeight - 4;
       }
       
-      // Ensure confirmation doesn't go off-screen horizontally
       if (left < 16) {
-        left = 16; // 16px margin from left edge
+        left = 16;
       }
       
       setPosition({ top, left });
@@ -45,31 +42,30 @@ export const PanelRemoveConfirmation: React.FC<PanelRemoveConfirmationProps> = (
 
   return (
     <Portal>
-      {/* Backdrop */}
       <div 
         className="fixed inset-0 z-40"
         onClick={onClose}
       />
       
-      {/* Confirmation */}
       <AnimatePresence>
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: -10 }}
-          className="fixed w-48 bg-red-900/90 border border-red-600 rounded-lg shadow-xl z-50 p-3"
+          className="neu-dropdown fixed w-40 z-50 p-3"
           style={{
             top: position.top,
             left: position.left,
           }}
         >
-          <p className="text-sm text-red-100 mb-2">Remove this panel?</p>
+          <p className="text-xs neu-text-primary mb-2">Remove this panel?</p>
           <div className="flex space-x-2">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onConfirm}
-              className="px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-xs text-white"
+              className="neu-btn-small px-2 py-1 text-xs"
+              style={{ color: 'var(--neu-error)' }}
             >
               Remove
             </motion.button>
@@ -77,7 +73,7 @@ export const PanelRemoveConfirmation: React.FC<PanelRemoveConfirmationProps> = (
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onClose}
-              className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-xs text-white"
+              className="neu-btn-small px-2 py-1 text-xs"
             >
               Cancel
             </motion.button>

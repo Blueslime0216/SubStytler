@@ -22,20 +22,17 @@ export const PanelActionsDropdown: React.FC<PanelActionsDropdownProps> = ({
     if (isOpen && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const dropdownHeight = 120; // Estimated dropdown height
+      const dropdownHeight = 100;
       
-      // Calculate optimal position
-      let top = rect.bottom + 4; // 4px gap below trigger
-      let left = rect.right - 192; // Align right edge (w-48 = 192px)
+      let top = rect.bottom + 4;
+      let left = rect.right - 160;
       
-      // Check if dropdown would go below viewport
       if (top + dropdownHeight > viewportHeight) {
-        top = rect.top - dropdownHeight - 4; // Position above trigger
+        top = rect.top - dropdownHeight - 4;
       }
       
-      // Ensure dropdown doesn't go off-screen horizontally
       if (left < 16) {
-        left = 16; // 16px margin from left edge
+        left = 16;
       }
       
       setPosition({ top, left });
@@ -46,52 +43,48 @@ export const PanelActionsDropdown: React.FC<PanelActionsDropdownProps> = ({
 
   return (
     <Portal>
-      {/* Backdrop */}
       <div 
         className="fixed inset-0 z-40"
         onClick={onClose}
       />
       
-      {/* Dropdown */}
       <AnimatePresence>
         <motion.div
           initial={{ opacity: 0, y: -10, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.95 }}
           transition={{ duration: 0.15 }}
-          className="fixed w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 overflow-hidden"
+          className="neu-dropdown fixed w-40 z-50 overflow-hidden"
           style={{
             top: position.top,
             left: position.left,
           }}
         >
           <div className="p-2">
-            <div className="text-xs text-gray-400 px-2 py-1 mb-1">
+            <div className="neu-caption px-2 py-1 mb-1">
               Panel Actions
             </div>
             
-            {/* Split Horizontally */}
             <motion.button
-              whileHover={{ backgroundColor: 'rgba(55, 65, 81, 0.8)' }}
+              whileHover={{ scale: 1.01 }}
               onClick={() => onSplitPanel('horizontal', 'text-editor')}
-              className="w-full flex items-center space-x-2 px-2 py-2 rounded-md text-left hover:bg-gray-700 transition-colors"
+              className="neu-dropdown-item w-full flex items-center space-x-2 px-2 py-2 rounded-md text-left"
             >
-              <svg className="w-4 h-4 text-gray-400 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 neu-text-secondary rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
               </svg>
-              <span className="text-sm text-gray-200">Split Horizontally</span>
+              <span className="text-xs">Split Horizontally</span>
             </motion.button>
             
-            {/* Split Vertically */}
             <motion.button
-              whileHover={{ backgroundColor: 'rgba(55, 65, 81, 0.8)' }}
+              whileHover={{ scale: 1.01 }}
               onClick={() => onSplitPanel('vertical', 'text-editor')}
-              className="w-full flex items-center space-x-2 px-2 py-2 rounded-md text-left hover:bg-gray-700 transition-colors"
+              className="neu-dropdown-item w-full flex items-center space-x-2 px-2 py-2 rounded-md text-left"
             >
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 neu-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
               </svg>
-              <span className="text-sm text-gray-200">Split Vertically</span>
+              <span className="text-xs">Split Vertically</span>
             </motion.button>
           </div>
         </motion.div>

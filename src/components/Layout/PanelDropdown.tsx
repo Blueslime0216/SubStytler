@@ -24,18 +24,18 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
     if (isOpen && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const dropdownHeight = 400;
+      const dropdownHeight = 320;
       
-      let top = rect.bottom + 12;
+      let top = rect.bottom + 8;
       let left = rect.left;
       
       if (top + dropdownHeight > viewportHeight) {
-        top = rect.top - dropdownHeight - 12;
+        top = rect.top - dropdownHeight - 8;
       }
       
-      const dropdownWidth = 320;
+      const dropdownWidth = 280;
       if (left + dropdownWidth > window.innerWidth) {
-        left = window.innerWidth - dropdownWidth - 24;
+        left = window.innerWidth - dropdownWidth - 16;
       }
       
       setPosition({ top, left });
@@ -57,19 +57,19 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -20, scale: 0.95 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="dropdown-portal fixed z-50 overflow-hidden"
+          className="neu-dropdown fixed z-50 overflow-hidden"
           style={{
             top: position.top,
             left: position.left,
-            width: '320px'
+            width: '280px'
           }}
         >
-          <div className="p-4">
-            <div className="caption font-medium px-2 py-2 mb-3">
+          <div className="p-3">
+            <div className="neu-caption font-medium px-2 py-2 mb-2">
               Switch Panel Type
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-1">
               {availablePanels.map(([panelType, panelConfig]) => {
                 const PanelIcon = panelConfig.icon;
                 return (
@@ -78,28 +78,29 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => onPanelChange(panelType as PanelType)}
-                    className="dropdown-item w-full flex items-center space-x-4 p-4 text-left"
+                    className="neu-dropdown-item w-full flex items-center space-x-3 p-3 text-left"
                   >
                     <motion.div 
-                      className="p-2.5 rounded-xl bg-surface border border-accent/20"
-                      whileHover={{ backgroundColor: 'var(--bg-hover)' }}
+                      className="p-1.5 rounded-lg neu-shadow-1"
+                      whileHover={{ scale: 1.05 }}
+                      style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
                     >
-                      <PanelIcon className="w-5 h-5 text-accent" />
+                      <PanelIcon className="w-3.5 h-3.5 neu-text-accent" />
                     </motion.div>
                     <div className="flex-1 min-w-0">
-                      <div className="body-primary font-medium">
+                      <div className="neu-body-primary text-xs font-medium">
                         {panelConfig.title}
                       </div>
-                      <div className="caption truncate">
+                      <div className="neu-caption text-xs truncate">
                         {panelConfig.description}
                       </div>
                     </div>
                     <motion.svg 
-                      className="w-4 h-4 text-muted opacity-0 group-hover:opacity-100"
+                      className="w-3 h-3 neu-text-secondary opacity-0 group-hover:opacity-100"
                       fill="none" 
                       stroke="currentColor" 
                       viewBox="0 0 24 24"
-                      whileHover={{ x: 4 }}
+                      whileHover={{ x: 2 }}
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </motion.svg>

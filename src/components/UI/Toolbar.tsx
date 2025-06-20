@@ -58,56 +58,55 @@ export const Toolbar: React.FC = () => {
   };
 
   return (
-    <div className="toolbar h-16 flex items-center px-8 space-x-2">
-      <div className="flex items-center space-x-8">
+    <div className="neu-toolbar h-12 flex items-center justify-between">
+      <div className="flex items-center space-x-6">
         {/* Brand Section */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <motion.div 
-            className="w-10 h-10 rounded-xl bg-gradient flex items-center justify-center shadow-purple"
-            whileHover={{ scale: 1.05, rotate: 5 }}
+            className="w-8 h-8 rounded-xl neu-shadow-1 flex items-center justify-center neu-hover-lift"
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
           >
-            <Sparkles className="w-5 h-5 text-white" />
+            <Sparkles className="w-4 h-4 neu-text-accent" />
           </motion.div>
           <div>
-            <h1 className="heading-primary text-gradient">Sub-Stytler</h1>
-            <p className="caption">Professional Subtitle Editor</p>
+            <h1 className="neu-heading-primary neu-text-accent">Sub-Stytler</h1>
+            <p className="neu-caption">Professional Editor</p>
           </div>
         </div>
         
         {/* Action Buttons */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <motion.button
             whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleSave}
-            className="btn-primary flex items-center space-x-2 hover-lift"
+            className="neu-btn-primary flex items-center space-x-2 neu-hover-lift"
           >
-            <Save className="w-4 h-4" />
-            <span className="body-primary">Save Project</span>
+            <Save className="w-3.5 h-3.5" />
+            <span>Save</span>
           </motion.button>
           
           <motion.button
             whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleExportYTT}
-            className="btn-secondary flex items-center space-x-2 hover-lift"
+            className="neu-btn flex items-center space-x-2 neu-hover-lift"
           >
-            <Download className="w-4 h-4" />
-            <span className="body-primary">Export YTT</span>
+            <Download className="w-3.5 h-3.5" />
+            <span>Export</span>
           </motion.button>
         </div>
       </div>
       
-      <div className="flex-1" />
-      
       {/* Project Info & Settings */}
-      <div className="flex items-center space-x-6">
+      <div className="flex items-center space-x-4">
         <div className="text-right">
-          <div className="body-primary">
+          <div className="neu-body-primary text-xs">
             {currentProject?.name || 'Untitled Project'}
           </div>
-          <div className="caption">
+          <div className="neu-caption">
             {currentProject?.subtitles.length || 0} subtitles
           </div>
         </div>
@@ -115,9 +114,9 @@ export const Toolbar: React.FC = () => {
         <motion.button
           whileHover={{ scale: 1.05, rotate: 90 }}
           whileTap={{ scale: 0.95 }}
-          className="btn-icon hover-glow"
+          className="neu-btn-icon"
         >
-          <Settings className="w-5 h-5" />
+          <Settings className="w-4 h-4" />
         </motion.button>
       </div>
     </div>

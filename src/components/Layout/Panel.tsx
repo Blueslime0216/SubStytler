@@ -59,20 +59,21 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
 
   return (
     <motion.div
-      className={`panel-container flex flex-col ${className}`}
+      className={`neu-panel flex flex-col ${className}`}
       initial={{ opacity: 0, scale: 0.98, y: 10 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      {/* Enhanced Panel Header */}
-      <div className="panel-header flex items-center justify-between">
-        <div className="flex items-center space-x-4 flex-1">
+      {/* Compact Panel Header */}
+      <div className="neu-panel-header flex items-center justify-between">
+        <div className="flex items-center space-x-3 flex-1">
           {/* Icon Container */}
           <motion.div 
-            className="p-2.5 rounded-xl bg-surface border border-accent/20"
-            whileHover={{ scale: 1.05, backgroundColor: 'var(--bg-hover)' }}
+            className="p-1.5 rounded-lg neu-shadow-1"
+            whileHover={{ scale: 1.05 }}
+            style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
           >
-            <IconComponent className="w-5 h-5 text-accent" />
+            <IconComponent className="w-3.5 h-3.5 neu-text-accent" />
           </motion.div>
           
           {/* Panel Title & Selector */}
@@ -81,14 +82,14 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center space-x-3 group"
+            className="flex items-center space-x-2 group"
           >
             <div className="text-left">
-              <div className="heading-secondary">{config.title}</div>
-              <div className="caption">{config.description}</div>
+              <div className="neu-body-primary text-xs">{config.title}</div>
+              <div className="neu-caption text-xs">{config.description}</div>
             </div>
             <motion.svg 
-              className="w-4 h-4 text-muted"
+              className="w-3 h-3 neu-text-secondary"
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -101,17 +102,17 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
         </div>
         
         {/* Panel Actions */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
           {/* Actions Button */}
           <motion.button
             ref={actionsButtonRef}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsActionsOpen(!isActionsOpen)}
-            className="btn-icon"
+            className="neu-btn-icon p-1.5"
             title="Panel Actions"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
           </motion.button>
@@ -121,24 +122,23 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
             ref={removeButtonRef}
             whileHover={{ 
               scale: canRemove ? 1.05 : 1,
-              backgroundColor: canRemove ? 'rgba(239, 68, 68, 0.15)' : undefined
             }}
             whileTap={{ scale: canRemove ? 0.95 : 1 }}
             onClick={onRemoveClick}
             disabled={!canRemove}
-            className={`btn-icon ${
+            className={`neu-btn-icon p-1.5 ${
               canRemove 
-                ? 'hover:border-error hover:text-error' 
+                ? 'neu-hover-lift' 
                 : 'opacity-40 cursor-not-allowed'
             }`}
             title={canRemove ? "Close Panel" : "Cannot close the last panel"}
           >
             {canRemove ? (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             )}
@@ -149,7 +149,7 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
       {/* Panel Content */}
       <PanelContent type={type} />
 
-      {/* Enhanced Dropdowns */}
+      {/* Dropdowns */}
       <PanelDropdown
         isOpen={isDropdownOpen}
         onClose={() => setIsDropdownOpen(false)}
