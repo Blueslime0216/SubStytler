@@ -24,22 +24,22 @@
   --neu-info: #4299E1;
   
   /* Enhanced Sharp Shadow System */
-  --neu-shadow-1: 4px 4px 8px var(--neu-dark), -2px -2px 6px var(--neu-light);
-  --neu-shadow-2: 6px 6px 12px var(--neu-dark), -3px -3px 9px var(--neu-light);
-  --neu-shadow-3: 8px 8px 16px var(--neu-dark), -4px -4px 12px var(--neu-light);
-  --neu-shadow-4: 10px 10px 20px var(--neu-dark), -5px -5px 15px var(--neu-light);
+  --neu-shadow-1: 6px 6px 12px var(--neu-dark), -3px -3px 8px var(--neu-light);
+  --neu-shadow-2: 8px 8px 16px var(--neu-dark), -4px -4px 12px var(--neu-light);
+  --neu-shadow-3: 10px 10px 20px var(--neu-dark), -5px -5px 15px var(--neu-light);
+  --neu-shadow-4: 12px 12px 24px var(--neu-dark), -6px -6px 18px var(--neu-light);
   
   /* Sharp Inset Shadows */
-  --neu-shadow-inset: inset 3px 3px 6px var(--neu-dark), inset -2px -2px 4px var(--neu-light);
-  --neu-shadow-inset-soft: inset 2px 2px 4px var(--neu-dark), inset -1px -1px 3px var(--neu-light);
-  --neu-shadow-inset-deep: inset 4px 4px 8px var(--neu-dark), inset -3px -3px 6px var(--neu-light);
+  --neu-shadow-inset: inset 4px 4px 8px var(--neu-dark), inset -2px -2px 6px var(--neu-light);
+  --neu-shadow-inset-soft: inset 3px 3px 6px var(--neu-dark), inset -2px -2px 4px var(--neu-light);
+  --neu-shadow-inset-deep: inset 5px 5px 10px var(--neu-dark), inset -3px -3px 8px var(--neu-light);
   
   /* Pressed States */
-  --neu-shadow-pressed: inset 2px 2px 4px var(--neu-dark), inset -1px -1px 3px var(--neu-light);
+  --neu-shadow-pressed: inset 3px 3px 6px var(--neu-dark), inset -2px -2px 4px var(--neu-light);
   
   /* Subtle Shadows */
-  --neu-shadow-subtle: 2px 2px 4px var(--neu-dark), -1px -1px 3px var(--neu-light);
-  --neu-shadow-micro: 1px 1px 2px var(--neu-dark), -1px -1px 2px var(--neu-light);
+  --neu-shadow-subtle: 3px 3px 6px var(--neu-dark), -2px -2px 4px var(--neu-light);
+  --neu-shadow-micro: 2px 2px 4px var(--neu-dark), -1px -1px 3px var(--neu-light);
 }
 
 /* Dark Mode - Default Theme */
@@ -68,14 +68,14 @@
   --neu-info: #63B3ED;
   
   /* Dark Mode Sharp Shadows */
-  --neu-shadow-1: 5px 5px 10px var(--neu-dark), -3px -3px 8px var(--neu-light);
-  --neu-shadow-2: 7px 7px 14px var(--neu-dark), -4px -4px 10px var(--neu-light);
-  --neu-shadow-3: 9px 9px 18px var(--neu-dark), -5px -5px 12px var(--neu-light);
-  --neu-shadow-4: 12px 12px 24px var(--neu-dark), -6px -6px 16px var(--neu-light);
+  --neu-shadow-1: 6px 6px 12px var(--neu-dark), -3px -3px 8px var(--neu-light);
+  --neu-shadow-2: 8px 8px 16px var(--neu-dark), -4px -4px 12px var(--neu-light);
+  --neu-shadow-3: 10px 10px 20px var(--neu-dark), -5px -5px 16px var(--neu-light);
+  --neu-shadow-4: 12px 12px 24px var(--neu-dark), -6px -6px 18px var(--neu-light);
   
   /* Dark Mode Sharp Inset Shadows */
   --neu-shadow-inset: inset 4px 4px 8px var(--neu-dark), inset -3px -3px 6px var(--neu-light);
-  --neu-shadow-inset-soft: inset 2px 2px 4px var(--neu-dark), inset -2px -2px 4px var(--neu-light);
+  --neu-shadow-inset-soft: inset 3px 3px 6px var(--neu-dark), inset -2px -2px 4px var(--neu-light);
   --neu-shadow-inset-deep: inset 5px 5px 10px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
   
   /* Dark Mode Pressed States */
@@ -83,7 +83,7 @@
   
   /* Dark Mode Subtle Shadows */
   --neu-shadow-subtle: 3px 3px 6px var(--neu-dark), -2px -2px 4px var(--neu-light);
-  --neu-shadow-micro: 2px 2px 4px var(--neu-dark), -1px -1px 2px var(--neu-light);
+  --neu-shadow-micro: 2px 2px 4px var(--neu-dark), -1px -1px 3px var(--neu-light);
 }
 
 /* Light Mode Override */
@@ -112,20 +112,20 @@
   --neu-info: #4299E1;
   
   /* Light Mode Sharp Shadows */
-  --neu-shadow-1: 4px 4px 8px var(--neu-dark), -2px -2px 6px var(--neu-light);
-  --neu-shadow-2: 6px 6px 12px var(--neu-dark), -3px -3px 9px var(--neu-light);
-  --neu-shadow-3: 8px 8px 16px var(--neu-dark), -4px -4px 12px var(--neu-light);
-  --neu-shadow-4: 10px 10px 20px var(--neu-dark), -5px -5px 15px var(--neu-light);
+  --neu-shadow-1: 6px 6px 12px var(--neu-dark), -3px -3px 8px var(--neu-light);
+  --neu-shadow-2: 8px 8px 16px var(--neu-dark), -4px -4px 12px var(--neu-light);
+  --neu-shadow-3: 10px 10px 20px var(--neu-dark), -5px -5px 15px var(--neu-light);
+  --neu-shadow-4: 12px 12px 24px var(--neu-dark), -6px -6px 18px var(--neu-light);
   
   /* Light Mode Sharp Inset Shadows */
-  --neu-shadow-inset: inset 3px 3px 6px var(--neu-dark), inset -2px -2px 4px var(--neu-light);
-  --neu-shadow-inset-soft: inset 2px 2px 4px var(--neu-dark), inset -1px -1px 3px var(--neu-light);
-  --neu-shadow-inset-deep: inset 4px 4px 8px var(--neu-dark), inset -3px -3px 6px var(--neu-light);
+  --neu-shadow-inset: inset 4px 4px 8px var(--neu-dark), inset -2px -2px 6px var(--neu-light);
+  --neu-shadow-inset-soft: inset 3px 3px 6px var(--neu-dark), inset -2px -2px 4px var(--neu-light);
+  --neu-shadow-inset-deep: inset 5px 5px 10px var(--neu-dark), inset -3px -3px 8px var(--neu-light);
   
   /* Light Mode Pressed States */
-  --neu-shadow-pressed: inset 2px 2px 4px var(--neu-dark), inset -1px -1px 3px var(--neu-light);
+  --neu-shadow-pressed: inset 3px 3px 6px var(--neu-dark), inset -2px -2px 4px var(--neu-light);
   
   /* Light Mode Subtle Shadows */
-  --neu-shadow-subtle: 2px 2px 4px var(--neu-dark), -1px -1px 3px var(--neu-light);
-  --neu-shadow-micro: 1px 1px 2px var(--neu-dark), -1px -1px 2px var(--neu-light);
+  --neu-shadow-subtle: 3px 3px 6px var(--neu-dark), -2px -2px 4px var(--neu-light);
+  --neu-shadow-micro: 2px 2px 4px var(--neu-dark), -1px -1px 3px var(--neu-light);
 }

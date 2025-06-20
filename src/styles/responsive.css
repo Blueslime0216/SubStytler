@@ -43,7 +43,8 @@
   }
   
   .neu-btn, .neu-btn-primary {
-    @apply px-3 py-2 text-sm;
+    padding: 8px 12px;
+    font-size: 0.75rem;
   }
   
   .neu-dropdown {
@@ -60,13 +61,13 @@
 /* High Contrast Mode */
 @media (prefers-contrast: high) {
   :root {
-    --neu-shadow-1: 4px 4px 8px rgba(0, 0, 0, 0.4), -2px -2px 6px rgba(255, 255, 255, 0.9);
-    --neu-shadow-2: 6px 6px 12px rgba(0, 0, 0, 0.5), -3px -3px 9px rgba(255, 255, 255, 1);
+    --neu-shadow-1: 8px 8px 16px rgba(0, 0, 0, 0.4), -4px -4px 12px rgba(255, 255, 255, 0.9);
+    --neu-shadow-2: 10px 10px 20px rgba(0, 0, 0, 0.5), -5px -5px 15px rgba(255, 255, 255, 1);
   }
   
   [data-theme="dark"] {
-    --neu-shadow-1: 5px 5px 10px rgba(0, 0, 0, 0.7), -3px -3px 8px rgba(255, 255, 255, 0.15);
-    --neu-shadow-2: 7px 7px 14px rgba(0, 0, 0, 0.8), -4px -4px 10px rgba(255, 255, 255, 0.2);
+    --neu-shadow-1: 8px 8px 16px rgba(0, 0, 0, 0.7), -4px -4px 12px rgba(255, 255, 255, 0.15);
+    --neu-shadow-2: 10px 10px 20px rgba(0, 0, 0, 0.8), -5px -5px 15px rgba(255, 255, 255, 0.2);
   }
 }
 

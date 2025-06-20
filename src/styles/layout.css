@@ -79,9 +79,16 @@
 }
 
 .neu-theme-toggle {
-  @apply neu-btn-icon;
+  padding: 10px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: var(--neu-base);
+  color: var(--neu-text-secondary);
+  box-shadow: var(--neu-shadow-1);
+  border: none;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .neu-theme-toggle::after {
@@ -102,4 +109,10 @@
   width: 100%;
   height: 100%;
   opacity: 0.1;
+}
+
+.neu-theme-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--neu-shadow-2);
+  color: var(--neu-text-primary);
 }

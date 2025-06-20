@@ -21,29 +21,32 @@
 
 /* Typography */
 .neu-heading-primary {
-  @apply text-xl font-semibold;
+  font-size: 1.25rem;
+  font-weight: 600;
   color: var(--neu-text-primary);
   letter-spacing: -0.025em;
 }
 
 .neu-heading-secondary {
-  @apply text-lg font-medium;
+  font-size: 1.125rem;
+  font-weight: 500;
   color: var(--neu-text-primary);
   letter-spacing: -0.015em;
 }
 
 .neu-body-primary {
-  @apply text-sm font-medium;
+  font-size: 0.875rem;
+  font-weight: 500;
   color: var(--neu-text-primary);
 }
 
 .neu-body-secondary {
-  @apply text-sm;
+  font-size: 0.875rem;
   color: var(--neu-text-secondary);
 }
 
 .neu-caption {
-  @apply text-xs;
+  font-size: 0.75rem;
   color: var(--neu-text-muted);
   font-family: 'JetBrains Mono', monospace;
 }
