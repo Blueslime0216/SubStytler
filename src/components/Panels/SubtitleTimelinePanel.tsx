@@ -76,8 +76,8 @@ export const SubtitleTimelinePanel: React.FC = () => {
           className="absolute flex flex-col items-center"
           style={{ left: x }}
         >
-          <div className="w-px h-5 bg-border-secondary" />
-          <span className="caption font-mono mt-2">
+          <div className="w-px h-4 neu-text-secondary" />
+          <span className="neu-caption font-mono mt-1">
             {formatTime(time, fps)}
           </span>
         </div>
@@ -102,7 +102,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
       lines.push(
         <div
           key={frame}
-          className="absolute w-px h-full bg-border-subtle opacity-40"
+          className="absolute w-px h-full neu-text-secondary opacity-20"
           style={{ 
             left: x,
             transition: 'none'
@@ -115,43 +115,43 @@ export const SubtitleTimelinePanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col timeline-container">
-      {/* Enhanced Toolbar */}
-      <div className="timeline-ruler flex items-center justify-between p-5">
-        <div className="flex items-center space-x-4">
+    <div className="h-full flex flex-col neu-timeline">
+      {/* Neumorphism Toolbar */}
+      <div className="neu-timeline-ruler flex items-center justify-between p-3">
+        <div className="flex items-center space-x-3">
           <motion.button
             whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
             onClick={addNewSubtitle}
-            className="btn-primary flex items-center space-x-2 hover-lift"
+            className="neu-btn-primary flex items-center space-x-2 neu-hover-lift"
           >
-            <Plus className="w-4 h-4" />
-            <span className="body-primary">Add Subtitle</span>
+            <Plus className="w-3.5 h-3.5" />
+            <span className="text-xs">Add Subtitle</span>
           </motion.button>
           
           <div className="flex items-center space-x-2">
-            <Grid className="w-4 h-4 text-muted" />
-            <span className="caption">Frame Grid</span>
+            <Grid className="w-3.5 h-3.5 neu-text-secondary" />
+            <span className="neu-caption">Frame Grid</span>
           </div>
         </div>
         
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-2">
-            <Layers className="w-4 h-4 text-muted" />
-            <span className="caption">Track 1</span>
+            <Layers className="w-3.5 h-3.5 neu-text-secondary" />
+            <span className="neu-caption">Track 1</span>
           </div>
           
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleZoom('out')}
-              className="btn-icon"
+              className="neu-btn-icon p-1.5"
             >
-              <ZoomOut className="w-4 h-4" />
+              <ZoomOut className="w-3.5 h-3.5" />
             </motion.button>
             
-            <div className="px-3 py-2 rounded-lg bg-surface border border-primary caption font-mono">
+            <div className="neu-card-small px-2 py-1 neu-caption font-mono">
               {zoom.toFixed(1)}x
             </div>
             
@@ -159,9 +159,9 @@ export const SubtitleTimelinePanel: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleZoom('in')}
-              className="btn-icon"
+              className="neu-btn-icon p-1.5"
             >
-              <ZoomIn className="w-4 h-4" />
+              <ZoomIn className="w-3.5 h-3.5" />
             </motion.button>
           </div>
         </div>
@@ -169,12 +169,12 @@ export const SubtitleTimelinePanel: React.FC = () => {
       
       <div className="flex-1 flex flex-col">
         {/* Time Ruler */}
-        <div className="h-16 timeline-ruler relative overflow-hidden border-b border-primary">
+        <div className="h-12 neu-timeline-ruler relative overflow-hidden">
           {renderTimeRuler()}
         </div>
         
         {/* Track Area */}
-        <div className="timeline-track flex-1 relative overflow-hidden">
+        <div className="neu-timeline-track flex-1 relative overflow-hidden">
           <div
             ref={containerRef}
             className="h-full relative cursor-pointer"
@@ -197,11 +197,11 @@ export const SubtitleTimelinePanel: React.FC = () => {
               return (
                 <motion.div
                   key={subtitle.id}
-                  className="subtitle-block absolute h-10 cursor-move flex items-center px-4"
+                  className="neu-subtitle-block absolute h-8 cursor-move flex items-center px-3"
                   style={{
                     left: Math.max(0, left),
                     width: Math.max(24, width),
-                    top: 60,
+                    top: 50,
                     transition: 'none'
                   }}
                   whileHover={{ y: -2 }}
@@ -212,7 +212,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
                   }}
                   dragTransition={{ power: 0, timeConstant: 0 }}
                 >
-                  <div className="body-primary text-white font-medium truncate">
+                  <div className="text-xs text-white font-medium truncate">
                     {subtitle.spans[0]?.text || 'Empty subtitle'}
                   </div>
                 </motion.div>
@@ -224,15 +224,18 @@ export const SubtitleTimelinePanel: React.FC = () => {
               className="absolute top-0 w-0.5 h-full pointer-events-none z-20"
               style={{ 
                 left: timeToPixel(currentTime),
-                background: 'var(--gradient-primary)',
+                background: 'var(--neu-primary)',
                 transition: 'none'
               }}
               animate={{ opacity: [0.8, 1, 0.8] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
               <div 
-                className="absolute -top-3 -left-3 w-6 h-6 rotate-45 bg-gradient shadow-purple"
-                style={{ transition: 'none' }}
+                className="absolute -top-2 -left-2 w-4 h-4 rotate-45 neu-shadow-1"
+                style={{ 
+                  background: 'var(--neu-primary)',
+                  transition: 'none'
+                }}
               />
             </motion.div>
           </div>

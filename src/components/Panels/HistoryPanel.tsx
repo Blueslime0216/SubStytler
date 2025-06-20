@@ -24,47 +24,47 @@ export const HistoryPanel: React.FC = () => {
   return (
     <div className="h-full flex flex-col">
       {/* Controls */}
-      <div className="p-3 bg-gray-800 border-b border-gray-700">
+      <div className="neu-panel-header">
         <div className="flex items-center space-x-2">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center space-x-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded transition-colors"
+            className="neu-btn flex items-center space-x-1"
           >
-            <Undo className="w-4 h-4" />
-            <span className="text-sm">Undo</span>
+            <Undo className="w-3.5 h-3.5" />
+            <span className="text-xs">Undo</span>
           </motion.button>
           
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center space-x-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded transition-colors"
+            className="neu-btn flex items-center space-x-1"
           >
-            <Redo className="w-4 h-4" />
-            <span className="text-sm">Redo</span>
+            <Redo className="w-3.5 h-3.5" />
+            <span className="text-xs">Redo</span>
           </motion.button>
         </div>
       </div>
 
       {/* History List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto p-2 space-y-2">
         {historyItems.map((item, index) => (
           <motion.div
             key={item.id}
-            className="p-3 border-b border-gray-700 hover:bg-gray-800 cursor-pointer transition-colors"
+            className="neu-card p-3 neu-hover-lift cursor-pointer"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
             whileHover={{ x: 4 }}
           >
             <div className="flex items-center space-x-3">
-              <span className="text-lg">{getActionIcon(item.type)}</span>
+              <span className="text-base">{getActionIcon(item.type)}</span>
               
               <div className="flex-1">
-                <p className="text-sm text-white">{item.action}</p>
+                <p className="text-xs neu-text-primary">{item.action}</p>
                 <div className="flex items-center space-x-1 mt-1">
-                  <Clock className="w-3 h-3 text-gray-500" />
-                  <span className="text-xs text-gray-500">{item.time}</span>
+                  <Clock className="w-3 h-3 neu-text-secondary" />
+                  <span className="text-xs neu-text-secondary">{item.time}</span>
                 </div>
               </div>
             </div>
@@ -72,8 +72,8 @@ export const HistoryPanel: React.FC = () => {
         ))}
       </div>
       
-      <div className="p-3 bg-gray-800 border-t border-gray-700 text-center">
-        <p className="text-xs text-gray-500">
+      <div className="neu-panel-header text-center">
+        <p className="text-xs neu-text-secondary">
           {historyItems.length} actions in history
         </p>
       </div>

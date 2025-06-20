@@ -39,39 +39,40 @@ export const EffectsLibraryPanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full p-4">
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold text-white mb-2">Animation Effects</h3>
-        <p className="text-sm text-gray-400">Drag effects to subtitle spans</p>
+    <div className="h-full p-3">
+      <div className="mb-3">
+        <h3 className="text-base font-semibold neu-text-primary mb-2">Animation Effects</h3>
+        <p className="text-xs neu-text-secondary">Drag effects to subtitle spans</p>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {effects.map((effect) => (
           <motion.div
             key={effect.id}
             draggable
             onDragStart={(e) => handleDragStart(e, effect.id)}
-            className="p-3 bg-gray-800 border border-gray-700 rounded-lg cursor-move hover:bg-gray-750 transition-colors"
+            className="neu-card p-3 cursor-move neu-hover-lift"
             whileHover={{ scale: 1.02 }}
             whileDrag={{ scale: 1.05 }}
           >
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-600 rounded">
-                <effect.icon className="w-4 h-4 text-white" />
+              <div className="p-2 neu-shadow-1 rounded-lg" style={{ background: 'var(--neu-primary)' }}>
+                <effect.icon className="w-3.5 h-3.5 text-white" />
               </div>
               
               <div className="flex-1">
-                <h4 className="font-medium text-white">{effect.name}</h4>
-                <p className="text-xs text-gray-400">{effect.category}</p>
+                <h4 className="font-medium neu-text-primary text-sm">{effect.name}</h4>
+                <p className="text-xs neu-text-secondary">{effect.category}</p>
               </div>
             </div>
             
-            <p className="text-sm text-gray-300 mt-2">{effect.description}</p>
+            <p className="text-xs neu-text-secondary mt-2">{effect.description}</p>
             
             {/* Preview */}
-            <div className="mt-3 p-2 bg-gray-900 rounded border border-gray-600">
+            <div className="mt-3 neu-card-small">
               <motion.div
-                className="text-center text-sm text-blue-400"
+                className="text-center text-xs"
+                style={{ color: 'var(--neu-primary)' }}
                 animate={
                   effect.id === 'fade-in' ? { opacity: [0, 1] } :
                   effect.id === 'slide-up' ? { y: [20, 0] } :
@@ -88,12 +89,12 @@ export const EffectsLibraryPanel: React.FC = () => {
         ))}
       </div>
       
-      <div className="mt-6">
-        <h4 className="font-medium text-white mb-3">Custom Keyframes</h4>
+      <div className="mt-4">
+        <h4 className="font-medium neu-text-primary mb-3 text-sm">Custom Keyframes</h4>
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="w-full p-3 border-2 border-dashed border-gray-600 rounded-lg text-gray-400 hover:border-blue-500 hover:text-blue-400 transition-colors"
+          className="w-full neu-card p-3 neu-text-secondary hover:neu-text-primary transition-colors text-center text-xs"
         >
           + Create Custom Animation
         </motion.button>

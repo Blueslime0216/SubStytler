@@ -32,28 +32,28 @@ export const Toast: React.FC<ToastProps> = ({
   const getIcon = () => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="w-5 h-5 text-green-400" />;
+        return <CheckCircle className="w-4 h-4" style={{ color: 'var(--neu-success)' }} />;
       case 'error':
-        return <AlertCircle className="w-5 h-5 text-red-400" />;
+        return <AlertCircle className="w-4 h-4" style={{ color: 'var(--neu-error)' }} />;
       case 'warning':
-        return <AlertCircle className="w-5 h-5 text-yellow-400" />;
+        return <AlertCircle className="w-4 h-4" style={{ color: 'var(--neu-warning)' }} />;
       case 'info':
       default:
-        return <Info className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />;
+        return <Info className="w-4 h-4" style={{ color: 'var(--neu-primary)' }} />;
     }
   };
 
   const getToastClass = () => {
     switch (type) {
       case 'success':
-        return 'toast-success';
+        return 'neu-toast-success';
       case 'error':
-        return 'toast-error';
+        return 'neu-toast-error';
       case 'warning':
-        return 'toast-warning';
+        return 'neu-toast-warning';
       case 'info':
       default:
-        return 'toast-info';
+        return 'neu-toast-info';
     }
   };
 
@@ -62,28 +62,29 @@ export const Toast: React.FC<ToastProps> = ({
       initial={{ opacity: 0, y: -50, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -50, scale: 0.95 }}
-      className={`relative p-4 rounded-lg backdrop-blur-sm shadow-purple-lg max-w-md ${getToastClass()}`}
+      className={`neu-toast relative p-3 max-w-md ${getToastClass()}`}
     >
       <div className="flex items-start space-x-3">
         {getIcon()}
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-medium text-white">{title}</h4>
+          <h4 className="text-sm font-medium neu-text-primary">{title}</h4>
           {message && (
-            <p className="text-sm text-gray-200 mt-1">{message}</p>
+            <p className="text-xs neu-text-secondary mt-1">{message}</p>
           )}
         </div>
         <button
           onClick={() => onClose(id)}
-          className="flex-shrink-0 p-1 rounded-full hover:bg-white/10 transition-colors"
+          className="neu-btn-icon p-1"
         >
-          <X className="w-4 h-4 text-gray-300" />
+          <X className="w-3.5 h-3.5" />
         </button>
       </div>
       
       {/* Progress bar for auto-dismiss */}
       {duration > 0 && (
         <motion.div
-          className="absolute bottom-0 left-0 h-1 bg-white/20 rounded-b-lg"
+          className="absolute bottom-0 left-0 h-1 rounded-b-lg"
+          style={{ backgroundColor: 'var(--neu-primary)' }}
           initial={{ width: '100%' }}
           animate={{ width: '0%' }}
           transition={{ duration: duration / 1000, ease: 'linear' }}

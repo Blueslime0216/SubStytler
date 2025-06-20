@@ -14,22 +14,19 @@ export const AudioWaveformPanel: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Set canvas size
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * window.devicePixelRatio;
     canvas.height = rect.height * window.devicePixelRatio;
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
-    // Draw waveform placeholder
     const width = rect.width;
     const height = rect.height;
     const centerY = height / 2;
 
     // Generate sample waveform data
-    ctx.strokeStyle = '#3B82F6';
+    ctx.strokeStyle = 'var(--neu-primary)';
     ctx.lineWidth = 1;
     ctx.beginPath();
 
@@ -49,7 +46,7 @@ export const AudioWaveformPanel: React.FC = () => {
     // Draw playhead
     if (currentTime >= viewStart && currentTime <= viewEnd) {
       const playheadX = ((currentTime - viewStart) / (viewEnd - viewStart)) * width;
-      ctx.strokeStyle = '#EF4444';
+      ctx.strokeStyle = 'var(--neu-error)';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(playheadX, 0);
@@ -70,18 +67,18 @@ export const AudioWaveformPanel: React.FC = () => {
 
   if (!currentProject?.videoMeta) {
     return (
-      <div className="h-full flex items-center justify-center text-gray-400">
-        <p>Load a video to see the audio waveform</p>
+      <div className="h-full flex items-center justify-center neu-text-secondary">
+        <p className="text-sm">Load a video to see the audio waveform</p>
       </div>
     );
   }
 
   return (
-    <div className="h-full bg-gray-900 p-4">
+    <div className="h-full neu-bg-base p-3">
       <canvas
         ref={canvasRef}
         onClick={handleCanvasClick}
-        className="w-full h-full cursor-pointer rounded-lg bg-gray-800"
+        className="w-full h-full cursor-pointer rounded-lg neu-shadow-inset"
         style={{ width: '100%', height: '100%' }}
       />
     </div>
