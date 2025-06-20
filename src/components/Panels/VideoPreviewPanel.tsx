@@ -140,7 +140,7 @@ export const VideoPreviewPanel: React.FC = () => {
   const hasVideo = currentProject?.videoMeta;
 
   return (
-    <div className="h-full flex flex-col neu-bg-base">
+    <div className="h-full flex flex-col neu-bg-base neu-video-panel">
       <div className="flex-1 relative">
         <video
           ref={videoRef}
