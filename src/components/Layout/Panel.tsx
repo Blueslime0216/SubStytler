@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Cog, Wrench, X, AlertTriangle } from 'lucide-react';
 import { PanelType } from '../../types/project';
 import { useLayoutStore } from '../../stores/layoutStore';
 import { PanelContent } from './PanelContent';
@@ -59,36 +60,46 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
 
   return (
     <motion.div
-      className={`panel-container flex flex-col ${className}`}
+      className={`panel-steampunk flex flex-col ${className} relative`}
       initial={{ opacity: 0, scale: 0.98, y: 10 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      {/* Enhanced Panel Header */}
-      <div className="panel-header flex items-center justify-between">
-        <div className="flex items-center space-x-4 flex-1">
-          {/* Icon Container */}
+      {/* 장식용 리벳들 */}
+      <div className="rivet-decoration top-2 left-2"></div>
+      <div className="rivet-decoration top-2 right-2"></div>
+      
+      {/* 패널 헤더 */}
+      <div className="panel-header-steampunk flex items-center justify-between relative">
+        {/* 장식용 기어 */}
+        <div className="absolute top-1 left-2">
+          <Cog className="w-2 h-2 text-brass gear-slow opacity-40" />
+        </div>
+        
+        <div className="flex items-center space-x-3 flex-1 relative z-10">
+          {/* 아이콘 컨테이너 */}
           <motion.div 
-            className="p-2.5 rounded-xl bg-surface border border-accent/20"
-            whileHover={{ scale: 1.05, backgroundColor: 'var(--bg-hover)' }}
+            className="p-1.5 rounded-lg bg-brass border border-brass-dark relative overflow-hidden"
+            whileHover={{ scale: 1.05 }}
           >
-            <IconComponent className="w-5 h-5 text-accent" />
+            <IconComponent className="w-3 h-3 text-workshop" />
+            <div className="absolute inset-0 texture-metal opacity-30"></div>
           </motion.div>
           
-          {/* Panel Title & Selector */}
+          {/* 패널 제목 & 선택기 */}
           <motion.button
             ref={titleButtonRef}
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center space-x-3 group"
+            className="flex items-center space-x-2 group"
           >
             <div className="text-left">
-              <div className="heading-secondary">{config.title}</div>
-              <div className="caption">{config.description}</div>
+              <div className="font-steampunk text-sm font-medium text-primary">{config.title}</div>
+              <div className="font-mono text-xs text-muted">{config.description}</div>
             </div>
             <motion.svg 
-              className="w-4 h-4 text-muted"
+              className="w-3 h-3 text-muted"
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -100,56 +111,58 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
           </motion.button>
         </div>
         
-        {/* Panel Actions */}
-        <div className="flex items-center space-x-2">
-          {/* Actions Button */}
+        {/* 패널 액션들 */}
+        <div className="flex items-center space-x-1 relative z-10">
+          {/* 액션 버튼 */}
           <motion.button
             ref={actionsButtonRef}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsActionsOpen(!isActionsOpen)}
-            className="btn-icon"
+            className="btn-steampunk-icon p-1"
             title="Panel Actions"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
+            <Wrench className="w-3 h-3" />
           </motion.button>
           
-          {/* Remove Button */}
+          {/* 제거 버튼 */}
           <motion.button
             ref={removeButtonRef}
             whileHover={{ 
               scale: canRemove ? 1.05 : 1,
-              backgroundColor: canRemove ? 'rgba(239, 68, 68, 0.15)' : undefined
             }}
             whileTap={{ scale: canRemove ? 0.95 : 1 }}
             onClick={onRemoveClick}
             disabled={!canRemove}
-            className={`btn-icon ${
+            className={`btn-steampunk-icon p-1 ${
               canRemove 
-                ? 'hover:border-error hover:text-error' 
+                ? 'hover:bg-red-600 hover:border-red-500' 
                 : 'opacity-40 cursor-not-allowed'
             }`}
             title={canRemove ? "Close Panel" : "Cannot close the last panel"}
           >
             {canRemove ? (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <X className="w-3 h-3" />
             ) : (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
+              <AlertTriangle className="w-3 h-3" />
             )}
           </motion.button>
         </div>
+        
+        {/* 장식용 파이프 */}
+        <div className="pipe-decoration top-0 right-16 w-8 h-1"></div>
       </div>
       
-      {/* Panel Content */}
-      <PanelContent type={type} />
+      {/* 패널 콘텐츠 */}
+      <div className="flex-1 overflow-hidden relative">
+        <PanelContent type={type} />
+        
+        {/* 하단 리벳들 */}
+        <div className="rivet-decoration bottom-2 left-2"></div>
+        <div className="rivet-decoration bottom-2 right-2"></div>
+      </div>
 
-      {/* Enhanced Dropdowns */}
+      {/* 드롭다운들 */}
       <PanelDropdown
         isOpen={isDropdownOpen}
         onClose={() => setIsDropdownOpen(false)}
