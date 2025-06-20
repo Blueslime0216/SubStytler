@@ -24,18 +24,18 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
     if (isOpen && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const dropdownHeight = 500;
+      const dropdownHeight = 400;
       
-      let top = rect.bottom + 16;
+      let top = rect.bottom + 12;
       let left = rect.left;
       
       if (top + dropdownHeight > viewportHeight) {
-        top = rect.top - dropdownHeight - 16;
+        top = rect.top - dropdownHeight - 12;
       }
       
-      const dropdownWidth = 380;
+      const dropdownWidth = 320;
       if (left + dropdownWidth > window.innerWidth) {
-        left = window.innerWidth - dropdownWidth - 32;
+        left = window.innerWidth - dropdownWidth - 24;
       }
       
       setPosition({ top, left });
@@ -56,50 +56,50 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
           initial={{ opacity: 0, y: -20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -20, scale: 0.95 }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
-          className="dropdown-station fixed z-50 overflow-hidden"
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="dropdown-portal fixed z-50 overflow-hidden"
           style={{
             top: position.top,
             left: position.left,
-            width: '380px'
+            width: '320px'
           }}
         >
-          <div className="p-6">
-            <div className="caption-station font-semibold px-3 py-3 mb-4 text-nebula">
+          <div className="p-4">
+            <div className="caption font-medium px-2 py-2 mb-3">
               Switch Panel Type
             </div>
             
-            <div className="space-y-3">
+            <div className="space-y-2">
               {availablePanels.map(([panelType, panelConfig]) => {
                 const PanelIcon = panelConfig.icon;
                 return (
                   <motion.button
                     key={panelType}
-                    whileHover={{ scale: 1.02, x: 8 }}
+                    whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => onPanelChange(panelType as PanelType)}
-                    className="dropdown-item-station w-full flex items-center space-x-5 p-5 text-left"
+                    className="dropdown-item w-full flex items-center space-x-4 p-4 text-left"
                   >
                     <motion.div 
-                      className="p-3 rounded-xl bg-energy border-2 border-nebula shadow-energy"
-                      whileHover={{ rotate: 5 }}
+                      className="p-2.5 rounded-xl bg-surface border border-accent/20"
+                      whileHover={{ backgroundColor: 'var(--bg-hover)' }}
                     >
-                      <PanelIcon className="w-6 h-6 text-white" />
+                      <PanelIcon className="w-5 h-5 text-accent" />
                     </motion.div>
                     <div className="flex-1 min-w-0">
-                      <div className="body-station-primary font-semibold text-nebula">
+                      <div className="body-primary font-medium">
                         {panelConfig.title}
                       </div>
-                      <div className="caption-station truncate">
+                      <div className="caption truncate">
                         {panelConfig.description}
                       </div>
                     </div>
                     <motion.svg 
-                      className="w-5 h-5 text-stellar-secondary opacity-0 group-hover:opacity-100"
+                      className="w-4 h-4 text-muted opacity-0 group-hover:opacity-100"
                       fill="none" 
                       stroke="currentColor" 
                       viewBox="0 0 24 24"
-                      whileHover={{ x: 6 }}
+                      whileHover={{ x: 4 }}
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </motion.svg>
