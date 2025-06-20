@@ -1,0 +1,105 @@
+/* Layout and Structure Styles */
+
+.neu-toolbar {
+  background: var(--neu-base);
+  border-bottom: 1px solid rgba(163, 168, 196, 0.1);
+  box-shadow: var(--neu-shadow-1);
+  padding: 8px 16px;
+  position: relative;
+}
+
+.neu-toolbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0.4;
+}
+
+.neu-status-bar {
+  background: var(--neu-base);
+  border-top: 1px solid rgba(163, 168, 196, 0.1);
+  color: var(--neu-text-muted);
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 4px 16px;
+  position: relative;
+}
+
+.neu-status-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0.3;
+}
+
+.neu-video-controller {
+  background: var(--neu-base);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(163, 168, 196, 0.1);
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05), var(--neu-shadow-1);
+  position: relative;
+}
+
+.neu-video-controller::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0.4;
+}
+
+.neu-resize-handle {
+  background: transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  opacity: 0;
+}
+
+.neu-resize-handle:hover {
+  opacity: 1;
+  background: linear-gradient(145deg, var(--neu-accent), var(--neu-surface));
+  box-shadow: var(--neu-shadow-subtle);
+}
+
+.neu-resize-handle.dragging {
+  opacity: 1;
+  background: var(--neu-primary);
+  box-shadow: var(--neu-shadow-1), 0 0 4px rgba(99, 179, 237, 0.3);
+}
+
+.neu-theme-toggle {
+  @apply neu-btn-icon;
+  position: relative;
+  overflow: hidden;
+}
+
+.neu-theme-toggle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, var(--neu-primary), transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.neu-theme-toggle:hover::after {
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
+}

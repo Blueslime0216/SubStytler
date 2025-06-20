@@ -62,15 +62,14 @@ export const Toolbar: React.FC = () => {
   return (
     <div className="neu-toolbar h-14 flex items-center justify-between">
       <div className="flex items-center space-x-6">
-        {/* Brand Section */}
         <div className="flex items-center space-x-4">
           <motion.div 
             className="w-10 h-10 rounded-2xl neu-shadow-2 flex items-center justify-center neu-hover-lift"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ y: 0 }}
             style={{ 
               background: 'linear-gradient(145deg, var(--neu-primary), var(--neu-primary-dark))',
-              boxShadow: 'var(--neu-shadow-2), 0 0 20px rgba(99, 179, 237, 0.3)'
+              boxShadow: 'var(--neu-shadow-2), 0 0 8px rgba(99, 179, 237, 0.3)'
             }}
           >
             <Sparkles className="w-5 h-5 text-white" />
@@ -81,11 +80,10 @@ export const Toolbar: React.FC = () => {
           </div>
         </div>
         
-        {/* Action Buttons */}
         <div className="flex items-center space-x-4">
           <motion.button
-            whileHover={{ scale: 1.02, y: -1 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ y: 0 }}
             onClick={handleSave}
             className="neu-btn-primary flex items-center space-x-2 neu-hover-lift"
           >
@@ -94,8 +92,8 @@ export const Toolbar: React.FC = () => {
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.02, y: -1 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ y: 0 }}
             onClick={handleExportYTT}
             className="neu-btn flex items-center space-x-2 neu-hover-lift"
           >
@@ -105,7 +103,6 @@ export const Toolbar: React.FC = () => {
         </div>
       </div>
       
-      {/* Project Info & Controls */}
       <div className="flex items-center space-x-6">
         <div className="text-right">
           <div className="neu-body-primary">
@@ -116,20 +113,18 @@ export const Toolbar: React.FC = () => {
           </div>
         </div>
         
-        {/* Theme Toggle - 회전 애니메이션 제거 */}
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ y: -1 }}
+          whileTap={{ y: 0 }}
           onClick={toggleTheme}
           className="neu-theme-toggle"
           title={`Switch to ${isDarkMode ? 'Light' : 'Dark'} Mode`}
         >
-          {/* 회전 애니메이션 제거하고 페이드 효과로 변경 */}
           <motion.div
             key={isDarkMode ? 'dark' : 'light'}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
           >
             {isDarkMode ? (
@@ -140,10 +135,9 @@ export const Toolbar: React.FC = () => {
           </motion.div>
         </motion.button>
         
-        {/* Settings 버튼 - 회전 애니메이션 제거 */}
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ y: -1 }}
+          whileTap={{ y: 0 }}
           className="neu-btn-icon neu-hover-glow"
         >
           <Settings className="w-5 h-5" />

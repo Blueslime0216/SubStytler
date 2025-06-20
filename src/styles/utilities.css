@@ -1,0 +1,124 @@
+/* Utility Classes and Animations */
+
+/* Text Utilities */
+.neu-text-primary { color: var(--neu-text-primary); }
+.neu-text-secondary { color: var(--neu-text-secondary); }
+.neu-text-muted { color: var(--neu-text-muted); }
+.neu-text-accent { color: var(--neu-text-accent); }
+
+/* Background Utilities */
+.neu-bg-base { background: var(--neu-base); }
+.neu-bg-surface { background: var(--neu-surface); }
+.neu-bg-accent { background: var(--neu-accent); }
+
+/* Shadow Utilities */
+.neu-shadow-1 { box-shadow: var(--neu-shadow-1); }
+.neu-shadow-2 { box-shadow: var(--neu-shadow-2); }
+.neu-shadow-3 { box-shadow: var(--neu-shadow-3); }
+.neu-shadow-4 { box-shadow: var(--neu-shadow-4); }
+.neu-shadow-inset { box-shadow: var(--neu-shadow-inset); }
+.neu-shadow-pressed { box-shadow: var(--neu-shadow-pressed); }
+
+/* Typography */
+.neu-heading-primary {
+  @apply text-xl font-semibold;
+  color: var(--neu-text-primary);
+  letter-spacing: -0.025em;
+}
+
+.neu-heading-secondary {
+  @apply text-lg font-medium;
+  color: var(--neu-text-primary);
+  letter-spacing: -0.015em;
+}
+
+.neu-body-primary {
+  @apply text-sm font-medium;
+  color: var(--neu-text-primary);
+}
+
+.neu-body-secondary {
+  @apply text-sm;
+  color: var(--neu-text-secondary);
+}
+
+.neu-caption {
+  @apply text-xs;
+  color: var(--neu-text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Animations */
+@keyframes neu-pulse {
+  0%, 100% {
+    box-shadow: var(--neu-shadow-1);
+  }
+  50% {
+    box-shadow: var(--neu-shadow-2);
+  }
+}
+
+@keyframes neu-glow {
+  0%, 100% {
+    box-shadow: var(--neu-shadow-2), 0 0 4px rgba(99, 179, 237, 0.2);
+  }
+  50% {
+    box-shadow: var(--neu-shadow-3), 0 0 8px rgba(99, 179, 237, 0.4);
+  }
+}
+
+@keyframes neu-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.neu-pulse {
+  animation: neu-pulse 2s ease-in-out infinite;
+}
+
+.neu-glow {
+  animation: neu-glow 2s ease-in-out infinite;
+}
+
+.neu-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(99, 179, 237, 0.1),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: neu-shimmer 2s infinite;
+}
+
+/* Hover Effects - No Scale Changes */
+.neu-hover-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--neu-shadow-2);
+}
+
+.neu-hover-press:active {
+  transform: translateY(1px);
+  box-shadow: var(--neu-shadow-pressed);
+}
+
+.neu-hover-glow:hover {
+  box-shadow: var(--neu-shadow-2), 0 0 6px rgba(99, 179, 237, 0.3);
+}
+
+/* Focus Management */
+.neu-focus:focus {
+  outline: none;
+  box-shadow: var(--neu-shadow-1), 0 0 0 3px rgba(99, 179, 237, 0.2);
+}
+
+/* Loading States */
+.neu-loading {
+  background: linear-gradient(90deg, var(--neu-base), var(--neu-accent), var(--neu-base));
+  background-size: 200% 100%;
+  animation: neu-shimmer 2s infinite;
+}

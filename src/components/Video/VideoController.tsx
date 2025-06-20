@@ -148,7 +148,6 @@ export const VideoController: React.FC<VideoControllerProps> = ({
 
   return (
     <div className="neu-video-controller">
-      {/* Enhanced Neumorphism Progress Bar */}
       <div className="px-8 pt-6 pb-4">
         <div 
           ref={progressBarRef}
@@ -157,23 +156,18 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           }`}
           onMouseDown={handleProgressBarMouseDown}
         >
-          {/* Progress Track */}
           <div className="neu-progress-track" />
-          
-          {/* Progress Fill */}
           <div 
             className="neu-progress-fill"
             style={{ width: `${progressPercentage}%` }}
           />
-          
-          {/* Progress Thumb */}
           <div 
             className={`neu-progress-thumb ${
-              isDragging ? 'opacity-100 scale-125' : 'opacity-0 group-hover:opacity-100'
+              isDragging ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
             }`}
             style={{ 
               left: `${progressPercentage}%`,
-              transition: isDragging ? 'none' : 'opacity 0.2s ease, transform 0.2s ease'
+              transition: isDragging ? 'none' : 'opacity 0.2s ease'
             }}
           />
           
@@ -193,13 +187,11 @@ export const VideoController: React.FC<VideoControllerProps> = ({
         </div>
       </div>
 
-      {/* Enhanced Neumorphism Controls */}
       <div className="flex items-center justify-between px-8 pb-6">
-        {/* Left Controls */}
         <div className="flex items-center space-x-4">
           <motion.button
-            whileHover={{ scale: 1.05, y: -1 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ y: 0 }}
             onClick={handleFrameBack}
             disabled={!isVideoLoaded}
             className="neu-btn-icon disabled:opacity-40 neu-hover-lift"
@@ -209,8 +201,8 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.05, y: -1 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ y: 0 }}
             onClick={handlePlayPause}
             disabled={!isVideoLoaded}
             className="neu-btn-primary p-4 disabled:opacity-40 neu-hover-glow"
@@ -224,8 +216,8 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.05, y: -1 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ y: 0 }}
             onClick={handleFrameForward}
             disabled={!isVideoLoaded}
             className="neu-btn-icon disabled:opacity-40 neu-hover-lift"
@@ -234,15 +226,14 @@ export const VideoController: React.FC<VideoControllerProps> = ({
             <SkipForward className="w-5 h-5" />
           </motion.button>
 
-          {/* Enhanced Neumorphism Volume Control */}
           <div 
             className="flex items-center space-x-4"
             onMouseEnter={() => setIsVolumeHovered(true)}
             onMouseLeave={() => setIsVolumeHovered(false)}
           >
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ y: -1 }}
+              whileTap={{ y: 0 }}
               onClick={onMuteToggle}
               className="neu-btn-icon neu-hover-lift"
               title={isMuted ? 'Unmute' : 'Mute'}
@@ -269,19 +260,14 @@ export const VideoController: React.FC<VideoControllerProps> = ({
                 onMouseDown={handleVolumeBarMouseDown}
                 style={{ width: '96px' }}
               >
-                {/* Volume Track */}
                 <div className="neu-volume-track" />
-                
-                {/* Volume Fill */}
                 <div 
                   className="neu-volume-fill"
                   style={{ width: `${volumePercentage}%` }}
                 />
-                
-                {/* Volume Thumb */}
                 <div 
                   className={`neu-volume-thumb ${
-                    isDraggingVolume ? 'scale-125' : ''
+                    isDraggingVolume ? '' : ''
                   }`}
                   style={{ 
                     left: `${volumePercentage}%`,
@@ -307,7 +293,6 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           </div>
         </div>
         
-        {/* Enhanced Time Display */}
         <div className="text-center space-y-2">
           <div className="font-mono text-lg font-medium neu-text-primary">
             {formatTime(currentTime, fps)} / {formatTime(duration, fps)}
@@ -320,11 +305,10 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           </div>
         </div>
         
-        {/* Right Controls - Settings 버튼 회전 애니메이션 제거 */}
         <div className="flex items-center">
           <motion.button
-            whileHover={{ scale: 1.05, y: -1 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ y: 0 }}
             onClick={onSettings}
             className="neu-btn-icon neu-hover-glow"
             title="Settings"

@@ -1,0 +1,39 @@
+/* Toast System Styles */
+
+.neu-toast {
+  background: var(--neu-base);
+  border-radius: 12px;
+  box-shadow: var(--neu-shadow-2);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.neu-toast::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, var(--neu-light), var(--neu-accent));
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.neu-toast-success {
+  border-left: 3px solid var(--neu-success);
+}
+
+.neu-toast-error {
+  border-left: 3px solid var(--neu-error);
+}
+
+.neu-toast-info {
+  border-left: 3px solid var(--neu-info);
+}
+
+.neu-toast-warning {
+  border-left: 3px solid var(--neu-warning);
+}

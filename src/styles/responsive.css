@@ -1,0 +1,80 @@
+/* Responsive Design and Media Queries */
+
+/* Scrollbar Styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--neu-dark) var(--neu-base);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neu-base);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neu-dark);
+  border-radius: 4px;
+  border: 1px solid var(--neu-base);
+  box-shadow: var(--neu-shadow-micro);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neu-darker);
+  box-shadow: var(--neu-shadow-subtle);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--neu-base);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .neu-panel {
+    border-radius: 12px;
+  }
+  
+  .neu-panel-header {
+    padding: 6px 12px;
+  }
+  
+  .neu-btn, .neu-btn-primary {
+    @apply px-3 py-2 text-sm;
+  }
+  
+  .neu-dropdown {
+    max-width: calc(100vw - 32px);
+    margin: 0 16px;
+  }
+  
+  .neu-progress-container {
+    margin: 0 6px;
+    padding: 8px 0;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --neu-shadow-1: 4px 4px 8px rgba(0, 0, 0, 0.4), -2px -2px 6px rgba(255, 255, 255, 0.9);
+    --neu-shadow-2: 6px 6px 12px rgba(0, 0, 0, 0.5), -3px -3px 9px rgba(255, 255, 255, 1);
+  }
+  
+  [data-theme="dark"] {
+    --neu-shadow-1: 5px 5px 10px rgba(0, 0, 0, 0.7), -3px -3px 8px rgba(255, 255, 255, 0.15);
+    --neu-shadow-2: 7px 7px 14px rgba(0, 0, 0, 0.8), -4px -4px 10px rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

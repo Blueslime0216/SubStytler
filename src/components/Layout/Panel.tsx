@@ -60,27 +60,24 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
   return (
     <motion.div
       className={`neu-panel flex flex-col ${className}`}
-      initial={{ opacity: 0, scale: 0.98, y: 10 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      {/* Compact Panel Header */}
       <div className="neu-panel-header flex items-center justify-between">
         <div className="flex items-center space-x-3 flex-1">
-          {/* Icon Container */}
           <motion.div 
             className="p-1.5 rounded-lg neu-shadow-1"
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ y: -1 }}
             style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
           >
             <IconComponent className="w-3.5 h-3.5 neu-text-accent" />
           </motion.div>
           
-          {/* Panel Title & Selector */}
           <motion.button
             ref={titleButtonRef}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ y: 0 }}
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center space-x-2 group"
           >
@@ -101,13 +98,11 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
           </motion.button>
         </div>
         
-        {/* Panel Actions */}
         <div className="flex items-center space-x-1">
-          {/* Actions Button */}
           <motion.button
             ref={actionsButtonRef}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ y: 0 }}
             onClick={() => setIsActionsOpen(!isActionsOpen)}
             className="neu-btn-icon p-1.5"
             title="Panel Actions"
@@ -117,13 +112,12 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
             </svg>
           </motion.button>
           
-          {/* Remove Button */}
           <motion.button
             ref={removeButtonRef}
             whileHover={{ 
-              scale: canRemove ? 1.05 : 1,
+              y: canRemove ? -1 : 0,
             }}
-            whileTap={{ scale: canRemove ? 0.95 : 1 }}
+            whileTap={{ y: canRemove ? 0 : 0 }}
             onClick={onRemoveClick}
             disabled={!canRemove}
             className={`neu-btn-icon p-1.5 ${
@@ -146,10 +140,8 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
         </div>
       </div>
       
-      {/* Panel Content */}
       <PanelContent type={type} />
 
-      {/* Dropdowns */}
       <PanelDropdown
         isOpen={isDropdownOpen}
         onClose={() => setIsDropdownOpen(false)}
