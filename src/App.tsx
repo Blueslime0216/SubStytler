@@ -32,8 +32,8 @@ function App() {
     <div className="h-screen neu-text-primary flex flex-col neu-bg-base">
       <Toolbar />
       
-      {/* Enhanced Panel Container - Increased padding for shadow visibility */}
-      <div className="flex-1 p-4" style={{ overflow: 'visible' }}>
+      {/* Enhanced Panel Container - Maximum padding for shadow visibility */}
+      <div className="flex-1" style={{ padding: '20px', overflow: 'visible' }}>
         <motion.div
           className="h-full"
           initial={{ opacity: 0, y: 20 }}

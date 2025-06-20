@@ -25,4 +25,24 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
+  /* Critical: Ensure body doesn't clip shadows */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Critical: Global overflow fix for all containers */
+#root {
+  overflow: visible !important;
+}
+
+/* Ensure all panel containers allow shadow visibility */
+.h-screen,
+.h-full,
+.flex-1 {
+  overflow: visible !important;
+}
+
+/* Override any Tailwind overflow settings that might clip shadows */
+.overflow-hidden {
+  overflow: visible !important;
 }

@@ -1,4 +1,4 @@
-/* Professional Neumorphism Component System - Enhanced Accessibility & Shadow Visibility */
+/* Professional Neumorphism Component System - Enhanced Shadow Visibility */
 
 /* Button System - Enhanced Interactive Feedback */
 .neu-btn {
@@ -149,16 +149,15 @@
   box-shadow: var(--neu-shadow-1), 0 0 0 3px var(--neu-interactive-border);
 }
 
-/* Panel System - Enhanced Separation & Shadow Visibility */
+/* Panel System - Enhanced Shadow Visibility */
 .neu-panel {
   background: var(--neu-base);
   border-radius: 18px;
   position: relative;
   box-shadow: var(--neu-shadow-2);
   border: 2px solid rgba(255, 255, 255, 0.05);
-  /* Ensure shadows are visible */
-  margin: 8px;
-  overflow: visible;
+  /* Critical: Remove any margin/padding that could cause clipping */
+  overflow: visible !important;
 }
 
 .neu-panel::before {
@@ -184,6 +183,7 @@
   font-weight: 600;
   color: var(--neu-text-primary);
   border-radius: 18px 18px 0 0;
+  overflow: visible;
 }
 
 .neu-panel-header::after {
@@ -209,7 +209,8 @@
   transition: all 0.2s ease;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  margin: 2px; /* Small margin to prevent shadow clipping */
+  /* Ensure cards don't clip shadows */
+  overflow: visible;
 }
 
 .neu-card::before {
@@ -243,7 +244,7 @@
   padding: 10px;
   transition: all 0.2s ease;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  margin: 2px;
+  overflow: visible;
 }
 
 .neu-card-micro {
@@ -253,7 +254,7 @@
   padding: 8px;
   transition: all 0.2s ease;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  margin: 1px;
+  overflow: visible;
 }
 
 /* Input System - Enhanced Contrast */
@@ -428,10 +429,22 @@
   visibility: visible;
 }
 
-/* Shadow Container for Proper Display */
-.neu-shadow-safe {
+/* Critical: Global overflow fix for shadow visibility */
+.neu-shadow-container,
+.neu-panel-container,
+.neu-layout-container {
   overflow: visible !important;
-  padding: 12px;
-  margin: -12px;
-  box-sizing: content-box;
+}
+
+/* Ensure React Resizable Panels don't clip shadows */
+[data-panel-group] {
+  overflow: visible !important;
+}
+
+[data-panel] {
+  overflow: visible !important;
+}
+
+[data-panel-resize-handle] {
+  overflow: visible !important;
 }
