@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Settings, Cog, Gauge } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Settings } from 'lucide-react';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { formatTime } from '../../utils/timeUtils';
 
@@ -147,43 +147,29 @@ export const VideoController: React.FC<VideoControllerProps> = ({
   const volumePercentage = (isMuted ? 0 : volume) * 100;
 
   return (
-    <div className="bg-panel border-t-2 border-copper-main relative">
-      {/* 장식용 요소들 */}
-      <div className="absolute top-1 left-4">
-        <Cog className="w-3 h-3 text-brass gear-slow opacity-30" />
-      </div>
-      <div className="absolute top-1 right-8">
-        <Cog className="w-2 h-2 text-copper gear-reverse opacity-25" />
-      </div>
-      
-      {/* 리벳 장식 */}
-      <div className="rivet-decoration top-1 left-1"></div>
-      <div className="rivet-decoration top-1 right-1"></div>
-      
-      {/* 파이프 장식 */}
-      <div className="pipe-decoration top-0 left-16 w-20 h-1"></div>
-      <div className="pipe-decoration top-0 right-20 w-16 h-1"></div>
-
-      {/* 프로그레스 바 */}
-      <div className="px-6 pt-4 pb-3">
+    <div className="video-controller">
+      {/* Enhanced Progress Bar */}
+      <div className="px-8 pt-6 pb-4">
         <div 
           ref={progressBarRef}
-          className={`progress-steampunk group relative ${
+          className={`progress-bar-container group ${
             isVideoLoaded ? 'cursor-pointer' : 'cursor-not-allowed'
           }`}
           onMouseDown={handleProgressBarMouseDown}
         >
+          <div className="progress-bar-track" />
+          
           <div 
-            className="progress-fill-steampunk"
+            className="progress-bar-fill"
             style={{ width: `${progressPercentage}%` }}
           />
           
           <div className={`absolute inset-0 rounded-lg transition-all duration-200 ${
-            isDragging ? 'bg-brass/10' : 'bg-transparent group-hover:bg-brass/5'
+            isDragging ? 'bg-accent/10' : 'bg-transparent group-hover:bg-accent/5'
           }`} />
           
           <div 
-            className={`absolute w-4 h-4 bg-brass border-2 border-brass-dark rounded-full shadow-brass transform -translate-x-1/2 -translate-y-1/2 top-1/2 transition-all ${
+            className={`progress-bar-thumb ${
               isDragging ? 'opacity-100 scale-125' : 'opacity-0 group-hover:opacity-100'
             }`}
             style={{ 
@@ -194,7 +180,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           
           {isDragging && (
             <motion.div 
-              className="absolute -top-8 bg-panel border border-copper-main rounded px-2 py-1 font-mono text-xs"
+              className="tooltip absolute -top-12"
               style={{ 
                 left: `${progressPercentage}%`, 
                 transform: 'translateX(-50%)'
@@ -208,19 +194,19 @@ export const VideoController: React.FC<VideoControllerProps> = ({
         </div>
       </div>
 
-      {/* 컨트롤 */}
-      <div className="flex items-center justify-between px-6 pb-4 relative z-10">
-        {/* 왼쪽 컨트롤 */}
-        <div className="flex items-center space-x-4">
+      {/* Enhanced Controls */}
+      <div className="flex items-center justify-between px-8 pb-6">
+        {/* Left Controls */}
+        <div className="flex items-center space-x-5">
           <motion.button
             whileHover={{ scale: 1.05, y: -1 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleFrameBack}
             disabled={!isVideoLoaded}
-            className="btn-steampunk-icon disabled:opacity-40"
+            className="btn-icon disabled:opacity-40"
             title="Previous Frame"
           >
-            <SkipBack className="w-4 h-4" />
+            <SkipBack className="w-5 h-5" />
           </motion.button>
           
           <motion.button
@@ -228,13 +214,13 @@ export const VideoController: React.FC<VideoControllerProps> = ({
             whileTap={{ scale: 0.95 }}
             onClick={handlePlayPause}
             disabled={!isVideoLoaded}
-            className="btn-steampunk p-3 disabled:opacity-40"
+            className="btn-primary p-4 disabled:opacity-40"
             title={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (
-              <Pause className="w-5 h-5" />
+              <Pause className="w-6 h-6" />
             ) : (
-              <Play className="w-5 h-5" />
+              <Play className="w-6 h-6" />
             )}
           </motion.button>
           
@@ -243,15 +229,15 @@ export const VideoController: React.FC<VideoControllerProps> = ({
             whileTap={{ scale: 0.95 }}
             onClick={handleFrameForward}
             disabled={!isVideoLoaded}
-            className="btn-steampunk-icon disabled:opacity-40"
+            className="btn-icon disabled:opacity-40"
             title="Next Frame"
           >
-            <SkipForward className="w-4 h-4" />
+            <SkipForward className="w-5 h-5" />
           </motion.button>
 
-          {/* 볼륨 컨트롤 */}
+          {/* Enhanced Volume Control */}
           <div 
-            className="flex items-center space-x-3"
+            className="flex items-center space-x-4"
             onMouseEnter={() => setIsVolumeHovered(true)}
             onMouseLeave={() => setIsVolumeHovered(false)}
           >
@@ -259,13 +245,13 @@ export const VideoController: React.FC<VideoControllerProps> = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onMuteToggle}
-              className="btn-steampunk-icon"
+              className="btn-icon"
               title={isMuted ? 'Unmute' : 'Mute'}
             >
               {isMuted ? (
-                <VolumeX className="w-4 h-4" />
+                <VolumeX className="w-5 h-5" />
               ) : (
-                <Volume2 className="w-4 h-4" />
+                <Volume2 className="w-5 h-5" />
               )}
             </motion.button>
             
@@ -273,23 +259,25 @@ export const VideoController: React.FC<VideoControllerProps> = ({
               className="overflow-visible"
               initial={{ width: 0, opacity: 0 }}
               animate={{ 
-                width: isVolumeHovered || isDraggingVolume ? 80 : 0,
+                width: isVolumeHovered || isDraggingVolume ? 96 : 0,
                 opacity: isVolumeHovered || isDraggingVolume ? 1 : 0
               }}
               transition={{ duration: 0.2, ease: "easeOut" }}
             >
               <div 
                 ref={volumeBarRef}
-                className="progress-steampunk h-2 cursor-pointer relative"
+                className="volume-container flex items-center cursor-pointer"
                 onMouseDown={handleVolumeBarMouseDown}
               >
+                <div className="volume-track" />
+                
                 <div 
-                  className="progress-fill-steampunk h-full"
+                  className="volume-fill"
                   style={{ width: `${volumePercentage}%` }}
                 />
                 
                 <div 
-                  className={`absolute w-3 h-3 bg-brass border border-brass-dark rounded-full top-1/2 transform -translate-x-1/2 -translate-y-1/2 ${
+                  className={`volume-thumb ${
                     isDraggingVolume ? 'scale-125' : ''
                   }`}
                   style={{ 
@@ -300,7 +288,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
                 
                 {isDraggingVolume && (
                   <motion.div 
-                    className="absolute -top-8 bg-panel border border-copper-main rounded px-2 py-1 font-mono text-xs"
+                    className="tooltip absolute -top-10"
                     style={{ 
                       left: `${volumePercentage}%`, 
                       transform: 'translateX(-50%)'
@@ -316,39 +304,29 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           </div>
         </div>
         
-        {/* 시간 표시 */}
+        {/* Enhanced Time Display */}
         <div className="text-center space-y-1">
-          <div className="font-mono text-sm font-medium text-brass">
+          <div className="font-mono text-lg font-medium text-primary">
             {formatTime(currentTime, fps)} / {formatTime(duration, fps)}
           </div>
-          <div className="flex items-center justify-center space-x-3 font-mono text-xs text-muted">
+          <div className="flex items-center justify-center space-x-4 caption">
             <span>Frame {getCurrentFrame()} / {getTotalFrames()}</span>
             <span>@{fps}fps</span>
-            {isVideoLoaded && (
-              <div className="flex items-center space-x-1">
-                <Gauge className="w-3 h-3 text-brass pressure-gauge" />
-                <span className="text-brass">Ready</span>
-              </div>
-            )}
-            {isDragging && (
-              <div className="flex items-center space-x-1">
-                <Cog className="w-3 h-3 text-brass gear" />
-                <span className="text-brass">Seeking</span>
-              </div>
-            )}
+            {isVideoLoaded && <span className="text-success">● Ready</span>}
+            {isDragging && <span className="text-accent">● Seeking</span>}
           </div>
         </div>
         
-        {/* 오른쪽 컨트롤 */}
+        {/* Right Controls */}
         <div className="flex items-center">
           <motion.button
             whileHover={{ scale: 1.05, rotate: 90 }}
             whileTap={{ scale: 0.95 }}
             onClick={onSettings}
-            className="btn-steampunk-icon"
+            className="btn-icon hover-glow"
             title="Settings"
           >
-            <Settings className="w-4 h-4" />
+            <Settings className="w-5 h-5" />
           </motion.button>
         </div>
       </div>

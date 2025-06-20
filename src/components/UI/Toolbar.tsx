@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Save, Download, Settings, Cog, Wrench, Gauge } from 'lucide-react';
+import { Save, Download, Settings, Sparkles } from 'lucide-react';
 import { useProjectStore } from '../../stores/projectStore';
 
 export const Toolbar: React.FC = () => {
@@ -58,102 +58,67 @@ export const Toolbar: React.FC = () => {
   };
 
   return (
-    <div className="toolbar-steampunk relative">
-      {/* 장식용 기어들 */}
-      <div className="absolute top-2 left-4">
-        <Cog className="w-4 h-4 text-copper gear opacity-30" />
-      </div>
-      <div className="absolute top-1 right-8">
-        <Cog className="w-3 h-3 text-brass gear-reverse opacity-40" />
-      </div>
-      <div className="absolute bottom-1 left-20">
-        <Cog className="w-2 h-2 text-bronze gear-slow opacity-25" />
-      </div>
-      
-      {/* 리벳 장식 */}
-      <div className="rivet-decoration top-2 left-2"></div>
-      <div className="rivet-decoration top-2 right-2"></div>
-      <div className="rivet-decoration bottom-2 left-2"></div>
-      <div className="rivet-decoration bottom-2 right-2"></div>
-      
-      <div className="flex items-center justify-between relative z-10">
-        {/* 브랜드 섹션 */}
-        <div className="flex items-center space-x-6">
-          <div className="flex items-center space-x-3">
-            <motion.div 
-              className="relative"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className="w-8 h-8 bg-brass rounded-lg flex items-center justify-center shadow-brass relative overflow-hidden">
-                <Wrench className="w-4 h-4 text-workshop" />
-                <div className="absolute inset-0 texture-metal opacity-30"></div>
-              </div>
-              {/* 증기 효과 */}
-              <div className="absolute -top-1 left-1/2 transform -translate-x-1/2">
-                <div className="steam-particle w-1 h-1 bg-steel-light rounded-full opacity-0"></div>
-                <div className="steam-particle w-1 h-1 bg-steel-light rounded-full opacity-0"></div>
-                <div className="steam-particle w-1 h-1 bg-steel-light rounded-full opacity-0"></div>
-              </div>
-            </motion.div>
-            <div>
-              <h1 className="font-steampunk text-lg font-bold text-brass">Sub-Stytler</h1>
-              <p className="font-mono text-xs text-muted">Steampunk Workshop</p>
-            </div>
-          </div>
-          
-          {/* 액션 버튼들 */}
-          <div className="flex items-center space-x-3">
-            <motion.button
-              whileHover={{ scale: 1.02, y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleSave}
-              className="btn-steampunk-small flex items-center space-x-2"
-            >
-              <Save className="w-3 h-3" />
-              <span>Save</span>
-            </motion.button>
-            
-            <motion.button
-              whileHover={{ scale: 1.02, y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleExportYTT}
-              className="btn-steampunk-small flex items-center space-x-2"
-            >
-              <Download className="w-3 h-3" />
-              <span>Export</span>
-            </motion.button>
+    <div className="toolbar h-16 flex items-center px-8 space-x-2">
+      <div className="flex items-center space-x-8">
+        {/* Brand Section */}
+        <div className="flex items-center space-x-4">
+          <motion.div 
+            className="w-10 h-10 rounded-xl bg-gradient flex items-center justify-center shadow-purple"
+            whileHover={{ scale: 1.05, rotate: 5 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Sparkles className="w-5 h-5 text-white" />
+          </motion.div>
+          <div>
+            <h1 className="heading-primary text-gradient">Sub-Stytler</h1>
+            <p className="caption">Professional Subtitle Editor</p>
           </div>
         </div>
         
-        {/* 상태 및 설정 */}
-        <div className="flex items-center space-x-6">
-          {/* 압력 게이지 */}
-          <div className="flex items-center space-x-2">
-            <Gauge className="w-4 h-4 text-brass pressure-gauge" />
-            <div className="text-xs font-mono">
-              <span className="text-brass">{currentProject?.subtitles.length || 0}</span>
-              <span className="text-muted"> subtitles</span>
-            </div>
-          </div>
-          
-          <div className="text-right">
-            <div className="font-steampunk text-sm font-medium text-primary">
-              {currentProject?.name || 'Untitled Project'}
-            </div>
-            <div className="font-mono text-xs text-muted">
-              Workshop Active
-            </div>
-          </div>
+        {/* Action Buttons */}
+        <div className="flex items-center space-x-4">
+          <motion.button
+            whileHover={{ scale: 1.02, y: -1 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleSave}
+            className="btn-primary flex items-center space-x-2 hover-lift"
+          >
+            <Save className="w-4 h-4" />
+            <span className="body-primary">Save Project</span>
+          </motion.button>
           
           <motion.button
-            whileHover={{ scale: 1.05, rotate: 90 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn-steampunk-icon"
+            whileHover={{ scale: 1.02, y: -1 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleExportYTT}
+            className="btn-secondary flex items-center space-x-2 hover-lift"
           >
-            <Settings className="w-4 h-4" />
+            <Download className="w-4 h-4" />
+            <span className="body-primary">Export YTT</span>
           </motion.button>
         </div>
+      </div>
+      
+      <div className="flex-1" />
+      
+      {/* Project Info & Settings */}
+      <div className="flex items-center space-x-6">
+        <div className="text-right">
+          <div className="body-primary">
+            {currentProject?.name || 'Untitled Project'}
+          </div>
+          <div className="caption">
+            {currentProject?.subtitles.length || 0} subtitles
+          </div>
+        </div>
+        
+        <motion.button
+          whileHover={{ scale: 1.05, rotate: 90 }}
+          whileTap={{ scale: 0.95 }}
+          className="btn-icon hover-glow"
+        >
+          <Settings className="w-5 h-5" />
+        </motion.button>
       </div>
     </div>
   );
