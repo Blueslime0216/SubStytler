@@ -5,12 +5,14 @@ import { AreaRenderer } from './components/Layout/AreaRenderer';
 import { ToastContainer } from './components/UI/ToastContainer';
 import { useLayoutStore } from './stores/layoutStore';
 import { useProjectStore } from './stores/projectStore';
+import { useThemeStore } from './stores/themeStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useToast } from './hooks/useToast';
 
 function App() {
   const { areas, resizeArea } = useLayoutStore();
   const { createProject, currentProject } = useProjectStore();
+  const { isDarkMode } = useThemeStore();
   const { toasts, removeToast } = useToast();
   
   useKeyboardShortcuts();
@@ -21,11 +23,16 @@ function App() {
     }
   }, [currentProject, createProject]);
 
+  // Apply theme to document
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
+
   return (
     <div className="h-screen neu-text-primary flex flex-col overflow-hidden neu-bg-base">
       <Toolbar />
       
-      <div className="flex-1 overflow-hidden p-2">
+      <div className="flex-1 overflow-hidden p-3">
         <motion.div
           className="h-full"
           initial={{ opacity: 0, y: 20 }}
@@ -42,19 +49,19 @@ function App() {
         </motion.div>
       </div>
       
-      {/* Compact Status Bar */}
+      {/* Enhanced Status Bar */}
       <motion.div 
-        className="neu-status-bar h-6 flex items-center space-x-4"
+        className="neu-status-bar h-7 flex items-center space-x-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
         <div className="flex items-center space-x-2">
-          <div className="w-1.5 h-1.5 rounded-full neu-pulse" style={{ background: 'var(--neu-success)' }} />
+          <div className="w-2 h-2 rounded-full neu-glow" style={{ background: 'var(--neu-success)' }} />
           <span>Ready</span>
         </div>
         
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
           <span>{currentProject?.subtitles.length || 0} subtitles</span>
           <span>•</span>
           <span>{currentProject?.name || 'Untitled Project'}</span>
@@ -62,10 +69,12 @@ function App() {
         
         <div className="flex-1" />
         
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
           <span>Sub-Stytler v2.0</span>
           <span>•</span>
           <span>Professional Edition</span>
+          <span>•</span>
+          <span className="neu-text-accent">{isDarkMode ? 'Dark' : 'Light'} Mode</span>
         </div>
       </motion.div>
 

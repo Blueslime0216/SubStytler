@@ -1,10 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Save, Download, Settings, Sparkles } from 'lucide-react';
+import { Save, Download, Settings, Sparkles, Sun, Moon } from 'lucide-react';
 import { useProjectStore } from '../../stores/projectStore';
+import { useThemeStore } from '../../stores/themeStore';
 
 export const Toolbar: React.FC = () => {
   const { saveProject, currentProject } = useProjectStore();
+  const { isDarkMode, toggleTheme } = useThemeStore();
 
   const handleSave = () => {
     saveProject();
@@ -58,17 +60,20 @@ export const Toolbar: React.FC = () => {
   };
 
   return (
-    <div className="neu-toolbar h-12 flex items-center justify-between">
+    <div className="neu-toolbar h-14 flex items-center justify-between">
       <div className="flex items-center space-x-6">
         {/* Brand Section */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
           <motion.div 
-            className="w-8 h-8 rounded-xl neu-shadow-1 flex items-center justify-center neu-hover-lift"
-            whileHover={{ scale: 1.05 }}
+            className="w-10 h-10 rounded-2xl neu-shadow-2 flex items-center justify-center neu-hover-lift"
+            whileHover={{ scale: 1.05, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
-            style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
+            style={{ 
+              background: 'linear-gradient(145deg, var(--neu-primary), var(--neu-primary-dark))',
+              boxShadow: 'var(--neu-shadow-2), 0 0 20px rgba(102, 126, 234, 0.3)'
+            }}
           >
-            <Sparkles className="w-4 h-4 neu-text-accent" />
+            <Sparkles className="w-5 h-5 text-white" />
           </motion.div>
           <div>
             <h1 className="neu-heading-primary neu-text-accent">Sub-Stytler</h1>
@@ -77,15 +82,15 @@ export const Toolbar: React.FC = () => {
         </div>
         
         {/* Action Buttons */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
           <motion.button
             whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleSave}
             className="neu-btn-primary flex items-center space-x-2 neu-hover-lift"
           >
-            <Save className="w-3.5 h-3.5" />
-            <span>Save</span>
+            <Save className="w-4 h-4" />
+            <span>Save Project</span>
           </motion.button>
           
           <motion.button
@@ -94,16 +99,16 @@ export const Toolbar: React.FC = () => {
             onClick={handleExportYTT}
             className="neu-btn flex items-center space-x-2 neu-hover-lift"
           >
-            <Download className="w-3.5 h-3.5" />
-            <span>Export</span>
+            <Download className="w-4 h-4" />
+            <span>Export YTT</span>
           </motion.button>
         </div>
       </div>
       
-      {/* Project Info & Settings */}
-      <div className="flex items-center space-x-4">
+      {/* Project Info & Controls */}
+      <div className="flex items-center space-x-6">
         <div className="text-right">
-          <div className="neu-body-primary text-xs">
+          <div className="neu-body-primary">
             {currentProject?.name || 'Untitled Project'}
           </div>
           <div className="neu-caption">
@@ -111,12 +116,33 @@ export const Toolbar: React.FC = () => {
           </div>
         </div>
         
+        {/* Theme Toggle */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={toggleTheme}
+          className="neu-theme-toggle"
+          title={`Switch to ${isDarkMode ? 'Light' : 'Dark'} Mode`}
+        >
+          <motion.div
+            initial={false}
+            animate={{ rotate: isDarkMode ? 180 : 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            {isDarkMode ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
+          </motion.div>
+        </motion.button>
+        
         <motion.button
           whileHover={{ scale: 1.05, rotate: 90 }}
           whileTap={{ scale: 0.95 }}
-          className="neu-btn-icon"
+          className="neu-btn-icon neu-hover-glow"
         >
-          <Settings className="w-4 h-4" />
+          <Settings className="w-5 h-5" />
         </motion.button>
       </div>
     </div>

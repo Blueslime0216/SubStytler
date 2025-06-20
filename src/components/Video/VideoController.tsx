@@ -148,52 +148,38 @@ export const VideoController: React.FC<VideoControllerProps> = ({
 
   return (
     <div className="neu-video-controller">
-      {/* Neumorphism Progress Bar - 트랜지션 제거 */}
-      <div className="px-6 pt-4 pb-3">
+      {/* Enhanced Neumorphism Progress Bar */}
+      <div className="px-8 pt-6 pb-4">
         <div 
           ref={progressBarRef}
-          className={`relative h-6 flex items-center group ${
+          className={`neu-progress-container relative h-8 flex items-center group ${
             isVideoLoaded ? 'cursor-pointer' : 'cursor-not-allowed'
           }`}
           onMouseDown={handleProgressBarMouseDown}
         >
           {/* Progress Track */}
+          <div className="neu-progress-track" />
+          
+          {/* Progress Fill */}
           <div 
-            className="absolute top-1/2 left-0 right-0 h-1 rounded-full transform -translate-y-1/2"
-            style={{ 
-              background: 'var(--neu-dark)',
-              boxShadow: 'inset 2px 2px 4px var(--neu-dark), inset -2px -2px 4px var(--neu-light)'
-            }}
+            className="neu-progress-fill"
+            style={{ width: `${progressPercentage}%` }}
           />
           
-          {/* Progress Fill - 트랜지션 제거 */}
+          {/* Progress Thumb */}
           <div 
-            className="absolute top-1/2 left-0 h-1 rounded-full transform -translate-y-1/2"
-            style={{ 
-              width: `${progressPercentage}%`,
-              background: 'linear-gradient(90deg, var(--neu-primary), var(--neu-primary-light))',
-              boxShadow: '0 0 4px var(--neu-primary)',
-              transition: 'none' // 트랜지션 완전 제거
-            }}
-          />
-          
-          {/* Progress Thumb - 드래그 중일 때만 트랜지션 제거 */}
-          <div 
-            className={`absolute top-1/2 w-4 h-4 rounded-full transform -translate-y-1/2 -translate-x-1/2 ${
-              isDragging ? 'opacity-100 scale-125' : 'opacity-0 group-hover:opacity-100 transition-all duration-200'
+            className={`neu-progress-thumb ${
+              isDragging ? 'opacity-100 scale-125' : 'opacity-0 group-hover:opacity-100'
             }`}
             style={{ 
               left: `${progressPercentage}%`,
-              background: 'var(--neu-base)',
-              border: '2px solid var(--neu-primary)',
-              boxShadow: 'var(--neu-shadow-1)',
-              transition: isDragging ? 'none' : 'opacity 0.2s ease, transform 0.2s ease' // 드래그 중에만 트랜지션 제거
+              transition: isDragging ? 'none' : 'opacity 0.2s ease, transform 0.2s ease'
             }}
           />
           
           {isDragging && (
             <motion.div 
-              className="neu-card-small absolute -top-10 text-xs neu-text-primary"
+              className="neu-card-micro absolute -top-12 text-xs neu-text-primary font-mono"
               style={{ 
                 left: `${progressPercentage}%`, 
                 transform: 'translateX(-50%)'
@@ -207,19 +193,19 @@ export const VideoController: React.FC<VideoControllerProps> = ({
         </div>
       </div>
 
-      {/* Neumorphism Controls */}
-      <div className="flex items-center justify-between px-6 pb-4">
+      {/* Enhanced Neumorphism Controls */}
+      <div className="flex items-center justify-between px-8 pb-6">
         {/* Left Controls */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
           <motion.button
             whileHover={{ scale: 1.05, y: -1 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleFrameBack}
             disabled={!isVideoLoaded}
-            className="neu-btn-icon disabled:opacity-40"
+            className="neu-btn-icon disabled:opacity-40 neu-hover-lift"
             title="Previous Frame"
           >
-            <SkipBack className="w-4 h-4" />
+            <SkipBack className="w-5 h-5" />
           </motion.button>
           
           <motion.button
@@ -227,13 +213,13 @@ export const VideoController: React.FC<VideoControllerProps> = ({
             whileTap={{ scale: 0.95 }}
             onClick={handlePlayPause}
             disabled={!isVideoLoaded}
-            className="neu-btn-primary p-3 disabled:opacity-40"
+            className="neu-btn-primary p-4 disabled:opacity-40 neu-hover-glow"
             title={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (
-              <Pause className="w-5 h-5" />
+              <Pause className="w-6 h-6" />
             ) : (
-              <Play className="w-5 h-5" />
+              <Play className="w-6 h-6" />
             )}
           </motion.button>
           
@@ -242,15 +228,15 @@ export const VideoController: React.FC<VideoControllerProps> = ({
             whileTap={{ scale: 0.95 }}
             onClick={handleFrameForward}
             disabled={!isVideoLoaded}
-            className="neu-btn-icon disabled:opacity-40"
+            className="neu-btn-icon disabled:opacity-40 neu-hover-lift"
             title="Next Frame"
           >
-            <SkipForward className="w-4 h-4" />
+            <SkipForward className="w-5 h-5" />
           </motion.button>
 
-          {/* Neumorphism Volume Control - 트랜지션 제거 */}
+          {/* Enhanced Neumorphism Volume Control */}
           <div 
-            className="flex items-center space-x-3"
+            className="flex items-center space-x-4"
             onMouseEnter={() => setIsVolumeHovered(true)}
             onMouseLeave={() => setIsVolumeHovered(false)}
           >
@@ -258,13 +244,13 @@ export const VideoController: React.FC<VideoControllerProps> = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onMuteToggle}
-              className="neu-btn-icon"
+              className="neu-btn-icon neu-hover-lift"
               title={isMuted ? 'Unmute' : 'Mute'}
             >
               {isMuted ? (
-                <VolumeX className="w-4 h-4" />
+                <VolumeX className="w-5 h-5" />
               ) : (
-                <Volume2 className="w-4 h-4" />
+                <Volume2 className="w-5 h-5" />
               )}
             </motion.button>
             
@@ -272,54 +258,40 @@ export const VideoController: React.FC<VideoControllerProps> = ({
               className="overflow-visible"
               initial={{ width: 0, opacity: 0 }}
               animate={{ 
-                width: isVolumeHovered || isDraggingVolume ? 80 : 0,
+                width: isVolumeHovered || isDraggingVolume ? 96 : 0,
                 opacity: isVolumeHovered || isDraggingVolume ? 1 : 0
               }}
               transition={{ duration: 0.2, ease: "easeOut" }}
             >
               <div 
                 ref={volumeBarRef}
-                className="relative h-6 flex items-center cursor-pointer"
+                className="neu-volume-container relative h-8 flex items-center cursor-pointer"
                 onMouseDown={handleVolumeBarMouseDown}
-                style={{ width: '80px' }}
+                style={{ width: '96px' }}
               >
                 {/* Volume Track */}
+                <div className="neu-volume-track" />
+                
+                {/* Volume Fill */}
                 <div 
-                  className="absolute top-1/2 left-0 right-0 h-0.5 rounded-full transform -translate-y-1/2"
-                  style={{ 
-                    background: 'var(--neu-dark)',
-                    boxShadow: 'inset 1px 1px 2px var(--neu-dark), inset -1px -1px 2px var(--neu-light)'
-                  }}
+                  className="neu-volume-fill"
+                  style={{ width: `${volumePercentage}%` }}
                 />
                 
-                {/* Volume Fill - 트랜지션 제거 */}
+                {/* Volume Thumb */}
                 <div 
-                  className="absolute top-1/2 left-0 h-0.5 rounded-full transform -translate-y-1/2"
-                  style={{ 
-                    width: `${volumePercentage}%`,
-                    background: 'linear-gradient(90deg, var(--neu-primary), var(--neu-primary-light))',
-                    boxShadow: '0 0 3px var(--neu-primary)',
-                    transition: 'none' // 트랜지션 완전 제거
-                  }}
-                />
-                
-                {/* Volume Thumb - 드래그 중일 때만 트랜지션 제거 */}
-                <div 
-                  className={`absolute top-1/2 w-3 h-3 rounded-full transform -translate-y-1/2 -translate-x-1/2 ${
+                  className={`neu-volume-thumb ${
                     isDraggingVolume ? 'scale-125' : ''
                   }`}
                   style={{ 
                     left: `${volumePercentage}%`,
-                    background: 'var(--neu-base)',
-                    border: '2px solid var(--neu-primary)',
-                    boxShadow: 'var(--neu-shadow-1)',
-                    transition: isDraggingVolume ? 'none' : 'transform 0.1s ease' // 드래그 중에만 트랜지션 제거
+                    transition: isDraggingVolume ? 'none' : 'transform 0.1s ease'
                   }}
                 />
                 
                 {isDraggingVolume && (
                   <motion.div 
-                    className="neu-card-small absolute -top-8 text-xs neu-text-primary whitespace-nowrap"
+                    className="neu-card-micro absolute -top-10 text-xs neu-text-primary font-mono whitespace-nowrap"
                     style={{ 
                       left: `${volumePercentage}%`, 
                       transform: 'translateX(-50%)'
@@ -335,15 +307,15 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           </div>
         </div>
         
-        {/* Neumorphism Time Display */}
-        <div className="text-center space-y-1">
-          <div className="font-mono text-base font-medium neu-text-primary">
+        {/* Enhanced Time Display */}
+        <div className="text-center space-y-2">
+          <div className="font-mono text-lg font-medium neu-text-primary">
             {formatTime(currentTime, fps)} / {formatTime(duration, fps)}
           </div>
-          <div className="flex items-center justify-center space-x-3 neu-caption">
+          <div className="flex items-center justify-center space-x-4 neu-caption">
             <span>Frame {getCurrentFrame()} / {getTotalFrames()}</span>
             <span>@{fps}fps</span>
-            {isVideoLoaded && <span style={{ color: 'var(--neu-success)' }}>● Ready</span>}
+            {isVideoLoaded && <span className="neu-text-accent">● Ready</span>}
             {isDragging && <span style={{ color: 'var(--neu-primary)' }}>● Seeking</span>}
           </div>
         </div>
@@ -354,10 +326,10 @@ export const VideoController: React.FC<VideoControllerProps> = ({
             whileHover={{ scale: 1.05, rotate: 90 }}
             whileTap={{ scale: 0.95 }}
             onClick={onSettings}
-            className="neu-btn-icon neu-hover-lift"
+            className="neu-btn-icon neu-hover-glow"
             title="Settings"
           >
-            <Settings className="w-4 h-4" />
+            <Settings className="w-5 h-5" />
           </motion.button>
         </div>
       </div>

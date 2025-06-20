@@ -2,31 +2,92 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Neumorphism Color System */
+/* Professional Neumorphism Design System */
 :root {
-  /* Base Neumorphism Colors */
-  --neu-base: #F0F0F3;
+  /* Light Mode Neumorphism */
+  --neu-base: #E6E7EE;
   --neu-light: #FFFFFF;
-  --neu-dark: #D1D9E6;
-  --neu-accent: #E3E8F0;
-  --neu-text: #8E9AAF;
-  --neu-text-dark: #6C7B95;
-  --neu-text-primary: #5A6B85;
-  --neu-active: #E8ECF5;
+  --neu-dark: #A3A8C4;
+  --neu-darker: #9398B2;
+  --neu-accent: #D1D9E6;
+  --neu-surface: #F0F0F3;
   
-  /* Neumorphism Shadow System */
-  --neu-shadow-1: 5px 5px 10px var(--neu-dark), -5px -5px 10px var(--neu-light);
+  /* Text Colors - Light Mode */
+  --neu-text-primary: #4A4F6B;
+  --neu-text-secondary: #6C7B95;
+  --neu-text-muted: #8E9AAF;
+  --neu-text-accent: #5A67D8;
+  
+  /* Semantic Colors */
+  --neu-primary: #667EEA;
+  --neu-primary-light: #7C8FEF;
+  --neu-primary-dark: #5A67D8;
+  --neu-success: #48BB78;
+  --neu-warning: #ED8936;
+  --neu-error: #F56565;
+  --neu-info: #4299E1;
+  
+  /* Enhanced Shadow System */
+  --neu-shadow-1: 6px 6px 12px var(--neu-dark), -6px -6px 12px var(--neu-light);
   --neu-shadow-2: 10px 10px 20px var(--neu-dark), -10px -10px 20px var(--neu-light);
   --neu-shadow-3: 15px 15px 30px var(--neu-dark), -15px -15px 30px var(--neu-light);
-  --neu-shadow-inset: inset 5px 5px 10px var(--neu-dark), inset -5px -5px 10px var(--neu-light);
-  --neu-shadow-inset-soft: inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light);
+  --neu-shadow-4: 20px 20px 40px var(--neu-dark), -20px -20px 40px var(--neu-light);
   
-  /* Subtle accent for interactive elements */
-  --neu-primary: #A8B5D1;
-  --neu-primary-light: #B8C5E1;
-  --neu-success: #A8D5B5;
-  --neu-warning: #D5C5A8;
-  --neu-error: #D5A8A8;
+  /* Inset Shadows */
+  --neu-shadow-inset: inset 6px 6px 12px var(--neu-dark), inset -6px -6px 12px var(--neu-light);
+  --neu-shadow-inset-soft: inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light);
+  --neu-shadow-inset-deep: inset 8px 8px 16px var(--neu-dark), inset -8px -8px 16px var(--neu-light);
+  
+  /* Pressed/Active States */
+  --neu-shadow-pressed: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+  
+  /* Subtle Shadows for Small Elements */
+  --neu-shadow-subtle: 3px 3px 6px var(--neu-dark), -3px -3px 6px var(--neu-light);
+  --neu-shadow-micro: 2px 2px 4px var(--neu-dark), -2px -2px 4px var(--neu-light);
+}
+
+/* Dark Mode Neumorphism */
+[data-theme="dark"] {
+  /* Dark Mode Base Colors */
+  --neu-base: #2D3748;
+  --neu-light: #4A5568;
+  --neu-dark: #1A202C;
+  --neu-darker: #171923;
+  --neu-accent: #374151;
+  --neu-surface: #374151;
+  
+  /* Text Colors - Dark Mode */
+  --neu-text-primary: #E2E8F0;
+  --neu-text-secondary: #CBD5E0;
+  --neu-text-muted: #A0AEC0;
+  --neu-text-accent: #90CDF4;
+  
+  /* Semantic Colors - Dark Mode */
+  --neu-primary: #63B3ED;
+  --neu-primary-light: #90CDF4;
+  --neu-primary-dark: #4299E1;
+  --neu-success: #68D391;
+  --neu-warning: #F6AD55;
+  --neu-error: #FC8181;
+  --neu-info: #63B3ED;
+  
+  /* Dark Mode Enhanced Shadows */
+  --neu-shadow-1: 8px 8px 16px var(--neu-dark), -8px -8px 16px var(--neu-light);
+  --neu-shadow-2: 12px 12px 24px var(--neu-dark), -12px -12px 24px var(--neu-light);
+  --neu-shadow-3: 18px 18px 36px var(--neu-dark), -18px -18px 36px var(--neu-light);
+  --neu-shadow-4: 24px 24px 48px var(--neu-dark), -24px -24px 48px var(--neu-light);
+  
+  /* Dark Mode Inset Shadows */
+  --neu-shadow-inset: inset 8px 8px 16px var(--neu-dark), inset -8px -8px 16px var(--neu-light);
+  --neu-shadow-inset-soft: inset 4px 4px 8px var(--neu-dark), inset -4px -8px 8px var(--neu-light);
+  --neu-shadow-inset-deep: inset 10px 10px 20px var(--neu-dark), inset -10px -10px 20px var(--neu-light);
+  
+  /* Dark Mode Pressed States */
+  --neu-shadow-pressed: inset 6px 6px 12px var(--neu-dark), inset -6px -6px 12px var(--neu-light);
+  
+  /* Dark Mode Subtle Shadows */
+  --neu-shadow-subtle: 4px 4px 8px var(--neu-dark), -4px -4px 8px var(--neu-light);
+  --neu-shadow-micro: 3px 3px 6px var(--neu-dark), -3px -3px 6px var(--neu-light);
 }
 
 /* Typography System */
@@ -47,102 +108,172 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Enhanced Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
   background: var(--neu-base);
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--neu-dark);
-  border-radius: 3px;
+  border-radius: 4px;
   border: 1px solid var(--neu-base);
+  box-shadow: var(--neu-shadow-micro);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--neu-text);
+  background: var(--neu-darker);
+  box-shadow: var(--neu-shadow-subtle);
 }
 
 ::-webkit-scrollbar-corner {
   background: var(--neu-base);
 }
 
-/* Neumorphism Button System */
+/* Professional Neumorphism Button System */
 .neu-btn {
-  @apply font-medium px-3 py-2 rounded-xl transition-all duration-200 relative overflow-hidden;
+  @apply font-medium px-4 py-2.5 rounded-2xl transition-all duration-200 relative overflow-hidden;
   background: var(--neu-base);
   color: var(--neu-text-primary);
   box-shadow: var(--neu-shadow-1);
   border: none;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
+  position: relative;
+}
+
+.neu-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, var(--neu-light), var(--neu-accent));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: inherit;
+}
+
+.neu-btn:hover::before {
+  opacity: 0.1;
 }
 
 .neu-btn:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: var(--neu-shadow-2);
-  color: var(--neu-text-dark);
+  color: var(--neu-text-primary);
 }
 
 .neu-btn:active {
   transform: translateY(0);
-  box-shadow: var(--neu-shadow-inset-soft);
+  box-shadow: var(--neu-shadow-pressed);
 }
 
 .neu-btn-primary {
   @apply neu-btn;
-  background: linear-gradient(145deg, var(--neu-base), var(--neu-accent));
-  color: var(--neu-primary);
+  background: linear-gradient(145deg, var(--neu-primary), var(--neu-primary-dark));
+  color: white;
   font-weight: 500;
+  box-shadow: var(--neu-shadow-2), 0 0 20px rgba(102, 126, 234, 0.3);
 }
 
 .neu-btn-primary:hover {
-  color: var(--neu-primary-light);
+  background: linear-gradient(145deg, var(--neu-primary-light), var(--neu-primary));
+  box-shadow: var(--neu-shadow-3), 0 0 30px rgba(102, 126, 234, 0.4);
+  color: white;
+}
+
+.neu-btn-primary:active {
+  box-shadow: var(--neu-shadow-inset-soft), 0 0 15px rgba(102, 126, 234, 0.2);
 }
 
 .neu-btn-small {
   @apply neu-btn;
-  @apply px-2 py-1.5 text-xs;
-  box-shadow: 3px 3px 6px var(--neu-dark), -3px -3px 6px var(--neu-light);
+  @apply px-3 py-2 text-sm rounded-xl;
+  box-shadow: var(--neu-shadow-subtle);
 }
 
 .neu-btn-icon {
-  @apply p-2 rounded-lg transition-all duration-200;
+  @apply p-2.5 rounded-xl transition-all duration-200;
   background: var(--neu-base);
-  color: var(--neu-text);
+  color: var(--neu-text-secondary);
   box-shadow: var(--neu-shadow-1);
   border: none;
+  position: relative;
+}
+
+.neu-btn-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, var(--neu-light), var(--neu-accent));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: inherit;
+}
+
+.neu-btn-icon:hover::before {
+  opacity: 0.15;
 }
 
 .neu-btn-icon:hover {
   transform: translateY(-1px);
   box-shadow: var(--neu-shadow-2);
-  color: var(--neu-text-dark);
+  color: var(--neu-text-primary);
 }
 
 .neu-btn-icon:active {
   transform: translateY(0);
-  box-shadow: var(--neu-shadow-inset-soft);
+  box-shadow: var(--neu-shadow-pressed);
 }
 
-/* Neumorphism Panel System */
+/* Enhanced Neumorphism Panel System */
 .neu-panel {
   background: var(--neu-base);
-  border-radius: 20px;
+  border-radius: 24px;
   box-shadow: var(--neu-shadow-3);
   overflow: hidden;
+  position: relative;
+}
+
+.neu-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neu-light), transparent);
+  opacity: 0.5;
 }
 
 .neu-panel-header {
-  background: linear-gradient(145deg, var(--neu-base), var(--neu-accent));
-  padding: 10px 16px;
+  background: linear-gradient(145deg, var(--neu-surface), var(--neu-accent));
+  padding: 12px 20px;
   border-bottom: 1px solid var(--neu-dark);
+  position: relative;
+}
+
+.neu-panel-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neu-light), transparent);
+  opacity: 0.3;
 }
 
 .neu-panel-content {
@@ -150,88 +281,178 @@ body {
   overflow: hidden;
 }
 
-/* Neumorphism Card System */
+/* Enhanced Neumorphism Card System */
 .neu-card {
   background: var(--neu-base);
   border-radius: 16px;
   box-shadow: var(--neu-shadow-2);
-  padding: 12px;
-  transition: all 0.2s ease;
+  padding: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.neu-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, var(--neu-light), var(--neu-accent));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.neu-card:hover::before {
+  opacity: 0.05;
 }
 
 .neu-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--neu-shadow-3);
 }
 
 .neu-card-small {
   @apply neu-card;
-  padding: 8px;
+  padding: 12px;
   border-radius: 12px;
   box-shadow: var(--neu-shadow-1);
 }
 
-/* Neumorphism Input System */
+.neu-card-micro {
+  @apply neu-card;
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: var(--neu-shadow-subtle);
+}
+
+/* Enhanced Neumorphism Input System */
 .neu-input {
   background: var(--neu-base);
   border: none;
-  border-radius: 12px;
-  padding: 8px 12px;
+  border-radius: 16px;
+  padding: 12px 16px;
   box-shadow: var(--neu-shadow-inset);
   color: var(--neu-text-primary);
-  font-size: 0.8rem;
-  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .neu-input:focus {
   outline: none;
-  box-shadow: var(--neu-shadow-inset), 0 0 0 2px var(--neu-primary);
+  box-shadow: var(--neu-shadow-inset-deep), 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: linear-gradient(145deg, var(--neu-base), var(--neu-surface));
 }
 
 .neu-input::placeholder {
-  color: var(--neu-text);
+  color: var(--neu-text-muted);
   font-weight: 400;
 }
 
 .neu-select {
   @apply neu-input;
   cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
 }
 
-/* Neumorphism Dropdown System */
+/* Enhanced Neumorphism Dropdown System */
 .neu-dropdown {
   background: var(--neu-base);
-  border-radius: 16px;
-  box-shadow: var(--neu-shadow-3);
-  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: var(--neu-shadow-4);
+  backdrop-filter: blur(20px);
   border: 1px solid var(--neu-light);
-}
-
-.neu-dropdown-item {
-  @apply px-3 py-2 rounded-lg transition-all duration-150;
-  color: var(--neu-text);
-  font-size: 0.8rem;
-}
-
-.neu-dropdown-item:hover {
-  background: linear-gradient(145deg, var(--neu-accent), var(--neu-base));
-  color: var(--neu-text-primary);
-  transform: translateX(2px);
-  box-shadow: var(--neu-shadow-1);
-}
-
-/* Neumorphism Timeline System */
-.neu-timeline {
-  background: var(--neu-base);
-  border-radius: 16px;
-  box-shadow: var(--neu-shadow-2);
+  position: relative;
   overflow: hidden;
 }
 
+.neu-dropdown::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, var(--neu-light), var(--neu-accent));
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+.neu-dropdown-item {
+  @apply px-4 py-3 rounded-xl transition-all duration-200;
+  color: var(--neu-text-secondary);
+  font-size: 0.875rem;
+  position: relative;
+  margin: 2px;
+}
+
+.neu-dropdown-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, var(--neu-light), var(--neu-accent));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: inherit;
+}
+
+.neu-dropdown-item:hover::before {
+  opacity: 0.1;
+}
+
+.neu-dropdown-item:hover {
+  color: var(--neu-text-primary);
+  transform: translateX(4px);
+  box-shadow: var(--neu-shadow-1);
+}
+
+/* Enhanced Neumorphism Timeline System */
+.neu-timeline {
+  background: var(--neu-base);
+  border-radius: 20px;
+  box-shadow: var(--neu-shadow-3);
+  overflow: hidden;
+  position: relative;
+}
+
+.neu-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--neu-primary), var(--neu-primary-light));
+  opacity: 0.6;
+}
+
 .neu-timeline-ruler {
-  background: linear-gradient(145deg, var(--neu-base), var(--neu-accent));
+  background: linear-gradient(145deg, var(--neu-surface), var(--neu-accent));
   border-bottom: 1px solid var(--neu-dark);
-  padding: 8px 0;
+  padding: 12px 0;
+  position: relative;
+}
+
+.neu-timeline-ruler::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neu-light), transparent);
+  opacity: 0.4;
 }
 
 .neu-timeline-track {
@@ -241,53 +462,157 @@ body {
 
 .neu-subtitle-block {
   background: linear-gradient(145deg, var(--neu-primary), var(--neu-primary-light));
-  border-radius: 8px;
-  box-shadow: var(--neu-shadow-1);
+  border-radius: 12px;
+  box-shadow: var(--neu-shadow-2), 0 0 15px rgba(102, 126, 234, 0.2);
   color: white;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.neu-subtitle-block::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--neu-primary-light), white, var(--neu-primary-light));
+  opacity: 0.6;
 }
 
 .neu-subtitle-block:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--neu-shadow-2);
+  transform: translateY(-2px);
+  box-shadow: var(--neu-shadow-3), 0 0 25px rgba(102, 126, 234, 0.3);
 }
 
-/* Neumorphism Progress Bar - 드래그 요소 트랜지션 제거 */
+/* Enhanced Progress Bar System - 완전히 새로운 뉴모피즘 디자인 */
 .neu-progress-container {
   background: var(--neu-base);
-  border-radius: 8px;
+  border-radius: 12px;
   box-shadow: var(--neu-shadow-inset);
-  padding: 4px 0;
-  margin: 0 8px;
+  padding: 8px 0;
+  margin: 0 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.neu-progress-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, var(--neu-dark), var(--neu-light));
+  opacity: 0.1;
+  border-radius: inherit;
 }
 
 .neu-progress-track {
   position: absolute;
   top: 50%;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--neu-dark);
-  border-radius: 1px;
+  left: 8px;
+  right: 8px;
+  height: 4px;
+  background: var(--neu-base);
+  border-radius: 2px;
   transform: translateY(-50%);
+  box-shadow: var(--neu-shadow-inset-soft);
 }
 
-/* 진행 바 fill - 트랜지션 제거 */
 .neu-progress-fill {
   position: absolute;
   top: 50%;
+  left: 8px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--neu-primary), var(--neu-primary-light));
+  border-radius: 2px;
+  transform: translateY(-50%);
+  transition: none;
+  box-shadow: 0 0 8px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  position: relative;
+}
+
+.neu-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  border-radius: inherit;
+}
+
+.neu-progress-thumb {
+  background: var(--neu-base);
+  border: 3px solid var(--neu-primary);
+  box-shadow: var(--neu-shadow-2), 0 0 10px rgba(102, 126, 234, 0.3);
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.neu-progress-thumb::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  background: linear-gradient(145deg, var(--neu-light), var(--neu-accent));
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.neu-progress-thumb:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: var(--neu-shadow-3), 0 0 20px rgba(102, 126, 234, 0.5);
+  border-color: var(--neu-primary-light);
+}
+
+/* Volume Control - 뉴모피즘 스타일 */
+.neu-volume-container {
+  background: var(--neu-base);
+  border-radius: 8px;
+  box-shadow: var(--neu-shadow-inset);
+  padding: 6px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.neu-volume-track {
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: var(--neu-base);
+  border-radius: 1px;
+  transform: translateY(-50%);
+  box-shadow: var(--neu-shadow-inset-soft);
+}
+
+.neu-volume-fill {
+  position: absolute;
+  top: 50%;
+  left: 4px;
   height: 2px;
   background: linear-gradient(90deg, var(--neu-primary), var(--neu-primary-light));
   border-radius: 1px;
   transform: translateY(-50%);
-  transition: none; /* 트랜지션 제거 - 즉각적인 반응 */
-  box-shadow: 0 0 4px var(--neu-primary);
+  transition: none;
+  box-shadow: 0 0 6px rgba(102, 126, 234, 0.4);
 }
 
-/* 진행 바 thumb - 드래그 시에만 트랜지션 제거 */
-.neu-progress-thumb {
+.neu-volume-thumb {
   background: var(--neu-base);
   border: 2px solid var(--neu-primary);
   box-shadow: var(--neu-shadow-1);
@@ -297,45 +622,77 @@ body {
   border-radius: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  /* 기본 트랜지션은 유지, 드래그 시에만 인라인으로 제거 */
-  transition: all 0.2s ease;
+  transition: transform 0.1s ease;
 }
 
-.neu-progress-thumb:hover {
+.neu-volume-thumb:hover {
   transform: translate(-50%, -50%) scale(1.2);
   box-shadow: var(--neu-shadow-2);
 }
 
-/* 드래그 가능한 요소들의 트랜지션 제거 클래스 */
-.neu-dragging {
-  transition: none !important;
+/* Enhanced Neumorphism Toolbar */
+.neu-toolbar {
+  background: linear-gradient(145deg, var(--neu-surface), var(--neu-accent));
+  border-bottom: 1px solid var(--neu-dark);
+  box-shadow: var(--neu-shadow-2);
+  padding: 12px 20px;
+  position: relative;
 }
 
-/* Neumorphism Toolbar */
-.neu-toolbar {
-  background: linear-gradient(145deg, var(--neu-base), var(--neu-accent));
-  border-bottom: 1px solid var(--neu-dark);
-  box-shadow: var(--neu-shadow-1);
-  padding: 8px 16px;
+.neu-toolbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neu-light), transparent);
+  opacity: 0.4;
 }
 
 /* Status Bar */
 .neu-status-bar {
   background: var(--neu-base);
   border-top: 1px solid var(--neu-dark);
-  color: var(--neu-text);
-  font-size: 0.7rem;
+  color: var(--neu-text-muted);
+  font-size: 0.75rem;
   font-family: 'JetBrains Mono', monospace;
-  padding: 4px 16px;
+  padding: 6px 20px;
+  position: relative;
 }
 
-/* Neumorphism Toast System */
+.neu-status-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neu-light), transparent);
+  opacity: 0.3;
+}
+
+/* Enhanced Neumorphism Toast System */
 .neu-toast {
   background: var(--neu-base);
   border-radius: 16px;
   box-shadow: var(--neu-shadow-3);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
   border: 1px solid var(--neu-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.neu-toast::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, var(--neu-light), var(--neu-accent));
+  opacity: 0.05;
+  pointer-events: none;
 }
 
 .neu-toast-success {
@@ -347,25 +704,37 @@ body {
 }
 
 .neu-toast-info {
-  border-left: 4px solid var(--neu-primary);
+  border-left: 4px solid var(--neu-info);
 }
 
 .neu-toast-warning {
   border-left: 4px solid var(--neu-warning);
 }
 
-/* Neumorphism Video Controller */
+/* Enhanced Neumorphism Video Controller */
 .neu-video-controller {
-  background: linear-gradient(to top, var(--neu-base), var(--neu-accent));
-  backdrop-filter: blur(10px);
+  background: linear-gradient(to top, var(--neu-base), var(--neu-surface));
+  backdrop-filter: blur(20px);
   border-top: 1px solid var(--neu-dark);
-  box-shadow: 0 -2px 10px var(--neu-dark);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1), var(--neu-shadow-2);
+  position: relative;
 }
 
-/* Resize Handles */
+.neu-video-controller::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neu-light), transparent);
+  opacity: 0.4;
+}
+
+/* Enhanced Resize Handles */
 .neu-resize-handle {
   background: var(--neu-base);
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   position: relative;
 }
 
@@ -376,34 +745,64 @@ body {
 
 .neu-resize-handle.dragging {
   background: var(--neu-primary);
-  box-shadow: var(--neu-shadow-2);
+  box-shadow: var(--neu-shadow-2), 0 0 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Theme Toggle Button */
+.neu-theme-toggle {
+  @apply neu-btn-icon;
+  position: relative;
+  overflow: hidden;
+}
+
+.neu-theme-toggle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, var(--neu-primary), transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.neu-theme-toggle:hover::after {
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
 }
 
 /* Utility Classes */
 .neu-text-primary { color: var(--neu-text-primary); }
-.neu-text-secondary { color: var(--neu-text); }
-.neu-text-muted { color: var(--neu-text); opacity: 0.7; }
-.neu-text-accent { color: var(--neu-primary); }
+.neu-text-secondary { color: var(--neu-text-secondary); }
+.neu-text-muted { color: var(--neu-text-muted); }
+.neu-text-accent { color: var(--neu-text-accent); }
 
 .neu-bg-base { background: var(--neu-base); }
+.neu-bg-surface { background: var(--neu-surface); }
 .neu-bg-accent { background: var(--neu-accent); }
 
 .neu-shadow-1 { box-shadow: var(--neu-shadow-1); }
 .neu-shadow-2 { box-shadow: var(--neu-shadow-2); }
 .neu-shadow-3 { box-shadow: var(--neu-shadow-3); }
+.neu-shadow-4 { box-shadow: var(--neu-shadow-4); }
 .neu-shadow-inset { box-shadow: var(--neu-shadow-inset); }
+.neu-shadow-pressed { box-shadow: var(--neu-shadow-pressed); }
 
 /* Typography */
 .neu-heading-primary {
-  @apply text-lg font-semibold;
+  @apply text-xl font-semibold;
   color: var(--neu-text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 .neu-heading-secondary {
-  @apply text-base font-medium;
+  @apply text-lg font-medium;
   color: var(--neu-text-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
 
 .neu-body-primary {
@@ -413,16 +812,16 @@ body {
 
 .neu-body-secondary {
   @apply text-sm;
-  color: var(--neu-text);
+  color: var(--neu-text-secondary);
 }
 
 .neu-caption {
   @apply text-xs;
-  color: var(--neu-text);
+  color: var(--neu-text-muted);
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Animations */
+/* Enhanced Animations */
 @keyframes neu-pulse {
   0%, 100% {
     box-shadow: var(--neu-shadow-1);
@@ -432,42 +831,13 @@ body {
   }
 }
 
-.neu-pulse {
-  animation: neu-pulse 2s ease-in-out infinite;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .neu-panel-header {
-    padding: 8px 12px;
+@keyframes neu-glow {
+  0%, 100% {
+    box-shadow: var(--neu-shadow-2), 0 0 10px rgba(102, 126, 234, 0.2);
   }
-  
-  .neu-btn, .neu-btn-primary {
-    @apply px-2 py-1.5 text-xs;
+  50% {
+    box-shadow: var(--neu-shadow-3), 0 0 20px rgba(102, 126, 234, 0.4);
   }
-  
-  .neu-dropdown {
-    max-width: calc(100vw - 24px);
-    margin: 0 12px;
-  }
-  
-  .neu-progress-container {
-    margin: 0 6px;
-    padding: 6px 0;
-  }
-}
-
-/* Focus Management */
-.neu-focus:focus {
-  outline: none;
-  box-shadow: var(--neu-shadow-1), 0 0 0 2px var(--neu-primary);
-}
-
-/* Loading States */
-.neu-loading {
-  background: linear-gradient(90deg, var(--neu-base), var(--neu-accent), var(--neu-base));
-  background-size: 200% 100%;
-  animation: neu-shimmer 2s infinite;
 }
 
 @keyframes neu-shimmer {
@@ -479,13 +849,96 @@ body {
   }
 }
 
+.neu-pulse {
+  animation: neu-pulse 2s ease-in-out infinite;
+}
+
+.neu-glow {
+  animation: neu-glow 2s ease-in-out infinite;
+}
+
+.neu-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(102, 126, 234, 0.1),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: neu-shimmer 2s infinite;
+}
+
 /* Hover Effects */
 .neu-hover-lift:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--neu-shadow-3);
 }
 
 .neu-hover-press:active {
   transform: translateY(1px);
-  box-shadow: var(--neu-shadow-inset-soft);
+  box-shadow: var(--neu-shadow-pressed);
+}
+
+.neu-hover-glow:hover {
+  box-shadow: var(--neu-shadow-2), 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .neu-panel {
+    border-radius: 16px;
+  }
+  
+  .neu-panel-header {
+    padding: 10px 16px;
+  }
+  
+  .neu-btn, .neu-btn-primary {
+    @apply px-3 py-2 text-sm;
+  }
+  
+  .neu-dropdown {
+    max-width: calc(100vw - 32px);
+    margin: 0 16px;
+  }
+  
+  .neu-progress-container {
+    margin: 0 8px;
+    padding: 10px 0;
+  }
+}
+
+/* Focus Management */
+.neu-focus:focus {
+  outline: none;
+  box-shadow: var(--neu-shadow-1), 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+/* Loading States */
+.neu-loading {
+  background: linear-gradient(90deg, var(--neu-base), var(--neu-accent), var(--neu-base));
+  background-size: 200% 100%;
+  animation: neu-shimmer 2s infinite;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --neu-shadow-1: 8px 8px 16px rgba(0, 0, 0, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.8);
+    --neu-shadow-2: 12px 12px 24px rgba(0, 0, 0, 0.4), -12px -12px 24px rgba(255, 255, 255, 0.9);
+  }
+  
+  [data-theme="dark"] {
+    --neu-shadow-1: 10px 10px 20px rgba(0, 0, 0, 0.6), -10px -10px 20px rgba(255, 255, 255, 0.1);
+    --neu-shadow-2: 15px 15px 30px rgba(0, 0, 0, 0.7), -15px -15px 30px rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
