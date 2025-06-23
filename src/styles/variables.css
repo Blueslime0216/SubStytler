@@ -25,68 +25,77 @@
   --neu-error: #FC8181;
   --neu-info: #63B3ED;
   
-  /* Unified Dark Shadow System - Pure Black Based */
+  /* Neumorphism Shadow System - Harmonious with Background */
   --neu-shadow-1: 
-    8px 8px 16px rgba(0, 0, 0, 0.4),
-    -4px -4px 12px rgba(255, 255, 255, 0.05);
+    6px 6px 12px rgba(13, 17, 23, 0.8),
+    -3px -3px 8px rgba(45, 55, 72, 0.6);
   
   --neu-shadow-2: 
-    12px 12px 24px rgba(0, 0, 0, 0.5),
-    -6px -6px 16px rgba(255, 255, 255, 0.08);
+    8px 8px 16px rgba(13, 17, 23, 0.9),
+    -4px -4px 10px rgba(45, 55, 72, 0.7);
   
   --neu-shadow-3: 
-    16px 16px 32px rgba(0, 0, 0, 0.6),
-    -8px -8px 20px rgba(255, 255, 255, 0.1);
+    12px 12px 24px rgba(13, 17, 23, 1),
+    -6px -6px 14px rgba(45, 55, 72, 0.8);
   
   --neu-shadow-4: 
-    20px 20px 40px rgba(0, 0, 0, 0.7),
-    -10px -10px 24px rgba(255, 255, 255, 0.12);
+    16px 16px 32px rgba(13, 17, 23, 1),
+    -8px -8px 18px rgba(45, 55, 72, 0.9);
   
-  /* Enhanced Elevated Shadows - Consistent Black Theme */
+  /* Panel-Specific Shadows - Half Size for Subtle 3D Effect */
+  --neu-shadow-panel: 
+    4px 4px 12px rgba(13, 17, 23, 0.7),
+    -2px -2px 6px rgba(45, 55, 72, 0.5);
+  
+  --neu-shadow-panel-hover: 
+    6px 6px 16px rgba(13, 17, 23, 0.8),
+    -3px -3px 8px rgba(45, 55, 72, 0.6);
+  
+  /* Enhanced Elevated Shadows - Harmonious Colors */
   --neu-shadow-elevated: 
-    16px 16px 48px rgba(0, 0, 0, 0.6),
-    -8px -8px 24px rgba(255, 255, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    8px 8px 24px rgba(13, 17, 23, 0.8),
+    -4px -4px 12px rgba(45, 55, 72, 0.6),
+    inset 0 1px 0 rgba(45, 55, 72, 0.3);
   
   --neu-shadow-elevated-hover: 
-    20px 20px 60px rgba(0, 0, 0, 0.7),
-    -10px -10px 30px rgba(255, 255, 255, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    12px 12px 32px rgba(13, 17, 23, 0.9),
+    -6px -6px 16px rgba(45, 55, 72, 0.7),
+    inset 0 1px 0 rgba(45, 55, 72, 0.4);
   
-  /* Unified Inset Shadows */
+  /* Unified Inset Shadows - Background Harmonious */
   --neu-shadow-inset: 
-    inset 6px 6px 12px rgba(0, 0, 0, 0.4),
-    inset -3px -3px 9px rgba(255, 255, 255, 0.05);
+    inset 4px 4px 8px rgba(13, 17, 23, 0.6),
+    inset -2px -2px 6px rgba(45, 55, 72, 0.4);
   
   --neu-shadow-inset-soft: 
-    inset 4px 4px 8px rgba(0, 0, 0, 0.3),
-    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+    inset 3px 3px 6px rgba(13, 17, 23, 0.5),
+    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
   
   --neu-shadow-inset-deep: 
-    inset 8px 8px 16px rgba(0, 0, 0, 0.5),
-    inset -4px -4px 12px rgba(255, 255, 255, 0.06);
+    inset 6px 6px 12px rgba(13, 17, 23, 0.7),
+    inset -3px -3px 8px rgba(45, 55, 72, 0.5);
   
   /* Unified Interactive States */
   --neu-shadow-pressed: 
-    inset 4px 4px 8px rgba(0, 0, 0, 0.4),
-    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+    inset 3px 3px 6px rgba(13, 17, 23, 0.6),
+    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
   
   --neu-shadow-hover: 
-    10px 10px 20px rgba(0, 0, 0, 0.5),
-    -5px -5px 15px rgba(255, 255, 255, 0.08);
+    7px 7px 14px rgba(13, 17, 23, 0.8),
+    -3px -3px 9px rgba(45, 55, 72, 0.6);
   
   --neu-shadow-active: 
-    inset 3px 3px 6px rgba(0, 0, 0, 0.3),
-    inset -1px -1px 4px rgba(255, 255, 255, 0.03);
+    inset 2px 2px 4px rgba(13, 17, 23, 0.5),
+    inset -1px -1px 3px rgba(45, 55, 72, 0.2);
   
   /* Unified Subtle Shadows */
   --neu-shadow-subtle: 
-    4px 4px 8px rgba(0, 0, 0, 0.3),
-    -2px -2px 6px rgba(255, 255, 255, 0.04);
+    3px 3px 6px rgba(13, 17, 23, 0.6),
+    -1px -1px 4px rgba(45, 55, 72, 0.3);
   
   --neu-shadow-micro: 
-    2px 2px 4px rgba(0, 0, 0, 0.2),
-    -1px -1px 3px rgba(255, 255, 255, 0.03);
+    2px 2px 4px rgba(13, 17, 23, 0.5),
+    -1px -1px 2px rgba(45, 55, 72, 0.2);
   
   /* Interactive Feedback - Consistent with Shadow Theme */
   --neu-interactive-bg: rgba(99, 179, 237, 0.15);
@@ -118,62 +127,70 @@
   --neu-info: #63B3ED;
   
   --neu-shadow-1: 
-    8px 8px 16px rgba(0, 0, 0, 0.4),
-    -4px -4px 12px rgba(255, 255, 255, 0.05);
+    6px 6px 12px rgba(13, 17, 23, 0.8),
+    -3px -3px 8px rgba(45, 55, 72, 0.6);
   
   --neu-shadow-2: 
-    12px 12px 24px rgba(0, 0, 0, 0.5),
-    -6px -6px 16px rgba(255, 255, 255, 0.08);
+    8px 8px 16px rgba(13, 17, 23, 0.9),
+    -4px -4px 10px rgba(45, 55, 72, 0.7);
   
   --neu-shadow-3: 
-    16px 16px 32px rgba(0, 0, 0, 0.6),
-    -8px -8px 20px rgba(255, 255, 255, 0.1);
+    12px 12px 24px rgba(13, 17, 23, 1),
+    -6px -6px 14px rgba(45, 55, 72, 0.8);
   
   --neu-shadow-4: 
-    20px 20px 40px rgba(0, 0, 0, 0.7),
-    -10px -10px 24px rgba(255, 255, 255, 0.12);
+    16px 16px 32px rgba(13, 17, 23, 1),
+    -8px -8px 18px rgba(45, 55, 72, 0.9);
+  
+  --neu-shadow-panel: 
+    4px 4px 12px rgba(13, 17, 23, 0.7),
+    -2px -2px 6px rgba(45, 55, 72, 0.5);
+  
+  --neu-shadow-panel-hover: 
+    6px 6px 16px rgba(13, 17, 23, 0.8),
+    -3px -3px 8px rgba(45, 55, 72, 0.6);
   
   --neu-shadow-elevated: 
-    16px 16px 48px rgba(0, 0, 0, 0.6),
-    -8px -8px 24px rgba(255, 255, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    8px 8px 24px rgba(13, 17, 23, 0.8),
+    -4px -4px 12px rgba(45, 55, 72, 0.6),
+    inset 0 1px 0 rgba(45, 55, 72, 0.3);
   
   --neu-shadow-elevated-hover: 
-    20px 20px 60px rgba(0, 0, 0, 0.7),
-    -10px -10px 30px rgba(255, 255, 255, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    12px 12px 32px rgba(13, 17, 23, 0.9),
+    -6px -6px 16px rgba(45, 55, 72, 0.7),
+    inset 0 1px 0 rgba(45, 55, 72, 0.4);
   
   --neu-shadow-inset: 
-    inset 6px 6px 12px rgba(0, 0, 0, 0.4),
-    inset -3px -3px 9px rgba(255, 255, 255, 0.05);
+    inset 4px 4px 8px rgba(13, 17, 23, 0.6),
+    inset -2px -2px 6px rgba(45, 55, 72, 0.4);
   
   --neu-shadow-inset-soft: 
-    inset 4px 4px 8px rgba(0, 0, 0, 0.3),
-    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+    inset 3px 3px 6px rgba(13, 17, 23, 0.5),
+    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
   
   --neu-shadow-inset-deep: 
-    inset 8px 8px 16px rgba(0, 0, 0, 0.5),
-    inset -4px -4px 12px rgba(255, 255, 255, 0.06);
+    inset 6px 6px 12px rgba(13, 17, 23, 0.7),
+    inset -3px -3px 8px rgba(45, 55, 72, 0.5);
   
   --neu-shadow-pressed: 
-    inset 4px 4px 8px rgba(0, 0, 0, 0.4),
-    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+    inset 3px 3px 6px rgba(13, 17, 23, 0.6),
+    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
   
   --neu-shadow-hover: 
-    10px 10px 20px rgba(0, 0, 0, 0.5),
-    -5px -5px 15px rgba(255, 255, 255, 0.08);
+    7px 7px 14px rgba(13, 17, 23, 0.8),
+    -3px -3px 9px rgba(45, 55, 72, 0.6);
   
   --neu-shadow-active: 
-    inset 3px 3px 6px rgba(0, 0, 0, 0.3),
-    inset -1px -1px 4px rgba(255, 255, 255, 0.03);
+    inset 2px 2px 4px rgba(13, 17, 23, 0.5),
+    inset -1px -1px 3px rgba(45, 55, 72, 0.2);
   
   --neu-shadow-subtle: 
-    4px 4px 8px rgba(0, 0, 0, 0.3),
-    -2px -2px 6px rgba(255, 255, 255, 0.04);
+    3px 3px 6px rgba(13, 17, 23, 0.6),
+    -1px -1px 4px rgba(45, 55, 72, 0.3);
   
   --neu-shadow-micro: 
-    2px 2px 4px rgba(0, 0, 0, 0.2),
-    -1px -1px 3px rgba(255, 255, 255, 0.03);
+    2px 2px 4px rgba(13, 17, 23, 0.5),
+    -1px -1px 2px rgba(45, 55, 72, 0.2);
   
   --neu-interactive-bg: rgba(99, 179, 237, 0.15);
   --neu-interactive-border: rgba(99, 179, 237, 0.4);
@@ -204,62 +221,70 @@
   --neu-info: #63B3ED;
   
   --neu-shadow-1: 
-    8px 8px 16px rgba(0, 0, 0, 0.4),
-    -4px -4px 12px rgba(255, 255, 255, 0.05);
+    6px 6px 12px rgba(13, 17, 23, 0.8),
+    -3px -3px 8px rgba(45, 55, 72, 0.6);
   
   --neu-shadow-2: 
-    12px 12px 24px rgba(0, 0, 0, 0.5),
-    -6px -6px 16px rgba(255, 255, 255, 0.08);
+    8px 8px 16px rgba(13, 17, 23, 0.9),
+    -4px -4px 10px rgba(45, 55, 72, 0.7);
   
   --neu-shadow-3: 
-    16px 16px 32px rgba(0, 0, 0, 0.6),
-    -8px -8px 20px rgba(255, 255, 255, 0.1);
+    12px 12px 24px rgba(13, 17, 23, 1),
+    -6px -6px 14px rgba(45, 55, 72, 0.8);
   
   --neu-shadow-4: 
-    20px 20px 40px rgba(0, 0, 0, 0.7),
-    -10px -10px 24px rgba(255, 255, 255, 0.12);
+    16px 16px 32px rgba(13, 17, 23, 1),
+    -8px -8px 18px rgba(45, 55, 72, 0.9);
+  
+  --neu-shadow-panel: 
+    4px 4px 12px rgba(13, 17, 23, 0.7),
+    -2px -2px 6px rgba(45, 55, 72, 0.5);
+  
+  --neu-shadow-panel-hover: 
+    6px 6px 16px rgba(13, 17, 23, 0.8),
+    -3px -3px 8px rgba(45, 55, 72, 0.6);
   
   --neu-shadow-elevated: 
-    16px 16px 48px rgba(0, 0, 0, 0.6),
-    -8px -8px 24px rgba(255, 255, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    8px 8px 24px rgba(13, 17, 23, 0.8),
+    -4px -4px 12px rgba(45, 55, 72, 0.6),
+    inset 0 1px 0 rgba(45, 55, 72, 0.3);
   
   --neu-shadow-elevated-hover: 
-    20px 20px 60px rgba(0, 0, 0, 0.7),
-    -10px -10px 30px rgba(255, 255, 255, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    12px 12px 32px rgba(13, 17, 23, 0.9),
+    -6px -6px 16px rgba(45, 55, 72, 0.7),
+    inset 0 1px 0 rgba(45, 55, 72, 0.4);
   
   --neu-shadow-inset: 
-    inset 6px 6px 12px rgba(0, 0, 0, 0.4),
-    inset -3px -3px 9px rgba(255, 255, 255, 0.05);
+    inset 4px 4px 8px rgba(13, 17, 23, 0.6),
+    inset -2px -2px 6px rgba(45, 55, 72, 0.4);
   
   --neu-shadow-inset-soft: 
-    inset 4px 4px 8px rgba(0, 0, 0, 0.3),
-    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+    inset 3px 3px 6px rgba(13, 17, 23, 0.5),
+    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
   
   --neu-shadow-inset-deep: 
-    inset 8px 8px 16px rgba(0, 0, 0, 0.5),
-    inset -4px -4px 12px rgba(255, 255, 255, 0.06);
+    inset 6px 6px 12px rgba(13, 17, 23, 0.7),
+    inset -3px -3px 8px rgba(45, 55, 72, 0.5);
   
   --neu-shadow-pressed: 
-    inset 4px 4px 8px rgba(0, 0, 0, 0.4),
-    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+    inset 3px 3px 6px rgba(13, 17, 23, 0.6),
+    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
   
   --neu-shadow-hover: 
-    10px 10px 20px rgba(0, 0, 0, 0.5),
-    -5px -5px 15px rgba(255, 255, 255, 0.08);
+    7px 7px 14px rgba(13, 17, 23, 0.8),
+    -3px -3px 9px rgba(45, 55, 72, 0.6);
   
   --neu-shadow-active: 
-    inset 3px 3px 6px rgba(0, 0, 0, 0.3),
-    inset -1px -1px 4px rgba(255, 255, 255, 0.03);
+    inset 2px 2px 4px rgba(13, 17, 23, 0.5),
+    inset -1px -1px 3px rgba(45, 55, 72, 0.2);
   
   --neu-shadow-subtle: 
-    4px 4px 8px rgba(0, 0, 0, 0.3),
-    -2px -2px 6px rgba(255, 255, 255, 0.04);
+    3px 3px 6px rgba(13, 17, 23, 0.6),
+    -1px -1px 4px rgba(45, 55, 72, 0.3);
   
   --neu-shadow-micro: 
-    2px 2px 4px rgba(0, 0, 0, 0.2),
-    -1px -1px 3px rgba(255, 255, 255, 0.03);
+    2px 2px 4px rgba(13, 17, 23, 0.5),
+    -1px -1px 2px rgba(45, 55, 72, 0.2);
   
   --neu-interactive-bg: rgba(99, 179, 237, 0.15);
   --neu-interactive-border: rgba(99, 179, 237, 0.4);

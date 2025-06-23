@@ -1,11 +1,11 @@
-/* Panel System - No Hover Effects */
+/* Panel System - Reduced Shadow Sizes */
 
 .neu-panel {
   background: var(--neu-base);
   border-radius: 18px;
   position: relative;
-  box-shadow: var(--neu-shadow-elevated);
-  border: 2px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--neu-shadow-panel);
+  border: 2px solid rgba(45, 55, 72, 0.3);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -21,9 +21,9 @@
   right: 0;
   bottom: 0;
   background: linear-gradient(145deg, 
-    rgba(255, 255, 255, 0.05) 0%, 
+    rgba(45, 55, 72, 0.1) 0%, 
     transparent 50%, 
-    rgba(255, 255, 255, 0.02) 100%);
+    rgba(13, 17, 23, 0.05) 100%);
   pointer-events: none;
   border-radius: inherit;
 }
@@ -33,7 +33,7 @@
 .neu-panel-header {
   background: var(--neu-base);
   padding: 12px 18px;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 2px solid rgba(45, 55, 72, 0.3);
   position: relative;
   font-weight: 600;
   color: var(--neu-text-primary);
@@ -51,7 +51,7 @@
   height: 1px;
   background: linear-gradient(90deg, 
     transparent 0%, 
-    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(45, 55, 72, 0.4) 50%, 
     transparent 100%);
   opacity: 0.6;
 }
@@ -65,7 +65,7 @@
   z-index: 1;
 }
 
-/* All Panel Types - No Hover Effects */
+/* All Panel Types - Reduced Shadow Sizes */
 .neu-video-panel,
 .neu-timeline,
 .neu-text-editor-panel,
@@ -78,8 +78,8 @@
   border-radius: 18px;
   overflow: hidden;
   position: relative;
-  box-shadow: var(--neu-shadow-elevated);
-  border: 2px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--neu-shadow-panel);
+  border: 2px solid rgba(45, 55, 72, 0.3);
   background: var(--neu-base);
 }
 
@@ -99,9 +99,9 @@
   right: 0;
   bottom: 0;
   background: linear-gradient(145deg, 
-    rgba(255, 255, 255, 0.05) 0%, 
+    rgba(45, 55, 72, 0.1) 0%, 
     transparent 50%, 
-    rgba(255, 255, 255, 0.02) 100%);
+    rgba(13, 17, 23, 0.05) 100%);
   pointer-events: none;
   border-radius: inherit;
 }
