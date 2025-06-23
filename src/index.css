@@ -1,10 +1,16 @@
 /* Import Design System Styles */
 @import './styles/variables.css';
 @import './styles/base.css';
+@import './styles/typography.css';
 @import './styles/components.css';
 @import './styles/timeline.css';
+@import './styles/progress.css';
+@import './styles/video.css';
 @import './styles/layout.css';
+@import './styles/resize.css';
 @import './styles/toast.css';
+@import './styles/animations.css';
+@import './styles/focus.css';
 @import './styles/utilities.css';
 @import './styles/responsive.css';
 

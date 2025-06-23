@@ -1,0 +1,59 @@
+/* Typography System - Enhanced Readability */
+
+.neu-heading-primary {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neu-text-primary);
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+}
+
+.neu-heading-secondary {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--neu-text-primary);
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+}
+
+.neu-body-primary {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--neu-text-primary);
+  line-height: 1.5;
+}
+
+.neu-body-secondary {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--neu-text-secondary);
+  line-height: 1.5;
+}
+
+.neu-caption {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--neu-text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.4;
+}
+
+/* Typography responsive adjustments */
+@media (max-width: 768px) {
+  .neu-heading-primary {
+    font-size: 1.125rem;
+  }
+  
+  .neu-heading-secondary {
+    font-size: 1rem;
+  }
+  
+  .neu-body-primary,
+  .neu-body-secondary {
+    font-size: 0.8125rem;
+  }
+  
+  .neu-caption {
+    font-size: 0.6875rem;
+  }
+}

@@ -1,0 +1,64 @@
+/* Focus Management and Accessibility */
+
+/* Focus Management - Enhanced */
+.neu-focus:focus {
+  outline: none;
+  box-shadow: var(--neu-shadow-1), 0 0 0 3px var(--neu-interactive-border);
+  border-color: var(--neu-primary);
+}
+
+.neu-focus-ring:focus-visible {
+  outline: none;
+  box-shadow: var(--neu-shadow-1), 0 0 0 3px var(--neu-interactive-border);
+}
+
+/* Interactive State Classes */
+.neu-clickable {
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.neu-clickable:hover {
+  cursor: pointer !important;
+}
+
+.neu-draggable {
+  cursor: grab !important;
+  transition: all 0.2s ease;
+}
+
+.neu-draggable:hover {
+  cursor: grab !important;
+}
+
+.neu-draggable:active {
+  cursor: grabbing !important;
+}
+
+.neu-disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+.neu-disabled:hover {
+  cursor: not-allowed !important;
+}
+
+/* High Contrast Mode - Dark Theme Only */
+@media (prefers-contrast: high) {
+  :root {
+    --neu-text-primary: #FFFFFF;
+    --neu-text-secondary: #CCCCCC;
+    --neu-interactive-border: #66B3FF;
+    --neu-shadow-1: 12px 12px 28px rgba(0, 0, 0, 0.8), -6px -6px 18px rgba(255, 255, 255, 0.2);
+    --neu-shadow-2: 16px 16px 36px rgba(0, 0, 0, 0.9), -8px -8px 22px rgba(255, 255, 255, 0.25);
+  }
+  
+  .neu-btn,
+  .neu-card,
+  .neu-panel {
+    border: 2px solid var(--neu-text-primary);
+  }
+}

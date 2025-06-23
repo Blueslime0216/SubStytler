@@ -1,0 +1,55 @@
+/* Video Component Styles */
+
+.neu-video-controller {
+  background: var(--neu-base);
+  backdrop-filter: blur(20px);
+  border-top: 2px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1), var(--neu-shadow-2);
+  position: relative;
+  z-index: 10;
+  border-radius: 0 0 18px 18px;
+  overflow: hidden;
+}
+
+.neu-video-controller::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0.6;
+}
+
+.neu-video-controller > div:last-child {
+  border-radius: 0 0 18px 18px;
+  overflow: hidden;
+}
+
+/* Video Panel Specific Fixes */
+.neu-video-panel {
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+}
+
+.neu-video-panel .neu-video-controller {
+  border-radius: 0 0 18px 18px;
+  margin: 0;
+  position: relative;
+}
+
+/* Ensure proper border radius inheritance */
+.neu-panel .neu-video-controller {
+  border-radius: 0 0 16px 16px;
+}
+
+/* Video Upload Area */
+.neu-video-upload {
+  cursor: pointer;
+}
+
+.neu-video-upload:hover {
+  cursor: pointer;
+}
