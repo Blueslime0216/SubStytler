@@ -1,4 +1,4 @@
-/* Panel System - Unified Shadow Theme */
+/* Panel System - No Hover Effects */
 
 .neu-panel {
   background: var(--neu-base);
@@ -28,12 +28,7 @@
   border-radius: inherit;
 }
 
-.neu-panel:hover {
-  box-shadow: var(--neu-shadow-elevated-hover);
-  border-color: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px) translateZ(0);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Removed hover effects - no transform or shadow changes */
 
 .neu-panel-header {
   background: var(--neu-base);
@@ -70,7 +65,7 @@
   z-index: 1;
 }
 
-/* All Panel Types - Unified Shadow System */
+/* All Panel Types - No Hover Effects */
 .neu-video-panel,
 .neu-timeline,
 .neu-text-editor-panel,
@@ -111,17 +106,4 @@
   border-radius: inherit;
 }
 
-.neu-video-panel:hover,
-.neu-timeline:hover,
-.neu-text-editor-panel:hover,
-.neu-style-manager-panel:hover,
-.neu-script-viewer-panel:hover,
-.neu-effects-library-panel:hover,
-.neu-history-panel:hover,
-.neu-notes-panel:hover,
-.neu-audio-waveform-panel:hover {
-  box-shadow: var(--neu-shadow-elevated-hover);
-  border-color: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Removed all hover effects for panel types */

@@ -1,4 +1,4 @@
-/* Card System - Enhanced Visual Hierarchy */
+/* Card System - Reduced Hover Effects */
 
 .neu-card {
   background: var(--neu-base);
@@ -25,15 +25,14 @@
   pointer-events: none;
 }
 
+/* Reduced hover effect - only subtle border change */
 .neu-card:hover {
-  box-shadow: var(--neu-shadow-hover);
   border-color: var(--neu-interactive-border);
-  filter: brightness(var(--neu-hover-brightness));
   cursor: pointer;
 }
 
 .neu-card:hover::before {
-  opacity: 0.5;
+  opacity: 0.3;
 }
 
 .neu-card-small {
