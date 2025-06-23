@@ -1,16 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import './AreaRenderer.css';
-
-// Area 타입 정의
-interface Area {
-  id: string;
-  x: number; // %
-  y: number; // %
-  width: number; // %
-  height: number; // %
-  minWidth: number;
-  minHeight: number;
-}
+import { Area } from '../../types/area';
 
 type BorderDir = 'left' | 'right' | 'top' | 'bottom';
 interface LinkedArea { id: string; dir: BorderDir; }

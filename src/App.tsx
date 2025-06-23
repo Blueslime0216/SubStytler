@@ -1,32 +1,15 @@
 import React from 'react';
 import { AreaRenderer } from './components/Layout/AreaRenderer';
-import { VideoPreviewPanel } from './components/Panels/VideoPreviewPanel';
-import { SubtitleTimelinePanel } from './components/Panels/SubtitleTimelinePanel';
-import { TextEditorPanel } from './components/Panels/TextEditorPanel';
 import { useLayoutStore } from './stores/layoutStore';
 import { shallow } from 'zustand/shallow';
-
-// 좌측(비디오): 전체 높이, 우측 상단(타임라인), 우측 하단(텍스트)
-const INITIAL_AREAS = [
-  { id: 'video', x: 0, y: 0, width: 60, height: 100, minWidth: 15, minHeight: 20 },
-  { id: 'timeline', x: 60, y: 0, width: 40, height: 55, minWidth: 15, minHeight: 20 },
-  { id: 'text', x: 60, y: 55, width: 40, height: 45, minWidth: 15, minHeight: 20 },
-];
+import { panelRegistry, PanelId } from './config/panelRegistry';
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(state => ({ areas: state.areas, setAreas: state.setAreas }), shallow);
 
-  const renderPanel = (area: { id: string }) => {
-    switch (area.id) {
-      case 'video':
-        return <VideoPreviewPanel />;
-      case 'timeline':
-        return <SubtitleTimelinePanel />;
-      case 'text':
-        return <TextEditorPanel />;
-      default:
-        return null;
-    }
+  const renderPanel = (area: { id: PanelId }) => {
+    const Comp = panelRegistry[area.id] as React.ComponentType;
+    return Comp ? <Comp /> : null;
   };
 
   return (
