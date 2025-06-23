@@ -109,8 +109,10 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
   };
 
   const handleBorderMouseLeave = (areaId: string, dir: BorderDir) => {
-    // Only clear if we're leaving the same border we entered
-    if (currentHoveredBorder?.areaId === areaId && currentHoveredBorder?.dir === dir) {
+    // Only clear if we're leaving the same border we entered AND not dragging
+    if (currentHoveredBorder?.areaId === areaId && 
+        currentHoveredBorder?.dir === dir && 
+        !dragging) {
       setCurrentHoveredBorder(null);
       
       if (hoverOverlay && !hoverOverlay.isDragging) {
@@ -158,19 +160,21 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
     }
   }, [areas, dragging]);
 
-  // Handle drag end
+  // Handle drag end - improved logic
   React.useEffect(() => {
     if (!dragging && hoverOverlay?.isDragging) {
-      // Check if mouse is still over the border
+      // 드래그가 끝났을 때, 현재 호버된 경계가 있는지 확인
       if (currentHoveredBorder) {
-        // Start fade inner shadow animation
+        // 마우스가 여전히 경계 위에 있으면 호버 상태로 전환
         setHoverOverlay(prev => prev ? {
           ...prev,
           isDragging: false,
-          isFadingInner: true
+          isHovering: true,
+          isFadingInner: true,
+          isFadingOuter: false
         } : null);
         
-        // After inner fade, return to hover state
+        // 내부 그림자 페이드 아웃 후 호버 상태로 복귀
         setTimeout(() => {
           setHoverOverlay(prev => prev ? {
             ...prev,
@@ -178,7 +182,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
           } : null);
         }, 100);
       } else {
-        // Mouse is not over border, fade out completely
+        // 마우스가 경계를 벗어났으면 완전히 페이드 아웃
         setHoverOverlay(prev => prev ? {
           ...prev,
           isDragging: false,

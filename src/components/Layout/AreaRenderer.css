@@ -48,14 +48,14 @@
   animation: hoverShadowAppear 0.1s ease-out forwards;
 }
 
-/* Dragging State - Outer + Inner Shadow, 0.1s Animation */
+/* Dragging State - Outer + Inner Shadow, 0.1s Animation - STABLE */
 .border-hover-overlay.dragging {
   box-shadow: 
     9px 9px 27px rgba(13, 17, 23, 1.0),
     -4px -4px 18px rgba(45, 55, 72, 0.9),
     inset 4px 4px 12px rgba(13, 17, 23, 0.75),
     inset -3px -3px 9px rgba(45, 55, 72, 0.45);
-  animation: dragShadowAppear 0.1s ease-out forwards;
+  /* 드래그 중에는 애니메이션 없음 - 안정적인 그림자 유지 */
 }
 
 /* Fade Out States */
@@ -83,21 +83,8 @@
   }
 }
 
-/* Drag Shadow Animation - 0.1s */
-@keyframes dragShadowAppear {
-  0% {
-    box-shadow: 
-      6px 6px 18px rgba(13, 17, 23, 0.9),
-      -3px -3px 12px rgba(45, 55, 72, 0.6);
-  }
-  100% {
-    box-shadow: 
-      9px 9px 27px rgba(13, 17, 23, 1.0),
-      -4px -4px 18px rgba(45, 55, 72, 0.9),
-      inset 4px 4px 12px rgba(13, 17, 23, 0.75),
-      inset -3px -3px 9px rgba(45, 55, 72, 0.45);
-  }
-}
+/* Drag Shadow - NO ANIMATION - 즉시 적용 */
+/* 드래그 상태에서는 애니메이션 없이 즉시 그림자 적용 */
 
 /* Fade Inner Shadow - 0.1s */
 @keyframes fadeInnerShadow {
