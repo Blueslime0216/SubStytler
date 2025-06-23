@@ -1,4 +1,4 @@
-/* Panel System - Reduced Shadow Sizes */
+/* Panel System - Increased Shadow Sizes by 3/2 (1.5x) */
 
 .neu-panel {
   background: var(--neu-base);
@@ -65,7 +65,7 @@
   z-index: 1;
 }
 
-/* All Panel Types - Reduced Shadow Sizes */
+/* All Panel Types - Increased Shadow Sizes by 3/2 (1.5x) */
 .neu-video-panel,
 .neu-timeline,
 .neu-text-editor-panel,

@@ -1,0 +1,73 @@
+/* Color System Variables - Dark Mode Only */
+
+:root {
+  /* Dark Mode Base Colors - Stronger Contrast */
+  --neu-base: #1A202C;
+  --neu-light: #2D3748;
+  --neu-dark: #0D1117;
+  --neu-darker: #000000;
+  --neu-accent: #374151;
+  --neu-surface: #2D3748;
+  
+  /* Text Colors - Dark Mode - High Contrast */
+  --neu-text-primary: #F7FAFC;
+  --neu-text-secondary: #E2E8F0;
+  --neu-text-muted: #CBD5E0;
+  --neu-text-accent: #90CDF4;
+  
+  /* Semantic Colors - Dark Mode - Enhanced */
+  --neu-primary: #63B3ED;
+  --neu-primary-light: #90CDF4;
+  --neu-primary-dark: #4299E1;
+  --neu-success: #68D391;
+  --neu-warning: #F6AD55;
+  --neu-error: #FC8181;
+  --neu-info: #63B3ED;
+}
+
+/* Ensure dark theme is always applied */
+[data-theme="dark"] {
+  --neu-base: #1A202C;
+  --neu-light: #2D3748;
+  --neu-dark: #0D1117;
+  --neu-darker: #000000;
+  --neu-accent: #374151;
+  --neu-surface: #2D3748;
+  
+  --neu-text-primary: #F7FAFC;
+  --neu-text-secondary: #E2E8F0;
+  --neu-text-muted: #CBD5E0;
+  --neu-text-accent: #90CDF4;
+  
+  --neu-primary: #63B3ED;
+  --neu-primary-light: #90CDF4;
+  --neu-primary-dark: #4299E1;
+  --neu-success: #68D391;
+  --neu-warning: #F6AD55;
+  --neu-error: #FC8181;
+  --neu-info: #63B3ED;
+}
+
+/* Remove any light mode references */
+[data-theme="light"] {
+  /* Redirect to dark mode */
+  --neu-base: #1A202C;
+  --neu-light: #2D3748;
+  --neu-dark: #0D1117;
+  --neu-darker: #000000;
+  --neu-accent: #374151;
+  --neu-surface: #2D3748;
+  
+  --neu-text-primary: #F7FAFC;
+  --neu-text-secondary: #E2E8F0;
+  --neu-text-muted: #CBD5E0;
+  --neu-text-accent: #90CDF4;
+  
+  --neu-primary: #63B3ED;
+  --neu-primary-light: #90CDF4;
+  --neu-primary-dark: #4299E1;
+  --neu-success: #68D391;
+  --neu-warning: #F6AD55;
+  --neu-error: #FC8181;
+  --neu-info: #63B3ED;
+}

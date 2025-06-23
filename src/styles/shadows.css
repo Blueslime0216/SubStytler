@@ -1,0 +1,139 @@
+/* Shadow System Variables - Harmonious with Background */
+
+:root {
+  /* Neumorphism Shadow System - Harmonious with Background */
+  --neu-shadow-1: 
+    6px 6px 12px rgba(13, 17, 23, 0.8),
+    -3px -3px 8px rgba(45, 55, 72, 0.6);
+  
+  --neu-shadow-2: 
+    8px 8px 16px rgba(13, 17, 23, 0.9),
+    -4px -4px 10px rgba(45, 55, 72, 0.7);
+  
+  --neu-shadow-3: 
+    12px 12px 24px rgba(13, 17, 23, 1),
+    -6px -6px 14px rgba(45, 55, 72, 0.8);
+  
+  --neu-shadow-4: 
+    16px 16px 32px rgba(13, 17, 23, 1),
+    -8px -8px 18px rgba(45, 55, 72, 0.9);
+  
+  /* Panel-Specific Shadows - Increased by 3/2 (1.5x) */
+  --neu-shadow-panel: 
+    6px 6px 18px rgba(13, 17, 23, 0.7),
+    -3px -3px 9px rgba(45, 55, 72, 0.5);
+  
+  --neu-shadow-panel-hover: 
+    9px 9px 24px rgba(13, 17, 23, 0.8),
+    -4px -4px 12px rgba(45, 55, 72, 0.6);
+  
+  /* Enhanced Elevated Shadows - Harmonious Colors */
+  --neu-shadow-elevated: 
+    12px 12px 36px rgba(13, 17, 23, 0.8),
+    -6px -6px 18px rgba(45, 55, 72, 0.6),
+    inset 0 1px 0 rgba(45, 55, 72, 0.3);
+  
+  --neu-shadow-elevated-hover: 
+    18px 18px 48px rgba(13, 17, 23, 0.9),
+    -9px -9px 24px rgba(45, 55, 72, 0.7),
+    inset 0 1px 0 rgba(45, 55, 72, 0.4);
+  
+  /* Unified Subtle Shadows */
+  --neu-shadow-subtle: 
+    3px 3px 6px rgba(13, 17, 23, 0.6),
+    -1px -1px 4px rgba(45, 55, 72, 0.3);
+  
+  --neu-shadow-micro: 
+    2px 2px 4px rgba(13, 17, 23, 0.5),
+    -1px -1px 2px rgba(45, 55, 72, 0.2);
+}
+
+/* Ensure dark theme is always applied */
+[data-theme="dark"] {
+  --neu-shadow-1: 
+    6px 6px 12px rgba(13, 17, 23, 0.8),
+    -3px -3px 8px rgba(45, 55, 72, 0.6);
+  
+  --neu-shadow-2: 
+    8px 8px 16px rgba(13, 17, 23, 0.9),
+    -4px -4px 10px rgba(45, 55, 72, 0.7);
+  
+  --neu-shadow-3: 
+    12px 12px 24px rgba(13, 17, 23, 1),
+    -6px -6px 14px rgba(45, 55, 72, 0.8);
+  
+  --neu-shadow-4: 
+    16px 16px 32px rgba(13, 17, 23, 1),
+    -8px -8px 18px rgba(45, 55, 72, 0.9);
+  
+  --neu-shadow-panel: 
+    6px 6px 18px rgba(13, 17, 23, 0.7),
+    -3px -3px 9px rgba(45, 55, 72, 0.5);
+  
+  --neu-shadow-panel-hover: 
+    9px 9px 24px rgba(13, 17, 23, 0.8),
+    -4px -4px 12px rgba(45, 55, 72, 0.6);
+  
+  --neu-shadow-elevated: 
+    12px 12px 36px rgba(13, 17, 23, 0.8),
+    -6px -6px 18px rgba(45, 55, 72, 0.6),
+    inset 0 1px 0 rgba(45, 55, 72, 0.3);
+  
+  --neu-shadow-elevated-hover: 
+    18px 18px 48px rgba(13, 17, 23, 0.9),
+    -9px -9px 24px rgba(45, 55, 72, 0.7),
+    inset 0 1px 0 rgba(45, 55, 72, 0.4);
+  
+  --neu-shadow-subtle: 
+    3px 3px 6px rgba(13, 17, 23, 0.6),
+    -1px -1px 4px rgba(45, 55, 72, 0.3);
+  
+  --neu-shadow-micro: 
+    2px 2px 4px rgba(13, 17, 23, 0.5),
+    -1px -1px 2px rgba(45, 55, 72, 0.2);
+}
+
+/* Remove any light mode references */
+[data-theme="light"] {
+  --neu-shadow-1: 
+    6px 6px 12px rgba(13, 17, 23, 0.8),
+    -3px -3px 8px rgba(45, 55, 72, 0.6);
+  
+  --neu-shadow-2: 
+    8px 8px 16px rgba(13, 17, 23, 0.9),
+    -4px -4px 10px rgba(45, 55, 72, 0.7);
+  
+  --neu-shadow-3: 
+    12px 12px 24px rgba(13, 17, 23, 1),
+    -6px -6px 14px rgba(45, 55, 72, 0.8);
+  
+  --neu-shadow-4: 
+    16px 16px 32px rgba(13, 17, 23, 1),
+    -8px -8px 18px rgba(45, 55, 72, 0.9);
+  
+  --neu-shadow-panel: 
+    6px 6px 18px rgba(13, 17, 23, 0.7),
+    -3px -3px 9px rgba(45, 55, 72, 0.5);
+  
+  --neu-shadow-panel-hover: 
+    9px 9px 24px rgba(13, 17, 23, 0.8),
+    -4px -4px 12px rgba(45, 55, 72, 0.6);
+  
+  --neu-shadow-elevated: 
+    12px 12px 36px rgba(13, 17, 23, 0.8),
+    -6px -6px 18px rgba(45, 55, 72, 0.6),
+    inset 0 1px 0 rgba(45, 55, 72, 0.3);
+  
+  --neu-shadow-elevated-hover: 
+    18px 18px 48px rgba(13, 17, 23, 0.9),
+    -9px -9px 24px rgba(45, 55, 72, 0.7),
+    inset 0 1px 0 rgba(45, 55, 72, 0.4);
+  
+  --neu-shadow-subtle: 
+    3px 3px 6px rgba(13, 17, 23, 0.6),
+    -1px -1px 4px rgba(45, 55, 72, 0.3);
+  
+  --neu-shadow-micro: 
+    2px 2px 4px rgba(13, 17, 23, 0.5),
+    -1px -1px 2px rgba(45, 55, 72, 0.2);
+}
