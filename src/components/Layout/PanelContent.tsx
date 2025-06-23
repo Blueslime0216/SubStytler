@@ -29,8 +29,16 @@ const panelComponents: Record<PanelType, React.ComponentType> = {
 export const PanelContent: React.FC<PanelContentProps> = ({ type }) => {
   const PanelComponent = panelComponents[type];
   
+  if (!PanelComponent) {
+    return (
+      <div className="h-full flex items-center justify-center neu-text-secondary">
+        <p className="text-sm">Panel type "{type}" not found</p>
+      </div>
+    );
+  }
+  
   return (
-    <div className="neu-panel-content">
+    <div className="h-full w-full">
       <PanelComponent />
     </div>
   );

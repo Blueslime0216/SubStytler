@@ -1,0 +1,57 @@
+/* Card System - Enhanced Visual Hierarchy */
+
+.neu-card {
+  background: var(--neu-base);
+  border-radius: 14px;
+  box-shadow: var(--neu-shadow-1);
+  padding: 14px;
+  transition: all 0.2s ease;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.neu-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--neu-interactive-bg);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.neu-card:hover {
+  box-shadow: var(--neu-shadow-hover);
+  border-color: var(--neu-interactive-border);
+  filter: brightness(var(--neu-hover-brightness));
+  cursor: pointer;
+}
+
+.neu-card:hover::before {
+  opacity: 0.5;
+}
+
+.neu-card-small {
+  background: var(--neu-base);
+  border-radius: 12px;
+  box-shadow: var(--neu-shadow-subtle);
+  padding: 10px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.neu-card-micro {
+  background: var(--neu-base);
+  border-radius: 10px;
+  box-shadow: var(--neu-shadow-micro);
+  padding: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}

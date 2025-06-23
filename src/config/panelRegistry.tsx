@@ -1,18 +1,16 @@
-import { VideoPreviewPanel } from '../components/Panels/VideoPreviewPanel';
-import { SubtitleTimelinePanel } from '../components/Panels/SubtitleTimelinePanel';
-import { TextEditorPanel } from '../components/Panels/TextEditorPanel';
-import { StyleManagerPanel } from '../components/Panels/StyleManagerPanel';
-import { ScriptViewerPanel } from '../components/Panels/ScriptViewerPanel';
-import { EffectsLibraryPanel } from '../components/Panels/EffectsLibraryPanel';
-import { HistoryPanel } from '../components/Panels/HistoryPanel';
-import { NotesPanel } from '../components/Panels/NotesPanel';
-import { AudioWaveformPanel } from '../components/Panels/AudioWaveformPanel';
+import React from 'react';
 import { Panel } from '../components/Layout/Panel';
+import { PanelType } from '../types/project';
 
 export const panelRegistry = {
-  video: () => <Panel type="video-preview" />,
-  timeline: () => <Panel type="subtitle-timeline" />,
-  text: () => <Panel type="text-editor" />,
+  video: () => <Panel type="video-preview" areaId="video" />,
+  timeline: () => <Panel type="subtitle-timeline" areaId="timeline" />,
+  text: () => <Panel type="text-editor" areaId="text" />,
 } as const;
 
 export type PanelId = keyof typeof panelRegistry;
+
+// Helper function to create panel with proper props
+export const createPanel = (type: PanelType, areaId: string) => {
+  return <Panel type={type} areaId={areaId} />;
+};

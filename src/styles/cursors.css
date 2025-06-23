@@ -1,0 +1,121 @@
+/* Cursor Management - Global Pointer Fixes */
+
+/* Interactive Element Indicators */
+.neu-interactive {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.neu-interactive::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  transition: border-color 0.2s ease;
+  pointer-events: none;
+}
+
+.neu-interactive:hover {
+  cursor: pointer;
+}
+
+.neu-interactive:hover::after {
+  border-color: var(--neu-interactive-border);
+}
+
+/* Global cursor pointer for interactive elements */
+button,
+[role="button"],
+[tabindex]:not([tabindex="-1"]),
+.neu-interactive,
+.neu-clickable,
+.clickable {
+  cursor: pointer !important;
+}
+
+button:hover,
+[role="button"]:hover,
+[tabindex]:not([tabindex="-1"]):hover,
+.neu-interactive:hover,
+.neu-clickable:hover,
+.clickable:hover {
+  cursor: pointer !important;
+}
+
+/* Motion component cursor fixes */
+.motion-button,
+.motion-div[role="button"],
+[data-motion="button"] {
+  cursor: pointer !important;
+}
+
+.motion-button:hover,
+.motion-div[role="button"]:hover,
+[data-motion="button"]:hover {
+  cursor: pointer !important;
+}
+
+/* Remove help cursor from title attributes on interactive elements */
+button[title],
+[role="button"][title],
+.neu-btn[title],
+.neu-btn-primary[title],
+.neu-btn-small[title],
+.neu-btn-icon[title],
+.neu-interactive[title] {
+  cursor: pointer !important;
+}
+
+button[title]:hover,
+[role="button"][title]:hover,
+.neu-btn[title]:hover,
+.neu-btn-primary[title]:hover,
+.neu-btn-small[title]:hover,
+.neu-btn-icon[title]:hover,
+.neu-interactive[title]:hover {
+  cursor: pointer !important;
+}
+
+/* Specific cursor types */
+.neu-clickable {
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.neu-draggable {
+  cursor: grab !important;
+  transition: all 0.2s ease;
+}
+
+.neu-draggable:hover {
+  cursor: grab !important;
+}
+
+.neu-draggable:active {
+  cursor: grabbing !important;
+}
+
+.neu-disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+.neu-disabled:hover {
+  cursor: not-allowed !important;
+}
+
+/* Links */
+a {
+  cursor: pointer !important;
+}
+
+a:hover {
+  cursor: pointer !important;
+}

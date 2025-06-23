@@ -1,0 +1,129 @@
+/* Panel System - Enhanced Elevated Shadow Effect */
+
+.neu-panel {
+  background: var(--neu-base);
+  border-radius: 18px;
+  position: relative;
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: translateZ(0);
+  height: 100%;
+}
+
+.neu-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.05) 0%, 
+    transparent 50%, 
+    rgba(163, 168, 196, 0.05) 100%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.neu-panel:hover {
+  box-shadow: 
+    var(--neu-shadow-elevated-hover),
+    0 12px 48px rgba(0, 0, 0, 0.4),
+    0 6px 24px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px) translateZ(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.neu-panel-header {
+  background: var(--neu-base);
+  padding: 12px 18px;
+  border-bottom: 2px solid rgba(163, 168, 196, 0.15);
+  position: relative;
+  font-weight: 600;
+  color: var(--neu-text-primary);
+  border-radius: 18px 18px 0 0;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.neu-panel-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    transparent 100%);
+  opacity: 0.6;
+}
+
+.neu-panel-content {
+  border-radius: 0 0 18px 18px;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Specific Panel Types */
+.neu-video-panel {
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.neu-timeline {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.neu-text-editor-panel {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  background: var(--neu-base);
+  position: relative;
+}
+
+.neu-style-manager-panel,
+.neu-script-viewer-panel,
+.neu-effects-library-panel,
+.neu-history-panel,
+.neu-notes-panel,
+.neu-audio-waveform-panel {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}

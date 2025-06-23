@@ -1,5 +1,6 @@
 /* Import Design System Styles */
 @import './styles/variables.css';
+@import './styles/base.css';
 @import './styles/components.css';
 @import './styles/timeline.css';
 @import './styles/layout.css';
@@ -7,42 +8,6 @@
 @import './styles/utilities.css';
 @import './styles/responsive.css';
 
-/* Typography System */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-body {
-  background: var(--neu-base);
-  color: var(--neu-text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-weight: 400;
-  line-height: 1.4;
-  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  /* Critical: Ensure body doesn't clip shadows */
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-/* Critical: Global overflow fix for all containers */
-#root {
-  overflow: visible !important;
-}
-
-/* Ensure all panel containers allow shadow visibility */
-.h-screen,
-.h-full,
-.flex-1 {
-  overflow: visible !important;
-}
-
-/* Override any Tailwind overflow settings that might clip shadows */
-.overflow-hidden {
-  overflow: visible !important;
-}
