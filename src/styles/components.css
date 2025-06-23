@@ -160,16 +160,22 @@
   cursor: pointer;
 }
 
-/* Panel System - Perfect Border Radius & Enhanced Shadow Visibility */
+/* Panel System - Enhanced Elevated Shadow Effect */
 .neu-panel {
   background: var(--neu-base);
   border-radius: 18px;
   position: relative;
-  box-shadow: var(--neu-shadow-2);
-  border: 2px solid rgba(255, 255, 255, 0.05);
-  overflow: hidden; /* Critical: Ensure all children respect border radius */
+  /* Enhanced elevated shadow for prominent 3D effect */
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  transform: translateZ(0); /* Force hardware acceleration */
 }
 
 .neu-panel::before {
@@ -180,11 +186,23 @@
   right: 0;
   bottom: 0;
   background: linear-gradient(145deg, 
-    rgba(255, 255, 255, 0.03) 0%, 
+    rgba(255, 255, 255, 0.05) 0%, 
     transparent 50%, 
-    rgba(163, 168, 196, 0.03) 100%);
+    rgba(163, 168, 196, 0.05) 100%);
   pointer-events: none;
   border-radius: inherit;
+}
+
+/* Enhanced hover effect for panels */
+.neu-panel:hover {
+  box-shadow: 
+    var(--neu-shadow-elevated-hover),
+    0 12px 48px rgba(0, 0, 0, 0.4),
+    0 6px 24px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px) translateZ(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .neu-panel-header {
@@ -194,7 +212,7 @@
   position: relative;
   font-weight: 600;
   color: var(--neu-text-primary);
-  border-radius: 18px 18px 0 0; /* Top corners only */
+  border-radius: 18px 18px 0 0;
   flex-shrink: 0;
 }
 
@@ -214,7 +232,7 @@
 
 /* Panel Content Area - Ensure proper border radius inheritance */
 .neu-panel > div:last-child {
-  border-radius: 0 0 18px 18px; /* Bottom corners for last child */
+  border-radius: 0 0 18px 18px;
   overflow: hidden;
   flex: 1;
 }
@@ -230,6 +248,12 @@
   border-radius: 18px;
   overflow: hidden;
   position: relative;
+  /* Enhanced shadow for video panel */
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .neu-video-panel > div:first-child {
@@ -246,6 +270,12 @@
 .neu-timeline {
   border-radius: 18px;
   overflow: hidden;
+  /* Enhanced shadow for timeline panel */
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .neu-timeline .neu-timeline-ruler:first-child {
@@ -262,6 +292,47 @@
   overflow: hidden;
 }
 
+/* Text Editor Panel - Enhanced Shadow */
+.neu-text-editor-panel {
+  border-radius: 18px;
+  overflow: hidden;
+  /* Enhanced elevated shadow effect */
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  background: var(--neu-base);
+  position: relative;
+}
+
+.neu-text-editor-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.05) 0%, 
+    transparent 50%, 
+    rgba(163, 168, 196, 0.05) 100%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.neu-text-editor-panel:hover {
+  box-shadow: 
+    var(--neu-shadow-elevated-hover),
+    0 12px 48px rgba(0, 0, 0, 0.4),
+    0 6px 24px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Card System - Enhanced Visual Hierarchy */
 .neu-card {
   background: var(--neu-base);
@@ -271,7 +342,7 @@
   transition: all 0.2s ease;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  overflow: hidden; /* Ensure content respects border radius */
+  overflow: hidden;
 }
 
 .neu-card::before {
@@ -531,46 +602,76 @@
   overflow: hidden;
 }
 
-/* Text Editor Panel Specific */
-.neu-text-editor-panel {
-  border-radius: 18px;
-  overflow: hidden;
-}
-
 /* Style Manager Panel Specific */
 .neu-style-manager-panel {
   border-radius: 18px;
   overflow: hidden;
+  /* Enhanced shadow */
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Script Viewer Panel Specific */
 .neu-script-viewer-panel {
   border-radius: 18px;
   overflow: hidden;
+  /* Enhanced shadow */
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Effects Library Panel Specific */
 .neu-effects-library-panel {
   border-radius: 18px;
   overflow: hidden;
+  /* Enhanced shadow */
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* History Panel Specific */
 .neu-history-panel {
   border-radius: 18px;
   overflow: hidden;
+  /* Enhanced shadow */
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Notes Panel Specific */
 .neu-notes-panel {
   border-radius: 18px;
   overflow: hidden;
+  /* Enhanced shadow */
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Audio Waveform Panel Specific */
 .neu-audio-waveform-panel {
   border-radius: 18px;
   overflow: hidden;
+  /* Enhanced shadow */
+  box-shadow: 
+    var(--neu-shadow-elevated),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Critical: Global overflow fix for shadow visibility */
