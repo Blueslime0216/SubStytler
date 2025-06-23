@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './AreaRenderer.css';
 import { Area } from '../../types/area';
 import { useAreaDrag, BorderDir } from './hooks/useAreaDrag';
@@ -12,7 +12,30 @@ interface AreaRendererProps {
 const BORDER_THICKNESS = 8;
 
 export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, renderPanel }) => {
-  const { containerRef, onBorderMouseDown, dragging } = useAreaDrag(areas, setAreas);
+  const { containerRef, onBorderMouseDown, dragging, getLinkedBorders } = useAreaDrag(areas, setAreas);
+  const [hoveredBorders, setHoveredBorders] = useState<Set<string>>(new Set());
+
+  const handleBorderMouseEnter = (areaId: string, dir: BorderDir) => {
+    // Get all linked borders that would move together during drag
+    const linkedBorders = getLinkedBorders(areaId, dir);
+    const borderIds = new Set([
+      `${areaId}-${dir}`,
+      ...linkedBorders.map(border => `${border.id}-${border.dir}`)
+    ]);
+    setHoveredBorders(borderIds);
+  };
+
+  const handleBorderMouseLeave = () => {
+    setHoveredBorders(new Set());
+  };
+
+  const isBorderHovered = (areaId: string, dir: BorderDir) => {
+    return hoveredBorders.has(`${areaId}-${dir}`);
+  };
+
+  const isBorderDragging = (areaId: string, dir: BorderDir) => {
+    return dragging?.areaId === areaId && dragging?.dir === dir;
+  };
 
   return (
     <div
@@ -47,11 +70,12 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
             zIndex: 200,
           }}
         >
-          {/* Enhanced Border Elements with Hover Shadow Effects */}
+          {/* Enhanced Border Elements with Adjacent Hover Effects */}
           {/* 좌 */}
           <div
             className={`area-border area-border-vertical ${
-              dragging?.areaId === area.id && dragging?.dir === 'left' ? 'dragging' : ''
+              isBorderDragging(area.id, 'left') ? 'dragging' : 
+              isBorderHovered(area.id, 'left') ? 'hovered' : ''
             }`}
             style={{ 
               left: 0, 
@@ -63,13 +87,16 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
               zIndex: 10 
             }}
             onMouseDown={e => onBorderMouseDown(e, area.id, 'left')}
+            onMouseEnter={() => handleBorderMouseEnter(area.id, 'left')}
+            onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel horizontally"
           />
           
           {/* 우 */}
           <div
             className={`area-border area-border-vertical ${
-              dragging?.areaId === area.id && dragging?.dir === 'right' ? 'dragging' : ''
+              isBorderDragging(area.id, 'right') ? 'dragging' : 
+              isBorderHovered(area.id, 'right') ? 'hovered' : ''
             }`}
             style={{ 
               right: 0, 
@@ -81,13 +108,16 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
               zIndex: 10 
             }}
             onMouseDown={e => onBorderMouseDown(e, area.id, 'right')}
+            onMouseEnter={() => handleBorderMouseEnter(area.id, 'right')}
+            onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel horizontally"
           />
           
           {/* 상 */}
           <div
             className={`area-border area-border-horizontal ${
-              dragging?.areaId === area.id && dragging?.dir === 'top' ? 'dragging' : ''
+              isBorderDragging(area.id, 'top') ? 'dragging' : 
+              isBorderHovered(area.id, 'top') ? 'hovered' : ''
             }`}
             style={{ 
               left: 0, 
@@ -99,13 +129,16 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
               zIndex: 10 
             }}
             onMouseDown={e => onBorderMouseDown(e, area.id, 'top')}
+            onMouseEnter={() => handleBorderMouseEnter(area.id, 'top')}
+            onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel vertically"
           />
           
           {/* 하 */}
           <div
             className={`area-border area-border-horizontal ${
-              dragging?.areaId === area.id && dragging?.dir === 'bottom' ? 'dragging' : ''
+              isBorderDragging(area.id, 'bottom') ? 'dragging' : 
+              isBorderHovered(area.id, 'bottom') ? 'hovered' : ''
             }`}
             style={{ 
               left: 0, 
@@ -117,6 +150,8 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
               zIndex: 10 
             }}
             onMouseDown={e => onBorderMouseDown(e, area.id, 'bottom')}
+            onMouseEnter={() => handleBorderMouseEnter(area.id, 'bottom')}
+            onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel vertically"
           />
 

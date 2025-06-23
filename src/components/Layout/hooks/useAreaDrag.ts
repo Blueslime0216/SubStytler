@@ -85,6 +85,7 @@ interface UseAreaDragReturn {
     lastY: number;
     linked: LinkedArea[];
   } | null;
+  getLinkedBorders: (areaId: string, dir: BorderDir) => LinkedArea[];
 }
 
 export function useAreaDrag(
@@ -104,6 +105,18 @@ export function useAreaDrag(
   useEffect(() => {
     areasRef.current = areas;
   }, [areas]);
+
+  // Function to get linked borders for hover effect
+  const getLinkedBorders = (areaId: string, dir: BorderDir): LinkedArea[] => {
+    const area = areas.find(a => a.id === areaId);
+    if (!area) return [];
+    
+    const visited = new Set<string>();
+    visited.add(area.id);
+    const linked: LinkedArea[] = [];
+    detectLinkedAreas(areas, area, dir, visited, linked);
+    return linked;
+  };
 
   // Mouse move / up listeners when dragging
   useEffect(() => {
@@ -190,5 +203,5 @@ export function useAreaDrag(
     setDragging({ areaId, dir, lastX: e.clientX, lastY: e.clientY, linked });
   };
 
-  return { containerRef, onBorderMouseDown, dragging };
+  return { containerRef, onBorderMouseDown, dragging, getLinkedBorders };
 }
