@@ -1,32 +1,72 @@
 import React, { useState } from 'react';
 import { AreaRenderer } from './components/Layout/AreaRenderer';
+import { VideoPreviewPanel } from './components/Panels/VideoPreviewPanel';
+import { SubtitleTimelinePanel } from './components/Panels/SubtitleTimelinePanel';
+import { TextEditorPanel } from './components/Panels/TextEditorPanel';
 
+// 좌측(비디오): 전체 높이, 우측 상단(타임라인), 우측 하단(텍스트)
 const INITIAL_AREAS = [
-  // 1행
-  { id: 'area-1-1', x: 0, y: 0, width: 33.33, height: 50, minWidth: 10, minHeight: 10 },
-  { id: 'area-1-2', x: 33.33, y: 0, width: 33.34, height: 50, minWidth: 10, minHeight: 10 },
-  { id: 'area-1-3', x: 66.67, y: 0, width: 33.33, height: 50, minWidth: 10, minHeight: 10 },
-  // 2행
-  { id: 'area-2-1', x: 0, y: 50, width: 33.33, height: 50, minWidth: 10, minHeight: 10 },
-  { id: 'area-2-2', x: 33.33, y: 50, width: 33.34, height: 50, minWidth: 10, minHeight: 10 },
-  { id: 'area-2-3', x: 66.67, y: 50, width: 33.33, height: 50, minWidth: 10, minHeight: 10 },
+  { id: 'video', x: 0, y: 0, width: 60, height: 100, minWidth: 15, minHeight: 20 },
+  { id: 'timeline', x: 60, y: 0, width: 40, height: 55, minWidth: 15, minHeight: 20 },
+  { id: 'text', x: 60, y: 55, width: 40, height: 45, minWidth: 15, minHeight: 20 },
 ];
 
 export default function App() {
   const [areas, setAreas] = useState(INITIAL_AREAS);
 
+  const renderPanel = (area: { id: string }) => {
+    switch (area.id) {
+      case 'video':
+        return <VideoPreviewPanel />;
+      case 'timeline':
+        return <SubtitleTimelinePanel />;
+      case 'text':
+        return <TextEditorPanel />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <header style={{ height: 60, background: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <h1 style={{ fontSize: 20 }}>상단 헤더</h1>
+    <div className="min-h-screen flex flex-col bg-neu-base text-white" style={{ overflow: 'visible' }}>
+      {/* Header */}
+      <header className="h-14 flex items-center justify-between px-4 shadow-neu-bottom relative z-20" style={{ background: 'var(--neu-base)' }}>
+        <div className="flex items-center space-x-3">
+          <div className="neu-btn-icon w-8 h-8 flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5-9-5-9 5 9 5z"/></svg>
+          </div>
+          <div>
+            <div className="neu-title text-lg font-semibold">Sub-Stytler</div>
+            <div className="neu-caption text-xs opacity-60">Professional Editor</div>
+          </div>
+        </div>
+        <div className="flex items-center space-x-3">
+          <button className="neu-btn px-4 py-1.5 text-sm">Save Project</button>
+          <button className="neu-btn px-4 py-1.5 text-sm">Export YTT</button>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="text-sm opacity-80">Untitled Project</div>
+        </div>
       </header>
-      <main style={{ flex: 1, background: '#f3f4f6', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flex: 1, margin: 24, borderRadius: 12, overflow: 'hidden', boxShadow: '0 2px 12px #0001', background: '#fff', position: 'relative' }}>
-          <AreaRenderer areas={areas} setAreas={setAreas} />
+
+      {/* Main Content */}
+      <main
+        className="flex-1 h-full min-h-0 flex flex-col p-4"
+        style={{
+          overflow: 'visible',
+          position: 'relative',
+          height: 'calc(100vh - 56px - 24px)', // header 56px, footer 24px
+        }}
+      >
+        <div className="flex-1 h-full min-h-0 relative rounded-xl" style={{ overflow: 'visible' }}>
+          <AreaRenderer areas={areas} setAreas={setAreas} renderPanel={renderPanel} />
         </div>
       </main>
-      <footer style={{ height: 48, background: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ fontSize: 16 }}>하단 영역</span>
+
+      {/* Footer */}
+      <footer className="h-6 flex items-center justify-between text-xs px-3 opacity-70" style={{ background: 'var(--neu-base-darker)' }}>
+        <span>Ready • 0 subtitles • Untitled Project</span>
+        <span>Sub-Stytler v2.0 • Professional Edition • Dark Mode</span>
       </footer>
     </div>
   );

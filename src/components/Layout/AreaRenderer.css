@@ -10,9 +10,9 @@
   position: absolute;
   transition: background 0.2s;
   box-sizing: border-box;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   background: #f6f8fa;
-  border: 1px solid #d1d5db;
+  /* border: 1px solid #d1d5db; */
   overflow: visible;
 }
 
