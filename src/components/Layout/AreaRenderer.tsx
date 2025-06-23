@@ -126,7 +126,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
         // Remove overlay after fade animation
         setTimeout(() => {
           setHoverOverlay(null);
-        }, 300);
+        }, 500);
       }
     }
   };
@@ -145,11 +145,13 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
     onBorderMouseDown(e, areaId, dir);
   };
 
-  // Update overlay position during drag with exact synchronization
+  // 🎯 CRITICAL: 드래그 중 정확한 위치 동기화
   React.useEffect(() => {
     if (dragging && hoverOverlay && hoverOverlay.isDragging) {
-      // Calculate new position immediately when areas change
+      // 🚀 실시간으로 경계 위치 재계산 및 즉시 동기화
       const overlayBounds = calculateOverlayBounds(dragging.areaId, dragging.dir);
+      
+      // 🎯 즉시 위치 업데이트 - 지연 없음
       setHoverOverlay(prev => prev ? {
         ...overlayBounds,
         isDragging: true,
@@ -158,7 +160,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
         isFadingOuter: false
       } : null);
     }
-  }, [areas, dragging]);
+  }, [areas, dragging]); // areas 변경 시 즉시 반응
 
   // Handle drag end - improved logic
   React.useEffect(() => {
@@ -180,7 +182,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
             ...prev,
             isFadingInner: false
           } : null);
-        }, 100);
+        }, 200); // 0.2초 후
       } else {
         // 마우스가 경계를 벗어났으면 완전히 페이드 아웃
         setHoverOverlay(prev => prev ? {
@@ -192,7 +194,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
         
         setTimeout(() => {
           setHoverOverlay(null);
-        }, 300);
+        }, 500); // 0.5초 후
       }
     }
   }, [dragging, currentHoveredBorder]);

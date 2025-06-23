@@ -43,19 +43,19 @@
 /* Hovering State - Only Outer Shadow, 0.3s Animation */
 .border-hover-overlay.hovering {
   box-shadow: 
-    12px 12px 36px rgba(0, 0, 0, 0.95),
-    -6px -6px 24px rgba(90, 110, 144, 0.8);
+    6px 6px 18px rgba(0, 0, 0, 0.95),
+    -3px -3px 12px rgba(90, 110, 144, 0.8);
   animation: hoverShadowAppear 0.3s ease-out forwards;
 }
 
 /* Dragging State - Outer + Inner Shadow - STABLE */
 .border-hover-overlay.dragging {
   box-shadow: 
-    18px 18px 54px rgba(0, 0, 0, 1.0),
-    -8px -8px 36px rgba(90, 110, 144, 0.95),
-    inset 8px 8px 24px rgba(0, 0, 0, 0.9),
-    inset -6px -6px 18px rgba(90, 110, 144, 0.7);
-  animation: dragShadowAppear 0.2s ease-out forwards;
+    9px 9px 27px rgba(0, 0, 0, 1.0),
+    -4px -4px 18px rgba(90, 110, 144, 0.95),
+    inset 4px 4px 12px rgba(0, 0, 0, 0.9),
+    inset -3px -3px 9px rgba(90, 110, 144, 0.7);
+  /* 드래그 중에는 애니메이션 없음 - 안정성 보장 */
 }
 
 /* Fade Out States */
@@ -77,8 +77,8 @@
   }
   100% {
     box-shadow: 
-      12px 12px 36px rgba(0, 0, 0, 0.95),
-      -6px -6px 24px rgba(90, 110, 144, 0.8);
+      6px 6px 18px rgba(0, 0, 0, 0.95),
+      -3px -3px 12px rgba(90, 110, 144, 0.8);
     opacity: 1;
   }
 }
@@ -87,15 +87,15 @@
 @keyframes dragShadowAppear {
   0% {
     box-shadow: 
-      12px 12px 36px rgba(0, 0, 0, 0.95),
-      -6px -6px 24px rgba(90, 110, 144, 0.8);
+      6px 6px 18px rgba(0, 0, 0, 0.95),
+      -3px -3px 12px rgba(90, 110, 144, 0.8);
   }
   100% {
     box-shadow: 
-      18px 18px 54px rgba(0, 0, 0, 1.0),
-      -8px -8px 36px rgba(90, 110, 144, 0.95),
-      inset 8px 8px 24px rgba(0, 0, 0, 0.9),
-      inset -6px -6px 18px rgba(90, 110, 144, 0.7);
+      9px 9px 27px rgba(0, 0, 0, 1.0),
+      -4px -4px 18px rgba(90, 110, 144, 0.95),
+      inset 4px 4px 12px rgba(0, 0, 0, 0.9),
+      inset -3px -3px 9px rgba(90, 110, 144, 0.7);
   }
 }
 
@@ -103,15 +103,15 @@
 @keyframes fadeInnerShadow {
   0% {
     box-shadow: 
-      18px 18px 54px rgba(0, 0, 0, 1.0),
-      -8px -8px 36px rgba(90, 110, 144, 0.95),
-      inset 8px 8px 24px rgba(0, 0, 0, 0.9),
-      inset -6px -6px 18px rgba(90, 110, 144, 0.7);
+      9px 9px 27px rgba(0, 0, 0, 1.0),
+      -4px -4px 18px rgba(90, 110, 144, 0.95),
+      inset 4px 4px 12px rgba(0, 0, 0, 0.9),
+      inset -3px -3px 9px rgba(90, 110, 144, 0.7);
   }
   100% {
     box-shadow: 
-      12px 12px 36px rgba(0, 0, 0, 0.95),
-      -6px -6px 24px rgba(90, 110, 144, 0.8);
+      6px 6px 18px rgba(0, 0, 0, 0.95),
+      -3px -3px 12px rgba(90, 110, 144, 0.8);
   }
 }
 
@@ -119,8 +119,8 @@
 @keyframes fadeOuterShadow {
   0% {
     box-shadow: 
-      12px 12px 36px rgba(0, 0, 0, 0.95),
-      -6px -6px 24px rgba(90, 110, 144, 0.8);
+      6px 6px 18px rgba(0, 0, 0, 0.95),
+      -3px -3px 12px rgba(90, 110, 144, 0.8);
     opacity: 1;
   }
   100% {
