@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AreaRenderer } from './components/Layout/AreaRenderer';
 import { VideoPreviewPanel } from './components/Panels/VideoPreviewPanel';
 import { SubtitleTimelinePanel } from './components/Panels/SubtitleTimelinePanel';
 import { TextEditorPanel } from './components/Panels/TextEditorPanel';
+import { useLayoutStore } from './stores/layoutStore';
+import { shallow } from 'zustand/shallow';
 
 // 좌측(비디오): 전체 높이, 우측 상단(타임라인), 우측 하단(텍스트)
 const INITIAL_AREAS = [
@@ -12,7 +14,7 @@ const INITIAL_AREAS = [
 ];
 
 export default function App() {
-  const [areas, setAreas] = useState(INITIAL_AREAS);
+  const { areas, setAreas } = useLayoutStore(state => ({ areas: state.areas, setAreas: state.setAreas }), shallow);
 
   const renderPanel = (area: { id: string }) => {
     switch (area.id) {
@@ -55,11 +57,10 @@ export default function App() {
         style={{
           overflow: 'visible',
           position: 'relative',
-          height: 'calc(100vh - 56px - 24px)', // header 56px, footer 24px
         }}
       >
         <div className="flex-1 h-full min-h-0 relative rounded-xl" style={{ overflow: 'visible' }}>
-          <AreaRenderer areas={areas} setAreas={setAreas} renderPanel={renderPanel} />
+          <AreaRenderer areas={areas as any} setAreas={setAreas as any} renderPanel={renderPanel} />
         </div>
       </main>
 

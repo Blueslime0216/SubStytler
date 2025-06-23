@@ -26,7 +26,11 @@ interface LayoutState {
 }
 
 export const useLayoutStore = create<LayoutState>((set, get) => ({
-  areas: createDefaultLayout(),
+  areas: [
+    { id: 'video', x: 0, y: 0, width: 60, height: 100, minWidth: 15, minHeight: 20 },
+    { id: 'timeline', x: 60, y: 0, width: 40, height: 55, minWidth: 15, minHeight: 20 },
+    { id: 'text', x: 60, y: 55, width: 40, height: 45, minWidth: 15, minHeight: 20 },
+  ] as unknown as any,
   draggedPanel: null,
   dropTarget: null,
 

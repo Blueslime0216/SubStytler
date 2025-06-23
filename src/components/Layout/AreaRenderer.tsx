@@ -275,7 +275,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
             height: `${area.height}%`,
             background: 'transparent',
             boxSizing: 'border-box',
-            padding: '24px', // 공간 확보하여 패널 그림자 클리핑 방지
+            padding: 'var(--panel-padding, 24px)', // 공간 확보 - CSS 변수화
             // borderRadius: 8,
             transition: dragging ? 'none' : 'background 0.2s',
             overflow: 'visible',
