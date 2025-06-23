@@ -11,31 +11,116 @@ interface AreaRendererProps {
 
 const BORDER_THICKNESS = 8;
 
+interface HoverOverlay {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  isDragging: boolean;
+}
+
 export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, renderPanel }) => {
   const { containerRef, onBorderMouseDown, dragging, getLinkedBorders } = useAreaDrag(areas, setAreas);
-  const [hoveredBorders, setHoveredBorders] = useState<Set<string>>(new Set());
+  const [hoverOverlay, setHoverOverlay] = useState<HoverOverlay | null>(null);
+
+  const calculateOverlayBounds = (areaId: string, dir: BorderDir): HoverOverlay => {
+    const container = containerRef.current;
+    if (!container) return { x: 0, y: 0, width: 0, height: 0, isDragging: false };
+
+    const containerRect = container.getBoundingClientRect();
+    const area = areas.find(a => a.id === areaId);
+    if (!area) return { x: 0, y: 0, width: 0, height: 0, isDragging: false };
+
+    // Get all linked borders
+    const linkedBorders = getLinkedBorders(areaId, dir);
+    const allBorders = [{ id: areaId, dir }, ...linkedBorders];
+
+    // Calculate bounding box for all linked borders
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+    allBorders.forEach(({ id, dir: borderDir }) => {
+      const borderArea = areas.find(a => a.id === id);
+      if (!borderArea) return;
+
+      const areaX = (borderArea.x / 100) * containerRect.width;
+      const areaY = (borderArea.y / 100) * containerRect.height;
+      const areaWidth = (borderArea.width / 100) * containerRect.width;
+      const areaHeight = (borderArea.height / 100) * containerRect.height;
+
+      let borderX, borderY, borderWidth, borderHeight;
+
+      switch (borderDir) {
+        case 'left':
+          borderX = areaX;
+          borderY = areaY;
+          borderWidth = BORDER_THICKNESS;
+          borderHeight = areaHeight;
+          break;
+        case 'right':
+          borderX = areaX + areaWidth - BORDER_THICKNESS;
+          borderY = areaY;
+          borderWidth = BORDER_THICKNESS;
+          borderHeight = areaHeight;
+          break;
+        case 'top':
+          borderX = areaX;
+          borderY = areaY;
+          borderWidth = areaWidth;
+          borderHeight = BORDER_THICKNESS;
+          break;
+        case 'bottom':
+          borderX = areaX;
+          borderY = areaY + areaHeight - BORDER_THICKNESS;
+          borderWidth = areaWidth;
+          borderHeight = BORDER_THICKNESS;
+          break;
+        default:
+          return;
+      }
+
+      minX = Math.min(minX, borderX);
+      minY = Math.min(minY, borderY);
+      maxX = Math.max(maxX, borderX + borderWidth);
+      maxY = Math.max(maxY, borderY + borderHeight);
+    });
+
+    return {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+      isDragging: false
+    };
+  };
 
   const handleBorderMouseEnter = (areaId: string, dir: BorderDir) => {
-    // Get all linked borders that would move together during drag
-    const linkedBorders = getLinkedBorders(areaId, dir);
-    const borderIds = new Set([
-      `${areaId}-${dir}`,
-      ...linkedBorders.map(border => `${border.id}-${border.dir}`)
-    ]);
-    setHoveredBorders(borderIds);
+    const overlay = calculateOverlayBounds(areaId, dir);
+    setHoverOverlay(overlay);
   };
 
   const handleBorderMouseLeave = () => {
-    setHoveredBorders(new Set());
+    if (!dragging) {
+      setHoverOverlay(null);
+    }
   };
 
-  const isBorderHovered = (areaId: string, dir: BorderDir) => {
-    return hoveredBorders.has(`${areaId}-${dir}`);
+  const handleBorderMouseDown = (e: React.MouseEvent, areaId: string, dir: BorderDir) => {
+    // Update overlay to dragging state
+    if (hoverOverlay) {
+      setHoverOverlay({ ...hoverOverlay, isDragging: true });
+    }
+    onBorderMouseDown(e, areaId, dir);
   };
 
-  const isBorderDragging = (areaId: string, dir: BorderDir) => {
-    return dragging?.areaId === areaId && dragging?.dir === dir;
-  };
+  // Update overlay position during drag
+  React.useEffect(() => {
+    if (dragging && hoverOverlay) {
+      const overlay = calculateOverlayBounds(dragging.areaId, dragging.dir);
+      setHoverOverlay({ ...overlay, isDragging: true });
+    } else if (!dragging && hoverOverlay?.isDragging) {
+      setHoverOverlay(null);
+    }
+  }, [dragging, areas]);
 
   return (
     <div
@@ -70,13 +155,10 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
             zIndex: 200,
           }}
         >
-          {/* Enhanced Border Elements with Adjacent Hover Effects */}
+          {/* Invisible Border Elements for Mouse Events */}
           {/* 좌 */}
           <div
-            className={`area-border area-border-vertical ${
-              isBorderDragging(area.id, 'left') ? 'dragging' : 
-              isBorderHovered(area.id, 'left') ? 'hovered' : ''
-            }`}
+            className="area-border area-border-vertical"
             style={{ 
               left: 0, 
               top: 0, 
@@ -84,9 +166,11 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
               height: '100%', 
               position: 'absolute', 
               cursor: 'ew-resize', 
-              zIndex: 10 
+              zIndex: 10,
+              background: 'transparent',
+              opacity: 0
             }}
-            onMouseDown={e => onBorderMouseDown(e, area.id, 'left')}
+            onMouseDown={e => handleBorderMouseDown(e, area.id, 'left')}
             onMouseEnter={() => handleBorderMouseEnter(area.id, 'left')}
             onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel horizontally"
@@ -94,10 +178,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
           
           {/* 우 */}
           <div
-            className={`area-border area-border-vertical ${
-              isBorderDragging(area.id, 'right') ? 'dragging' : 
-              isBorderHovered(area.id, 'right') ? 'hovered' : ''
-            }`}
+            className="area-border area-border-vertical"
             style={{ 
               right: 0, 
               top: 0, 
@@ -105,9 +186,11 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
               height: '100%', 
               position: 'absolute', 
               cursor: 'ew-resize', 
-              zIndex: 10 
+              zIndex: 10,
+              background: 'transparent',
+              opacity: 0
             }}
-            onMouseDown={e => onBorderMouseDown(e, area.id, 'right')}
+            onMouseDown={e => handleBorderMouseDown(e, area.id, 'right')}
             onMouseEnter={() => handleBorderMouseEnter(area.id, 'right')}
             onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel horizontally"
@@ -115,10 +198,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
           
           {/* 상 */}
           <div
-            className={`area-border area-border-horizontal ${
-              isBorderDragging(area.id, 'top') ? 'dragging' : 
-              isBorderHovered(area.id, 'top') ? 'hovered' : ''
-            }`}
+            className="area-border area-border-horizontal"
             style={{ 
               left: 0, 
               top: 0, 
@@ -126,9 +206,11 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
               height: BORDER_THICKNESS, 
               position: 'absolute', 
               cursor: 'ns-resize', 
-              zIndex: 10 
+              zIndex: 10,
+              background: 'transparent',
+              opacity: 0
             }}
-            onMouseDown={e => onBorderMouseDown(e, area.id, 'top')}
+            onMouseDown={e => handleBorderMouseDown(e, area.id, 'top')}
             onMouseEnter={() => handleBorderMouseEnter(area.id, 'top')}
             onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel vertically"
@@ -136,10 +218,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
           
           {/* 하 */}
           <div
-            className={`area-border area-border-horizontal ${
-              isBorderDragging(area.id, 'bottom') ? 'dragging' : 
-              isBorderHovered(area.id, 'bottom') ? 'hovered' : ''
-            }`}
+            className="area-border area-border-horizontal"
             style={{ 
               left: 0, 
               bottom: 0, 
@@ -147,9 +226,11 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
               height: BORDER_THICKNESS, 
               position: 'absolute', 
               cursor: 'ns-resize', 
-              zIndex: 10 
+              zIndex: 10,
+              background: 'transparent',
+              opacity: 0
             }}
-            onMouseDown={e => onBorderMouseDown(e, area.id, 'bottom')}
+            onMouseDown={e => handleBorderMouseDown(e, area.id, 'bottom')}
             onMouseEnter={() => handleBorderMouseEnter(area.id, 'bottom')}
             onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel vertically"
@@ -161,6 +242,25 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
           </div>
         </div>
       ))}
+
+      {/* Hover Overlay Element */}
+      {hoverOverlay && (
+        <div
+          className={`border-hover-overlay ${hoverOverlay.isDragging ? 'dragging' : 'hovering'}`}
+          style={{
+            position: 'absolute',
+            left: hoverOverlay.x,
+            top: hoverOverlay.y,
+            width: hoverOverlay.width,
+            height: hoverOverlay.height,
+            pointerEvents: 'none', // Allow mouse events to pass through
+            zIndex: 15,
+            borderRadius: '4px',
+            background: 'var(--neu-base)', // Same as background
+            transition: hoverOverlay.isDragging ? 'none' : 'all 0.5s ease',
+          }}
+        />
+      )}
     </div>
   );
 };
