@@ -145,16 +145,13 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
     onBorderMouseDown(e, areaId, dir);
   };
 
-  // 🚀 CRITICAL: 실시간 드래그 위치 추적 - areas 변경과 무관하게 동작
+  // 🎯 CRITICAL: 드래그 중 실시간 위치 업데이트 - 최적화된 방식
   React.useEffect(() => {
     if (!dragging || !hoverOverlay?.isDragging) return;
 
-    let animationFrameId: number;
-
-    const updateOverlayPosition = () => {
-      // 🎯 매 프레임마다 오버레이 위치 재계산
+    // 🚀 즉시 위치 업데이트
+    const updatePosition = () => {
       const overlayBounds = calculateOverlayBounds(dragging.areaId, dragging.dir);
-      
       setHoverOverlay(prev => prev ? {
         ...overlayBounds,
         isDragging: true,
@@ -162,35 +159,23 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
         isFadingInner: false,
         isFadingOuter: false
       } : null);
-
-      // 🔄 다음 프레임에서도 계속 업데이트
-      animationFrameId = requestAnimationFrame(updateOverlayPosition);
     };
 
-    // 🚀 실시간 업데이트 시작
-    animationFrameId = requestAnimationFrame(updateOverlayPosition);
+    // 즉시 한 번 업데이트
+    updatePosition();
+
+    // 🎯 마우스 이동 이벤트에 직접 연결하여 실시간 추적
+    const handleMouseMove = () => {
+      updatePosition();
+    };
+
+    // 전역 마우스 이벤트 리스너 추가
+    document.addEventListener('mousemove', handleMouseMove);
 
     return () => {
-      // 🛑 드래그 종료 시 애니메이션 정리
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
+      document.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [dragging?.areaId, dragging?.dir, dragging !== null]); // dragging 상태에만 의존
-
-  // 🎯 areas 변경 시에도 추가 업데이트 (기존 로직 유지)
-  React.useEffect(() => {
-    if (dragging && hoverOverlay && hoverOverlay.isDragging) {
-      const overlayBounds = calculateOverlayBounds(dragging.areaId, dragging.dir);
-      setHoverOverlay(prev => prev ? {
-        ...overlayBounds,
-        isDragging: true,
-        isHovering: true,
-        isFadingInner: false,
-        isFadingOuter: false
-      } : null);
-    }
-  }, [areas, dragging]);
+  }, [dragging?.areaId, dragging?.dir, dragging !== null, areas]); // areas도 의존성에 포함
 
   // Handle drag end - improved logic
   React.useEffect(() => {
