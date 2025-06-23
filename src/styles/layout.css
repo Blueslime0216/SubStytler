@@ -1,8 +1,8 @@
-/* Layout and Structure Styles - Enhanced Accessibility & Shadow Visibility */
+/* Layout and Structure Styles - Unified Shadow Theme */
 
 .neu-toolbar {
   background: var(--neu-base);
-  border-bottom: 2px solid rgba(163, 168, 196, 0.2);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
   box-shadow: var(--neu-shadow-2);
   padding: 12px 20px;
   position: relative;
@@ -16,13 +16,13 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0.6;
 }
 
 .neu-status-bar {
   background: var(--neu-base);
-  border-top: 2px solid rgba(163, 168, 196, 0.2);
+  border-top: 2px solid rgba(255, 255, 255, 0.08);
   color: var(--neu-text-primary);
   font-size: 0.75rem;
   font-family: 'JetBrains Mono', monospace;
@@ -40,18 +40,17 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0.5;
 }
 
 .neu-video-controller {
   background: var(--neu-base);
   backdrop-filter: blur(20px);
-  border-top: 2px solid rgba(163, 168, 196, 0.2);
+  border-top: 2px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1), var(--neu-shadow-2);
   position: relative;
   z-index: 10;
-  /* Critical: Add proper border radius for bottom corners */
   border-radius: 0 0 18px 18px;
   overflow: hidden;
 }
@@ -63,11 +62,10 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0.6;
 }
 
-/* Ensure video controller children respect border radius */
 .neu-video-controller > div:last-child {
   border-radius: 0 0 18px 18px;
   overflow: hidden;
@@ -161,8 +159,8 @@
   width: 2px;
   background: linear-gradient(180deg, 
     transparent 0%, 
-    rgba(163, 168, 196, 0.3) 20%, 
-    rgba(163, 168, 196, 0.3) 80%, 
+    rgba(255, 255, 255, 0.1) 20%, 
+    rgba(255, 255, 255, 0.1) 80%, 
     transparent 100%);
   margin: 12px 0;
 }

@@ -1,14 +1,10 @@
-/* Panel System - Enhanced Elevated Shadow Effect */
+/* Panel System - Unified Shadow Theme */
 
 .neu-panel {
   background: var(--neu-base);
   border-radius: 18px;
   position: relative;
-  box-shadow: 
-    var(--neu-shadow-elevated),
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: var(--neu-shadow-elevated);
   border: 2px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
   display: flex;
@@ -27,17 +23,13 @@
   background: linear-gradient(145deg, 
     rgba(255, 255, 255, 0.05) 0%, 
     transparent 50%, 
-    rgba(163, 168, 196, 0.05) 100%);
+    rgba(255, 255, 255, 0.02) 100%);
   pointer-events: none;
   border-radius: inherit;
 }
 
 .neu-panel:hover {
-  box-shadow: 
-    var(--neu-shadow-elevated-hover),
-    0 12px 48px rgba(0, 0, 0, 0.4),
-    0 6px 24px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: var(--neu-shadow-elevated-hover);
   border-color: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px) translateZ(0);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -46,7 +38,7 @@
 .neu-panel-header {
   background: var(--neu-base);
   padding: 12px 18px;
-  border-bottom: 2px solid rgba(163, 168, 196, 0.15);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
   position: relative;
   font-weight: 600;
   color: var(--neu-text-primary);
@@ -64,7 +56,7 @@
   height: 1px;
   background: linear-gradient(90deg, 
     transparent 0%, 
-    rgba(255, 255, 255, 0.2) 50%, 
+    rgba(255, 255, 255, 0.1) 50%, 
     transparent 100%);
   opacity: 0.6;
 }
@@ -78,41 +70,10 @@
   z-index: 1;
 }
 
-/* Specific Panel Types */
-.neu-video-panel {
-  border-radius: 18px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: 
-    var(--neu-shadow-elevated),
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.neu-timeline {
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 
-    var(--neu-shadow-elevated),
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.neu-text-editor-panel {
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 
-    var(--neu-shadow-elevated),
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.08);
-  background: var(--neu-base);
-  position: relative;
-}
-
+/* All Panel Types - Unified Shadow System */
+.neu-video-panel,
+.neu-timeline,
+.neu-text-editor-panel,
 .neu-style-manager-panel,
 .neu-script-viewer-panel,
 .neu-effects-library-panel,
@@ -121,9 +82,46 @@
 .neu-audio-waveform-panel {
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 
-    var(--neu-shadow-elevated),
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  box-shadow: var(--neu-shadow-elevated);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  background: var(--neu-base);
+}
+
+.neu-video-panel::before,
+.neu-timeline::before,
+.neu-text-editor-panel::before,
+.neu-style-manager-panel::before,
+.neu-script-viewer-panel::before,
+.neu-effects-library-panel::before,
+.neu-history-panel::before,
+.neu-notes-panel::before,
+.neu-audio-waveform-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.05) 0%, 
+    transparent 50%, 
+    rgba(255, 255, 255, 0.02) 100%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.neu-video-panel:hover,
+.neu-timeline:hover,
+.neu-text-editor-panel:hover,
+.neu-style-manager-panel:hover,
+.neu-script-viewer-panel:hover,
+.neu-effects-library-panel:hover,
+.neu-history-panel:hover,
+.neu-notes-panel:hover,
+.neu-audio-waveform-panel:hover {
+  box-shadow: var(--neu-shadow-elevated-hover);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

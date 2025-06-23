@@ -25,38 +25,70 @@
   --neu-error: #FC8181;
   --neu-info: #63B3ED;
   
-  /* Dark Mode Strong Shadows - More Dramatic */
-  --neu-shadow-1: 12px 12px 24px var(--neu-dark), -6px -6px 16px var(--neu-light);
-  --neu-shadow-2: 16px 16px 32px var(--neu-dark), -8px -8px 20px var(--neu-light);
-  --neu-shadow-3: 20px 20px 40px var(--neu-dark), -10px -10px 24px var(--neu-light);
-  --neu-shadow-4: 24px 24px 48px var(--neu-dark), -12px -12px 28px var(--neu-light);
+  /* Unified Dark Shadow System - Pure Black Based */
+  --neu-shadow-1: 
+    8px 8px 16px rgba(0, 0, 0, 0.4),
+    -4px -4px 12px rgba(255, 255, 255, 0.05);
   
-  /* Enhanced Elevated Shadows for Prominent 3D Effect */
+  --neu-shadow-2: 
+    12px 12px 24px rgba(0, 0, 0, 0.5),
+    -6px -6px 16px rgba(255, 255, 255, 0.08);
+  
+  --neu-shadow-3: 
+    16px 16px 32px rgba(0, 0, 0, 0.6),
+    -8px -8px 20px rgba(255, 255, 255, 0.1);
+  
+  --neu-shadow-4: 
+    20px 20px 40px rgba(0, 0, 0, 0.7),
+    -10px -10px 24px rgba(255, 255, 255, 0.12);
+  
+  /* Enhanced Elevated Shadows - Consistent Black Theme */
   --neu-shadow-elevated: 
-    20px 20px 60px rgba(0, 0, 0, 0.5),
-    -10px -10px 30px rgba(255, 255, 255, 0.1),
+    16px 16px 48px rgba(0, 0, 0, 0.6),
+    -8px -8px 24px rgba(255, 255, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   
   --neu-shadow-elevated-hover: 
-    24px 24px 80px rgba(0, 0, 0, 0.6),
-    -12px -12px 40px rgba(255, 255, 255, 0.15),
+    20px 20px 60px rgba(0, 0, 0, 0.7),
+    -10px -10px 30px rgba(255, 255, 255, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
   
-  /* Dark Mode Strong Inset Shadows */
-  --neu-shadow-inset: inset 8px 8px 16px var(--neu-dark), inset -4px -4px 12px var(--neu-light);
-  --neu-shadow-inset-soft: inset 6px 6px 12px var(--neu-dark), inset -3px -3px 9px var(--neu-light);
-  --neu-shadow-inset-deep: inset 10px 10px 20px var(--neu-dark), inset -5px -5px 15px var(--neu-light);
+  /* Unified Inset Shadows */
+  --neu-shadow-inset: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.4),
+    inset -3px -3px 9px rgba(255, 255, 255, 0.05);
   
-  /* Dark Mode Interactive States */
-  --neu-shadow-pressed: inset 6px 6px 12px var(--neu-dark), inset -3px -3px 9px var(--neu-light);
-  --neu-shadow-hover: 14px 14px 28px var(--neu-dark), -7px -7px 18px var(--neu-light);
-  --neu-shadow-active: inset 4px 4px 8px var(--neu-dark), inset -2px -2px 6px var(--neu-light);
+  --neu-shadow-inset-soft: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
   
-  /* Dark Mode Subtle Shadows */
-  --neu-shadow-subtle: 6px 6px 12px var(--neu-dark), -3px -3px 9px var(--neu-light);
-  --neu-shadow-micro: 4px 4px 8px var(--neu-dark), -2px -2px 6px var(--neu-light);
+  --neu-shadow-inset-deep: 
+    inset 8px 8px 16px rgba(0, 0, 0, 0.5),
+    inset -4px -4px 12px rgba(255, 255, 255, 0.06);
   
-  /* Dark Mode Interactive Feedback */
+  /* Unified Interactive States */
+  --neu-shadow-pressed: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.4),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+  
+  --neu-shadow-hover: 
+    10px 10px 20px rgba(0, 0, 0, 0.5),
+    -5px -5px 15px rgba(255, 255, 255, 0.08);
+  
+  --neu-shadow-active: 
+    inset 3px 3px 6px rgba(0, 0, 0, 0.3),
+    inset -1px -1px 4px rgba(255, 255, 255, 0.03);
+  
+  /* Unified Subtle Shadows */
+  --neu-shadow-subtle: 
+    4px 4px 8px rgba(0, 0, 0, 0.3),
+    -2px -2px 6px rgba(255, 255, 255, 0.04);
+  
+  --neu-shadow-micro: 
+    2px 2px 4px rgba(0, 0, 0, 0.2),
+    -1px -1px 3px rgba(255, 255, 255, 0.03);
+  
+  /* Interactive Feedback - Consistent with Shadow Theme */
   --neu-interactive-bg: rgba(99, 179, 237, 0.15);
   --neu-interactive-border: rgba(99, 179, 237, 0.4);
   --neu-hover-brightness: 1.1;
@@ -85,31 +117,63 @@
   --neu-error: #FC8181;
   --neu-info: #63B3ED;
   
-  --neu-shadow-1: 12px 12px 24px var(--neu-dark), -6px -6px 16px var(--neu-light);
-  --neu-shadow-2: 16px 16px 32px var(--neu-dark), -8px -8px 20px var(--neu-light);
-  --neu-shadow-3: 20px 20px 40px var(--neu-dark), -10px -10px 24px var(--neu-light);
-  --neu-shadow-4: 24px 24px 48px var(--neu-dark), -12px -12px 28px var(--neu-light);
+  --neu-shadow-1: 
+    8px 8px 16px rgba(0, 0, 0, 0.4),
+    -4px -4px 12px rgba(255, 255, 255, 0.05);
+  
+  --neu-shadow-2: 
+    12px 12px 24px rgba(0, 0, 0, 0.5),
+    -6px -6px 16px rgba(255, 255, 255, 0.08);
+  
+  --neu-shadow-3: 
+    16px 16px 32px rgba(0, 0, 0, 0.6),
+    -8px -8px 20px rgba(255, 255, 255, 0.1);
+  
+  --neu-shadow-4: 
+    20px 20px 40px rgba(0, 0, 0, 0.7),
+    -10px -10px 24px rgba(255, 255, 255, 0.12);
   
   --neu-shadow-elevated: 
-    20px 20px 60px rgba(0, 0, 0, 0.5),
-    -10px -10px 30px rgba(255, 255, 255, 0.1),
+    16px 16px 48px rgba(0, 0, 0, 0.6),
+    -8px -8px 24px rgba(255, 255, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   
   --neu-shadow-elevated-hover: 
-    24px 24px 80px rgba(0, 0, 0, 0.6),
-    -12px -12px 40px rgba(255, 255, 255, 0.15),
+    20px 20px 60px rgba(0, 0, 0, 0.7),
+    -10px -10px 30px rgba(255, 255, 255, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
   
-  --neu-shadow-inset: inset 8px 8px 16px var(--neu-dark), inset -4px -4px 12px var(--neu-light);
-  --neu-shadow-inset-soft: inset 6px 6px 12px var(--neu-dark), inset -3px -3px 9px var(--neu-light);
-  --neu-shadow-inset-deep: inset 10px 10px 20px var(--neu-dark), inset -5px -5px 15px var(--neu-light);
+  --neu-shadow-inset: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.4),
+    inset -3px -3px 9px rgba(255, 255, 255, 0.05);
   
-  --neu-shadow-pressed: inset 6px 6px 12px var(--neu-dark), inset -3px -3px 9px var(--neu-light);
-  --neu-shadow-hover: 14px 14px 28px var(--neu-dark), -7px -7px 18px var(--neu-light);
-  --neu-shadow-active: inset 4px 4px 8px var(--neu-dark), inset -2px -2px 6px var(--neu-light);
+  --neu-shadow-inset-soft: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
   
-  --neu-shadow-subtle: 6px 6px 12px var(--neu-dark), -3px -3px 9px var(--neu-light);
-  --neu-shadow-micro: 4px 4px 8px var(--neu-dark), -2px -2px 6px var(--neu-light);
+  --neu-shadow-inset-deep: 
+    inset 8px 8px 16px rgba(0, 0, 0, 0.5),
+    inset -4px -4px 12px rgba(255, 255, 255, 0.06);
+  
+  --neu-shadow-pressed: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.4),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+  
+  --neu-shadow-hover: 
+    10px 10px 20px rgba(0, 0, 0, 0.5),
+    -5px -5px 15px rgba(255, 255, 255, 0.08);
+  
+  --neu-shadow-active: 
+    inset 3px 3px 6px rgba(0, 0, 0, 0.3),
+    inset -1px -1px 4px rgba(255, 255, 255, 0.03);
+  
+  --neu-shadow-subtle: 
+    4px 4px 8px rgba(0, 0, 0, 0.3),
+    -2px -2px 6px rgba(255, 255, 255, 0.04);
+  
+  --neu-shadow-micro: 
+    2px 2px 4px rgba(0, 0, 0, 0.2),
+    -1px -1px 3px rgba(255, 255, 255, 0.03);
   
   --neu-interactive-bg: rgba(99, 179, 237, 0.15);
   --neu-interactive-border: rgba(99, 179, 237, 0.4);
@@ -139,31 +203,63 @@
   --neu-error: #FC8181;
   --neu-info: #63B3ED;
   
-  --neu-shadow-1: 12px 12px 24px var(--neu-dark), -6px -6px 16px var(--neu-light);
-  --neu-shadow-2: 16px 16px 32px var(--neu-dark), -8px -8px 20px var(--neu-light);
-  --neu-shadow-3: 20px 20px 40px var(--neu-dark), -10px -10px 24px var(--neu-light);
-  --neu-shadow-4: 24px 24px 48px var(--neu-dark), -12px -12px 28px var(--neu-light);
+  --neu-shadow-1: 
+    8px 8px 16px rgba(0, 0, 0, 0.4),
+    -4px -4px 12px rgba(255, 255, 255, 0.05);
+  
+  --neu-shadow-2: 
+    12px 12px 24px rgba(0, 0, 0, 0.5),
+    -6px -6px 16px rgba(255, 255, 255, 0.08);
+  
+  --neu-shadow-3: 
+    16px 16px 32px rgba(0, 0, 0, 0.6),
+    -8px -8px 20px rgba(255, 255, 255, 0.1);
+  
+  --neu-shadow-4: 
+    20px 20px 40px rgba(0, 0, 0, 0.7),
+    -10px -10px 24px rgba(255, 255, 255, 0.12);
   
   --neu-shadow-elevated: 
-    20px 20px 60px rgba(0, 0, 0, 0.5),
-    -10px -10px 30px rgba(255, 255, 255, 0.1),
+    16px 16px 48px rgba(0, 0, 0, 0.6),
+    -8px -8px 24px rgba(255, 255, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   
   --neu-shadow-elevated-hover: 
-    24px 24px 80px rgba(0, 0, 0, 0.6),
-    -12px -12px 40px rgba(255, 255, 255, 0.15),
+    20px 20px 60px rgba(0, 0, 0, 0.7),
+    -10px -10px 30px rgba(255, 255, 255, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
   
-  --neu-shadow-inset: inset 8px 8px 16px var(--neu-dark), inset -4px -4px 12px var(--neu-light);
-  --neu-shadow-inset-soft: inset 6px 6px 12px var(--neu-dark), inset -3px -3px 9px var(--neu-light);
-  --neu-shadow-inset-deep: inset 10px 10px 20px var(--neu-dark), inset -5px -5px 15px var(--neu-light);
+  --neu-shadow-inset: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.4),
+    inset -3px -3px 9px rgba(255, 255, 255, 0.05);
   
-  --neu-shadow-pressed: inset 6px 6px 12px var(--neu-dark), inset -3px -3px 9px var(--neu-light);
-  --neu-shadow-hover: 14px 14px 28px var(--neu-dark), -7px -7px 18px var(--neu-light);
-  --neu-shadow-active: inset 4px 4px 8px var(--neu-dark), inset -2px -2px 6px var(--neu-light);
+  --neu-shadow-inset-soft: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
   
-  --neu-shadow-subtle: 6px 6px 12px var(--neu-dark), -3px -3px 9px var(--neu-light);
-  --neu-shadow-micro: 4px 4px 8px var(--neu-dark), -2px -2px 6px var(--neu-light);
+  --neu-shadow-inset-deep: 
+    inset 8px 8px 16px rgba(0, 0, 0, 0.5),
+    inset -4px -4px 12px rgba(255, 255, 255, 0.06);
+  
+  --neu-shadow-pressed: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.4),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+  
+  --neu-shadow-hover: 
+    10px 10px 20px rgba(0, 0, 0, 0.5),
+    -5px -5px 15px rgba(255, 255, 255, 0.08);
+  
+  --neu-shadow-active: 
+    inset 3px 3px 6px rgba(0, 0, 0, 0.3),
+    inset -1px -1px 4px rgba(255, 255, 255, 0.03);
+  
+  --neu-shadow-subtle: 
+    4px 4px 8px rgba(0, 0, 0, 0.3),
+    -2px -2px 6px rgba(255, 255, 255, 0.04);
+  
+  --neu-shadow-micro: 
+    2px 2px 4px rgba(0, 0, 0, 0.2),
+    -1px -1px 3px rgba(255, 255, 255, 0.03);
   
   --neu-interactive-bg: rgba(99, 179, 237, 0.15);
   --neu-interactive-border: rgba(99, 179, 237, 0.4);

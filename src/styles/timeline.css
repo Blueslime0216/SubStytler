@@ -1,12 +1,12 @@
-/* Timeline Component Styles - Enhanced Accessibility */
+/* Timeline Component Styles - Unified Shadow Theme */
 
 .neu-timeline {
   background: var(--neu-base);
   border-radius: 18px;
-  box-shadow: var(--neu-shadow-2);
+  box-shadow: var(--neu-shadow-elevated);
   overflow: hidden;
   position: relative;
-  border: 2px solid rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.08);
 }
 
 .neu-timeline::before {
@@ -22,7 +22,7 @@
 
 .neu-timeline-ruler {
   background: var(--neu-base);
-  border-bottom: 2px solid rgba(163, 168, 196, 0.15);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
   padding: 12px 0;
   position: relative;
   font-weight: 600;
@@ -36,7 +36,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0.6;
 }
 
@@ -92,7 +92,7 @@
   cursor: move;
 }
 
-/* Progress Bar System - Enhanced Visibility */
+/* Progress Bar System - Unified Shadow Theme */
 .neu-progress-container {
   background: var(--neu-base);
   border-radius: 10px;
@@ -101,7 +101,7 @@
   margin: 0 12px;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   cursor: pointer;
 }
 
@@ -112,8 +112,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(145deg, var(--neu-dark), var(--neu-light));
-  opacity: 0.08;
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.02));
+  opacity: 0.5;
   border-radius: inherit;
 }
 
@@ -200,7 +200,7 @@
   box-shadow: var(--neu-shadow-1), 0 0 4px rgba(99, 179, 237, 0.3);
 }
 
-/* Volume Control - Enhanced */
+/* Volume Control - Unified Shadow Theme */
 .neu-volume-container {
   background: var(--neu-base);
   border-radius: 8px;
@@ -208,7 +208,7 @@
   padding: 6px 0;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   cursor: pointer;
 }
 
