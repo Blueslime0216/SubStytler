@@ -3,12 +3,16 @@ import { AreaRenderer } from './components/Layout/AreaRenderer';
 import { useLayoutStore } from './stores/layoutStore';
 import { shallow } from 'zustand/shallow';
 import { panelRegistry, PanelId } from './config/panelRegistry';
+import { Area } from './types/area';
 
 export default function App() {
-  const { areas, setAreas } = useLayoutStore(state => ({ areas: state.areas, setAreas: state.setAreas }), shallow);
+  const { areas, setAreas } = useLayoutStore(
+    state => ({ areas: state.areas, setAreas: state.setAreas }),
+    shallow,
+  );
 
-  const renderPanel = (area: { id: PanelId }) => {
-    const Comp = panelRegistry[area.id] as React.ComponentType;
+  const renderPanel = (area: Area) => {
+    const Comp = panelRegistry[area.id as PanelId];
     return Comp ? <Comp /> : null;
   };
 
@@ -43,7 +47,11 @@ export default function App() {
         }}
       >
         <div className="flex-1 h-full min-h-0 relative rounded-xl" style={{ overflow: 'visible' }}>
-          <AreaRenderer areas={areas as any} setAreas={setAreas as any} renderPanel={renderPanel} />
+          <AreaRenderer
+            areas={areas as any}
+            setAreas={setAreas as any}
+            renderPanel={renderPanel}
+          />
         </div>
       </main>
 
