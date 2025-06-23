@@ -17,23 +17,19 @@ interface HoverOverlay {
   width: number;
   height: number;
   isDragging: boolean;
-  isHovering: boolean;
-  isFadingInner: boolean;
-  isFadingOuter: boolean;
 }
 
 export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, renderPanel }) => {
   const { containerRef, onBorderMouseDown, dragging, getLinkedBorders } = useAreaDrag(areas, setAreas);
   const [hoverOverlay, setHoverOverlay] = useState<HoverOverlay | null>(null);
-  const [currentHoveredBorder, setCurrentHoveredBorder] = useState<{areaId: string, dir: BorderDir} | null>(null);
 
-  const calculateOverlayBounds = (areaId: string, dir: BorderDir): Omit<HoverOverlay, 'isDragging' | 'isHovering' | 'isFadingInner' | 'isFadingOuter'> => {
+  const calculateOverlayBounds = (areaId: string, dir: BorderDir): HoverOverlay => {
     const container = containerRef.current;
-    if (!container) return { x: 0, y: 0, width: 0, height: 0 };
+    if (!container) return { x: 0, y: 0, width: 0, height: 0, isDragging: false };
 
     const containerRect = container.getBoundingClientRect();
     const area = areas.find(a => a.id === areaId);
-    if (!area) return { x: 0, y: 0, width: 0, height: 0 };
+    if (!area) return { x: 0, y: 0, width: 0, height: 0, isDragging: false };
 
     // Get all linked borders
     const linkedBorders = getLinkedBorders(areaId, dir);
@@ -92,124 +88,39 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
       x: minX,
       y: minY,
       width: maxX - minX,
-      height: maxY - minY
+      height: maxY - minY,
+      isDragging: false
     };
   };
 
   const handleBorderMouseEnter = (areaId: string, dir: BorderDir) => {
-    setCurrentHoveredBorder({ areaId, dir });
-    const overlayBounds = calculateOverlayBounds(areaId, dir);
-    setHoverOverlay({
-      ...overlayBounds,
-      isDragging: false,
-      isHovering: true,
-      isFadingInner: false,
-      isFadingOuter: false
-    });
+    const overlay = calculateOverlayBounds(areaId, dir);
+    setHoverOverlay(overlay);
   };
 
-  const handleBorderMouseLeave = (areaId: string, dir: BorderDir) => {
-    // Only clear if we're leaving the same border we entered
-    if (currentHoveredBorder?.areaId === areaId && currentHoveredBorder?.dir === dir) {
-      setCurrentHoveredBorder(null);
-      
-      if (hoverOverlay && !hoverOverlay.isDragging) {
-        // Start fade out animation
-        setHoverOverlay({
-          ...hoverOverlay,
-          isHovering: false,
-          isFadingOuter: true
-        });
-        
-        // Remove overlay after fade animation
-        setTimeout(() => {
-          setHoverOverlay(null);
-        }, 300);
-      }
+  const handleBorderMouseLeave = () => {
+    if (!dragging) {
+      setHoverOverlay(null);
     }
   };
 
   const handleBorderMouseDown = (e: React.MouseEvent, areaId: string, dir: BorderDir) => {
-    // Update overlay to dragging state immediately
+    // Update overlay to dragging state
     if (hoverOverlay) {
-      setHoverOverlay({
-        ...hoverOverlay,
-        isDragging: true,
-        isHovering: true,
-        isFadingInner: false,
-        isFadingOuter: false
-      });
+      setHoverOverlay({ ...hoverOverlay, isDragging: true });
     }
     onBorderMouseDown(e, areaId, dir);
   };
 
-  // Update overlay position during drag with exact synchronization
+  // Update overlay position during drag
   React.useEffect(() => {
-    if (dragging && hoverOverlay && hoverOverlay.isDragging) {
-      // Calculate new position immediately when areas change
-      const overlayBounds = calculateOverlayBounds(dragging.areaId, dragging.dir);
-      setHoverOverlay(prev => prev ? {
-        ...overlayBounds,
-        isDragging: true,
-        isHovering: true,
-        isFadingInner: false,
-        isFadingOuter: false
-      } : null);
+    if (dragging && hoverOverlay) {
+      const overlay = calculateOverlayBounds(dragging.areaId, dragging.dir);
+      setHoverOverlay({ ...overlay, isDragging: true });
+    } else if (!dragging && hoverOverlay?.isDragging) {
+      setHoverOverlay(null);
     }
-  }, [areas, dragging]);
-
-  // Handle drag end
-  React.useEffect(() => {
-    if (!dragging && hoverOverlay?.isDragging) {
-      // Check if mouse is still over the border
-      if (currentHoveredBorder) {
-        // Start fade inner shadow animation
-        setHoverOverlay(prev => prev ? {
-          ...prev,
-          isDragging: false,
-          isFadingInner: true
-        } : null);
-        
-        // After inner fade, return to hover state
-        setTimeout(() => {
-          setHoverOverlay(prev => prev ? {
-            ...prev,
-            isFadingInner: false
-          } : null);
-        }, 100);
-      } else {
-        // Mouse is not over border, fade out completely
-        setHoverOverlay(prev => prev ? {
-          ...prev,
-          isDragging: false,
-          isHovering: false,
-          isFadingOuter: true
-        } : null);
-        
-        setTimeout(() => {
-          setHoverOverlay(null);
-        }, 300);
-      }
-    }
-  }, [dragging, currentHoveredBorder]);
-
-  const getOverlayClassName = () => {
-    if (!hoverOverlay) return '';
-    
-    let className = 'border-hover-overlay';
-    
-    if (hoverOverlay.isFadingOuter) {
-      className += ' fading-outer';
-    } else if (hoverOverlay.isFadingInner) {
-      className += ' fading-inner';
-    } else if (hoverOverlay.isDragging) {
-      className += ' dragging';
-    } else if (hoverOverlay.isHovering) {
-      className += ' hovering';
-    }
-    
-    return className;
-  };
+  }, [dragging, areas]);
 
   return (
     <div
@@ -261,7 +172,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
             }}
             onMouseDown={e => handleBorderMouseDown(e, area.id, 'left')}
             onMouseEnter={() => handleBorderMouseEnter(area.id, 'left')}
-            onMouseLeave={() => handleBorderMouseLeave(area.id, 'left')}
+            onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel horizontally"
           />
           
@@ -281,7 +192,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
             }}
             onMouseDown={e => handleBorderMouseDown(e, area.id, 'right')}
             onMouseEnter={() => handleBorderMouseEnter(area.id, 'right')}
-            onMouseLeave={() => handleBorderMouseLeave(area.id, 'right')}
+            onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel horizontally"
           />
           
@@ -301,7 +212,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
             }}
             onMouseDown={e => handleBorderMouseDown(e, area.id, 'top')}
             onMouseEnter={() => handleBorderMouseEnter(area.id, 'top')}
-            onMouseLeave={() => handleBorderMouseLeave(area.id, 'top')}
+            onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel vertically"
           />
           
@@ -321,7 +232,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
             }}
             onMouseDown={e => handleBorderMouseDown(e, area.id, 'bottom')}
             onMouseEnter={() => handleBorderMouseEnter(area.id, 'bottom')}
-            onMouseLeave={() => handleBorderMouseLeave(area.id, 'bottom')}
+            onMouseLeave={handleBorderMouseLeave}
             title="Drag to resize panel vertically"
           />
 
@@ -335,7 +246,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
       {/* Hover Overlay Element */}
       {hoverOverlay && (
         <div
-          className={getOverlayClassName()}
+          className={`border-hover-overlay ${hoverOverlay.isDragging ? 'dragging' : 'hovering'}`}
           style={{
             position: 'absolute',
             left: hoverOverlay.x,
@@ -346,6 +257,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
             zIndex: 15,
             borderRadius: '4px',
             background: 'var(--neu-base)', // Same as background
+            transition: hoverOverlay.isDragging ? 'none' : 'all 0.5s ease',
           }}
         />
       )}
