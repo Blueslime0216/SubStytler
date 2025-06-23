@@ -23,11 +23,11 @@
   border-radius: 4px;
 }
 
-/* Clean Border Hover Effect - Only Shadow, No Blue Highlight */
+/* Clean Border Hover Effect - Only Shadow, No Background Color Change */
 .area-border:hover,
 .area-border.hovered {
   opacity: 1;
-  background: linear-gradient(145deg, var(--neu-accent), var(--neu-surface));
+  background: transparent;
   box-shadow: 
     4px 4px 12px rgba(13, 17, 23, 0.6),
     -2px -2px 8px rgba(45, 55, 72, 0.4);
@@ -43,10 +43,10 @@
   cursor: ns-resize;
 }
 
-/* Enhanced visual feedback for active dragging */
+/* Enhanced visual feedback for active dragging - Light Gray Background */
 .area-border.dragging {
   opacity: 1;
-  background: var(--neu-primary);
+  background: linear-gradient(145deg, var(--neu-accent), var(--neu-surface));
   box-shadow: 
     6px 6px 18px rgba(13, 17, 23, 0.8),
     -3px -3px 12px rgba(45, 55, 72, 0.6),

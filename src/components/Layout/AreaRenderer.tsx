@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import './AreaRenderer.css';
 import { Area } from '../../types/area';
 import { useAreaDrag, BorderDir } from './hooks/useAreaDrag';
@@ -14,20 +14,32 @@ const BORDER_THICKNESS = 8;
 export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, renderPanel }) => {
   const { containerRef, onBorderMouseDown, dragging, getLinkedBorders } = useAreaDrag(areas, setAreas);
   const [hoveredBorders, setHoveredBorders] = useState<Set<string>>(new Set());
+  const [isCalculatingHover, setIsCalculatingHover] = useState(false);
 
-  const handleBorderMouseEnter = (areaId: string, dir: BorderDir) => {
+  const handleBorderMouseEnter = useCallback(async (areaId: string, dir: BorderDir) => {
+    // Prevent multiple simultaneous calculations
+    if (isCalculatingHover) return;
+    
+    setIsCalculatingHover(true);
+    
     // Get all linked borders that would move together during drag
     const linkedBorders = getLinkedBorders(areaId, dir);
     const borderIds = new Set([
       `${areaId}-${dir}`,
       ...linkedBorders.map(border => `${border.id}-${border.dir}`)
     ]);
+    
+    // Wait for calculation to complete, then apply all hover effects simultaneously
+    await new Promise(resolve => setTimeout(resolve, 0));
+    
     setHoveredBorders(borderIds);
-  };
+    setIsCalculatingHover(false);
+  }, [getLinkedBorders, isCalculatingHover]);
 
-  const handleBorderMouseLeave = () => {
+  const handleBorderMouseLeave = useCallback(() => {
     setHoveredBorders(new Set());
-  };
+    setIsCalculatingHover(false);
+  }, []);
 
   const isBorderHovered = (areaId: string, dir: BorderDir) => {
     return hoveredBorders.has(`${areaId}-${dir}`);
@@ -70,7 +82,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
             zIndex: 200,
           }}
         >
-          {/* Enhanced Border Elements with Adjacent Hover Effects */}
+          {/* Enhanced Border Elements with Synchronized Hover Effects */}
           {/* 좌 */}
           <div
             className={`area-border area-border-vertical ${
