@@ -191,4 +191,4 @@ export function useAreaDrag(
   };
 
   return { containerRef, onBorderMouseDown, dragging };
-} 
+}

@@ -41,37 +41,83 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
             height: `${area.height}%`,
             background: 'transparent',
             boxSizing: 'border-box',
-            padding: 'var(--panel-padding, 24px)', // 공간 확보 - CSS 변수화
-            // borderRadius: 8,
+            padding: 'var(--panel-padding, 24px)',
             transition: dragging ? 'none' : 'background 0.2s',
             overflow: 'visible',
             zIndex: 200,
           }}
         >
-          {/* 네 방향 경계선 */}
+          {/* Enhanced Border Elements with Hover Shadow Effects */}
           {/* 좌 */}
           <div
-            className="area-border area-border-vertical"
-            style={{ left: 0, top: 0, width: BORDER_THICKNESS, height: '100%', position: 'absolute', cursor: 'ew-resize', zIndex: 10, background: 'transparent', opacity: 0 /* Area의 경계 */ }}
+            className={`area-border area-border-vertical ${
+              dragging?.areaId === area.id && dragging?.dir === 'left' ? 'dragging' : ''
+            }`}
+            style={{ 
+              left: 0, 
+              top: 0, 
+              width: BORDER_THICKNESS, 
+              height: '100%', 
+              position: 'absolute', 
+              cursor: 'ew-resize', 
+              zIndex: 10 
+            }}
             onMouseDown={e => onBorderMouseDown(e, area.id, 'left')}
+            title="Drag to resize panel horizontally"
           />
+          
           {/* 우 */}
           <div
-            className="area-border area-border-vertical"
-            style={{ right: 0, top: 0, width: BORDER_THICKNESS, height: '100%', position: 'absolute', cursor: 'ew-resize', zIndex: 10, background: 'transparent', opacity: 0 }}
+            className={`area-border area-border-vertical ${
+              dragging?.areaId === area.id && dragging?.dir === 'right' ? 'dragging' : ''
+            }`}
+            style={{ 
+              right: 0, 
+              top: 0, 
+              width: BORDER_THICKNESS, 
+              height: '100%', 
+              position: 'absolute', 
+              cursor: 'ew-resize', 
+              zIndex: 10 
+            }}
             onMouseDown={e => onBorderMouseDown(e, area.id, 'right')}
+            title="Drag to resize panel horizontally"
           />
+          
           {/* 상 */}
           <div
-            className="area-border area-border-horizontal"
-            style={{ left: 0, top: 0, width: '100%', height: BORDER_THICKNESS, position: 'absolute', cursor: 'ns-resize', zIndex: 10, background: 'transparent', opacity: 0 }}
+            className={`area-border area-border-horizontal ${
+              dragging?.areaId === area.id && dragging?.dir === 'top' ? 'dragging' : ''
+            }`}
+            style={{ 
+              left: 0, 
+              top: 0, 
+              width: '100%', 
+              height: BORDER_THICKNESS, 
+              position: 'absolute', 
+              cursor: 'ns-resize', 
+              zIndex: 10 
+            }}
             onMouseDown={e => onBorderMouseDown(e, area.id, 'top')}
+            title="Drag to resize panel vertically"
           />
+          
           {/* 하 */}
           <div
-            className="area-border area-border-horizontal"
-            style={{ left: 0, bottom: 0, width: '100%', height: BORDER_THICKNESS, position: 'absolute', cursor: 'ns-resize', zIndex: 10, background: 'transparent', opacity: 0 }}
+            className={`area-border area-border-horizontal ${
+              dragging?.areaId === area.id && dragging?.dir === 'bottom' ? 'dragging' : ''
+            }`}
+            style={{ 
+              left: 0, 
+              bottom: 0, 
+              width: '100%', 
+              height: BORDER_THICKNESS, 
+              position: 'absolute', 
+              cursor: 'ns-resize', 
+              zIndex: 10 
+            }}
             onMouseDown={e => onBorderMouseDown(e, area.id, 'bottom')}
+            title="Drag to resize panel vertically"
           />
 
           {/* Panel Content */}
