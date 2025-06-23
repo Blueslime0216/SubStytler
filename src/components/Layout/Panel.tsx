@@ -59,12 +59,13 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
 
   return (
     <motion.div
-      className={`neu-panel flex flex-col ${className}`}
+      className={`neu-panel flex flex-col h-full ${className}`}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      <div className="neu-panel-header flex items-center justify-between">
+      {/* Panel Header */}
+      <div className="neu-panel-header flex items-center justify-between flex-shrink-0">
         <div className="flex items-center space-x-3 flex-1">
           <motion.div 
             className="p-1.5 rounded-lg neu-shadow-1 cursor-pointer"
@@ -133,8 +134,12 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
         </div>
       </div>
       
-      <PanelContent type={type} />
+      {/* Panel Content */}
+      <div className="neu-panel-content flex-1 min-h-0">
+        <PanelContent type={type} />
+      </div>
 
+      {/* Dropdowns */}
       <PanelDropdown
         isOpen={isDropdownOpen}
         onClose={() => setIsDropdownOpen(false)}

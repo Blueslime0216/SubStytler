@@ -176,6 +176,7 @@
   display: flex;
   flex-direction: column;
   transform: translateZ(0); /* Force hardware acceleration */
+  height: 100%;
 }
 
 .neu-panel::before {
@@ -214,6 +215,7 @@
   color: var(--neu-text-primary);
   border-radius: 18px 18px 0 0;
   flex-shrink: 0;
+  z-index: 10;
 }
 
 .neu-panel-header::after {
@@ -231,16 +233,13 @@
 }
 
 /* Panel Content Area - Ensure proper border radius inheritance */
-.neu-panel > div:last-child {
+.neu-panel-content {
   border-radius: 0 0 18px 18px;
   overflow: hidden;
   flex: 1;
-}
-
-/* Special handling for panels with specific content structures */
-.neu-panel .flex-1 {
-  border-radius: 0 0 18px 18px;
-  overflow: hidden;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* Video Panel Specific Fixes */
@@ -573,33 +572,6 @@
 .neu-tooltip:hover::before {
   opacity: 1;
   visibility: visible;
-}
-
-/* Critical: Panel Content Border Radius Fixes */
-.neu-panel-content {
-  border-radius: 0 0 18px 18px;
-  overflow: hidden;
-  flex: 1;
-}
-
-/* Ensure all panel children respect parent border radius */
-.neu-panel > *:first-child {
-  border-radius: 18px 18px 0 0;
-}
-
-.neu-panel > *:last-child {
-  border-radius: 0 0 18px 18px;
-}
-
-.neu-panel > *:only-child {
-  border-radius: 18px;
-}
-
-/* Special handling for flex containers in panels */
-.neu-panel .flex-1:last-child,
-.neu-panel .h-full:last-child {
-  border-radius: 0 0 18px 18px;
-  overflow: hidden;
 }
 
 /* Style Manager Panel Specific */
@@ -944,6 +916,7 @@ input[type="password"],
 input[type="number"],
 input[type="search"],
 input[type="url"],
+input[type="tel"],
 textarea {
   cursor: text;
 }
@@ -954,6 +927,7 @@ input[type="password"]:hover,
 input[type="number"]:hover,
 input[type="search"]:hover,
 input[type="url"]:hover,
+input[type="tel"]:hover,
 textarea:hover {
   cursor: text;
 }
