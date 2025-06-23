@@ -145,13 +145,43 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
     onBorderMouseDown(e, areaId, dir);
   };
 
-  // 🎯 CRITICAL: 드래그 중 정확한 위치 동기화
+  // 🚀 CRITICAL: 실시간 드래그 위치 추적 - areas 변경과 무관하게 동작
   React.useEffect(() => {
-    if (dragging && hoverOverlay && hoverOverlay.isDragging) {
-      // 🚀 실시간으로 경계 위치 재계산 및 즉시 동기화
+    if (!dragging || !hoverOverlay?.isDragging) return;
+
+    let animationFrameId: number;
+
+    const updateOverlayPosition = () => {
+      // 🎯 매 프레임마다 오버레이 위치 재계산
       const overlayBounds = calculateOverlayBounds(dragging.areaId, dragging.dir);
       
-      // 🎯 즉시 위치 업데이트 - 지연 없음
+      setHoverOverlay(prev => prev ? {
+        ...overlayBounds,
+        isDragging: true,
+        isHovering: true,
+        isFadingInner: false,
+        isFadingOuter: false
+      } : null);
+
+      // 🔄 다음 프레임에서도 계속 업데이트
+      animationFrameId = requestAnimationFrame(updateOverlayPosition);
+    };
+
+    // 🚀 실시간 업데이트 시작
+    animationFrameId = requestAnimationFrame(updateOverlayPosition);
+
+    return () => {
+      // 🛑 드래그 종료 시 애니메이션 정리
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [dragging?.areaId, dragging?.dir, dragging !== null]); // dragging 상태에만 의존
+
+  // 🎯 areas 변경 시에도 추가 업데이트 (기존 로직 유지)
+  React.useEffect(() => {
+    if (dragging && hoverOverlay && hoverOverlay.isDragging) {
+      const overlayBounds = calculateOverlayBounds(dragging.areaId, dragging.dir);
       setHoverOverlay(prev => prev ? {
         ...overlayBounds,
         isDragging: true,
@@ -160,7 +190,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
         isFadingOuter: false
       } : null);
     }
-  }, [areas, dragging]); // areas 변경 시 즉시 반응
+  }, [areas, dragging]);
 
   // Handle drag end - improved logic
   React.useEffect(() => {
