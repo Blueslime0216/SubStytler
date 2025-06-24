@@ -6,6 +6,55 @@
 @import './dropdowns.css';
 @import './cursors.css';
 
+/* 🎨 뉴모피즘 패널 선택기 전용 스타일 */
+.neu-panel-selector {
+  /* 커스텀 스크롤바 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(45, 55, 72, 0.6) transparent;
+}
+
+.neu-panel-selector::-webkit-scrollbar {
+  width: 6px;
+}
+
+.neu-panel-selector::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.neu-panel-selector::-webkit-scrollbar-thumb {
+  background: rgba(45, 55, 72, 0.6);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.neu-panel-selector::-webkit-scrollbar-thumb:hover {
+  background: rgba(45, 55, 72, 0.8);
+}
+
+/* 🌟 글로우 애니메이션 */
+@keyframes neu-glow-pulse {
+  0%, 100% {
+    box-shadow: 
+      20px 20px 60px rgba(13, 17, 23, 0.8),
+      -10px -10px 30px rgba(45, 55, 72, 0.6),
+      inset 2px 2px 8px rgba(45, 55, 72, 0.3),
+      inset -2px -2px 8px rgba(13, 17, 23, 0.4);
+  }
+  50% {
+    box-shadow: 
+      20px 20px 60px rgba(13, 17, 23, 0.8),
+      -10px -10px 30px rgba(45, 55, 72, 0.6),
+      inset 2px 2px 8px rgba(45, 55, 72, 0.3),
+      inset -2px -2px 8px rgba(13, 17, 23, 0.4),
+      0 0 30px rgba(99, 179, 237, 0.2);
+  }
+}
+
+.neu-panel-selector-container {
+  animation: neu-glow-pulse 4s ease-in-out infinite;
+}
+
 /* Tooltip Support */
 [title] {
   cursor: pointer;
