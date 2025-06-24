@@ -54,12 +54,15 @@ export const VideoController: React.FC<VideoControllerProps> = ({
     setCurrentTime(Math.min(duration, currentTime + frameDuration));
   };
 
+  // 🎯 정확한 시간 계산 - 패딩 고려
   const getTimeFromPosition = (clientX: number): number => {
     if (!progressBarRef.current) return currentTime;
     
     const rect = progressBarRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    const percentage = x / rect.width;
+    const padding = 20; // CSS의 left/right 패딩과 정확히 일치
+    const trackWidth = rect.width - (padding * 2); // 실제 트랙 너비
+    const x = Math.max(0, Math.min(clientX - rect.left - padding, trackWidth));
+    const percentage = trackWidth > 0 ? x / trackWidth : 0;
     return percentage * duration;
   };
 
@@ -86,12 +89,15 @@ export const VideoController: React.FC<VideoControllerProps> = ({
     setIsDragging(false);
   };
 
+  // 🎯 정확한 볼륨 계산 - 패딩 고려
   const getVolumeFromPosition = (clientX: number): number => {
     if (!volumeBarRef.current) return volume;
     
     const rect = volumeBarRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    const percentage = x / rect.width;
+    const padding = 8; // CSS의 left/right 패딩과 정확히 일치
+    const trackWidth = rect.width - (padding * 2); // 실제 트랙 너비
+    const x = Math.max(0, Math.min(clientX - rect.left - padding, trackWidth));
+    const percentage = trackWidth > 0 ? x / trackWidth : 0;
     return percentage;
   };
 
@@ -143,40 +149,68 @@ export const VideoController: React.FC<VideoControllerProps> = ({
   const getCurrentFrame = () => Math.floor((currentTime * fps) / 1000);
   const getTotalFrames = () => Math.floor((duration * fps) / 1000);
 
+  // 🎯 정확한 퍼센티지 계산 - 패딩 고려
   const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
   const volumePercentage = (isMuted ? 0 : volume) * 100;
+
+  // 🎯 썸 위치 계산 - 패딩과 트랙 너비 정확히 고려
+  const getThumbPosition = () => {
+    if (!progressBarRef.current) return '20px'; // 기본 패딩 위치
+    
+    const rect = progressBarRef.current.getBoundingClientRect();
+    const padding = 20;
+    const trackWidth = rect.width - (padding * 2);
+    const thumbPosition = padding + (progressPercentage / 100) * trackWidth;
+    return `${thumbPosition}px`;
+  };
+
+  const getVolumeThumbPosition = () => {
+    if (!volumeBarRef.current) return '8px'; // 기본 패딩 위치
+    
+    const rect = volumeBarRef.current.getBoundingClientRect();
+    const padding = 8;
+    const trackWidth = rect.width - (padding * 2);
+    const thumbPosition = padding + (volumePercentage / 100) * trackWidth;
+    return `${thumbPosition}px`;
+  };
 
   return (
     <div className="neu-video-controller">
       <div className="px-10 pt-8 pb-6">
         <div 
           ref={progressBarRef}
-          className={`neu-progress-container relative h-10 flex items-center group ${
+          className={`neu-progress-container relative h-16 flex items-center group ${
             isVideoLoaded ? 'cursor-pointer neu-interactive' : 'cursor-not-allowed'
           }`}
           onMouseDown={handleProgressBarMouseDown}
           title={isVideoLoaded ? "Click to seek video position" : "Load a video to enable seeking"}
         >
+          {/* 트랙 */}
           <div className="neu-progress-track" />
+          
+          {/* 진행 바 */}
           <div 
             className="neu-progress-fill"
-            style={{ width: `${progressPercentage}%` }}
+            style={{ width: `calc(${progressPercentage}% + 0px)` }}
           />
+          
+          {/* 썸 - 정확한 위치 */}
           <div 
             className={`neu-progress-thumb ${
               isDragging ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
             }`}
             style={{ 
-              left: `${progressPercentage}%`,
+              left: getThumbPosition(),
               transition: isDragging ? 'none' : 'opacity 0.2s ease'
             }}
           />
           
+          {/* 드래그 중 시간 표시 */}
           {isDragging && (
             <motion.div 
-              className="neu-card-micro absolute -top-14 text-sm neu-text-primary font-mono font-semibold"
+              className="neu-card-micro absolute -top-16 text-sm neu-text-primary font-mono font-semibold"
               style={{ 
-                left: `${progressPercentage}%`, 
+                left: getThumbPosition(),
                 transform: 'translateX(-50%)'
               }}
               initial={{ opacity: 0, y: 10 }}
@@ -249,29 +283,35 @@ export const VideoController: React.FC<VideoControllerProps> = ({
             >
               <div 
                 ref={volumeBarRef}
-                className="neu-volume-container relative h-10 flex items-center cursor-pointer neu-interactive"
+                className="neu-volume-container relative h-12 flex items-center cursor-pointer neu-interactive"
                 onMouseDown={handleVolumeBarMouseDown}
                 style={{ width: '120px' }}
                 title="Adjust volume"
               >
+                {/* 볼륨 트랙 */}
                 <div className="neu-volume-track" />
+                
+                {/* 볼륨 진행 바 */}
                 <div 
                   className="neu-volume-fill"
-                  style={{ width: `${volumePercentage}%` }}
+                  style={{ width: `calc(${volumePercentage}% + 0px)` }}
                 />
+                
+                {/* 볼륨 썸 - 정확한 위치 */}
                 <div 
                   className="neu-volume-thumb"
                   style={{ 
-                    left: `${volumePercentage}%`,
+                    left: getVolumeThumbPosition(),
                     transition: isDraggingVolume ? 'none' : 'transform 0.1s ease'
                   }}
                 />
                 
+                {/* 드래그 중 볼륨 표시 */}
                 {isDraggingVolume && (
                   <motion.div 
-                    className="neu-card-micro absolute -top-12 text-sm neu-text-primary font-mono font-semibold whitespace-nowrap"
+                    className="neu-card-micro absolute -top-14 text-sm neu-text-primary font-mono font-semibold whitespace-nowrap"
                     style={{ 
-                      left: `${volumePercentage}%`, 
+                      left: getVolumeThumbPosition(),
                       transform: 'translateX(-50%)'
                     }}
                     initial={{ opacity: 0, y: 5 }}
