@@ -15,12 +15,16 @@ export const panelRegistry = {
   'effects-library': () => <Panel type="effects-library" areaId="effects-library" />,
   'history': () => <Panel type="history" areaId="history" />,
   'notes': () => <Panel type="notes" areaId="notes" />,
-  'empty': () => <Panel type="empty" areaId="empty" />, // 🆕 빈 패널 등록
+  'empty': () => <Panel type="empty" areaId="empty" />,
+  
+  // 🔧 동적 패널 생성 함수 추가
+  createPanel: (type: PanelType, areaId: string) => <Panel type={type} areaId={areaId} key={areaId} />
 } as const;
 
 export type PanelId = keyof typeof panelRegistry;
 
-// Helper function to create panel with proper props
+// 🔧 Helper function to create panel with proper props and unique key
 export const createPanel = (type: PanelType, areaId: string) => {
-  return <Panel type={type} areaId={areaId} />;
+  console.log('🏗️ 패널 생성:', { type, areaId });
+  return <Panel type={type} areaId={areaId} key={`${type}-${areaId}-${Date.now()}`} />;
 };

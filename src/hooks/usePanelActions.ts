@@ -24,16 +24,35 @@ export const usePanelActions = (
 
   // 🔧 성능 최적화: 메모이제이션된 이벤트 핸들러
   const handlePanelChange = useCallback((newPanelType: PanelType) => {
-    console.log('🔄 패널 변경 시도:', { areaId, currentType: type, newType: newPanelType });
+    console.log('🔄 패널 변경 시도:', { 
+      areaId, 
+      currentType: type, 
+      newType: newPanelType,
+      timestamp: Date.now()
+    });
     
-    if (areaId && newPanelType !== type) {
-      changePanelType(areaId, newPanelType);
-      console.log('✅ 패널 변경 완료:', newPanelType);
-    } else {
-      console.warn('⚠️ 패널 변경 실패:', { areaId, newPanelType, currentType: type });
+    if (!areaId) {
+      console.error('❌ areaId가 없습니다!');
+      return;
     }
     
-    setIsDropdownOpen(false);
+    if (newPanelType === type) {
+      console.warn('⚠️ 같은 타입으로 변경 시도');
+      return;
+    }
+    
+    try {
+      changePanelType(areaId, newPanelType);
+      console.log('✅ 패널 변경 완료:', newPanelType);
+      
+      // 🔧 상태 업데이트 후 약간의 지연을 두고 드롭다운 닫기
+      setTimeout(() => {
+        setIsDropdownOpen(false);
+      }, 100);
+      
+    } catch (error) {
+      console.error('❌ 패널 변경 실패:', error);
+    }
   }, [areaId, type, changePanelType, setIsDropdownOpen]);
 
   const handleSplitPanel = useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
