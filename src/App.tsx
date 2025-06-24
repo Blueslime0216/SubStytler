@@ -11,32 +11,46 @@ export default function App() {
     shallow,
   );
 
-  // 🎯 동적 패널 렌더링 로직 - 모든 ID 패턴 지원 + 강제 리렌더링
+  // 🎯 동적 패널 렌더링 로직 - ID 매칭 문제 해결
   const renderPanel = useMemo(() => {
     return (area: Area) => {
-      console.log('🎨 패널 렌더링:', { areaId: area.id, timestamp: Date.now() });
+      console.log('🎨 App.tsx 패널 렌더링:', { 
+        areaId: area.id, 
+        timestamp: Date.now(),
+        allAreas: areas.map(a => a.id)
+      });
       
       // 1️⃣ 직접 매칭 시도
       if (panelRegistry[area.id as keyof typeof panelRegistry]) {
         const Component = panelRegistry[area.id as keyof typeof panelRegistry];
-        return <Component key={area.id} />; // 🔧 key 추가로 강제 리렌더링
+        console.log('✅ 직접 매칭 성공:', area.id);
+        return <Component key={area.id} />;
       }
       
       // 2️⃣ 패턴 매칭 시도 (예: "history-1735113234567" → "history")
       const baseType = area.id.split('-')[0];
-      console.log('🔍 패턴 매칭:', { areaId: area.id, baseType });
+      console.log('🔍 패턴 매칭 시도:', { areaId: area.id, baseType });
       
       if (panelRegistry[baseType as keyof typeof panelRegistry]) {
         const Component = panelRegistry[baseType as keyof typeof panelRegistry];
-        return <Component key={area.id} />; // 🔧 key 추가로 강제 리렌더링
+        console.log('✅ 패턴 매칭 성공:', { areaId: area.id, baseType });
+        
+        // 🔧 실제 area ID를 areaId prop으로 전달
+        return React.createElement(Component.type, { 
+          key: area.id,
+          areaId: area.id // 🎯 실제 area ID 전달
+        });
       }
       
       // 3️⃣ 기본값: 빈 패널
       console.log('⚠️ 기본 패널 사용:', area.id);
       const EmptyComponent = panelRegistry.empty;
-      return <EmptyComponent key={area.id} />; // 🔧 key 추가로 강제 리렌더링
+      return React.createElement(EmptyComponent.type, { 
+        key: area.id,
+        areaId: area.id // 🎯 실제 area ID 전달
+      });
     };
-  }, [areas]); // 🔧 areas 의존성 추가로 변경 시 리렌더링
+  }, [areas]);
 
   return (
     <div className="min-h-screen flex flex-col bg-neu-base text-white" style={{ overflow: 'visible' }}>
@@ -70,7 +84,7 @@ export default function App() {
       >
         <div className="flex-1 h-full min-h-0 relative rounded-xl" style={{ overflow: 'visible' }}>
           <AreaRenderer
-            key={`areas-${areas.length}-${areas.map(a => a.id).join('-')}`} // 🔧 강제 리렌더링을 위한 key
+            key={`areas-${areas.length}-${areas.map(a => a.id).join('-')}`}
             areas={areas as any}
             setAreas={setAreas as any}
             renderPanel={renderPanel}

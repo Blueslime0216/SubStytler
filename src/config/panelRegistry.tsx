@@ -2,23 +2,28 @@ import React from 'react';
 import { Panel } from '../components/Layout/Panel';
 import { PanelType } from '../types/project';
 
+// 🔧 패널 생성 함수 - areaId를 올바르게 전달
+const createPanelComponent = (type: PanelType) => {
+  return React.forwardRef<any, { areaId?: string }>((props, ref) => {
+    console.log('🏗️ 패널 컴포넌트 생성:', { type, areaId: props.areaId });
+    return <Panel type={type} areaId={props.areaId} key={props.areaId || type} />;
+  });
+};
+
 export const panelRegistry = {
-  video: () => <Panel type="video-preview" areaId="video" />,
-  timeline: () => <Panel type="subtitle-timeline" areaId="timeline" />,
-  text: () => <Panel type="text-editor" areaId="text" />,
-  'video-preview': () => <Panel type="video-preview" areaId="video-preview" />,
-  'subtitle-timeline': () => <Panel type="subtitle-timeline" areaId="subtitle-timeline" />,
-  'audio-waveform': () => <Panel type="audio-waveform" areaId="audio-waveform" />,
-  'text-editor': () => <Panel type="text-editor" areaId="text-editor" />,
-  'style-manager': () => <Panel type="style-manager" areaId="style-manager" />,
-  'script-viewer': () => <Panel type="script-viewer" areaId="script-viewer" />,
-  'effects-library': () => <Panel type="effects-library" areaId="effects-library" />,
-  'history': () => <Panel type="history" areaId="history" />,
-  'notes': () => <Panel type="notes" areaId="notes" />,
-  'empty': () => <Panel type="empty" areaId="empty" />,
-  
-  // 🔧 동적 패널 생성 함수 추가
-  createPanel: (type: PanelType, areaId: string) => <Panel type={type} areaId={areaId} key={areaId} />
+  video: createPanelComponent('video-preview'),
+  timeline: createPanelComponent('subtitle-timeline'),
+  text: createPanelComponent('text-editor'),
+  'video-preview': createPanelComponent('video-preview'),
+  'subtitle-timeline': createPanelComponent('subtitle-timeline'),
+  'audio-waveform': createPanelComponent('audio-waveform'),
+  'text-editor': createPanelComponent('text-editor'),
+  'style-manager': createPanelComponent('style-manager'),
+  'script-viewer': createPanelComponent('script-viewer'),
+  'effects-library': createPanelComponent('effects-library'),
+  'history': createPanelComponent('history'),
+  'notes': createPanelComponent('notes'),
+  'empty': createPanelComponent('empty'),
 } as const;
 
 export type PanelId = keyof typeof panelRegistry;

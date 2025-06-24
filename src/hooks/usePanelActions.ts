@@ -24,11 +24,12 @@ export const usePanelActions = (
 
   // 🔧 성능 최적화: 메모이제이션된 이벤트 핸들러
   const handlePanelChange = useCallback((newPanelType: PanelType) => {
-    console.log('🔄 패널 변경 시도:', { 
+    console.log('🔄 usePanelActions 패널 변경 시도:', { 
       areaId, 
       currentType: type, 
       newType: newPanelType,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      availableAreas: areas.map(a => ({ id: a.id, type: a.id.split('-')[0] }))
     });
     
     if (!areaId) {
@@ -41,7 +42,18 @@ export const usePanelActions = (
       return;
     }
     
+    // 🔧 실제 area 존재 확인
+    const targetArea = areas.find(area => area.id === areaId);
+    if (!targetArea) {
+      console.error('❌ 대상 area를 찾을 수 없습니다:', { 
+        areaId, 
+        availableAreas: areas.map(a => a.id) 
+      });
+      return;
+    }
+    
     try {
+      console.log('🎯 changePanelType 호출:', { areaId, newPanelType });
       changePanelType(areaId, newPanelType);
       console.log('✅ 패널 변경 완료:', newPanelType);
       
@@ -53,7 +65,7 @@ export const usePanelActions = (
     } catch (error) {
       console.error('❌ 패널 변경 실패:', error);
     }
-  }, [areaId, type, changePanelType, setIsDropdownOpen]);
+  }, [areaId, type, changePanelType, setIsDropdownOpen, areas]);
 
   const handleSplitPanel = useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
     console.log('🔀 패널 분할 시도:', { areaId, direction, newPanelType });
