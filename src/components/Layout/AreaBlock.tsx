@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Area } from '../../types/area';
 import { BorderDir, LinkedArea } from './hooks/areaDragUtils';
 
@@ -69,7 +70,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
 
   const paddingValues = getPaddingValues();
 
-  // 🔧 기본 스타일 - 애니메이션 완전 제거
+  // 기본 스타일
   const baseStyle: React.CSSProperties = {
     position: 'absolute',
     left: `${area.x}%`,
@@ -80,14 +81,10 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     boxSizing: 'border-box',
     overflow: 'visible',
     zIndex: 200,
-    // 🔧 모든 애니메이션 완전 비활성화
-    transition: 'none !important',
-    animation: 'none !important',
-    // 🔧 하드웨어 가속
+    // 🔧 하드웨어 가속 강제 활성화
     transform: 'translate3d(0, 0, 0)',
     backfaceVisibility: 'hidden',
-    // 🔧 패딩을 직접 스타일로 적용 (Framer Motion 제거)
-    ...paddingValues,
+    willChange: dragging ? 'transform' : 'padding',
   };
 
   const handleBorderMouseEnter = (dir: BorderDir) => {
@@ -104,9 +101,25 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
   };
 
   return (
-    <div
+    <motion.div
       className={`area-block ${dragging ? 'dragging' : ''}`}
       style={baseStyle}
+      animate={paddingValues}
+      transition={{
+        // 🔧 드래그 중에는 완전히 애니메이션 비활성화
+        duration: dragging ? 0 : 0.15,
+        ease: "easeOut",
+        type: "tween",
+        // 🔧 불필요한 애니메이션 속성 제거
+        bounce: 0,
+        damping: 30,
+        stiffness: 300,
+      }}
+      // 🔧 드래그 중 최적화 설정
+      drag={false}
+      dragConstraints={false}
+      dragElastic={0}
+      dragMomentum={false}
     >
       {/* 좌측 경계 */}
       <div
@@ -217,6 +230,6 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
