@@ -11,11 +11,14 @@ interface AreaRendererProps {
   renderPanel?: (area: Area) => React.ReactNode;
 }
 
-const BORDER_THICKNESS = 8;
-
 export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, renderPanel }) => {
   const { containerRef, onBorderMouseDown, dragging, getLinkedBorders } = useAreaDrag(areas, setAreas);
   const [hoveredBorder, setHoveredBorder] = usePaddingHover(dragging);
+
+  console.log('🎨 AreaRenderer 렌더링:', { 
+    areasCount: areas.length, 
+    areas: areas.map(a => ({ id: a.id, x: a.x, y: a.y, width: a.width, height: a.height }))
+  });
 
   return (
     <div
@@ -32,18 +35,22 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
         zIndex: 10,
       }}
     >
-      {areas.map(area => (
-        <AreaBlock
-          key={area.id}
-          area={area}
-          dragging={dragging}
-          hoveredBorder={hoveredBorder}
-          setHoveredBorder={setHoveredBorder}
-          getLinkedBorders={getLinkedBorders}
-          onBorderMouseDown={onBorderMouseDown}
-          renderPanel={renderPanel}
-        />
-      ))}
+      {areas.map((area, index) => {
+        console.log(`🎯 Area ${index + 1} 렌더링:`, area);
+        
+        return (
+          <AreaBlock
+            key={`${area.id}-${area.x}-${area.y}-${area.width}-${area.height}`} // 🔑 고유 키 생성
+            area={area}
+            dragging={dragging}
+            hoveredBorder={hoveredBorder}
+            setHoveredBorder={setHoveredBorder}
+            getLinkedBorders={getLinkedBorders}
+            onBorderMouseDown={onBorderMouseDown}
+            renderPanel={renderPanel}
+          />
+        );
+      })}
     </div>
   );
 };

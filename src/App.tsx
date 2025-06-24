@@ -2,7 +2,7 @@ import React from 'react';
 import { AreaRenderer } from './components/Layout/AreaRenderer';
 import { useLayoutStore } from './stores/layoutStore';
 import { shallow } from 'zustand/shallow';
-import { panelRegistry, PanelId } from './config/panelRegistry';
+import { renderPanelById } from './config/panelRegistry';
 import { Area } from './types/area';
 
 export default function App() {
@@ -11,9 +11,10 @@ export default function App() {
     shallow,
   );
 
+  // 🎯 개선된 패널 렌더링 함수
   const renderPanel = (area: Area) => {
-    const Comp = panelRegistry[area.id as PanelId];
-    return Comp ? <Comp /> : null;
+    console.log('🎨 App에서 패널 렌더링:', area);
+    return renderPanelById(area.id);
   };
 
   return (

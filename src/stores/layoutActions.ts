@@ -26,54 +26,65 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     // 🔍 현재 areas 구조 확인
     console.log('📊 현재 areas 구조:', areas);
 
-    const splitAreaRecursive = (area: any): any => {
-      console.log('🔍 검사 중인 area:', area);
-      
-      // 🎯 Area 시스템에서는 id로 직접 매칭
-      if (area.id === areaId) {
-        console.log('✅ 분할할 area 발견:', area);
-        
-        // 🆕 새로운 area 생성
-        const newAreaId = `${areaId}-split-${Date.now()}`;
-        const newArea = {
-          id: newAreaId,
-          x: direction === 'horizontal' ? area.x : area.x + area.width / 2,
-          y: direction === 'horizontal' ? area.y + area.height / 2 : area.y,
-          width: direction === 'horizontal' ? area.width : area.width / 2,
-          height: direction === 'horizontal' ? area.height / 2 : area.height,
-          minWidth: area.minWidth || 15,
-          minHeight: area.minHeight || 20,
-        };
-
-        // 🔄 기존 area 크기 조정
-        const updatedArea = {
-          ...area,
-          width: direction === 'horizontal' ? area.width : area.width / 2,
-          height: direction === 'horizontal' ? area.height / 2 : area.height,
-        };
-
-        console.log('🆕 새로운 area:', newArea);
-        console.log('🔄 수정된 기존 area:', updatedArea);
-
-        return [updatedArea, newArea];
-      }
-
-      return area;
-    };
-
-    // 🔄 모든 areas에 대해 분할 시도
+    // 🎯 새로운 areas 배열 생성
     const newAreas = [];
     let splitOccurred = false;
 
     for (const area of areas) {
-      const result = splitAreaRecursive(area);
-      if (Array.isArray(result)) {
-        // 분할이 발생한 경우
-        newAreas.push(...result);
+      if (area.id === areaId) {
+        console.log('✅ 분할할 area 발견:', area);
+        
+        // 🆕 새로운 area ID 생성 (패널 타입으로 설정)
+        const newAreaId = newPanelType; // 직접 패널 타입을 ID로 사용
+        
+        if (direction === 'horizontal') {
+          // 🔄 가로 분할: 위아래로 나누기
+          const updatedArea = {
+            ...area,
+            height: area.height / 2, // 높이 절반
+          };
+          
+          const newArea = {
+            id: newAreaId,
+            x: area.x,
+            y: area.y + area.height / 2, // 아래쪽에 배치
+            width: area.width,
+            height: area.height / 2, // 높이 절반
+            minWidth: area.minWidth || 15,
+            minHeight: area.minHeight || 20,
+          };
+          
+          console.log('🔄 가로 분할 - 기존 area:', updatedArea);
+          console.log('🆕 가로 분할 - 새로운 area:', newArea);
+          
+          newAreas.push(updatedArea, newArea);
+        } else {
+          // 🔄 세로 분할: 좌우로 나누기
+          const updatedArea = {
+            ...area,
+            width: area.width / 2, // 너비 절반
+          };
+          
+          const newArea = {
+            id: newAreaId,
+            x: area.x + area.width / 2, // 오른쪽에 배치
+            y: area.y,
+            width: area.width / 2, // 너비 절반
+            height: area.height,
+            minWidth: area.minWidth || 15,
+            minHeight: area.minHeight || 20,
+          };
+          
+          console.log('🔄 세로 분할 - 기존 area:', updatedArea);
+          console.log('🆕 세로 분할 - 새로운 area:', newArea);
+          
+          newAreas.push(updatedArea, newArea);
+        }
+        
         splitOccurred = true;
-        console.log('✅ 분할 성공!');
       } else {
-        newAreas.push(result);
+        // 다른 area들은 그대로 유지
+        newAreas.push(area);
       }
     }
 
@@ -84,6 +95,9 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     }
 
     console.log('✅ splitArea 완료, 새로운 areas:', newAreas);
+    console.log('📊 areas 개수:', `${areas.length} → ${newAreas.length}`);
+    
+    // 🎯 상태 업데이트
     set({ areas: newAreas });
   },
 
@@ -116,14 +130,13 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     console.log('🔄 changePanelType 호출:', { areaId, newPanelType });
     const { areas } = get();
 
-    // 🎯 Area 시스템에서는 panelType이 아닌 id를 직접 변경
+    // 🎯 Area 시스템에서는 id를 직접 변경
     const newAreas = areas.map(area => {
       if (area.id === areaId) {
         console.log('✅ 패널 타입 변경:', { 
-          areaId: area.id,
-          newType: newPanelType
+          기존ID: area.id,
+          새로운ID: newPanelType
         });
-        // Area 시스템에서는 id 자체가 패널 타입을 나타냄
         return { ...area, id: newPanelType };
       }
       return area;
@@ -190,63 +203,17 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
   removeArea: (areaId: string) => {
     console.log('🗑️ removeArea 호출:', areaId);
     const { areas } = get();
-    if (countPanels(areas) <= 1) {
+    
+    // 🔍 현재 패널 개수 확인
+    if (areas.length <= 1) {
       console.warn('⚠️ 마지막 패널은 제거할 수 없습니다');
       return;
     }
 
-    const removeAreaRecursive = (area: AreaConfig): AreaConfig | null => {
-      if (area.id === areaId) return null;
-      if (area.children) {
-        const childIndex = area.children.findIndex(child => child.id === areaId);
-        if (childIndex !== -1) {
-          const newChildren = redistributeSizes(area.children, childIndex);
-          if (newChildren.length === 1) {
-            const promotedChild = newChildren[0];
-            return {
-              ...promotedChild,
-              id: area.id,
-              size: area.size || promotedChild.size,
-              minSize: area.minSize || promotedChild.minSize,
-              maxSize: area.maxSize || promotedChild.maxSize,
-            };
-          }
-          if (newChildren.length > 1) return { ...area, children: newChildren };
-          return null;
-        }
-        const processed = area.children
-          .map(removeAreaRecursive)
-          .filter((child): child is AreaConfig => child !== null);
-        if (processed.length === 0) return null;
-        if (processed.length === 1) {
-          const promotedChild = processed[0];
-          return {
-            ...promotedChild,
-            id: area.id,
-            size: area.size || promotedChild.size,
-            minSize: area.minSize || promotedChild.minSize,
-            maxSize: area.maxSize || promotedChild.maxSize,
-          };
-        }
-        return { ...area, children: processed };
-      }
-      return area;
-    };
-
-    let newAreas = areas
-      .map(removeAreaRecursive)
-      .filter((area: AreaConfig | null): area is AreaConfig => area !== null);
-    newAreas = newAreas
-      .map(cleanupEmptySplits)
-      .filter((area: AreaConfig | null): area is AreaConfig => area !== null)
-      .map(validateAndFixConstraints);
-
-    if (newAreas.length === 0) {
-      console.warn('⚠️ 모든 영역을 제거할 수 없습니다. 기본 레이아웃으로 복원합니다');
-      newAreas = createDefaultLayout();
-    }
-
-    console.log('✅ removeArea 완료');
+    // 🗑️ 해당 area 제거
+    const newAreas = areas.filter(area => area.id !== areaId);
+    
+    console.log('✅ removeArea 완료:', `${areas.length} → ${newAreas.length}`);
     set({ areas: newAreas });
   },
 });
