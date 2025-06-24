@@ -1,51 +1,29 @@
-/* 🔧 깜박거림 완전 해결 - 최적화된 CSS */
-
 .area-layout-container {
   position: relative;
   width: 100%;
   height: 100%;
   background: transparent;
-  overflow: visible;
-  /* 🔧 하드웨어 가속 활성화 */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
+  overflow: visible; /* 🔧 그림자 표시를 위해 visible */
 }
 
 .area-block {
   position: absolute;
   background: transparent;
-  overflow: visible;
+  overflow: visible; /* 🔧 그림자 표시를 위해 visible */
   box-sizing: border-box;
-  /* 🔧 모든 CSS 트랜지션 완전 제거 */
-  transition: none !important;
-  /* 🔧 하드웨어 가속 최적화 */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  will-change: padding;
+  /* 🔧 모든 CSS 트랜지션 제거 - Framer Motion이 제어 */
 }
 
-/* 🔧 드래그 중 최적화 */
+/* 드래그 중 표시 */
 .area-block.dragging {
-  /* 드래그 중에는 모든 애니메이션 비활성화 */
-  transition: none !important;
-  animation: none !important;
-  /* 하드웨어 가속 강화 */
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  will-change: transform;
+  /* Framer Motion에서 duration: 0으로 처리하므로 CSS는 불필요 */
 }
 
 .area-border {
   position: absolute;
   z-index: 10;
   border-radius: 4px;
-  /* 🔧 모든 시각적 효과 제거 */
-  transition: none !important;
-  animation: none !important;
-  /* 하드웨어 가속 */
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  /* 🔧 모든 시각적 효과 제거 - 순수한 패딩 애니메이션만 */
 }
 
 .area-border-vertical {
@@ -56,31 +34,8 @@
   cursor: ns-resize;
 }
 
-/* 🔧 성능 최적화 - 모든 자식 요소 */
-.area-block *,
-.area-border * {
-  /* 하드웨어 가속 활성화 */
+/* 🔧 깜박임 방지를 위한 최적화 */
+.area-block * {
   backface-visibility: hidden;
   transform: translateZ(0);
-  /* 불필요한 애니메이션 제거 */
-  transition: none !important;
-  animation: none !important;
-}
-
-/* 🔧 드래그 중 전역 최적화 */
-.dragging-active {
-  /* 드래그 중에는 모든 애니메이션 비활성화 */
-  * {
-    transition: none !important;
-    animation: none !important;
-  }
-}
-
-/* 🔧 GPU 가속 강제 활성화 */
-.area-block,
-.area-border {
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
-  -ms-transform: translate3d(0, 0, 0);
 }

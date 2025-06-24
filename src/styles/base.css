@@ -18,28 +18,6 @@ body {
   overflow-y: auto;
 }
 
-/* 🔧 드래그 중 전역 애니메이션 비활성화 (깜박거림 완전 제거) */
-body.dragging-active {
-  /* 모든 애니메이션과 트랜지션 비활성화 */
-  *, *::before, *::after {
-    transition: none !important;
-    animation: none !important;
-    animation-duration: 0s !important;
-    animation-delay: 0s !important;
-    transition-duration: 0s !important;
-    transition-delay: 0s !important;
-  }
-  
-  /* 커서 변경 */
-  cursor: grabbing !important;
-  
-  /* 텍스트 선택 비활성화 */
-  user-select: none !important;
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
-}
-
 /* Critical: Global overflow fix for all containers */
 #root {
   overflow: visible !important;
@@ -55,14 +33,6 @@ body.dragging-active {
 /* Override any Tailwind overflow settings that might clip shadows */
 .overflow-hidden {
   overflow: visible !important;
-}
-
-/* 🔧 성능 최적화를 위한 하드웨어 가속 */
-* {
-  /* GPU 가속 활성화 */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
 }
 
 /* Scrollbar Styling */
