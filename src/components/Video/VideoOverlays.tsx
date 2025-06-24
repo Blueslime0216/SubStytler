@@ -26,9 +26,6 @@ export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
   getInputProps,
   onRetry
 }) => {
-  // 비디오가 로드되었고 에러가 없으면 업로드 인터페이스를 숨김
-  const showUploadInterface = !hasVideo && !uploadState.isUploading && !isVideoLoaded;
-  
   // 비디오가 성공적으로 로드되었는지 확인
   const videoSuccessfullyLoaded = hasVideo && isVideoLoaded && !videoError;
 
@@ -37,16 +34,7 @@ export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
       {/* 비디오가 성공적으로 로드되지 않았을 때만 오버레이 표시 */}
       {!videoSuccessfullyLoaded && (
         <>
-          {/* 비디오가 없고 업로드 중이 아닐 때만 업로드 인터페이스 표시 */}
-          {showUploadInterface && (
-            <div className="pointer-events-auto">
-              <VideoUploadOverlay 
-                isDragActive={isDragActive}
-                getRootProps={getRootProps}
-                getInputProps={getInputProps}
-              />
-            </div>
-          )}
+          {/* 🎯 업로드 인터페이스 제거 - 메인 패널에서 처리 */}
           
           {uploadState.isUploading && (
             <VideoProgressOverlay uploadState={uploadState} />
