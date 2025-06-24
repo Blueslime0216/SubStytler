@@ -44,6 +44,11 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
 
   if (!isOpen) return null;
 
+  const handlePanelSelect = (panelType: PanelType) => {
+    console.log('🎯 드롭다운에서 패널 선택:', panelType);
+    onPanelChange(panelType);
+  };
+
   return (
     <Portal>
       <div 
@@ -53,9 +58,9 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
       
       <AnimatePresence>
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -20, scale: 0.95 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
           className="neu-dropdown fixed z-50 overflow-hidden"
           style={{
@@ -66,7 +71,7 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
         >
           <div className="p-3">
             <div className="neu-caption font-medium px-2 py-2 mb-2">
-              Switch Panel Type
+              🔄 패널 타입 변경
             </div>
             
             <div className="space-y-1">
@@ -75,13 +80,16 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                 return (
                   <motion.button
                     key={panelType}
-                    onClick={() => onPanelChange(panelType as PanelType)}
+                    onClick={() => handlePanelSelect(panelType as PanelType)}
                     className="neu-dropdown-item w-full flex items-center space-x-3 p-3 text-left cursor-pointer neu-interactive"
-                    title={`Switch to ${panelConfig.title}`}
+                    title={`${panelConfig.title}로 변경`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
                     <motion.div 
                       className="p-1.5 rounded-lg neu-shadow-1 cursor-pointer"
                       style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
+                      whileHover={{ scale: 1.1 }}
                     >
                       <PanelIcon className="w-3.5 h-3.5 neu-text-accent" />
                     </motion.div>
@@ -98,6 +106,7 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                       fill="none" 
                       stroke="currentColor" 
                       viewBox="0 0 24 24"
+                      whileHover={{ x: 2 }}
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </motion.svg>

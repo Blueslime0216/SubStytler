@@ -34,53 +34,48 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   return (
     <div className="neu-panel-header flex items-center justify-between flex-shrink-0">
       <div className="flex items-center space-x-3 flex-1">
-        <motion.div 
-          className="p-1.5 rounded-lg neu-shadow-1 cursor-pointer"
-          style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
-          title={`${config.title} Panel`}
-        >
-          <IconComponent className="w-3.5 h-3.5 neu-text-accent" />
-        </motion.div>
-        {/* Title & Dropdown */}
+        {/* 🎯 아이콘 클릭으로 패널 선택기 열기 */}
         <motion.button
           ref={titleButtonRef}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex items-center space-x-2 group cursor-pointer neu-interactive"
-          title="Change panel type"
+          className="p-1.5 rounded-lg neu-shadow-1 cursor-pointer neu-interactive group"
+          style={{ background: 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))' }}
+          title={`${config.title} - 클릭하여 패널 변경`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <div className="text-left">
-            <div className="neu-body-primary text-xs">{config.title}</div>
-            <div className="neu-caption text-xs">{config.description}</div>
-          </div>
-          <motion.svg 
-            className="w-3 h-3 neu-text-secondary"
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-            animate={{ rotate: isDropdownOpen ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </motion.svg>
+          <IconComponent className="w-3.5 h-3.5 neu-text-accent group-hover:neu-text-primary transition-colors" />
         </motion.button>
+
+        {/* 📝 간단한 패널 정보 표시 */}
+        <div className="text-left">
+          <div className="neu-body-primary text-xs">{config.title}</div>
+          <div className="neu-caption text-xs opacity-70">{config.description}</div>
+        </div>
       </div>
+
       <div className="flex items-center space-x-1">
         <motion.button
           ref={actionsButtonRef}
           onClick={() => setIsActionsOpen(!isActionsOpen)}
           className="neu-btn-icon p-1.5 cursor-pointer neu-interactive"
-          title="Panel Actions"
+          title="패널 액션"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
         </motion.button>
+        
         <motion.button
           ref={removeButtonRef}
           onClick={onRemoveClick}
           disabled={!canRemove}
           className={`neu-btn-icon p-1.5 ${canRemove ? 'cursor-pointer neu-interactive' : 'opacity-40 cursor-not-allowed'}`}
-          title={canRemove ? "Close Panel" : "Cannot close the last panel"}
+          title={canRemove ? "패널 닫기" : "마지막 패널은 닫을 수 없습니다"}
+          whileHover={canRemove ? { scale: 1.05 } : {}}
+          whileTap={canRemove ? { scale: 0.95 } : {}}
         >
           {canRemove ? (
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,4 +90,4 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
       </div>
     </div>
   );
-}; 
+};

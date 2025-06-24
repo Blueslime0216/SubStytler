@@ -20,6 +20,7 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
   },
 
   splitArea: (areaId: string, direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
+    console.log('🔀 splitArea 호출:', { areaId, direction, newPanelType });
     const { areas } = get();
 
     const splitAreaRecursive = (area: AreaConfig): AreaConfig => {
@@ -53,11 +54,12 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     };
 
     const newAreas = areas.map(splitAreaRecursive).map(validateAndFixConstraints);
+    console.log('✅ splitArea 완료, 새로운 areas:', newAreas);
     set({ areas: newAreas });
   },
 
   mergePanels: (sourceId: string, targetId: string) => {
-    console.log('Merging panels:', sourceId, targetId);
+    console.log('🔗 mergePanels 호출:', sourceId, targetId);
   },
 
   resizeArea: (areaId: string, size: number) => {
@@ -82,10 +84,16 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
   },
 
   changePanelType: (areaId: string, newPanelType: PanelType) => {
+    console.log('🔄 changePanelType 호출:', { areaId, newPanelType });
     const { areas } = get();
 
     const changePanelTypeRecursive = (area: AreaConfig): AreaConfig => {
       if (area.id === areaId && area.type === 'panel') {
+        console.log('✅ 패널 타입 변경 발견:', { 
+          oldType: area.panelType, 
+          newType: newPanelType,
+          areaId: area.id 
+        });
         return { ...area, panelType: newPanelType };
       }
 
@@ -97,10 +105,12 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     };
 
     const newAreas = areas.map(changePanelTypeRecursive);
+    console.log('🔄 changePanelType 완료, 새로운 areas:', newAreas);
     set({ areas: newAreas });
   },
 
   addNewArea: (parentId: string, direction: 'horizontal' | 'vertical', panelType: PanelType) => {
+    console.log('➕ addNewArea 호출:', { parentId, direction, panelType });
     const { areas } = get();
 
     const addAreaRecursive = (area: AreaConfig): AreaConfig => {
@@ -149,13 +159,15 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     };
 
     const newAreas = areas.map(addAreaRecursive).map(validateAndFixConstraints);
+    console.log('✅ addNewArea 완료');
     set({ areas: newAreas });
   },
 
   removeArea: (areaId: string) => {
+    console.log('🗑️ removeArea 호출:', areaId);
     const { areas } = get();
     if (countPanels(areas) <= 1) {
-      console.warn('Cannot remove the last panel');
+      console.warn('⚠️ 마지막 패널은 제거할 수 없습니다');
       return;
     }
 
@@ -206,10 +218,11 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
       .map(validateAndFixConstraints);
 
     if (newAreas.length === 0) {
-      console.warn('Cannot remove all areas, restoring default layout');
+      console.warn('⚠️ 모든 영역을 제거할 수 없습니다. 기본 레이아웃으로 복원합니다');
       newAreas = createDefaultLayout();
     }
 
+    console.log('✅ removeArea 완료');
     set({ areas: newAreas });
   },
-}); 
+});
