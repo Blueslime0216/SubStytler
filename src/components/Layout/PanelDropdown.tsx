@@ -59,6 +59,13 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
 
   if (!isOpen) return null;
 
+  // 🆕 빈 패널을 제외한 패널들을 먼저 표시하고, 빈 패널을 맨 마지막에 추가
+  const sortedPanels = [...availablePanels].sort(([typeA], [typeB]) => {
+    if (typeA === 'empty') return 1;  // 빈 패널을 맨 뒤로
+    if (typeB === 'empty') return -1; // 빈 패널을 맨 뒤로
+    return 0; // 나머지는 원래 순서 유지
+  });
+
   return (
     <Portal>
       {/* 🌫️ 백드롭 오버레이 */}
@@ -174,9 +181,10 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
 
           {/* 🎯 패널 옵션 그리드 */}
           <div className="relative z-10 space-y-3 max-h-80 overflow-y-auto pr-2 neu-panel-selector">
-            {availablePanels.map(([panelType, panelConfig], index) => {
+            {sortedPanels.map(([panelType, panelConfig], index) => {
               const PanelIcon = panelConfig.icon;
               const isSelected = selectedIndex === index;
+              const isEmpty = panelType === 'empty';
               
               return (
                 <motion.button
@@ -215,10 +223,25 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                         `,
                     border: isSelected 
                       ? '2px solid rgba(99, 179, 237, 0.5)'
+                      : isEmpty
+                      ? '2px solid rgba(255, 193, 7, 0.3)' // 🆕 빈 패널은 노란색 테두리
                       : '2px solid rgba(45, 55, 72, 0.3)',
                     transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    // 🆕 빈 패널을 맨 아래에 구분선과 함께 표시
+                    marginTop: isEmpty ? '16px' : '0',
+                    position: 'relative',
                   }}
                 >
+                  {/* 🆕 빈 패널 구분선 */}
+                  {isEmpty && (
+                    <div
+                      className="absolute -top-8 left-0 right-0 h-px"
+                      style={{
+                        background: 'linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.5), transparent)',
+                      }}
+                    />
+                  )}
+
                   {/* 🌟 호버 글로우 효과 */}
                   <motion.div
                     className="absolute inset-0 pointer-events-none"
@@ -243,6 +266,8 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                         borderRadius: '12px',
                         background: isSelected
                           ? 'linear-gradient(145deg, var(--neu-primary), var(--neu-primary-dark))'
+                          : isEmpty
+                          ? 'linear-gradient(145deg, #FFC107, #FF8F00)' // 🆕 빈 패널은 노란색 그라데이션
                           : 'linear-gradient(145deg, var(--neu-light), var(--neu-accent))',
                         boxShadow: isSelected
                           ? `
@@ -263,7 +288,7 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                     >
                       <PanelIcon 
                         className={`w-5 h-5 ${
-                          isSelected ? 'text-white' : 'neu-text-accent'
+                          isSelected || isEmpty ? 'text-white' : 'neu-text-accent'
                         } transition-colors duration-300`} 
                       />
                     </motion.div>
@@ -280,6 +305,14 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                         }}
                       >
                         {panelConfig.title}
+                        {isEmpty && (
+                          <span className="ml-2 text-xs px-2 py-0.5 rounded-full" style={{ 
+                            background: 'rgba(255, 193, 7, 0.2)', 
+                            color: '#FFC107' 
+                          }}>
+                            기본
+                          </span>
+                        )}
                       </motion.h4>
                       <motion.p 
                         className={`text-xs mt-1 ${

@@ -16,6 +16,7 @@ export const usePanelActions = (
   const totalPanels = countPanels(areas);
   const canRemove = totalPanels > 1;
 
+  // 🆕 현재 패널 타입을 제외한 모든 패널 (빈 패널 포함)
   const availablePanels = Object.entries(panelConfig).filter(([panelType]) => panelType !== type);
 
   const handlePanelChange = (newPanelType: PanelType) => {

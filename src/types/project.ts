@@ -109,4 +109,5 @@ export type PanelType =
   | 'script-viewer'
   | 'effects-library'
   | 'history'
-  | 'notes';
+  | 'notes'
+  | 'empty'; // 🆕 빈 패널 타입 추가
