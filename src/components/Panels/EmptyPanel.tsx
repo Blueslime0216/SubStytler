@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Square, Plus, ArrowRight, MousePointer } from 'lucide-react';
+import { Square, Plus, ArrowRight } from 'lucide-react';
 
 export const EmptyPanel: React.FC = () => {
   return (
@@ -66,7 +66,7 @@ export const EmptyPanel: React.FC = () => {
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <MousePointer className="w-3 h-3 text-white" />
+              <Square className="w-3 h-3 text-white" />
             </motion.div>
             <ArrowRight className="w-4 h-4 neu-text-secondary" />
             <span className="neu-text-primary">패널 선택 버튼 클릭</span>
@@ -110,21 +110,6 @@ export const EmptyPanel: React.FC = () => {
             />
           ))}
         </motion.div>
-
-        {/* 🔧 디버깅 정보 (개발 모드에서만) */}
-        {process.env.NODE_ENV === 'development' && (
-          <motion.div
-            className="mt-6 p-3 neu-card-small"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-          >
-            <div className="text-xs neu-text-muted">
-              <div>🔧 개발 모드</div>
-              <div>📍 빈 패널이 정상적으로 렌더링됨</div>
-            </div>
-          </motion.div>
-        )}
       </motion.div>
     </div>
   );

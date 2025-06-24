@@ -1,6 +1,7 @@
 import { PanelType, AreaConfig } from '../types/project';
 import { useLayoutStore } from '../stores/layoutStore';
 import { panelConfig } from '../config/panelConfig';
+import { countPanels } from '../utils/layoutUtils';
 
 export const usePanelActions = (
   areaId: string | undefined,
@@ -12,8 +13,7 @@ export const usePanelActions = (
 ) => {
   const { changePanelType, splitArea, removeArea } = useLayoutStore();
 
-  // 🔍 현재 패널 개수 계산 (Area 시스템용)
-  const totalPanels = Array.isArray(areas) ? areas.length : 0;
+  const totalPanels = countPanels(areas);
   const canRemove = totalPanels > 1;
 
   // 🆕 현재 패널 타입을 제외한 모든 패널 (빈 패널 포함)
@@ -48,7 +48,7 @@ export const usePanelActions = (
   };
 
   const handleRemovePanel = () => {
-    console.log('🗑️ 패널 제거 시도:', { areaId, canRemove, totalPanels });
+    console.log('🗑️ 패널 제거 시도:', { areaId, canRemove });
     
     if (!canRemove) {
       console.warn('⚠️ 마지막 패널은 제거할 수 없습니다');
@@ -67,7 +67,7 @@ export const usePanelActions = (
 
   const handleRemoveClick = () => {
     if (!canRemove) {
-      console.warn('⚠️ 제거 불가능한 패널 (총 패널 수:', totalPanels, ')');
+      console.warn('⚠️ 제거 불가능한 패널');
       return;
     }
     

@@ -28,12 +28,12 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
   onBorderMouseDown,
   renderPanel,
 }) => {
-  // 🎯 최적화된 패딩 계산 - 깜박거림 방지
-  const basePadding = 20;    // 기본 패딩
-  const hoverPadding = 8;    // 호버 시 패딩 (더 좁게)
+  // 🔄 패딩 값 반전: 기본 상태는 넓고, 호버 시 좁아짐
+  const basePadding = 28;    // 기본 상태: 넓은 패딩
+  const hoverPadding = 14;   // 호버 상태: 좁은 패딩
 
-  // 🔄 현재 영역의 패딩 상태 계산
-  const getPaddingValues = React.useMemo(() => {
+  // 현재 영역이 호버 상태인지 확인하고 패딩 계산
+  const getPaddingValues = () => {
     const defaultPadding = {
       paddingTop: basePadding,
       paddingRight: basePadding,
@@ -50,7 +50,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
 
     if (!current) return defaultPadding;
 
-    // 해당 방향의 패딩만 감소
+    // 해당 방향의 패딩만 감소 (좁아짐)
     switch (current.dir) {
       case 'left':
         return { ...defaultPadding, paddingLeft: hoverPadding };
@@ -63,10 +63,12 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
       default:
         return defaultPadding;
     }
-  }, [hoveredBorder, area.id, getLinkedBorders, basePadding, hoverPadding]);
+  };
 
-  // 🎯 기본 스타일 - 최적화
-  const baseStyle: React.CSSProperties = React.useMemo(() => ({
+  const paddingValues = getPaddingValues();
+
+  // 기본 스타일
+  const baseStyle: React.CSSProperties = {
     position: 'absolute',
     left: `${area.x}%`,
     top: `${area.y}%`,
@@ -76,118 +78,114 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     boxSizing: 'border-box',
     overflow: 'visible',
     zIndex: 200,
-  }), [area.x, area.y, area.width, area.height]);
+  };
 
-  // 🎯 이벤트 핸들러 최적화
-  const handleBorderMouseEnter = React.useCallback((dir: BorderDir) => {
-    if (!dragging) {
-      setHoveredBorder({ areaId: area.id, dir });
-    }
-  }, [dragging, setHoveredBorder, area.id]);
+  const handleBorderMouseEnter = (dir: BorderDir) => {
+    if (!dragging) setHoveredBorder({ areaId: area.id, dir });
+  };
   
-  const handleBorderMouseLeave = React.useCallback(() => {
-    if (!dragging) {
-      setHoveredBorder(null);
-    }
-  }, [dragging, setHoveredBorder]);
+  const handleBorderMouseLeave = () => {
+    if (!dragging) setHoveredBorder(null);
+  };
   
-  const handleBorderMouseDown = React.useCallback((e: React.MouseEvent, dir: BorderDir) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleBorderMouseDown = (e: React.MouseEvent, dir: BorderDir) => {
+    // 드래그 시작 시 즉시 호버 상태 설정
     setHoveredBorder({ areaId: area.id, dir });
     onBorderMouseDown(e, area.id, dir);
-  }, [setHoveredBorder, area.id, onBorderMouseDown]);
-
-  // 🎯 경계 요소 생성 최적화
-  const borderElements = React.useMemo(() => [
-    // 좌측 경계
-    {
-      key: 'left',
-      dir: 'left' as BorderDir,
-      style: {
-        left: 0,
-        top: 0,
-        width: BORDER_THICKNESS,
-        height: '100%',
-        cursor: 'ew-resize',
-      },
-      title: '좌측 경계 드래그'
-    },
-    // 우측 경계
-    {
-      key: 'right',
-      dir: 'right' as BorderDir,
-      style: {
-        right: 0,
-        top: 0,
-        width: BORDER_THICKNESS,
-        height: '100%',
-        cursor: 'ew-resize',
-      },
-      title: '우측 경계 드래그'
-    },
-    // 상단 경계
-    {
-      key: 'top',
-      dir: 'top' as BorderDir,
-      style: {
-        left: 0,
-        top: 0,
-        width: '100%',
-        height: BORDER_THICKNESS,
-        cursor: 'ns-resize',
-      },
-      title: '상단 경계 드래그'
-    },
-    // 하단 경계
-    {
-      key: 'bottom',
-      dir: 'bottom' as BorderDir,
-      style: {
-        left: 0,
-        bottom: 0,
-        width: '100%',
-        height: BORDER_THICKNESS,
-        cursor: 'ns-resize',
-      },
-      title: '하단 경계 드래그'
-    },
-  ], []);
+  };
 
   return (
     <motion.div
-      className="area-block"
+      className={`area-block ${dragging ? 'dragging' : ''}`}
       style={baseStyle}
-      animate={getPaddingValues}
+      animate={paddingValues}
       transition={{
-        duration: dragging ? 0 : 0.25, // 🎯 드래그 중에는 즉시 반응
-        ease: "easeOut",
+        duration: dragging ? 0 : 0.3, // 0.3초 트랜지션, 드래그 중에는 즉시 반응
+        ease: [0.25, 0.46, 0.45, 0.94], // 자연스러운 cubic-bezier
         type: "tween"
       }}
-      // 🚀 성능 최적화 - 불필요한 리렌더링 방지
-      layout={false}
-      layoutId={undefined}
     >
-      {/* 🎯 경계 요소들 - 최적화된 렌더링 */}
-      {borderElements.map(({ key, dir, style, title }) => (
-        <div
-          key={key}
-          className="area-border"
-          style={{
-            ...style,
-            position: 'absolute',
-            zIndex: 10,
-            background: 'transparent',
-            opacity: 0,
-          }}
-          onMouseDown={e => handleBorderMouseDown(e, dir)}
-          onMouseEnter={() => handleBorderMouseEnter(dir)}
-          onMouseLeave={handleBorderMouseLeave}
-          title={title}
-        />
-      ))}
+      {/* 좌측 경계 */}
+      <div
+        className="area-border area-border-vertical"
+        style={{
+          left: 0,
+          top: 0,
+          width: BORDER_THICKNESS,
+          height: '100%',
+          position: 'absolute',
+          cursor: 'ew-resize',
+          zIndex: 10,
+          background: 'transparent',
+          opacity: 0,
+        }}
+        onMouseDown={e => handleBorderMouseDown(e, 'left')}
+        onMouseEnter={() => handleBorderMouseEnter('left')}
+        onMouseLeave={handleBorderMouseLeave}
+        title="드래그하여 좌측 경계 조정"
+      />
       
-      {/* 🎨 패널 콘텐츠 */}
+      {/* 우측 경계 */}
+      <div
+        className="area-border area-border-vertical"
+        style={{
+          right: 0,
+          top: 0,
+          width: BORDER_THICKNESS,
+          height: '100%',
+          position: 'absolute',
+          cursor: 'ew-resize',
+          zIndex: 10,
+          background: 'transparent',
+          opacity: 0,
+        }}
+        onMouseDown={e => handleBorderMouseDown(e, 'right')}
+        onMouseEnter={() => handleBorderMouseEnter('right')}
+        onMouseLeave={handleBorderMouseLeave}
+        title="드래그하여 우측 경계 조정"
+      />
+      
+      {/* 상단 경계 */}
+      <div
+        className="area-border area-border-horizontal"
+        style={{
+          left: 0,
+          top: 0,
+          width: '100%',
+          height: BORDER_THICKNESS,
+          position: 'absolute',
+          cursor: 'ns-resize',
+          zIndex: 10,
+          background: 'transparent',
+          opacity: 0,
+        }}
+        onMouseDown={e => handleBorderMouseDown(e, 'top')}
+        onMouseEnter={() => handleBorderMouseEnter('top')}
+        onMouseLeave={handleBorderMouseLeave}
+        title="드래그하여 상단 경계 조정"
+      />
+      
+      {/* 하단 경계 */}
+      <div
+        className="area-border area-border-horizontal"
+        style={{
+          left: 0,
+          bottom: 0,
+          width: '100%',
+          height: BORDER_THICKNESS,
+          position: 'absolute',
+          cursor: 'ns-resize',
+          zIndex: 10,
+          background: 'transparent',
+          opacity: 0,
+        }}
+        onMouseDown={e => handleBorderMouseDown(e, 'bottom')}
+        onMouseEnter={() => handleBorderMouseEnter('bottom')}
+        onMouseLeave={handleBorderMouseLeave}
+        title="드래그하여 하단 경계 조정"
+      />
+      
+      {/* 패널 콘텐츠 */}
       <div style={{ 
         width: '100%', 
         height: '100%', 
