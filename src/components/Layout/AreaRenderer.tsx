@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import './AreaRenderer.css';
 import { Area } from '../../types/area';
 import { useAreaDrag, BorderDir } from './hooks/useAreaDrag';
@@ -11,13 +11,15 @@ interface AreaRendererProps {
   renderPanel?: (area: Area) => React.ReactNode;
 }
 
-export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, renderPanel }) => {
+// 🚀 메모이제이션으로 불필요한 리렌더링 방지
+export const AreaRenderer: React.FC<AreaRendererProps> = memo(({ areas, setAreas, renderPanel }) => {
   const { containerRef, onBorderMouseDown, dragging, getLinkedBorders } = useAreaDrag(areas, setAreas);
   const [hoveredBorder, setHoveredBorder] = usePaddingHover(dragging);
 
   console.log('🎨 AreaRenderer 렌더링:', { 
     areasCount: areas.length, 
-    areas: areas.map(a => ({ id: a.id, x: a.x, y: a.y, width: a.width, height: a.height }))
+    dragging: !!dragging,
+    hoveredBorder: hoveredBorder?.areaId
   });
 
   return (
@@ -36,11 +38,12 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
       }}
     >
       {areas.map((area, index) => {
-        console.log(`🎯 Area ${index + 1} 렌더링:`, area);
+        // 🎯 안정적인 키 생성 - 깜박거림 방지
+        const stableKey = `area-${area.id}-${Math.round(area.x)}-${Math.round(area.y)}`;
         
         return (
           <AreaBlock
-            key={`${area.id}-${area.x}-${area.y}-${area.width}-${area.height}`} // 🔑 고유 키 생성
+            key={stableKey}
             area={area}
             dragging={dragging}
             hoveredBorder={hoveredBorder}
@@ -53,4 +56,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
       })}
     </div>
   );
-};
+});
+
+// 🎯 디스플레이 이름 설정
+AreaRenderer.displayName = 'AreaRenderer';
