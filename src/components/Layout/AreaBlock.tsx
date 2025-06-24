@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Area } from '../../types/area';
 import { BorderDir, LinkedArea } from './hooks/areaDragUtils';
 
@@ -27,9 +27,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
   onBorderMouseDown,
   renderPanel,
 }) => {
-  const blockRef = useRef<HTMLDivElement>(null);
-
-  // 기본 스타일 - 패딩 제거, CSS에서 완전 처리
+  // 기본 스타일 - 패딩은 CSS 클래스에서 처리
   const style: React.CSSProperties = {
     position: 'absolute',
     left: `${area.x}%`,
@@ -42,51 +40,31 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     zIndex: 200,
   };
 
-  // 호버 상태에 따른 CSS 클래스 직접 조작 (React 리렌더링 우회)
-  useEffect(() => {
-    const element = blockRef.current;
-    if (!element) return;
-
-    // 모든 패딩 클래스 제거
-    element.classList.remove(
-      'hover-padding-left',
-      'hover-padding-right', 
-      'hover-padding-top',
-      'hover-padding-bottom'
-    );
-
-    // 호버된 경계에 따른 패딩 클래스 추가
-    if (hoveredBorder) {
-      const { areaId: hId, dir: hDir } = hoveredBorder;
-      const linked = getLinkedBorders(hId, hDir);
-      const affected = [{ id: hId, dir: hDir }, ...linked];
-      const current = affected.find(a => a.id === area.id);
-      
-      if (current) {
-        switch (current.dir) {
-          case 'left': 
-            element.classList.add('hover-padding-left');
-            break;
-          case 'right': 
-            element.classList.add('hover-padding-right');
-            break;
-          case 'top': 
-            element.classList.add('hover-padding-top');
-            break;
-          case 'bottom': 
-            element.classList.add('hover-padding-bottom');
-            break;
-        }
+  // 호버된 경계에 따른 CSS 클래스 결정
+  let paddingClass = '';
+  if (hoveredBorder) {
+    const { areaId: hId, dir: hDir } = hoveredBorder;
+    const linked = getLinkedBorders(hId, hDir);
+    const affected = [{ id: hId, dir: hDir }, ...linked];
+    const current = affected.find(a => a.id === area.id);
+    
+    if (current) {
+      switch (current.dir) {
+        case 'left': 
+          paddingClass = 'hover-padding-left';
+          break;
+        case 'right': 
+          paddingClass = 'hover-padding-right';
+          break;
+        case 'top': 
+          paddingClass = 'hover-padding-top';
+          break;
+        case 'bottom': 
+          paddingClass = 'hover-padding-bottom';
+          break;
       }
     }
-
-    // 드래그 상태 처리
-    if (dragging) {
-      element.classList.add('dragging');
-    } else {
-      element.classList.remove('dragging');
-    }
-  }, [hoveredBorder, dragging, area.id, getLinkedBorders]);
+  }
 
   const handleBorderMouseEnter = (dir: BorderDir) => {
     if (!dragging) setHoveredBorder({ areaId: area.id, dir });
@@ -103,9 +81,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
 
   return (
     <div 
-      ref={blockRef}
-      key={area.id} // React 요소 재사용 보장
-      className="area-block" // 기본 클래스만 설정
+      className={`area-block ${dragging ? 'dragging' : ''} ${paddingClass}`}
       style={style}
     >
       {/* 좌측 경계 */}
