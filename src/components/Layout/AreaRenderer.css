@@ -11,41 +11,19 @@
   background: #f6f8fa;
   overflow: visible;
   box-sizing: border-box;
-  /* 기본 패딩 */
-  padding: 14px;
-  /* 1초 부드러운 패딩 트랜지션 - cubic-bezier로 자연스러운 애니메이션 */
-  transition: padding 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Framer Motion이 패딩을 제어하므로 CSS 트랜지션 제거 */
 }
 
-/* 호버 시 패딩 변경 - 각 방향별로 개별 적용 */
-.area-block.hover-padding-left {
-  padding-left: 28px !important;
-}
-
-.area-block.hover-padding-right {
-  padding-right: 28px !important;
-}
-
-.area-block.hover-padding-top {
-  padding-top: 28px !important;
-}
-
-.area-block.hover-padding-bottom {
-  padding-bottom: 28px !important;
-}
-
-/* 드래그 중에는 트랜지션 비활성화 - 즉시 반응 */
+/* 드래그 중 표시 */
 .area-block.dragging {
-  transition: none !important;
+  /* Framer Motion에서 duration: 0으로 처리 */
 }
 
 .area-border {
   position: absolute;
-  background: transparent;
   z-index: 10;
-  opacity: 0;
   border-radius: 4px;
-  transition: all 0.2s ease;
+  /* Framer Motion이 호버 효과를 제어하므로 CSS 호버 제거 */
 }
 
 .area-border-vertical {
@@ -56,30 +34,7 @@
   cursor: ns-resize;
 }
 
-/* 호버 시 경계 영역 시각적 피드백 */
-.area-border:hover {
-  background: rgba(99, 179, 237, 0.1);
-  opacity: 1;
-  box-shadow: 
-    0 0 8px rgba(99, 179, 237, 0.3),
-    inset 0 0 4px rgba(99, 179, 237, 0.2);
-}
-
-/* 드래그 중 경계 영역 강조 */
-.area-border:active,
-.area-block.dragging .area-border {
-  background: rgba(99, 179, 237, 0.2);
-  opacity: 1;
-  box-shadow: 
-    0 0 12px rgba(99, 179, 237, 0.5),
-    inset 0 0 6px rgba(99, 179, 237, 0.3);
-}
-
-/* 디버깅용 - 패딩 변화 확인 */
-.area-block.hover-padding-left,
-.area-block.hover-padding-right,
-.area-block.hover-padding-top,
-.area-block.hover-padding-bottom {
-  /* 패딩 변화가 시각적으로 확인되도록 배경색 살짝 변경 */
+/* 디버깅용 - 패딩 변화 시 미세한 배경색 변화 */
+.area-block:hover {
   background: rgba(99, 179, 237, 0.02);
 }

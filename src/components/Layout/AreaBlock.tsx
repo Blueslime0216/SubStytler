@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Area } from '../../types/area';
 import { BorderDir, LinkedArea } from './hooks/areaDragUtils';
 
@@ -27,8 +28,47 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
   onBorderMouseDown,
   renderPanel,
 }) => {
-  // 기본 스타일 - 패딩은 CSS 클래스에서 처리
-  const style: React.CSSProperties = {
+  // 기본 패딩 값
+  const basePadding = 14;
+  const hoverPadding = 28;
+
+  // 현재 영역이 호버 상태인지 확인하고 패딩 계산
+  const getPaddingValues = () => {
+    const defaultPadding = {
+      paddingTop: basePadding,
+      paddingRight: basePadding,
+      paddingBottom: basePadding,
+      paddingLeft: basePadding,
+    };
+
+    if (!hoveredBorder) return defaultPadding;
+
+    const { areaId: hId, dir: hDir } = hoveredBorder;
+    const linked = getLinkedBorders(hId, hDir);
+    const affected = [{ id: hId, dir: hDir }, ...linked];
+    const current = affected.find(a => a.id === area.id);
+
+    if (!current) return defaultPadding;
+
+    // 해당 방향의 패딩만 증가
+    switch (current.dir) {
+      case 'left':
+        return { ...defaultPadding, paddingLeft: hoverPadding };
+      case 'right':
+        return { ...defaultPadding, paddingRight: hoverPadding };
+      case 'top':
+        return { ...defaultPadding, paddingTop: hoverPadding };
+      case 'bottom':
+        return { ...defaultPadding, paddingBottom: hoverPadding };
+      default:
+        return defaultPadding;
+    }
+  };
+
+  const paddingValues = getPaddingValues();
+
+  // 기본 스타일
+  const baseStyle: React.CSSProperties = {
     position: 'absolute',
     left: `${area.x}%`,
     top: `${area.y}%`,
@@ -39,32 +79,6 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     overflow: 'visible',
     zIndex: 200,
   };
-
-  // 호버된 경계에 따른 CSS 클래스 결정
-  let paddingClass = '';
-  if (hoveredBorder) {
-    const { areaId: hId, dir: hDir } = hoveredBorder;
-    const linked = getLinkedBorders(hId, hDir);
-    const affected = [{ id: hId, dir: hDir }, ...linked];
-    const current = affected.find(a => a.id === area.id);
-    
-    if (current) {
-      switch (current.dir) {
-        case 'left': 
-          paddingClass = 'hover-padding-left';
-          break;
-        case 'right': 
-          paddingClass = 'hover-padding-right';
-          break;
-        case 'top': 
-          paddingClass = 'hover-padding-top';
-          break;
-        case 'bottom': 
-          paddingClass = 'hover-padding-bottom';
-          break;
-      }
-    }
-  }
 
   const handleBorderMouseEnter = (dir: BorderDir) => {
     if (!dragging) setHoveredBorder({ areaId: area.id, dir });
@@ -80,12 +94,18 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
   };
 
   return (
-    <div 
-      className={`area-block ${dragging ? 'dragging' : ''} ${paddingClass}`}
-      style={style}
+    <motion.div
+      className={`area-block ${dragging ? 'dragging' : ''}`}
+      style={baseStyle}
+      animate={paddingValues}
+      transition={{
+        duration: dragging ? 0 : 1, // 드래그 중에는 즉시 반응
+        ease: [0.25, 0.46, 0.45, 0.94], // 자연스러운 cubic-bezier
+        type: "tween"
+      }}
     >
       {/* 좌측 경계 */}
-      <div
+      <motion.div
         className="area-border area-border-vertical"
         style={{
           left: 0,
@@ -96,8 +116,14 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           cursor: 'ew-resize',
           zIndex: 10,
           background: 'transparent',
-          opacity: 0,
         }}
+        initial={{ opacity: 0 }}
+        whileHover={{ 
+          opacity: 1,
+          background: 'rgba(99, 179, 237, 0.1)',
+          boxShadow: '0 0 8px rgba(99, 179, 237, 0.3), inset 0 0 4px rgba(99, 179, 237, 0.2)'
+        }}
+        transition={{ duration: 0.2 }}
         onMouseDown={e => handleBorderMouseDown(e, 'left')}
         onMouseEnter={() => handleBorderMouseEnter('left')}
         onMouseLeave={handleBorderMouseLeave}
@@ -105,7 +131,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
       />
       
       {/* 우측 경계 */}
-      <div
+      <motion.div
         className="area-border area-border-vertical"
         style={{
           right: 0,
@@ -116,8 +142,14 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           cursor: 'ew-resize',
           zIndex: 10,
           background: 'transparent',
-          opacity: 0,
         }}
+        initial={{ opacity: 0 }}
+        whileHover={{ 
+          opacity: 1,
+          background: 'rgba(99, 179, 237, 0.1)',
+          boxShadow: '0 0 8px rgba(99, 179, 237, 0.3), inset 0 0 4px rgba(99, 179, 237, 0.2)'
+        }}
+        transition={{ duration: 0.2 }}
         onMouseDown={e => handleBorderMouseDown(e, 'right')}
         onMouseEnter={() => handleBorderMouseEnter('right')}
         onMouseLeave={handleBorderMouseLeave}
@@ -125,7 +157,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
       />
       
       {/* 상단 경계 */}
-      <div
+      <motion.div
         className="area-border area-border-horizontal"
         style={{
           left: 0,
@@ -136,8 +168,14 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           cursor: 'ns-resize',
           zIndex: 10,
           background: 'transparent',
-          opacity: 0,
         }}
+        initial={{ opacity: 0 }}
+        whileHover={{ 
+          opacity: 1,
+          background: 'rgba(99, 179, 237, 0.1)',
+          boxShadow: '0 0 8px rgba(99, 179, 237, 0.3), inset 0 0 4px rgba(99, 179, 237, 0.2)'
+        }}
+        transition={{ duration: 0.2 }}
         onMouseDown={e => handleBorderMouseDown(e, 'top')}
         onMouseEnter={() => handleBorderMouseEnter('top')}
         onMouseLeave={handleBorderMouseLeave}
@@ -145,7 +183,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
       />
       
       {/* 하단 경계 */}
-      <div
+      <motion.div
         className="area-border area-border-horizontal"
         style={{
           left: 0,
@@ -156,8 +194,14 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           cursor: 'ns-resize',
           zIndex: 10,
           background: 'transparent',
-          opacity: 0,
         }}
+        initial={{ opacity: 0 }}
+        whileHover={{ 
+          opacity: 1,
+          background: 'rgba(99, 179, 237, 0.1)',
+          boxShadow: '0 0 8px rgba(99, 179, 237, 0.3), inset 0 0 4px rgba(99, 179, 237, 0.2)'
+        }}
+        transition={{ duration: 0.2 }}
         onMouseDown={e => handleBorderMouseDown(e, 'bottom')}
         onMouseEnter={() => handleBorderMouseEnter('bottom')}
         onMouseLeave={handleBorderMouseLeave}
@@ -174,6 +218,6 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
       }}>
         {renderPanel ? renderPanel(area) : null}
       </div>
-    </div>
+    </motion.div>
   );
 };
