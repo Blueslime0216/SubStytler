@@ -26,11 +26,16 @@ export const usePanelActions = (
   const handlePanelChange = useCallback((newPanelType: PanelType) => {
     console.log('🔄 패널 변경 시도:', { areaId, currentType: type, newType: newPanelType });
     
-    if (areaId && newPanelType !== type) {
+    if (!areaId) {
+      console.warn('⚠️ areaId가 없어서 패널 변경할 수 없습니다');
+      return;
+    }
+    
+    if (newPanelType !== type) {
       changePanelType(areaId, newPanelType);
       console.log('✅ 패널 변경 완료:', newPanelType);
     } else {
-      console.warn('⚠️ 패널 변경 실패:', { areaId, newPanelType, currentType: type });
+      console.log('ℹ️ 동일한 패널 타입이므로 변경하지 않음');
     }
     
     setIsDropdownOpen(false);
@@ -39,12 +44,13 @@ export const usePanelActions = (
   const handleSplitPanel = useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
     console.log('🔀 패널 분할 시도:', { areaId, direction, newPanelType });
     
-    if (areaId) {
-      splitArea(areaId, direction, newPanelType);
-      console.log('✅ 패널 분할 완료');
-    } else {
+    if (!areaId) {
       console.warn('⚠️ areaId가 없어서 분할할 수 없습니다');
+      return;
     }
+    
+    splitArea(areaId, direction, newPanelType);
+    console.log('✅ 패널 분할 완료');
     
     setIsActionsOpen(false);
   }, [areaId, splitArea, setIsActionsOpen]);
@@ -58,10 +64,13 @@ export const usePanelActions = (
       return;
     }
 
-    if (areaId) {
-      removeArea(areaId);
-      console.log('✅ 패널 제거 완료');
+    if (!areaId) {
+      console.warn('⚠️ areaId가 없어서 제거할 수 없습니다');
+      return;
     }
+
+    removeArea(areaId);
+    console.log('✅ 패널 제거 완료');
     
     setIsActionsOpen(false);
     setShowRemoveConfirm(false);

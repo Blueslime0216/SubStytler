@@ -9,15 +9,19 @@ import { PanelRemoveConfirmation } from './PanelRemoveConfirmation';
 import { usePanelActions } from '../../hooks/usePanelActions';
 import { panelConfig } from '../../config/panelConfig';
 import { PanelHeader } from './PanelHeader';
+import { extractPanelType } from '../../config/panelRegistry';
 
 interface PanelProps {
-  type: PanelType;
+  type?: PanelType; // 🎯 선택적으로 변경
   className?: string;
   areaId?: string;
   children?: React.ReactNode;
 }
 
 const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, children }) => {
+  // 🎯 패널 타입 결정 - areaId에서 추출하거나 전달받은 type 사용
+  const actualType = type || (areaId ? extractPanelType(areaId) : 'empty');
+  
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
@@ -34,26 +38,36 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     handleSplitPanel,
     handleRemovePanel,
     handleRemoveClick
-  } = usePanelActions(areaId, type, areas, setIsDropdownOpen, setIsActionsOpen, setShowRemoveConfirm);
+  } = usePanelActions(areaId, actualType, areas, setIsDropdownOpen, setIsActionsOpen, setShowRemoveConfirm);
 
-  const config = panelConfig[type];
+  const config = panelConfig[actualType];
   const IconComponent = config.icon;
+
+  console.log('🎨 Panel 렌더링:', {
+    areaId,
+    providedType: type,
+    actualType,
+    configFound: !!config
+  });
 
   // 🔧 성능 최적화: 이벤트 핸들러 메모이제이션
   const onPanelChange = React.useCallback((newPanelType: PanelType) => {
+    console.log('🔄 패널 변경 요청:', { areaId, from: actualType, to: newPanelType });
     handlePanelChange(newPanelType);
     setIsDropdownOpen(false);
-  }, [handlePanelChange]);
+  }, [handlePanelChange, areaId, actualType]);
 
   const onSplitPanel = React.useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
+    console.log('🔀 패널 분할 요청:', { areaId, direction, newPanelType });
     handleSplitPanel(direction, newPanelType);
     setIsActionsOpen(false);
-  }, [handleSplitPanel]);
+  }, [handleSplitPanel, areaId]);
 
   const onRemovePanel = React.useCallback(() => {
+    console.log('🗑️ 패널 제거 요청:', { areaId });
     handleRemovePanel();
     setShowRemoveConfirm(false);
-  }, [handleRemovePanel]);
+  }, [handleRemovePanel, areaId]);
 
   const onRemoveClick = React.useCallback(() => {
     if (!canRemove) return;
@@ -73,7 +87,7 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
       }}
     >
       <PanelHeader
-        type={type}
+        type={actualType}
         isDropdownOpen={isDropdownOpen}
         setIsDropdownOpen={setIsDropdownOpen}
         isActionsOpen={isActionsOpen}
@@ -86,7 +100,7 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
       />
       
       {/* Panel Content */}
-      <PanelBody type={type} />
+      <PanelBody type={actualType} />
 
       {/* Dropdowns - 조건부 렌더링으로 성능 최적화 */}
       {isDropdownOpen && (
@@ -123,7 +137,10 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
 // 🔧 성능 최적화: React.memo로 감싸서 불필요한 리렌더링 방지 + 더 정교한 비교
 export const Panel = React.memo(PanelComponent, (prevProps, nextProps) => {
   // 🔧 패널 타입과 areaId가 같으면 리렌더링 방지
-  return prevProps.type === nextProps.type && 
+  const prevType = prevProps.type || (prevProps.areaId ? extractPanelType(prevProps.areaId) : 'empty');
+  const nextType = nextProps.type || (nextProps.areaId ? extractPanelType(nextProps.areaId) : 'empty');
+  
+  return prevType === nextType && 
          prevProps.areaId === nextProps.areaId &&
          prevProps.className === nextProps.className;
 });

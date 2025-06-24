@@ -2,7 +2,7 @@ import { PanelType } from '../types/project';
 import { StateCreator } from 'zustand';
 
 /**
- * 🎯 Area 시스템 전용 레이아웃 액션 - 성능 최적화 버전
+ * 🎯 Area 시스템 전용 레이아웃 액션 - 성능 최적화 + ID 문제 해결
  * 좌표 기반 분할 및 관리
  */
 export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
@@ -17,14 +17,23 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     // 🎯 분할할 area 찾기
     const targetAreaIndex = areas.findIndex((area: any) => area.id === areaId);
     if (targetAreaIndex === -1) {
+      console.warn('⚠️ 분할할 영역을 찾을 수 없습니다:', areaId);
       return;
     }
 
     const targetArea = areas[targetAreaIndex];
 
-    // 🆕 새로운 area ID 생성 (중복 방지)
+    // 🆕 새로운 area ID 생성 (중복 방지 + 타임스탬프)
     const timestamp = Date.now();
-    const newAreaId = `${newPanelType}-${timestamp}`;
+    const randomSuffix = Math.random().toString(36).substr(2, 5);
+    const newAreaId = `${newPanelType}-${timestamp}-${randomSuffix}`;
+
+    console.log('🔀 영역 분할 실행:', {
+      originalId: areaId,
+      newId: newAreaId,
+      direction,
+      newPanelType
+    });
 
     // 📐 분할 계산
     let updatedArea, newArea;
@@ -72,18 +81,47 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     newAreas[targetAreaIndex] = updatedArea; // 기존 area 업데이트
     newAreas.push(newArea); // 새로운 area 추가
 
+    console.log('✅ 영역 분할 완료:', {
+      totalAreas: newAreas.length,
+      updatedArea: updatedArea.id,
+      newArea: newArea.id
+    });
+
     set({ areas: newAreas });
   },
 
   changePanelType: (areaId: string, newPanelType: PanelType) => {
     const { areas } = get();
 
+    console.log('🔄 패널 타입 변경 시도:', {
+      areaId,
+      newPanelType,
+      currentAreas: areas.map(a => ({ id: a.id, type: 'area' }))
+    });
+
     // 🔧 성능 최적화: 변경이 필요한 경우에만 새 배열 생성
     const targetIndex = areas.findIndex((area: any) => area.id === areaId);
-    if (targetIndex === -1) return;
+    if (targetIndex === -1) {
+      console.warn('⚠️ 패널 타입 변경 실패: 영역을 찾을 수 없음:', areaId);
+      return;
+    }
+
+    // 🎯 새로운 고유 ID 생성 (패널 타입 기반)
+    const timestamp = Date.now();
+    const randomSuffix = Math.random().toString(36).substr(2, 5);
+    const newId = `${newPanelType}-${timestamp}-${randomSuffix}`;
 
     const newAreas = areas.slice(); // 얕은 복사
-    newAreas[targetIndex] = { ...areas[targetIndex], id: newPanelType };
+    newAreas[targetIndex] = { 
+      ...areas[targetIndex], 
+      id: newId // 🎯 새로운 고유 ID로 변경
+    };
+
+    console.log('✅ 패널 타입 변경 완료:', {
+      oldId: areaId,
+      newId: newId,
+      newPanelType
+    });
 
     set({ areas: newAreas });
   },
@@ -92,25 +130,36 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     const { areas } = get();
 
     if (areas.length <= 1) {
+      console.warn('⚠️ 마지막 패널은 제거할 수 없습니다');
       return;
     }
+
+    console.log('🗑️ 영역 제거 시도:', {
+      areaId,
+      currentCount: areas.length
+    });
 
     // 🗑️ 해당 area 제거 - 성능 최적화
     const newAreas = areas.filter((area: any) => area.id !== areaId);
     
+    console.log('✅ 영역 제거 완료:', {
+      removedId: areaId,
+      newCount: newAreas.length
+    });
+
     set({ areas: newAreas });
   },
 
   // 🔧 기타 액션들 (현재 사용하지 않음)
   mergePanels: (sourceId: string, targetId: string) => {
-    // 구현 예정
+    console.log('🔗 패널 병합 (미구현):', { sourceId, targetId });
   },
 
   resizeArea: (areaId: string, size: number) => {
-    // 구현 예정
+    console.log('📏 영역 크기 조정 (미구현):', { areaId, size });
   },
 
   addNewArea: (parentId: string, direction: 'horizontal' | 'vertical', panelType: PanelType) => {
-    // 구현 예정
+    console.log('➕ 새 영역 추가 (미구현):', { parentId, direction, panelType });
   },
 });

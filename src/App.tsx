@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { AreaRenderer } from './components/Layout/AreaRenderer';
 import { useLayoutStore } from './stores/layoutStore';
 import { shallow } from 'zustand/shallow';
-import { panelRegistry } from './config/panelRegistry';
+import { panelRegistry, extractPanelType } from './config/panelRegistry';
 import { Area } from './types/area';
 
 export default function App() {
@@ -11,25 +11,24 @@ export default function App() {
     shallow,
   );
 
-  // 🎯 동적 패널 렌더링 로직 - 모든 ID 패턴 지원
+  // 🎯 동적 패널 렌더링 로직 - 완전히 개선된 ID 패턴 지원
   const renderPanel = useMemo(() => {
     return (area: Area) => {
-      // 1️⃣ 직접 매칭 시도
-      if (panelRegistry[area.id as keyof typeof panelRegistry]) {
-        const Component = panelRegistry[area.id as keyof typeof panelRegistry];
-        return <Component />;
-      }
+      console.log('🎨 패널 렌더링:', { areaId: area.id });
       
-      // 2️⃣ 패턴 매칭 시도 (예: "empty-1735113234567" → "empty")
-      const baseType = area.id.split('-')[0];
-      if (panelRegistry[baseType as keyof typeof panelRegistry]) {
-        const Component = panelRegistry[baseType as keyof typeof panelRegistry];
-        return <Component />;
-      }
+      // 🎯 패널 타입 추출
+      const panelType = extractPanelType(area.id);
       
-      // 3️⃣ 기본값: 빈 패널
-      const EmptyComponent = panelRegistry.empty;
-      return <EmptyComponent />;
+      // 🎯 패널 컴포넌트 가져오기 (Proxy를 통한 동적 매칭)
+      const PanelComponent = panelRegistry[area.id] || panelRegistry[panelType] || panelRegistry.empty;
+      
+      console.log('✅ 패널 컴포넌트 선택:', { 
+        areaId: area.id, 
+        extractedType: panelType,
+        componentFound: !!PanelComponent 
+      });
+      
+      return <PanelComponent areaId={area.id} />;
     };
   }, []);
 
