@@ -1,19 +1,22 @@
-/* Progress Bar and Control Systems - 완전 뉴모피즘 리디자인 + 정확한 위치 동기화 */
+/* Progress Bar and Control Systems - 완벽한 위치 정렬 수정 */
 
-/* 🎨 뉴모피즘 재생바 컨테이너 - 깊이감 있는 홈 */
+/* 🎨 뉴모피즘 재생바 컨테이너 - 정확한 중앙 정렬 */
 .neu-progress-container {
   background: var(--neu-base);
   border-radius: 20px;
   box-shadow: 
     inset 8px 8px 16px rgba(13, 17, 23, 0.8),
     inset -4px -4px 12px rgba(45, 55, 72, 0.6);
-  padding: 16px 20px; /* 정확한 패딩 값 */
+  padding: 20px; /* 모든 방향 동일한 패딩 */
   margin: 0 12px;
   position: relative;
   overflow: visible;
   border: 2px solid rgba(45, 55, 72, 0.3);
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: center; /* 수평 중앙 정렬 */
 }
 
 .neu-progress-container::before {
@@ -39,12 +42,12 @@
   cursor: pointer;
 }
 
-/* 🎯 뉴모피즘 트랙 - 깊게 파인 홈 (정확한 위치) */
+/* 🎯 뉴모피즘 트랙 - 완벽한 중앙 정렬 */
 .neu-progress-track {
   position: absolute;
   top: 50%;
-  left: 20px; /* 컨테이너 패딩과 일치 */
-  right: 20px; /* 컨테이너 패딩과 일치 */
+  left: 20px;
+  right: 20px;
   height: 12px;
   background: var(--neu-base);
   border-radius: 6px;
@@ -82,7 +85,7 @@
     transparent 100%);
 }
 
-/* ✨ 뉴모피즘 진행 바 - 부드러운 돌출 (정확한 위치) */
+/* ✨ 뉴모피즘 진행 바 - 정확한 1:1 비율 */
 .neu-progress-fill {
   position: absolute;
   top: 50%;
@@ -94,7 +97,7 @@
     var(--neu-primary-dark) 100%);
   border-radius: 6px;
   transform: translateY(-50%);
-  transition: none; /* 부드러운 실시간 업데이트 */
+  transition: none;
   box-shadow: 
     3px 3px 6px rgba(13, 17, 23, 0.6),
     -1px -1px 4px rgba(45, 55, 72, 0.4),
@@ -102,7 +105,7 @@
   border: 1px solid var(--neu-primary);
   position: relative;
   overflow: hidden;
-  min-width: 0; /* 0%일 때 완전히 숨김 */
+  min-width: 0;
 }
 
 .neu-progress-fill::before {
@@ -133,7 +136,7 @@
   border-radius: 6px;
 }
 
-/* 🎯 뉴모피즘 썸 - 물리적 핸들 (정확한 위치) */
+/* 🎯 뉴모피즘 썸 - 정확한 위치 계산 */
 .neu-progress-thumb {
   background: linear-gradient(145deg, 
     var(--neu-light) 0%,
@@ -150,12 +153,12 @@
   height: 28px;
   border-radius: 50%;
   top: 50%;
-  transform: translate(-50%, -50%); /* 중앙 정렬 */
+  transform: translate(-50%, -50%);
   transition: all 0.2s ease;
   cursor: grab;
   position: relative;
   overflow: hidden;
-  z-index: 10; /* 다른 요소 위에 표시 */
+  z-index: 10;
 }
 
 .neu-progress-thumb::before {
@@ -208,19 +211,22 @@
   transform: translate(-50%, -50%) scale(0.95);
 }
 
-/* 🎨 뉴모피즘 볼륨 컨트롤 - 미니어처 버전 */
+/* 🎨 뉴모피즘 볼륨 컨트롤 - 정확한 정렬 */
 .neu-volume-container {
   background: var(--neu-base);
   border-radius: 16px;
   box-shadow: 
     inset 6px 6px 12px rgba(13, 17, 23, 0.7),
     inset -3px -3px 8px rgba(45, 55, 72, 0.5);
-  padding: 12px 8px; /* 정확한 패딩 값 */
+  padding: 12px 8px;
   position: relative;
   overflow: visible;
   border: 1px solid rgba(45, 55, 72, 0.3);
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .neu-volume-container::before {
@@ -249,8 +255,8 @@
 .neu-volume-track {
   position: absolute;
   top: 50%;
-  left: 8px; /* 컨테이너 패딩과 일치 */
-  right: 8px; /* 컨테이너 패딩과 일치 */
+  left: 8px;
+  right: 8px;
   height: 6px;
   background: var(--neu-base);
   border-radius: 3px;
@@ -264,20 +270,20 @@
 .neu-volume-fill {
   position: absolute;
   top: 50%;
-  left: 8px; /* 트랙과 정확히 일치 */
+  left: 8px;
   height: 6px;
   background: linear-gradient(145deg, 
     var(--neu-primary-light) 0%,
     var(--neu-primary) 100%);
   border-radius: 3px;
   transform: translateY(-50%);
-  transition: none; /* 부드러운 실시간 업데이트 */
+  transition: none;
   box-shadow: 
     2px 2px 4px rgba(13, 17, 23, 0.5),
     -1px -1px 2px rgba(45, 55, 72, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border: 1px solid var(--neu-primary);
-  min-width: 0; /* 0%일 때 완전히 숨김 */
+  min-width: 0;
 }
 
 .neu-volume-thumb {
@@ -296,11 +302,11 @@
   height: 18px;
   border-radius: 50%;
   top: 50%;
-  transform: translate(-50%, -50%); /* 중앙 정렬 */
+  transform: translate(-50%, -50%);
   transition: all 0.2s ease;
   cursor: grab;
   position: relative;
-  z-index: 10; /* 다른 요소 위에 표시 */
+  z-index: 10;
 }
 
 .neu-volume-thumb::before {
@@ -350,7 +356,7 @@
   border: 1px solid rgba(45, 55, 72, 0.4);
   backdrop-filter: blur(10px);
   position: relative;
-  z-index: 20; /* 최상위 표시 */
+  z-index: 20;
 }
 
 .neu-progress-container .neu-card-micro::before {
@@ -393,7 +399,7 @@
   padding: 6px 8px;
   border: 1px solid rgba(45, 55, 72, 0.3);
   position: relative;
-  z-index: 20; /* 최상위 표시 */
+  z-index: 20;
 }
 
 .neu-volume-container .neu-card-micro::after {
@@ -413,7 +419,7 @@
 /* 🌟 반응형 최적화 */
 @media (max-width: 768px) {
   .neu-progress-container {
-    padding: 12px 16px;
+    padding: 16px;
     margin: 0 8px;
   }
   
