@@ -26,36 +26,25 @@ export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
   getInputProps,
   onRetry
 }) => {
-  // 비디오가 로드되었고 에러가 없으면 업로드 인터페이스를 숨김
-  const showUploadInterface = !hasVideo && !uploadState.isUploading && !isVideoLoaded;
-  
-  // 비디오가 성공적으로 로드되었는지 확인
+  // 🔧 비디오가 성공적으로 로드되었는지 확인
   const videoSuccessfullyLoaded = hasVideo && isVideoLoaded && !videoError;
 
   return (
     <div className="absolute inset-0 z-20 pointer-events-none video-overlay">
-      {/* 비디오가 성공적으로 로드되지 않았을 때만 오버레이 표시 */}
+      {/* 🔧 비디오가 성공적으로 로드되지 않았을 때만 오버레이 표시 */}
       {!videoSuccessfullyLoaded && (
         <>
-          {/* 비디오가 없고 업로드 중이 아닐 때만 업로드 인터페이스 표시 */}
-          {showUploadInterface && (
-            <div className="pointer-events-auto">
-              <VideoUploadOverlay 
-                isDragActive={isDragActive}
-                getRootProps={getRootProps}
-                getInputProps={getInputProps}
-              />
-            </div>
-          )}
-          
+          {/* 🔧 업로드 중일 때만 프로그레스 표시 */}
           {uploadState.isUploading && (
             <VideoProgressOverlay uploadState={uploadState} />
           )}
           
+          {/* 🔧 비디오가 있지만 로드되지 않았을 때만 로딩 표시 */}
           {hasVideo && !isVideoLoaded && !videoError && !uploadState.isUploading && (
             <VideoLoadingOverlay isLoading={true} />
           )}
 
+          {/* 🔧 에러가 있을 때만 에러 표시 */}
           {videoError && (
             <div className="pointer-events-auto">
               <VideoErrorOverlay error={videoError} onRetry={onRetry} />
@@ -64,7 +53,7 @@ export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
         </>
       )}
       
-      {/* 자막 오버레이는 비디오가 성공적으로 로드되었을 때만 표시 */}
+      {/* 🔧 자막 오버레이는 비디오가 성공적으로 로드되었을 때만 표시 */}
       {videoSuccessfullyLoaded && <SubtitleOverlay />}
     </div>
   );
