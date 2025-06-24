@@ -22,46 +22,31 @@ export const usePanelActions = (
     return { totalPanels, canRemove, availablePanels };
   }, [areas.length, type]);
 
-  // 🔧 패널 변경 핸들러 - 완전히 수정
+  // 🔧 성능 최적화: 메모이제이션된 이벤트 핸들러
   const handlePanelChange = useCallback((newPanelType: PanelType) => {
-    console.log('🔄 패널 변경 요청:', { areaId, currentType: type, newType: newPanelType });
+    console.log('🔄 패널 변경 시도:', { areaId, currentType: type, newType: newPanelType });
     
-    if (!areaId) {
-      console.error('❌ areaId가 없습니다');
-      return;
-    }
-    
-    if (newPanelType === type) {
-      console.log('⚠️ 동일한 패널 타입으로 변경 시도');
-      setIsDropdownOpen(false);
-      return;
-    }
-    
-    try {
+    if (areaId && newPanelType !== type) {
       changePanelType(areaId, newPanelType);
-      console.log('✅ 패널 변경 성공:', newPanelType);
-      setIsDropdownOpen(false);
-    } catch (error) {
-      console.error('❌ 패널 변경 실패:', error);
+      console.log('✅ 패널 변경 완료:', newPanelType);
+    } else {
+      console.warn('⚠️ 패널 변경 실패:', { areaId, newPanelType, currentType: type });
     }
+    
+    setIsDropdownOpen(false);
   }, [areaId, type, changePanelType, setIsDropdownOpen]);
 
-  // 🔧 패널 분할 핸들러 - 완전히 수정
   const handleSplitPanel = useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
-    console.log('🔀 패널 분할 요청:', { areaId, direction, newPanelType });
+    console.log('🔀 패널 분할 시도:', { areaId, direction, newPanelType });
     
-    if (!areaId) {
-      console.error('❌ areaId가 없어서 분할할 수 없습니다');
-      return;
-    }
-    
-    try {
+    if (areaId) {
       splitArea(areaId, direction, newPanelType);
-      console.log('✅ 패널 분할 성공');
-      setIsActionsOpen(false);
-    } catch (error) {
-      console.error('❌ 패널 분할 실패:', error);
+      console.log('✅ 패널 분할 완료');
+    } else {
+      console.warn('⚠️ areaId가 없어서 분할할 수 없습니다');
     }
+    
+    setIsActionsOpen(false);
   }, [areaId, splitArea, setIsActionsOpen]);
 
   const handleRemovePanel = useCallback(() => {
@@ -73,19 +58,13 @@ export const usePanelActions = (
       return;
     }
 
-    if (!areaId) {
-      console.error('❌ areaId가 없어서 제거할 수 없습니다');
-      return;
-    }
-
-    try {
+    if (areaId) {
       removeArea(areaId);
-      console.log('✅ 패널 제거 성공');
-      setIsActionsOpen(false);
-      setShowRemoveConfirm(false);
-    } catch (error) {
-      console.error('❌ 패널 제거 실패:', error);
+      console.log('✅ 패널 제거 완료');
     }
+    
+    setIsActionsOpen(false);
+    setShowRemoveConfirm(false);
   }, [areaId, canRemove, removeArea, setIsActionsOpen, setShowRemoveConfirm]);
 
   const handleRemoveClick = useCallback(() => {

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { AreaRenderer } from './components/Layout/AreaRenderer';
 import { useLayoutStore } from './stores/layoutStore';
 import { shallow } from 'zustand/shallow';
-import { extractPanelType, getPanelComponent } from './config/panelRegistry';
+import { panelRegistry, extractPanelType } from './config/panelRegistry';
 import { Area } from './types/area';
 
 export default function App() {
@@ -11,36 +11,26 @@ export default function App() {
     shallow,
   );
 
-  // 🎯 완전히 새로운 패널 렌더링 로직 - 분할 기능 지원
+  // 🎯 개선된 동적 패널 렌더링 로직 - 안정적인 ID 매칭
   const renderPanel = useMemo(() => {
     return (area: Area) => {
-      console.log('🎨 패널 렌더링:', area.id);
+      console.log('🎨 패널 렌더링 시도:', area.id);
       
-      try {
-        // 🔧 패널 타입 추출
-        const panelType = extractPanelType(area.id);
-        console.log('🔍 추출된 패널 타입:', panelType);
-        
-        // 🔧 동적 컴포넌트 생성
-        const PanelComponent = getPanelComponent(area.id);
-        
-        if (PanelComponent) {
-          console.log('✅ 패널 렌더링 성공:', { areaId: area.id, panelType });
-          return <PanelComponent key={area.id} />;
-        }
-        
-        // 🔧 폴백: 직접 컴포넌트 생성
-        const { Panel } = require('./components/Layout/Panel');
-        console.log('🔄 폴백 패널 생성:', { areaId: area.id, panelType });
-        return <Panel key={area.id} type={panelType} areaId={area.id} />;
-        
-      } catch (error) {
-        console.error('❌ 패널 렌더링 오류:', error);
-        
-        // 🔧 에러 시 빈 패널 렌더링
-        const { Panel } = require('./components/Layout/Panel');
-        return <Panel key={area.id} type="empty" areaId={area.id} />;
+      // 🔧 안정적인 패널 타입 추출
+      const panelType = extractPanelType(area.id);
+      
+      // 🔧 패널 레지스트리에서 컴포넌트 가져오기
+      const Component = panelRegistry[panelType as keyof typeof panelRegistry];
+      
+      if (Component) {
+        console.log('✅ 패널 렌더링 성공:', { areaId: area.id, panelType });
+        return <Component />;
       }
+      
+      // 🔧 기본값: 빈 패널
+      console.log('⚠️ 패널 컴포넌트를 찾을 수 없음, 빈 패널 사용:', area.id);
+      const EmptyComponent = panelRegistry.empty;
+      return <EmptyComponent />;
     };
   }, []);
 
