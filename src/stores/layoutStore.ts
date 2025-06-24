@@ -21,11 +21,11 @@ interface LayoutState {
 }
 
 export const useLayoutStore = create<LayoutState>((set, get, store) => ({
-  // State - Area 시스템 기본 레이아웃 (안정적인 ID 사용)
+  // State - Area 시스템 기본 레이아웃
   areas: [
-    { id: 'video-preview-default', x: 0, y: 0, width: 60, height: 100, minWidth: 15, minHeight: 20 },
-    { id: 'subtitle-timeline-default', x: 60, y: 0, width: 40, height: 55, minWidth: 15, minHeight: 20 },
-    { id: 'text-editor-default', x: 60, y: 55, width: 40, height: 45, minWidth: 15, minHeight: 20 },
+    { id: 'video', x: 0, y: 0, width: 60, height: 100, minWidth: 15, minHeight: 20 },
+    { id: 'timeline', x: 60, y: 0, width: 40, height: 55, minWidth: 15, minHeight: 20 },
+    { id: 'text', x: 60, y: 55, width: 40, height: 45, minWidth: 15, minHeight: 20 },
   ] as Area[],
   draggedPanel: null,
   dropTarget: null,
