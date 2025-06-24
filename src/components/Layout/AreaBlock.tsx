@@ -104,8 +104,8 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
         type: "tween"
       }}
     >
-      {/* 좌측 경계 */}
-      <motion.div
+      {/* 좌측 경계 - 하이라이트 제거, 투명한 상태 유지 */}
+      <div
         className="area-border area-border-vertical"
         style={{
           left: 0,
@@ -116,22 +116,16 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           cursor: 'ew-resize',
           zIndex: 10,
           background: 'transparent',
+          opacity: 0, // 완전히 투명
         }}
-        initial={{ opacity: 0 }}
-        whileHover={{ 
-          opacity: 1,
-          background: 'rgba(99, 179, 237, 0.1)',
-          boxShadow: '0 0 8px rgba(99, 179, 237, 0.3), inset 0 0 4px rgba(99, 179, 237, 0.2)'
-        }}
-        transition={{ duration: 0.2 }}
         onMouseDown={e => handleBorderMouseDown(e, 'left')}
         onMouseEnter={() => handleBorderMouseEnter('left')}
         onMouseLeave={handleBorderMouseLeave}
         title="드래그하여 좌측 경계 조정"
       />
       
-      {/* 우측 경계 */}
-      <motion.div
+      {/* 우측 경계 - 하이라이트 제거, 투명한 상태 유지 */}
+      <div
         className="area-border area-border-vertical"
         style={{
           right: 0,
@@ -142,22 +136,16 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           cursor: 'ew-resize',
           zIndex: 10,
           background: 'transparent',
+          opacity: 0, // 완전히 투명
         }}
-        initial={{ opacity: 0 }}
-        whileHover={{ 
-          opacity: 1,
-          background: 'rgba(99, 179, 237, 0.1)',
-          boxShadow: '0 0 8px rgba(99, 179, 237, 0.3), inset 0 0 4px rgba(99, 179, 237, 0.2)'
-        }}
-        transition={{ duration: 0.2 }}
         onMouseDown={e => handleBorderMouseDown(e, 'right')}
         onMouseEnter={() => handleBorderMouseEnter('right')}
         onMouseLeave={handleBorderMouseLeave}
         title="드래그하여 우측 경계 조정"
       />
       
-      {/* 상단 경계 */}
-      <motion.div
+      {/* 상단 경계 - 하이라이트 제거, 투명한 상태 유지 */}
+      <div
         className="area-border area-border-horizontal"
         style={{
           left: 0,
@@ -168,22 +156,16 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           cursor: 'ns-resize',
           zIndex: 10,
           background: 'transparent',
+          opacity: 0, // 완전히 투명
         }}
-        initial={{ opacity: 0 }}
-        whileHover={{ 
-          opacity: 1,
-          background: 'rgba(99, 179, 237, 0.1)',
-          boxShadow: '0 0 8px rgba(99, 179, 237, 0.3), inset 0 0 4px rgba(99, 179, 237, 0.2)'
-        }}
-        transition={{ duration: 0.2 }}
         onMouseDown={e => handleBorderMouseDown(e, 'top')}
         onMouseEnter={() => handleBorderMouseEnter('top')}
         onMouseLeave={handleBorderMouseLeave}
         title="드래그하여 상단 경계 조정"
       />
       
-      {/* 하단 경계 */}
-      <motion.div
+      {/* 하단 경계 - 하이라이트 제거, 투명한 상태 유지 */}
+      <div
         className="area-border area-border-horizontal"
         style={{
           left: 0,
@@ -194,14 +176,8 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           cursor: 'ns-resize',
           zIndex: 10,
           background: 'transparent',
+          opacity: 0, // 완전히 투명
         }}
-        initial={{ opacity: 0 }}
-        whileHover={{ 
-          opacity: 1,
-          background: 'rgba(99, 179, 237, 0.1)',
-          boxShadow: '0 0 8px rgba(99, 179, 237, 0.3), inset 0 0 4px rgba(99, 179, 237, 0.2)'
-        }}
-        transition={{ duration: 0.2 }}
         onMouseDown={e => handleBorderMouseDown(e, 'bottom')}
         onMouseEnter={() => handleBorderMouseEnter('bottom')}
         onMouseLeave={handleBorderMouseLeave}

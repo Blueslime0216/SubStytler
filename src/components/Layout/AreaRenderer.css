@@ -23,7 +23,7 @@
   position: absolute;
   z-index: 10;
   border-radius: 4px;
-  /* Framer Motion이 호버 효과를 제어하므로 CSS 호버 제거 */
+  /* 모든 호버 효과 제거 - 패딩 애니메이션만 유지 */
 }
 
 .area-border-vertical {
@@ -34,7 +34,4 @@
   cursor: ns-resize;
 }
 
-/* 디버깅용 - 패딩 변화 시 미세한 배경색 변화 */
-.area-block:hover {
-  background: rgba(99, 179, 237, 0.02);
-}
+/* 모든 시각적 효과 제거 - 순수한 패딩 애니메이션만 */
