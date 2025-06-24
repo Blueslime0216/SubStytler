@@ -29,7 +29,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
 }) => {
   // 패딩 계산 로직 - 1초 트랜지션 적용
   const basePadding = 14;
-  const hoverPadding = 28; // 더 명확한 시각적 피드백을 위해 증가
+  const hoverPadding = 28;
   
   const style: React.CSSProperties = {
     position: 'absolute',
@@ -39,12 +39,10 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     height: `${area.height}%`,
     background: 'transparent',
     boxSizing: 'border-box',
-    paddingTop: `${basePadding}px`,
-    paddingRight: `${basePadding}px`,
-    paddingBottom: `${basePadding}px`,
-    paddingLeft: `${basePadding}px`,
-    // 1초 부드러운 트랜지션 - 드래그 중에도 유지
-    transition: 'padding 1s cubic-bezier(0.4, 0, 0.2, 1)',
+    paddingTop: basePadding,
+    paddingRight: basePadding,
+    paddingBottom: basePadding,
+    paddingLeft: basePadding,
     overflow: 'visible',
     zIndex: 200,
   };
@@ -59,24 +57,19 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     if (current) {
       switch (current.dir) {
         case 'left': 
-          style.paddingLeft = `${hoverPadding}px`; 
+          style.paddingLeft = hoverPadding; 
           break;
         case 'right': 
-          style.paddingRight = `${hoverPadding}px`; 
+          style.paddingRight = hoverPadding; 
           break;
         case 'top': 
-          style.paddingTop = `${hoverPadding}px`; 
+          style.paddingTop = hoverPadding; 
           break;
         case 'bottom': 
-          style.paddingBottom = `${hoverPadding}px`; 
+          style.paddingBottom = hoverPadding; 
           break;
       }
     }
-  }
-
-  // 드래그 중일 때도 트랜지션 유지 (더 부드러운 경험)
-  if (dragging) {
-    style.transition = 'padding 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
   }
 
   const handleBorderMouseEnter = (dir: BorderDir) => {

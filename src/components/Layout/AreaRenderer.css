@@ -11,7 +11,7 @@
   background: #f6f8fa;
   overflow: visible;
   box-sizing: border-box;
-  /* 기본 패딩 트랜지션 - 1초 부드러운 애니메이션 */
+  /* 1초 부드러운 패딩 트랜지션 */
   transition: padding 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -26,7 +26,6 @@
   z-index: 10;
   opacity: 0;
   border-radius: 4px;
-  /* 호버 시 시각적 피드백을 위한 트랜지션 */
   transition: all 0.2s ease;
 }
 
@@ -38,7 +37,7 @@
   cursor: ns-resize;
 }
 
-/* 호버 시 경계 영역 시각적 피드백 */
+/* 호버 시 경계 영역 시각적 피드백 - 배경색과 그림자만 */
 .area-border:hover {
   background: rgba(99, 179, 237, 0.1);
   opacity: 1;
@@ -55,31 +54,4 @@
   box-shadow: 
     0 0 12px rgba(99, 179, 237, 0.5),
     inset 0 0 6px rgba(99, 179, 237, 0.3);
-}
-
-/* 패딩 변화 시각적 효과 강화 */
-.area-block {
-  /* 패딩 변화를 더 명확하게 보여주기 위한 배경 그라데이션 */
-  background: linear-gradient(145deg, #f6f8fa, #e2e8f0);
-  border-radius: 8px;
-}
-
-/* 호버된 영역의 패딩 영역 강조 */
-.area-block:hover {
-  background: linear-gradient(145deg, #f0f4f8, #e2e8f0);
-}
-
-/* 부드러운 패딩 애니메이션을 위한 추가 스타일 */
-@keyframes paddingPulse {
-  0%, 100% {
-    box-shadow: inset 0 0 0 2px transparent;
-  }
-  50% {
-    box-shadow: inset 0 0 0 2px rgba(99, 179, 237, 0.3);
-  }
-}
-
-/* 패딩이 변화하는 동안 미묘한 펄스 효과 */
-.area-block[style*="padding"] {
-  animation: paddingPulse 2s ease-in-out infinite;
 }
