@@ -14,7 +14,7 @@ interface PanelProps {
   type: PanelType;
   className?: string;
   areaId?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, children }) => {
@@ -39,32 +39,38 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
   const config = panelConfig[type];
   const IconComponent = config.icon;
 
-  const onPanelChange = (newPanelType: PanelType) => {
+  // 🔧 성능 최적화: 이벤트 핸들러 메모이제이션
+  const onPanelChange = React.useCallback((newPanelType: PanelType) => {
     handlePanelChange(newPanelType);
     setIsDropdownOpen(false);
-  };
+  }, [handlePanelChange]);
 
-  const onSplitPanel = (direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
+  const onSplitPanel = React.useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
     handleSplitPanel(direction, newPanelType);
     setIsActionsOpen(false);
-  };
+  }, [handleSplitPanel]);
 
-  const onRemovePanel = () => {
+  const onRemovePanel = React.useCallback(() => {
     handleRemovePanel();
     setShowRemoveConfirm(false);
-  };
+  }, [handleRemovePanel]);
 
-  const onRemoveClick = () => {
+  const onRemoveClick = React.useCallback(() => {
     if (!canRemove) return;
     handleRemoveClick();
-  };
+  }, [canRemove, handleRemoveClick]);
 
   return (
     <motion.div
       className={`neu-panel ${className}`}
       initial={{ opacity: 1, scale: 1 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
+      transition={{ duration: 0.15, ease: 'easeOut' }} // 🔧 더 빠른 애니메이션
+      // 🔧 성능 최적화: 레이아웃 최적화
+      style={{
+        contain: 'layout style',
+        willChange: 'auto'
+      }}
     >
       <PanelHeader
         type={type}
@@ -82,34 +88,42 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
       {/* Panel Content */}
       <PanelBody type={type} />
 
-      {/* Dropdowns */}
-      <PanelDropdown
-        isOpen={isDropdownOpen}
-        onClose={() => setIsDropdownOpen(false)}
-        triggerRef={titleButtonRef}
-        availablePanels={availablePanels}
-        onPanelChange={onPanelChange}
-      />
+      {/* Dropdowns - 조건부 렌더링으로 성능 최적화 */}
+      {isDropdownOpen && (
+        <PanelDropdown
+          isOpen={isDropdownOpen}
+          onClose={() => setIsDropdownOpen(false)}
+          triggerRef={titleButtonRef}
+          availablePanels={availablePanels}
+          onPanelChange={onPanelChange}
+        />
+      )}
 
-      <PanelActionsDropdown
-        isOpen={isActionsOpen}
-        onClose={() => setIsActionsOpen(false)}
-        triggerRef={actionsButtonRef}
-        onSplitPanel={onSplitPanel}
-      />
+      {isActionsOpen && (
+        <PanelActionsDropdown
+          isOpen={isActionsOpen}
+          onClose={() => setIsActionsOpen(false)}
+          triggerRef={actionsButtonRef}
+          onSplitPanel={onSplitPanel}
+        />
+      )}
 
-      <PanelRemoveConfirmation
-        isOpen={showRemoveConfirm && canRemove}
-        onClose={() => setShowRemoveConfirm(false)}
-        onConfirm={onRemovePanel}
-        triggerRef={removeButtonRef}
-      />
+      {showRemoveConfirm && canRemove && (
+        <PanelRemoveConfirmation
+          isOpen={showRemoveConfirm}
+          onClose={() => setShowRemoveConfirm(false)}
+          onConfirm={onRemovePanel}
+          triggerRef={removeButtonRef}
+        />
+      )}
     </motion.div>
   );
 };
 
-// 성능 최적화: React.memo로 감싸서 불필요한 리렌더링 방지
+// 🔧 성능 최적화: React.memo로 감싸서 불필요한 리렌더링 방지 + 더 정교한 비교
 export const Panel = React.memo(PanelComponent, (prevProps, nextProps) => {
-  // 패널 타입이 같으면 리렌더링 방지
-  return prevProps.type === nextProps.type && prevProps.areaId === nextProps.areaId;
+  // 🔧 패널 타입과 areaId가 같으면 리렌더링 방지
+  return prevProps.type === nextProps.type && 
+         prevProps.areaId === nextProps.areaId &&
+         prevProps.className === nextProps.className;
 });

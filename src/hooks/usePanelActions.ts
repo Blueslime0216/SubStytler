@@ -1,6 +1,7 @@
 import { PanelType, AreaConfig } from '../types/project';
 import { useLayoutStore } from '../stores/layoutStore';
 import { panelConfig } from '../config/panelConfig';
+import { useMemo, useCallback } from 'react';
 
 export const usePanelActions = (
   areaId: string | undefined,
@@ -12,13 +13,17 @@ export const usePanelActions = (
 ) => {
   const { changePanelType, splitArea, removeArea } = useLayoutStore();
 
-  const totalPanels = areas.length; // Area 시스템에서는 단순히 배열 길이
-  const canRemove = totalPanels > 1;
+  // 🔧 성능 최적화: 메모이제이션된 계산
+  const { totalPanels, canRemove, availablePanels } = useMemo(() => {
+    const totalPanels = areas.length;
+    const canRemove = totalPanels > 1;
+    const availablePanels = Object.entries(panelConfig).filter(([panelType]) => panelType !== type);
+    
+    return { totalPanels, canRemove, availablePanels };
+  }, [areas.length, type]);
 
-  // 현재 패널 타입을 제외한 모든 패널 (빈 패널 포함)
-  const availablePanels = Object.entries(panelConfig).filter(([panelType]) => panelType !== type);
-
-  const handlePanelChange = (newPanelType: PanelType) => {
+  // 🔧 성능 최적화: 메모이제이션된 이벤트 핸들러
+  const handlePanelChange = useCallback((newPanelType: PanelType) => {
     console.log('🔄 패널 변경 시도:', { areaId, currentType: type, newType: newPanelType });
     
     if (areaId && newPanelType !== type) {
@@ -29,9 +34,9 @@ export const usePanelActions = (
     }
     
     setIsDropdownOpen(false);
-  };
+  }, [areaId, type, changePanelType, setIsDropdownOpen]);
 
-  const handleSplitPanel = (direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
+  const handleSplitPanel = useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
     console.log('🔀 패널 분할 시도:', { areaId, direction, newPanelType });
     
     if (areaId) {
@@ -42,9 +47,9 @@ export const usePanelActions = (
     }
     
     setIsActionsOpen(false);
-  };
+  }, [areaId, splitArea, setIsActionsOpen]);
 
-  const handleRemovePanel = () => {
+  const handleRemovePanel = useCallback(() => {
     console.log('🗑️ 패널 제거 시도:', { areaId, canRemove });
     
     if (!canRemove) {
@@ -60,9 +65,9 @@ export const usePanelActions = (
     
     setIsActionsOpen(false);
     setShowRemoveConfirm(false);
-  };
+  }, [areaId, canRemove, removeArea, setIsActionsOpen, setShowRemoveConfirm]);
 
-  const handleRemoveClick = () => {
+  const handleRemoveClick = useCallback(() => {
     if (!canRemove) {
       console.warn('⚠️ 제거 불가능한 패널');
       return;
@@ -71,7 +76,7 @@ export const usePanelActions = (
     console.log('🗑️ 패널 제거 확인 대화상자 표시');
     setShowRemoveConfirm(true);
     setTimeout(() => setShowRemoveConfirm(false), 3000);
-  };
+  }, [canRemove, setShowRemoveConfirm]);
 
   return {
     canRemove,

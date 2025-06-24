@@ -32,6 +32,13 @@ export function useAreaDrag(
   const areasRef = useRef<Area[]>(areas);
   const animationFrameId = useRef<number | null>(null);
   const lastUpdateTimeRef = useRef<number>(0);
+  
+  // 🔧 성능 최적화: 메모이제이션된 연결 영역 계산
+  const linkedAreasCache = useRef<Map<string, LinkedArea[]>>(new Map());
+  
+  // 🔧 성능 최적화: 디바운스된 업데이트
+  const pendingUpdate = useRef<Area[] | null>(null);
+  const updateTimeoutRef = useRef<number | null>(null);
 
   // keep refs updated
   useEffect(() => {
@@ -40,10 +47,18 @@ export function useAreaDrag(
 
   useEffect(() => {
     areasRef.current = areas;
+    // 🔧 areas가 변경되면 캐시 무효화
+    linkedAreasCache.current.clear();
   }, [areas]);
 
-  // Function to get linked borders for hover effect
+  // 🔧 성능 최적화: 메모이제이션된 연결 영역 계산
   const getLinkedBorders = useCallback((areaId: string, dir: BorderDir): LinkedArea[] => {
+    const cacheKey = `${areaId}-${dir}`;
+    
+    if (linkedAreasCache.current.has(cacheKey)) {
+      return linkedAreasCache.current.get(cacheKey)!;
+    }
+    
     const area = areas.find(a => a.id === areaId);
     if (!area) return [];
     
@@ -51,10 +66,32 @@ export function useAreaDrag(
     visited.add(area.id);
     const linked: LinkedArea[] = [];
     detectLinkedAreas(areas, area, dir, visited, linked);
+    
+    // 🔧 캐시에 저장 (최대 100개까지만)
+    if (linkedAreasCache.current.size < 100) {
+      linkedAreasCache.current.set(cacheKey, linked);
+    }
+    
     return linked;
   }, [areas]);
 
-  // 🔧 최적화된 드래그 처리 - 깜박임 완전 제거
+  // 🔧 성능 최적화: 배치 업데이트 함수
+  const batchUpdateAreas = useCallback((newAreas: Area[]) => {
+    pendingUpdate.current = newAreas;
+    
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
+    }
+    
+    updateTimeoutRef.current = window.setTimeout(() => {
+      if (pendingUpdate.current) {
+        setAreas(pendingUpdate.current);
+        pendingUpdate.current = null;
+      }
+    }, 0);
+  }, [setAreas]);
+
+  // 🔧 최적화된 드래그 처리 - 성능 대폭 개선
   useEffect(() => {
     if (!dragging) return;
 
@@ -67,10 +104,10 @@ export function useAreaDrag(
         cancelAnimationFrame(animationFrameId.current);
       }
 
-      // 🔧 프레임 제한 - 60fps 보장 (약 16.7ms 간격)
+      // 🔧 프레임 제한 - 30fps로 제한하여 성능 향상 (약 33ms 간격)
       const now = performance.now();
       const elapsed = now - lastUpdateTimeRef.current;
-      if (elapsed < 16) return; // 16.7ms 미만이면 처리 건너뜀
+      if (elapsed < 33) return; // 33ms 미만이면 처리 건너뜀
 
       // 🔧 requestAnimationFrame으로 성능 최적화
       animationFrameId.current = requestAnimationFrame(() => {
@@ -86,11 +123,21 @@ export function useAreaDrag(
         const dxRaw = ((e.clientX - lastX) / containerWidth) * 100;
         const dyRaw = ((e.clientY - lastY) / containerHeight) * 100;
         
-        const currentAreas = areasRef.current.map(a => ({ ...a }));
+        // 🔧 성능 최적화: 얕은 복사로 변경
+        const currentAreas = areasRef.current;
         const areaIdx = currentAreas.findIndex(a => a.id === areaId);
         if (areaIdx === -1) return;
         
-        const newAreas = currentAreas.map(a => ({ ...a }));
+        // 🔧 성능 최적화: 필요한 영역만 복사
+        const newAreas = [...currentAreas];
+        const affectedAreaIds = new Set([areaId, ...linked.map(l => l.id)]);
+        
+        for (let i = 0; i < newAreas.length; i++) {
+          if (affectedAreaIds.has(newAreas[i].id)) {
+            newAreas[i] = { ...newAreas[i] };
+          }
+        }
+        
         const area = newAreas[areaIdx];
         const allLinked: LinkedArea[] = [{ id: areaId, dir }, ...linked];
         
@@ -98,8 +145,11 @@ export function useAreaDrag(
         let limitNeg = Infinity;
         const isHorizontal = dir === 'left' || dir === 'right';
         
+        // 🔧 성능 최적화: 제한 계산 최적화
         for (const { id, dir: moveDir } of allLinked) {
-          const a = newAreas.find(x => x.id === id)!;
+          const a = newAreas.find(x => x.id === id);
+          if (!a) continue;
+          
           const capacity = isHorizontal ? a.width - (a.minWidth || 15) : a.height - (a.minHeight || 20);
           if (isHorizontal) {
             if (moveDir === 'left') limitPos = Math.min(limitPos, capacity);
@@ -117,30 +167,35 @@ export function useAreaDrag(
         if (isHorizontal) move = dxRaw < 0 ? clamp(dxRaw, -limitNeg, 0) : clamp(dxRaw, 0, limitPos);
         else move = dyRaw < 0 ? clamp(dyRaw, -limitNeg, 0) : clamp(dyRaw, 0, limitPos);
 
-        for (const { id, dir: moveDir } of allLinked) {
-          const a = newAreas.find(x => x.id === id)!;
-          if (moveDir === 'left') {
-            a.x += move;
-            a.width -= move;
-          } else if (moveDir === 'right') {
-            a.width += move;
-          } else if (moveDir === 'top') {
-            a.y += move;
-            a.height -= move;
-          } else {
-            a.height += move; // bottom
+        // 🔧 성능 최적화: 변경사항이 있을 때만 업데이트
+        if (Math.abs(move) > 0.01) {
+          for (const { id, dir: moveDir } of allLinked) {
+            const a = newAreas.find(x => x.id === id);
+            if (!a) continue;
+            
+            if (moveDir === 'left') {
+              a.x += move;
+              a.width -= move;
+            } else if (moveDir === 'right') {
+              a.width += move;
+            } else if (moveDir === 'top') {
+              a.y += move;
+              a.height -= move;
+            } else {
+              a.height += move; // bottom
+            }
           }
-        }
 
-        // 🔧 배치 업데이트 - 한 번에 처리
-        setAreas(newAreas);
-        lastUpdateTimeRef.current = now;
-        
-        if (move !== 0 && draggingRef.current) {
-          if (isHorizontal) {
-            draggingRef.current.lastX = e.clientX;
-          } else {
-            draggingRef.current.lastY = e.clientY;
+          // 🔧 배치 업데이트 사용
+          batchUpdateAreas(newAreas);
+          lastUpdateTimeRef.current = now;
+          
+          if (draggingRef.current) {
+            if (isHorizontal) {
+              draggingRef.current.lastX = e.clientX;
+            } else {
+              draggingRef.current.lastY = e.clientY;
+            }
           }
         }
       });
@@ -150,6 +205,17 @@ export function useAreaDrag(
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
         animationFrameId.current = null;
+      }
+      
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+        updateTimeoutRef.current = null;
+      }
+      
+      // 🔧 최종 업데이트 강제 실행
+      if (pendingUpdate.current) {
+        setAreas(pendingUpdate.current);
+        pendingUpdate.current = null;
       }
       
       // 드래그 종료 시 body에서 클래스 제거
@@ -174,11 +240,15 @@ export function useAreaDrag(
         cancelAnimationFrame(animationFrameId.current);
         animationFrameId.current = null;
       }
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+        updateTimeoutRef.current = null;
+      }
       document.body.classList.remove('dragging-active');
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp as EventListener);
     };
-  }, [dragging, setAreas, setHoveredBorder]);
+  }, [dragging, batchUpdateAreas, setHoveredBorder]);
 
   const onBorderMouseDown = useCallback((
     e: React.MouseEvent,
@@ -188,15 +258,15 @@ export function useAreaDrag(
     e.preventDefault();
     e.stopPropagation();
     
-    const area = areas.find(a => a.id === areaId)!;
-    const visited = new Set<string>();
-    visited.add(area.id);
-    const linked: LinkedArea[] = [];
-    detectLinkedAreas(areas, area, dir, visited, linked);
+    const area = areas.find(a => a.id === areaId);
+    if (!area) return;
+    
+    // 🔧 성능 최적화: 캐시된 연결 영역 사용
+    const linked = getLinkedBorders(areaId, dir);
     
     setDragging({ areaId, dir, lastX: e.clientX, lastY: e.clientY, linked });
     lastUpdateTimeRef.current = performance.now();
-  }, [areas]);
+  }, [areas, getLinkedBorders]);
 
   return { containerRef, onBorderMouseDown, dragging, getLinkedBorders };
 }

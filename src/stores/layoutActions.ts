@@ -2,13 +2,13 @@ import { PanelType } from '../types/project';
 import { StateCreator } from 'zustand';
 
 /**
- * 🎯 Area 시스템 전용 레이아웃 액션
+ * 🎯 Area 시스템 전용 레이아웃 액션 - 성능 최적화 버전
  * 좌표 기반 분할 및 관리
  */
 export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
   setAreas: (areas: any[]) => {
-    // 항상 새로운 배열로 복사하여 불변성 보장
-    set({ areas: areas.map((a: any) => ({ ...a })) });
+    // 🔧 성능 최적화: 얕은 복사로 변경하여 메모리 사용량 감소
+    set({ areas: areas.slice() });
   },
 
   splitArea: (areaId: string, direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
@@ -67,8 +67,8 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
       };
     }
 
-    // 🔄 areas 배열 업데이트
-    const newAreas = [...areas];
+    // 🔄 areas 배열 업데이트 - 성능 최적화
+    const newAreas = areas.slice(); // 얕은 복사
     newAreas[targetAreaIndex] = updatedArea; // 기존 area 업데이트
     newAreas.push(newArea); // 새로운 area 추가
 
@@ -78,13 +78,12 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
   changePanelType: (areaId: string, newPanelType: PanelType) => {
     const { areas } = get();
 
-    // 🎯 Area 시스템에서는 id를 직접 변경
-    const newAreas = areas.map((area: any) => {
-      if (area.id === areaId) {
-        return { ...area, id: newPanelType };
-      }
-      return area;
-    });
+    // 🔧 성능 최적화: 변경이 필요한 경우에만 새 배열 생성
+    const targetIndex = areas.findIndex((area: any) => area.id === areaId);
+    if (targetIndex === -1) return;
+
+    const newAreas = areas.slice(); // 얕은 복사
+    newAreas[targetIndex] = { ...areas[targetIndex], id: newPanelType };
 
     set({ areas: newAreas });
   },
@@ -96,7 +95,7 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
       return;
     }
 
-    // 🗑️ 해당 area 제거
+    // 🗑️ 해당 area 제거 - 성능 최적화
     const newAreas = areas.filter((area: any) => area.id !== areaId);
     
     set({ areas: newAreas });

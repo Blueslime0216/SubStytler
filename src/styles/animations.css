@@ -1,4 +1,4 @@
-/* Enhanced Animations and Effects */
+/* Enhanced Animations and Effects - 성능 최적화 버전 */
 
 @keyframes neu-pulse {
   0%, 100% {
@@ -36,12 +36,18 @@
   }
 }
 
+/* 🔧 성능 최적화: 애니메이션 클래스들 */
 .neu-pulse {
   animation: neu-pulse 2s ease-in-out infinite;
+  /* 🔧 성능 최적화: GPU 가속 */
+  transform: translateZ(0);
+  will-change: box-shadow;
 }
 
 .neu-glow {
   animation: neu-glow 2s ease-in-out infinite;
+  transform: translateZ(0);
+  will-change: box-shadow;
 }
 
 .neu-shimmer {
@@ -53,45 +59,59 @@
   );
   background-size: 200% 100%;
   animation: neu-shimmer 2s infinite;
+  transform: translateZ(0);
+  will-change: background-position;
 }
 
 .neu-breathe {
   animation: neu-breathe 3s ease-in-out infinite;
+  transform: translateZ(0);
+  will-change: filter;
 }
 
-/* Enhanced Hover Effects */
+/* Enhanced Hover Effects - 성능 최적화 */
 .neu-hover-interactive:hover {
   box-shadow: var(--neu-shadow-hover);
   border-color: var(--neu-interactive-border);
   filter: brightness(var(--neu-hover-brightness));
-  transition: all 0.2s ease;
+  transition: all 0.15s ease; /* 🔧 더 빠른 트랜지션 */
   cursor: pointer;
+  /* 🔧 성능 최적화 */
+  transform: translateZ(0);
+  will-change: box-shadow, border-color, filter;
 }
 
 .neu-hover-glow:hover {
   box-shadow: var(--neu-shadow-2), 0 0 8px rgba(99, 179, 237, 0.4);
   filter: brightness(var(--neu-hover-brightness));
   cursor: pointer;
+  transform: translateZ(0);
+  will-change: box-shadow, filter;
 }
 
 .neu-hover-tactile:hover {
   box-shadow: var(--neu-shadow-inset-soft);
   filter: brightness(0.95);
   cursor: pointer;
+  transform: translateZ(0);
+  will-change: box-shadow, filter;
 }
 
 .neu-hover-tactile:active {
   box-shadow: var(--neu-shadow-active);
   filter: brightness(0.9);
   cursor: pointer;
+  transform: translateZ(0);
 }
 
-/* Loading States - Enhanced */
+/* Loading States - Enhanced - 성능 최적화 */
 .neu-loading {
   background: linear-gradient(90deg, var(--neu-base), var(--neu-accent), var(--neu-base));
   background-size: 200% 100%;
   animation: neu-shimmer 2s infinite;
   position: relative;
+  transform: translateZ(0);
+  will-change: background-position;
 }
 
 .neu-loading::after {
@@ -104,18 +124,53 @@
   background: var(--neu-interactive-bg);
   opacity: 0.5;
   border-radius: inherit;
+  transform: translateZ(0);
 }
 
-/* Reduced Motion Support */
+/* 🔧 성능 최적화: 저사양 기기 대응 */
+@media (max-width: 768px) {
+  .neu-pulse,
+  .neu-glow,
+  .neu-shimmer,
+  .neu-breathe {
+    animation-duration: 3s; /* 모바일에서는 더 느린 애니메이션 */
+  }
+  
+  .neu-hover-interactive:hover,
+  .neu-hover-glow:hover,
+  .neu-hover-tactile:hover {
+    transition-duration: 0.1s; /* 모바일에서는 더 빠른 트랜지션 */
+  }
+}
+
+/* 🔧 성능 최적화: 배터리 절약 모드 */
 @media (prefers-reduced-motion: reduce) {
   .neu-pulse,
   .neu-glow,
   .neu-shimmer,
   .neu-breathe {
-    animation: none;
+    animation: none !important;
   }
   
   * {
     transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+  
+  .neu-hover-interactive:hover,
+  .neu-hover-glow:hover,
+  .neu-hover-tactile:hover {
+    transition: none !important;
+  }
+}
+
+/* 🔧 성능 최적화: GPU 메모리 절약 */
+@media (max-resolution: 150dpi) {
+  .neu-pulse,
+  .neu-glow,
+  .neu-shimmer,
+  .neu-breathe {
+    /* 저해상도에서는 더 단순한 애니메이션 */
+    animation-timing-function: linear;
   }
 }
