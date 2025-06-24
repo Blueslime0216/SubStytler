@@ -4,8 +4,9 @@ import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
 import { useVideoSync } from '../../hooks/useVideoSync';
 import { useVideoUpload } from '../../hooks/useVideoUpload';
-import { VideoController } from '../Video/VideoController';
-import { VideoOverlays } from '../Video/VideoOverlays';
+import VideoPreviewPlayer from './VideoPreviewPlayer';
+import VideoPreviewOverlays from './VideoPreviewOverlays';
+import VideoPreviewController from './VideoPreviewController';
 import { useToast } from '../../hooks/useToast';
 
 export const VideoPreviewPanel: React.FC = () => {
@@ -142,17 +143,14 @@ export const VideoPreviewPanel: React.FC = () => {
   return (
     <div className="h-full flex flex-col neu-bg-base neu-video-panel">
       <div className="flex-1 relative">
-        <video
-          ref={videoRef}
-          className={`w-full h-full object-contain ${hasVideo ? 'block' : 'hidden'}`}
-          playsInline
-          controls={false}
-          preload="metadata"
-          src={hasVideo ? hasVideo.url : undefined}
+        <VideoPreviewPlayer
+          videoRef={videoRef}
+          hasVideo={!!hasVideo}
+          videoUrl={hasVideo?.url}
         />
         
-        <VideoOverlays
-          hasVideo={hasVideo}
+        <VideoPreviewOverlays
+          hasVideo={!!hasVideo}
           uploadState={uploadState}
           isVideoLoaded={isVideoLoaded}
           videoError={videoError}
@@ -163,13 +161,12 @@ export const VideoPreviewPanel: React.FC = () => {
         />
       </div>
       
-      <VideoController
+      <VideoPreviewController
         isVideoLoaded={isVideoLoaded}
         volume={volume}
         isMuted={isMuted}
         onVolumeChange={handleVolumeChange}
         onMuteToggle={handleMuteToggle}
-        onFullscreen={() => {}} // Empty function since fullscreen is removed
         onSettings={handleSettings}
       />
     </div>

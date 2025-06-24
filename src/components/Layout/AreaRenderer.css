@@ -12,6 +12,29 @@
   box-sizing: border-box;
   background: #f6f8fa;
   overflow: visible;
+  padding: 14px;
+}
+
+/* 호버 시 패딩 변경 */
+.area-block.hover-padding-left {
+  padding-left: 24px !important;
+}
+
+.area-block.hover-padding-right {
+  padding-right: 24px !important;
+}
+
+.area-block.hover-padding-top {
+  padding-top: 24px !important;
+}
+
+.area-block.hover-padding-bottom {
+  padding-bottom: 24px !important;
+}
+
+/* 드래그 중에는 트랜지션 비활성화 */
+.area-block.dragging {
+  transition: none !important;
 }
 
 .area-border {

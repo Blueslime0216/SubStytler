@@ -1,75 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Area } from '../../../types/area';
-
-// Internal types moved from AreaRenderer
-export type BorderDir = 'left' | 'right' | 'top' | 'bottom';
-export interface LinkedArea { id: string; dir: BorderDir; }
+import { BorderDir, LinkedArea, detectLinkedAreas, clamp, EPSILON } from './areaDragUtils';
 
 const BORDER_THICKNESS = 8;
-const EPSILON = 0.01;
-
-function getOppositeDir(dir: BorderDir): BorderDir {
-  return dir === 'left' ? 'right' : dir === 'right' ? 'left' : dir === 'top' ? 'bottom' : 'top';
-}
-
-function getAdjacentAreas(areas: Area[], area: Area, dir: BorderDir) {
-  // 같은 선상에 있는 인접 area를 모두 반환
-  if (dir === 'left') {
-    return areas.filter(
-      a =>
-        a.id !== area.id &&
-        Math.abs(a.x + a.width - area.x) < EPSILON &&
-        a.y < area.y + area.height &&
-        a.y + a.height > area.y,
-    );
-  }
-  if (dir === 'right') {
-    return areas.filter(
-      a =>
-        a.id !== area.id &&
-        Math.abs(area.x + area.width - a.x) < EPSILON &&
-        a.y < area.y + area.height &&
-        a.y + a.height > area.y,
-    );
-  }
-  if (dir === 'top') {
-    return areas.filter(
-      a =>
-        a.id !== area.id &&
-        Math.abs(a.y + a.height - area.y) < EPSILON &&
-        a.x < area.x + area.width &&
-        a.x + a.width > area.x,
-    );
-  }
-  // dir === 'bottom'
-  return areas.filter(
-    a =>
-      a.id !== area.id &&
-      Math.abs(area.y + area.height - a.y) < EPSILON &&
-      a.x < area.x + area.width &&
-      a.x + a.width > area.x,
-  );
-}
-
-function detectLinkedAreas(
-  areas: Area[],
-  startArea: Area,
-  dir: BorderDir,
-  visited: Set<string>,
-  result: LinkedArea[],
-) {
-  const adjacents = getAdjacentAreas(areas, startArea, dir).filter(a => !visited.has(a.id));
-  for (const adjacent of adjacents) {
-    const oppDir = getOppositeDir(dir);
-    visited.add(adjacent.id);
-    result.push({ id: adjacent.id, dir: oppDir });
-    detectLinkedAreas(areas, adjacent, oppDir, visited, result);
-  }
-}
-
-function clamp(val: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, val));
-}
 
 interface UseAreaDragReturn {
   containerRef: React.RefObject<HTMLDivElement>;
@@ -174,9 +107,12 @@ export function useAreaDrag(
       }
 
       setAreas(newAreas);
-      if (draggingRef.current) {
-        draggingRef.current.lastX = e.clientX;
-        draggingRef.current.lastY = e.clientY;
+      if (move !== 0 && draggingRef.current) {
+        if (isHorizontal) {
+          draggingRef.current.lastX = e.clientX;
+        } else {
+          draggingRef.current.lastY = e.clientY;
+        }
       }
     };
 
@@ -205,3 +141,5 @@ export function useAreaDrag(
 
   return { containerRef, onBorderMouseDown, dragging, getLinkedBorders };
 }
+
+export type { BorderDir };
