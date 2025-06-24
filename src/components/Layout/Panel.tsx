@@ -5,11 +5,10 @@ import { useLayoutStore } from '../../stores/layoutStore';
 import { PanelBody } from './PanelBody';
 import { PanelDropdown } from './PanelDropdown';
 import { PanelActionsDropdown } from './PanelActionsDropdown';
-import { PanelRemoveConfirmation } from './PanelRemoveConfirmation';
 import { usePanelActions } from '../../hooks/usePanelActions';
-import { panelConfig } from '../../config/panelConfig';
 import { PanelHeader } from './PanelHeader';
 import { extractPanelType } from '../../config/panelRegistry';
+import { BorderDir } from './hooks/areaDragUtils';
 
 interface PanelProps {
   type?: PanelType; // 🎯 선택적으로 변경
@@ -24,11 +23,10 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
   
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
-  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+  const [, setShowRemoveConfirm] = useState(false);
   
   const titleButtonRef = useRef<HTMLButtonElement>(null);
   const actionsButtonRef = useRef<HTMLButtonElement>(null);
-  const removeButtonRef = useRef<HTMLButtonElement>(null);
   
   const { areas } = useLayoutStore();
   const {
@@ -36,18 +34,21 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     availablePanels,
     handlePanelChange,
     handleSplitPanel,
-    handleRemovePanel,
-    handleRemoveClick
   } = usePanelActions(areaId, actualType, areas, setIsDropdownOpen, setIsActionsOpen, setShowRemoveConfirm);
 
-  const config = panelConfig[actualType];
-  const IconComponent = config.icon;
+  // 덮기(제거) 기능
+  const coverArea = useLayoutStore(state => state.coverArea);
+
+  const handleCoverPanel = React.useCallback((dir: BorderDir) => {
+    if (!areaId || !canRemove) return;
+    coverArea(areaId, dir);
+  }, [areaId, canRemove, coverArea]);
 
   console.log('🎨 Panel 렌더링:', {
     areaId,
     providedType: type,
     actualType,
-    configFound: !!config
+    configFound: true
   });
 
   // 🔧 성능 최적화: 이벤트 핸들러 메모이제이션
@@ -62,17 +63,6 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     handleSplitPanel(direction, newPanelType);
     setIsActionsOpen(false);
   }, [handleSplitPanel, areaId]);
-
-  const onRemovePanel = React.useCallback(() => {
-    console.log('🗑️ 패널 제거 요청:', { areaId });
-    handleRemovePanel();
-    setShowRemoveConfirm(false);
-  }, [handleRemovePanel, areaId]);
-
-  const onRemoveClick = React.useCallback(() => {
-    if (!canRemove) return;
-    handleRemoveClick();
-  }, [canRemove, handleRemoveClick]);
 
   return (
     <motion.div
@@ -93,10 +83,10 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
         isActionsOpen={isActionsOpen}
         setIsActionsOpen={setIsActionsOpen}
         canRemove={canRemove}
-        onRemoveClick={onRemoveClick}
+        onCover={handleCoverPanel}
         titleButtonRef={titleButtonRef}
         actionsButtonRef={actionsButtonRef}
-        removeButtonRef={removeButtonRef}
+        coverButtonRef={undefined}
       />
       
       {/* Panel Content */}
@@ -119,15 +109,6 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
           onClose={() => setIsActionsOpen(false)}
           triggerRef={actionsButtonRef}
           onSplitPanel={onSplitPanel}
-        />
-      )}
-
-      {showRemoveConfirm && canRemove && (
-        <PanelRemoveConfirmation
-          isOpen={showRemoveConfirm}
-          onClose={() => setShowRemoveConfirm(false)}
-          onConfirm={onRemovePanel}
-          triggerRef={removeButtonRef}
         />
       )}
     </motion.div>

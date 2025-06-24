@@ -48,6 +48,25 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
     const { currentProject } = get();
     if (currentProject) {
       set({ currentProject: { ...currentProject, videoMeta: meta }, isModified: true });
+    } else {
+      const newProject: Project = {
+        id: crypto.randomUUID(),
+        name: 'Untitled',
+        tracks: [],
+        subtitles: [],
+        styles: [],
+        timeline: {
+          currentTime: 0,
+          zoom: 1,
+          viewStart: 0,
+          viewEnd: 10,
+        },
+        dependencies: [],
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        videoMeta: meta,
+      };
+      set({ currentProject: newProject, isModified: true });
     }
   },
 

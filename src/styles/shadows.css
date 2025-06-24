@@ -20,8 +20,8 @@
   
   /* Panel-Specific Shadows - Increased by 3/2 (1.5x) */
   --neu-shadow-panel: 
-    6px 6px 18px rgba(13, 17, 23, 0.7),
-    -3px -3px 9px rgba(45, 55, 72, 0.5);
+    9px 9px 27px rgba(13, 17, 23, 0.7),
+    -4.5px -4.5px 13.5px rgba(45, 55, 72, 0.5);
   
   --neu-shadow-panel-hover: 
     9px 9px 24px rgba(13, 17, 23, 0.8),
@@ -67,8 +67,8 @@
     -8px -8px 18px rgba(45, 55, 72, 0.9);
   
   --neu-shadow-panel: 
-    6px 6px 18px rgba(13, 17, 23, 0.7),
-    -3px -3px 9px rgba(45, 55, 72, 0.5);
+    9px 9px 27px rgba(13, 17, 23, 0.7),
+    -4.5px -4.5px 13.5px rgba(45, 55, 72, 0.5);
   
   --neu-shadow-panel-hover: 
     9px 9px 24px rgba(13, 17, 23, 0.8),
@@ -112,8 +112,8 @@
     -8px -8px 18px rgba(45, 55, 72, 0.9);
   
   --neu-shadow-panel: 
-    6px 6px 18px rgba(13, 17, 23, 0.7),
-    -3px -3px 9px rgba(45, 55, 72, 0.5);
+    9px 9px 27px rgba(13, 17, 23, 0.7),
+    -4.5px -4.5px 13.5px rgba(45, 55, 72, 0.5);
   
   --neu-shadow-panel-hover: 
     9px 9px 24px rgba(13, 17, 23, 0.8),

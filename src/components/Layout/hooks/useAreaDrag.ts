@@ -3,6 +3,7 @@ import { Area } from '../../../types/area';
 import { BorderDir, LinkedArea, detectLinkedAreas, clamp, EPSILON } from './areaDragUtils';
 
 const BORDER_THICKNESS = 8;
+const SNAP_THRESHOLD = 2; // percent distance to trigger snapping
 
 interface UseAreaDragReturn {
   containerRef: React.RefObject<HTMLDivElement>;
@@ -166,6 +167,46 @@ export function useAreaDrag(
         let move = 0;
         if (isHorizontal) move = dxRaw < 0 ? clamp(dxRaw, -limitNeg, 0) : clamp(dxRaw, 0, limitPos);
         else move = dyRaw < 0 ? clamp(dyRaw, -limitNeg, 0) : clamp(dyRaw, 0, limitPos);
+
+        // 🧲 스냅 로직: 근처 경계에 자동 정렬
+        if (Math.abs(move) > 0.001) {
+          const boundaryPos = (() => {
+            if (isHorizontal) {
+              const base = area; // before mutation
+              return dir === 'left' ? base.x : base.x + base.width;
+            }
+            const base = area;
+            return dir === 'top' ? base.y : base.y + base.height;
+          })();
+
+          const tentativePos = boundaryPos + move;
+
+          let closestDiff: number | null = null;
+
+          for (const other of currentAreas) {
+            if (affectedAreaIds.has(other.id)) continue; // 자기 자신 및 링크 제외
+
+            const candidates = isHorizontal ? [other.x, other.x + other.width] : [other.y, other.y + other.height];
+            for (const c of candidates) {
+              const diff = c - tentativePos;
+              if (Math.abs(diff) < SNAP_THRESHOLD) {
+                if (closestDiff === null || Math.abs(diff) < Math.abs(closestDiff)) {
+                  closestDiff = diff;
+                }
+              }
+            }
+          }
+
+          if (closestDiff !== null) {
+            const snappedMove = move + closestDiff;
+            // 다시 한 번 제한 확인
+            if (isHorizontal) {
+              move = clamp(snappedMove, -limitNeg, limitPos);
+            } else {
+              move = clamp(snappedMove, -limitNeg, limitPos);
+            }
+          }
+        }
 
         // 🔧 성능 최적화: 변경사항이 있을 때만 업데이트
         if (Math.abs(move) > 0.01) {

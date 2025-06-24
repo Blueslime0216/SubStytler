@@ -33,11 +33,28 @@ export const panelRegistry = new Proxy(basePanelRegistry, {
       return target[prop as keyof typeof target];
     }
     
-    // 2️⃣ 패턴 매칭 시도 (예: "empty-1735113234567-abc12" → "empty")
-    const baseType = prop.split('-')[0] as PanelType;
-    if (baseType in target) {
-      console.log('🎯 패턴 매칭 성공:', { requestedId: prop, matchedType: baseType });
-      return target[baseType as keyof typeof target];
+    // 2️⃣ 패턴 매칭 시도 (대시가 포함된 패널 타입 지원)
+    //    예: "video-preview-1735113234567-abc12" → "video-preview"
+    //    예: "subtitle-timeline-1735113234567-abc12" → "subtitle-timeline"
+
+    // ▶ 2-1. prefix 매칭: 등록된 키가 요청 ID의 접두사인지 확인
+    for (const key of Object.keys(target) as PanelType[]) {
+      if (prop === key || prop.startsWith(`${key}-`)) {
+        // console.log('🎯 패턴 매칭 성공 (prefix):', { requestedId: prop, matchedType: key });
+        return target[key as keyof typeof target];
+      }
+    }
+
+    // ▶ 2-2. 레거시/축약형 별칭 매핑 (예: "video" → "video-preview")
+    const aliasMap: Record<string, PanelType> = {
+      video: 'video-preview',
+      timeline: 'subtitle-timeline',
+      text: 'text-editor',
+    };
+    if (prop in aliasMap) {
+      const mappedType = aliasMap[prop];
+      // console.log('🎯 별칭 매칭 성공:', { requestedId: prop, mappedType });
+      return target[mappedType as keyof typeof target];
     }
     
     // 3️⃣ 기본값: 빈 패널
@@ -55,13 +72,28 @@ export const createPanel = (type: PanelType, areaId: string) => {
 
 // 🎯 패널 타입 추출 함수
 export const extractPanelType = (areaId: string): PanelType => {
-  const baseType = areaId.split('-')[0] as PanelType;
-  
-  // 유효한 패널 타입인지 확인
-  if (baseType in basePanelRegistry) {
-    return baseType;
+  // 1️⃣ 정확히 일치하는 타입 검사
+  if (areaId in basePanelRegistry) {
+    return areaId as PanelType;
   }
-  
-  // 기본값: empty
+
+  // 2️⃣ prefix 매칭으로 타입 추출
+  for (const key of Object.keys(basePanelRegistry) as PanelType[]) {
+    if (areaId.startsWith(`${key}-`)) {
+      return key;
+    }
+  }
+
+  // 3️⃣ 별칭 매핑
+  const aliasMap: Record<string, PanelType> = {
+    video: 'video-preview',
+    timeline: 'subtitle-timeline',
+    text: 'text-editor',
+  };
+  if (areaId in aliasMap) {
+    return aliasMap[areaId];
+  }
+
+  // 4️⃣ 기본값: empty
   return 'empty';
 };

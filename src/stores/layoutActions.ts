@@ -1,5 +1,7 @@
 import { PanelType } from '../types/project';
 import { StateCreator } from 'zustand';
+import { detectLinkedAreas, EPSILON } from '../components/Layout/hooks/areaDragUtils';
+import { Area } from '../types/area';
 
 /**
  * 🎯 Area 시스템 전용 레이아웃 액션 - 성능 최적화 + ID 문제 해결
@@ -96,7 +98,8 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     console.log('🔄 패널 타입 변경 시도:', {
       areaId,
       newPanelType,
-      currentAreas: areas.map(a => ({ id: a.id, type: 'area' }))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      currentAreas: areas.map((a: any) => ({ id: a.id, type: 'area' }))
     });
 
     // 🔧 성능 최적화: 변경이 필요한 경우에만 새 배열 생성
@@ -147,6 +150,89 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
       newCount: newAreas.length
     });
 
+    set({ areas: newAreas });
+  },
+
+  /**
+   * ▶️ 특정 방향의 인접 영역을 덮어서 제거하고, 현재 영역을 확장합니다.
+   * @param areaId 기준 영역 ID
+   * @param dir     덮을 방향 ('left' | 'right' | 'top' | 'bottom')
+   */
+  coverArea: (areaId: string, dir: 'left' | 'right' | 'top' | 'bottom') => {
+    const { areas } = get();
+
+    if (areas.length <= 1) {
+      console.warn('⚠️ 마지막 패널은 더 이상 덮을 수 없습니다');
+      return;
+    }
+
+    const sourceIdx = areas.findIndex((a: any) => a.id === areaId);
+    if (sourceIdx === -1) {
+      console.warn('⚠️ 대상 영역을 찾을 수 없습니다:', areaId);
+      return;
+    }
+
+    const sourceArea = areas[sourceIdx];
+
+    // 🎯 인접 영역 탐색
+    const visited = new Set<string>();
+    visited.add(sourceArea.id);
+    const linked: any[] = [];
+    detectLinkedAreas(areas, sourceArea, dir, visited, linked);
+
+    if (linked.length === 0) {
+      console.warn('ℹ️ 해당 방향에 인접한 영역이 없습니다');
+      return;
+    }
+
+    const removeIds = linked.map(l => l.id);
+    const targets = areas.filter((a: any) => removeIds.includes(a.id));
+
+    // 📐 확장 범위 계산
+    let minX = sourceArea.x;
+    let minY = sourceArea.y;
+    let maxX = sourceArea.x + sourceArea.width;
+    let maxY = sourceArea.y + sourceArea.height;
+
+    targets.forEach((a: any) => {
+      minX = Math.min(minX, a.x);
+      minY = Math.min(minY, a.y);
+      maxX = Math.max(maxX, a.x + a.width);
+      maxY = Math.max(maxY, a.y + a.height);
+    });
+
+    // ➡️ 방향에 맞게 확장 (교차 축은 동일해야 함)
+    let newArea: Area = { ...sourceArea } as Area;
+
+    if (dir === 'left' || dir === 'right') {
+      const sameY = Math.abs(minY - sourceArea.y) < EPSILON && Math.abs(maxY - (sourceArea.y + sourceArea.height)) < EPSILON;
+      if (!sameY) {
+        console.warn('⚠️ 수평 덮기 실패: 높이가 일치하지 않습니다');
+        return;
+      }
+      newArea.x = minX;
+      newArea.width = maxX - minX;
+    } else {
+      const sameX = Math.abs(minX - sourceArea.x) < EPSILON && Math.abs(maxX - (sourceArea.x + sourceArea.width)) < EPSILON;
+      if (!sameX) {
+        console.warn('⚠️ 수직 덮기 실패: 폭이 일치하지 않습니다');
+        return;
+      }
+      newArea.y = minY;
+      newArea.height = maxY - minY;
+    }
+
+    // 🔄 areas 배열 갱신
+    const newAreas = areas
+      .filter((a: any) => !removeIds.includes(a.id)) // 대상 영역 제거
+      .slice();
+
+    const idxAfterFilter = newAreas.findIndex((a: any) => a.id === areaId);
+    if (idxAfterFilter !== -1) {
+      newAreas[idxAfterFilter] = newArea;
+    }
+
+    console.log('✅ 영역 덮기 완료:', { base: areaId, removed: removeIds, dir });
     set({ areas: newAreas });
   },
 

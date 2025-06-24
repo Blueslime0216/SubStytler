@@ -1,20 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-interface VideoUploadState {
-  isUploading: boolean;
-  uploadProgress: number;
-  uploadStage: string;
-}
-
 interface VideoProgressOverlayProps {
-  uploadState: VideoUploadState;
+  progress: number;
 }
 
 export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
-  uploadState
+  progress
 }) => {
-  if (!uploadState.isUploading) return null;
+  const stage = progress < 20 ? 'Validating'
+    : progress < 40 ? 'Loading' 
+    : progress < 60 ? 'Processing'
+    : progress < 80 ? 'Setting up'
+    : 'Completing';
 
   return (
     <div className="absolute inset-0 flex items-center justify-center neu-bg-base/70 backdrop-blur-sm z-20">
@@ -33,16 +31,16 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
             <div 
               className="w-3 h-3 rounded-full"
               style={{ 
-                background: `conic-gradient(var(--neu-primary) ${uploadState.uploadProgress * 3.6}deg, var(--neu-accent) 0deg)`
+                background: `conic-gradient(var(--neu-primary) ${progress * 3.6}deg, var(--neu-accent) 0deg)`
               }}
             />
           </motion.div>
           <div className="flex-1">
             <div className="flex justify-between items-center mb-1">
               <span className="neu-body-primary text-sm font-medium">Loading Video</span>
-              <span className="neu-text-accent text-sm font-mono">{uploadState.uploadProgress}%</span>
+              <span className="neu-text-accent text-sm font-mono">{progress}%</span>
             </div>
-            <p className="neu-caption text-xs">{uploadState.uploadStage}</p>
+            <p className="neu-caption text-xs">{stage}</p>
           </div>
         </div>
         
@@ -52,7 +50,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
           <motion.div 
             className="neu-progress-fill"
             initial={{ width: '0%' }}
-            animate={{ width: `${uploadState.uploadProgress}%` }}
+            animate={{ width: `${progress}%` }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
           />
         </div>
@@ -69,13 +67,13 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
             <motion.div
               key={stage.label}
               className={`neu-card-micro px-2 py-1 transition-all duration-300 ${
-                uploadState.uploadProgress >= stage.threshold 
+                progress >= stage.threshold 
                   ? 'neu-text-primary' 
                   : 'neu-text-secondary'
               }`}
               animate={{
-                scale: uploadState.uploadProgress >= stage.threshold ? 1.05 : 1,
-                boxShadow: uploadState.uploadProgress >= stage.threshold 
+                scale: progress >= stage.threshold ? 1.05 : 1,
+                boxShadow: progress >= stage.threshold 
                   ? 'var(--neu-shadow-1)' 
                   : 'var(--neu-shadow-micro)'
               }}

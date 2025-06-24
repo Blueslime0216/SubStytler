@@ -18,6 +18,7 @@ interface LayoutState {
   setDropTarget: (target: { areaId: string; position: 'top' | 'bottom' | 'left' | 'right' | 'center' } | null) => void;
   addNewArea: (parentId: string, direction: 'horizontal' | 'vertical', panelType: PanelType) => void;
   removeArea: (areaId: string) => void;
+  coverArea: (areaId: string, dir: 'left' | 'right' | 'top' | 'bottom') => void;
 }
 
 export const useLayoutStore = create<LayoutState>((set, get, store) => ({

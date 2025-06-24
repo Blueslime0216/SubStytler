@@ -6,54 +6,54 @@ import { VideoErrorOverlay } from './VideoErrorOverlay';
 import { SubtitleOverlay } from './SubtitleOverlay';
 
 interface VideoOverlaysProps {
-  hasVideo: any;
-  uploadState: any;
-  isVideoLoaded: boolean;
+  isLoading: boolean;
+  uploadProgress: number;
+  hasVideo: boolean;
   videoError: string | null;
   isDragActive: boolean;
-  getRootProps: () => any;
-  getInputProps: () => any;
   onRetry: () => void;
+  onUpload: () => void;
+  isVideoLoaded?: boolean;
 }
 
 export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
+  isLoading,
+  uploadProgress,
   hasVideo,
-  uploadState,
-  isVideoLoaded,
   videoError,
   isDragActive,
-  getRootProps,
-  getInputProps,
-  onRetry
+  onRetry,
+  onUpload,
+  isVideoLoaded = false
 }) => {
-  // 비디오가 성공적으로 로드되었는지 확인
-  const videoSuccessfullyLoaded = hasVideo && isVideoLoaded && !videoError;
-
   return (
     <div className="absolute inset-0 z-20 pointer-events-none video-overlay">
-      {/* 비디오가 성공적으로 로드되지 않았을 때만 오버레이 표시 */}
-      {!videoSuccessfullyLoaded && (
-        <>
-          {/* 🎯 업로드 인터페이스 제거 - 메인 패널에서 처리 */}
-          
-          {uploadState.isUploading && (
-            <VideoProgressOverlay uploadState={uploadState} />
-          )}
-          
-          {hasVideo && !isVideoLoaded && !videoError && !uploadState.isUploading && (
-            <VideoLoadingOverlay isLoading={true} />
-          )}
-
-          {videoError && (
-            <div className="pointer-events-auto">
-              <VideoErrorOverlay error={videoError} onRetry={onRetry} />
-            </div>
-          )}
-        </>
+      {/* 비디오가 없거나 에러가 있을 때 표시할 오버레이 */}
+      {!hasVideo && !isLoading && (
+        <div className="pointer-events-auto">
+          <VideoUploadOverlay onUpload={onUpload} isDragActive={isDragActive} />
+        </div>
       )}
       
-      {/* 자막 오버레이는 비디오가 성공적으로 로드되었을 때만 표시 */}
-      {videoSuccessfullyLoaded && <SubtitleOverlay />}
+      {/* 업로드 중 표시 */}
+      {isLoading && (
+        <VideoProgressOverlay progress={uploadProgress} />
+      )}
+      
+      {/* 로딩 표시는 업로드 중이 아니고, 비디오가 로드되지 않았을 때만 */}
+      {hasVideo && !videoError && !isLoading && !isVideoLoaded && (
+        <VideoLoadingOverlay isLoading={true} />
+      )}
+
+      {/* 에러 표시 */}
+      {videoError && (
+        <div className="pointer-events-auto">
+          <VideoErrorOverlay error={videoError} onRetry={onRetry} />
+        </div>
+      )}
+      
+      {/* 자막 오버레이 - 비디오가 로드되었을 때 표시 */}
+      {hasVideo && !videoError && isVideoLoaded && <SubtitleOverlay />}
     </div>
   );
 };

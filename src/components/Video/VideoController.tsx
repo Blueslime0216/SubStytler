@@ -1,8 +1,12 @@
-import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Settings, Maximize, RotateCcw } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { formatTime } from '../../utils/timeUtils';
+import VideoControllerPlayButton from './VideoController/VideoControllerPlayButton';
+import VideoControllerProgressBar from './VideoController/VideoControllerProgressBar';
+import VideoControllerVolumeButton from './VideoController/VideoControllerVolumeButton';
+import VideoControllerTimeDisplay from './VideoController/VideoControllerTimeDisplay';
+import VideoControllerAdditionalButtons from './VideoController/VideoControllerAdditionalButtons';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface VideoControllerProps {
   isVideoLoaded: boolean;
@@ -12,6 +16,7 @@ interface VideoControllerProps {
   onMuteToggle: () => void;
   onFullscreen: () => void;
   onSettings: () => void;
+  parentRef?: React.RefObject<HTMLElement>;
 }
 
 export const VideoController: React.FC<VideoControllerProps> = ({
@@ -21,7 +26,8 @@ export const VideoController: React.FC<VideoControllerProps> = ({
   onVolumeChange,
   onMuteToggle,
   onFullscreen,
-  onSettings
+  onSettings,
+  parentRef
 }) => {
   const { 
     currentTime, 
@@ -32,333 +38,177 @@ export const VideoController: React.FC<VideoControllerProps> = ({
     setCurrentTime 
   } = useTimelineStore();
 
-  const progressBarRef = useRef<HTMLDivElement>(null);
-  const volumeBarRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isVolumeHovered, setIsVolumeHovered] = useState(false);
-  const [isDraggingVolume, setIsDraggingVolume] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
+  const controllerRef = useRef<HTMLDivElement>(null);
+  const hideTimeoutRef = useRef<number | null>(null);
 
+  // 마우스 진입 시 컨트롤러 표시
+  const handleMouseEnter = () => {
+    setIsVisible(true);
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+  };
+
+  // 마우스 떠날 때 컨트롤러 숨기기 (지연 처리)
+  const handleMouseLeave = () => {
+    if (isInteracting) return;
+    
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+    }
+    
+    hideTimeoutRef.current = window.setTimeout(() => {
+      setIsVisible(false);
+      hideTimeoutRef.current = null;
+    }, 100); // 0.1초 후 사라짐
+  };
+
+  // 컨트롤러와 상호작용 중일 때 숨김 방지
+  const handleInteractionStart = () => {
+    setIsInteracting(true);
+  };
+
+  const handleInteractionEnd = () => {
+    setIsInteracting(false);
+  };
+
+  // 재생/일시정지 토글
   const handlePlayPause = () => {
     if (!isVideoLoaded) return;
     setPlaying(!isPlaying);
   };
 
-  const handleFrameBack = () => {
+  // 5초 앞으로 이동
+  const handleSkipForward = () => {
     if (!isVideoLoaded) return;
-    const frameDuration = 1000 / fps;
-    setCurrentTime(Math.max(0, currentTime - frameDuration));
+    setCurrentTime(Math.min(duration, currentTime + 5000));
   };
 
-  const handleFrameForward = () => {
-    if (!isVideoLoaded) return;
-    const frameDuration = 1000 / fps;
-    setCurrentTime(Math.min(duration, currentTime + frameDuration));
-  };
+  // 부모 영역(비디오 영역) 호버 감지
+  useEffect(() => {
+    if (!parentRef?.current) return;
+    const el = parentRef.current;
+    const handleEnter = () => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+        hideTimeoutRef.current = null;
+      }
+      setIsVisible(true);
+    };
+    const handleLeave = () => {
+      if (isInteracting) return;
+      if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = window.setTimeout(() => {
+        setIsVisible(false);
+        hideTimeoutRef.current = null;
+      }, 100);
+    };
+    el.addEventListener('mouseenter', handleEnter);
+    el.addEventListener('mouseleave', handleLeave);
+    return () => {
+      el.removeEventListener('mouseenter', handleEnter);
+      el.removeEventListener('mouseleave', handleLeave);
+    };
+  }, [parentRef, isInteracting]);
 
-  // 정확한 시간 계산
-  const getTimeFromPosition = (clientX: number): number => {
-    if (!progressBarRef.current) return currentTime;
-    
-    const rect = progressBarRef.current.getBoundingClientRect();
-    const padding = 12; // CSS의 left/right 패딩과 정확히 일치
-    const trackWidth = rect.width - (padding * 2); // 실제 트랙 너비
-    const x = Math.max(0, Math.min(clientX - rect.left - padding, trackWidth));
-    const percentage = trackWidth > 0 ? x / trackWidth : 0;
-    return percentage * duration;
-  };
+  // 글로벌 마우스 위치 기반 가드 – 커서가 비디오 영역이나 컨트롤러 위에 있으면 항상 보이도록
+  useEffect(() => {
+    const handleGlobalMove = (e: MouseEvent) => {
+      if (!parentRef?.current || !controllerRef.current) return;
+      const insideParent = parentRef.current.contains(e.target as Node);
+      const insideController = controllerRef.current.contains(e.target as Node);
+      if (insideParent || insideController) {
+        if (hideTimeoutRef.current) {
+          clearTimeout(hideTimeoutRef.current);
+          hideTimeoutRef.current = null;
+        }
+        setIsVisible(true);
+      }
+    };
+    document.addEventListener('mousemove', handleGlobalMove);
+    return () => document.removeEventListener('mousemove', handleGlobalMove);
+  }, [parentRef]);
 
-  const handleProgressBarMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isVideoLoaded) return;
-    
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-    
-    const newTime = getTimeFromPosition(e.clientX);
-    setCurrentTime(newTime);
-  };
-
-  const handleProgressMouseMove = (e: MouseEvent) => {
-    if (!isDragging || !isVideoLoaded) return;
-    
-    e.preventDefault();
-    const newTime = getTimeFromPosition(e.clientX);
-    setCurrentTime(Math.max(0, Math.min(duration, newTime)));
-  };
-
-  const handleProgressMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  // 볼륨 계산
-  const getVolumeFromPosition = (clientX: number): number => {
-    if (!volumeBarRef.current) return volume;
-    
-    const rect = volumeBarRef.current.getBoundingClientRect();
-    const padding = 6; // CSS의 left/right 패딩과 정확히 일치
-    const trackWidth = rect.width - (padding * 2); // 실제 트랙 너비
-    const x = Math.max(0, Math.min(clientX - rect.left - padding, trackWidth));
-    const percentage = trackWidth > 0 ? x / trackWidth : 0;
-    return percentage;
-  };
-
-  const handleVolumeBarMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDraggingVolume(true);
-    
-    const newVolume = getVolumeFromPosition(e.clientX);
-    onVolumeChange(newVolume);
-  };
-
-  const handleVolumeMouseMove = (e: MouseEvent) => {
-    if (!isDraggingVolume) return;
-    
-    e.preventDefault();
-    const newVolume = getVolumeFromPosition(e.clientX);
-    onVolumeChange(Math.max(0, Math.min(1, newVolume)));
-  };
-
-  const handleVolumeMouseUp = () => {
-    setIsDraggingVolume(false);
-  };
-
-  React.useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleProgressMouseMove);
-      document.addEventListener('mouseup', handleProgressMouseUp);
-      
-      return () => {
-        document.removeEventListener('mousemove', handleProgressMouseMove);
-        document.removeEventListener('mouseup', handleProgressMouseUp);
-      };
-    }
-  }, [isDragging, duration, isVideoLoaded]);
-
-  React.useEffect(() => {
-    if (isDraggingVolume) {
-      document.addEventListener('mousemove', handleVolumeMouseMove);
-      document.addEventListener('mouseup', handleVolumeMouseUp);
-      
-      return () => {
-        document.removeEventListener('mousemove', handleVolumeMouseMove);
-        document.removeEventListener('mouseup', handleVolumeMouseUp);
-      };
-    }
-  }, [isDraggingVolume]);
-
-  const getCurrentFrame = () => Math.floor((currentTime * fps) / 1000);
-  const getTotalFrames = () => Math.floor((duration * fps) / 1000);
-
-  // 퍼센티지 계산
-  const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
-  const volumePercentage = (isMuted ? 0 : volume) * 100;
-
-  // 썸 위치 계산
-  const getThumbPosition = () => {
-    if (!progressBarRef.current) return '12px'; // 기본 패딩 위치
-    
-    const rect = progressBarRef.current.getBoundingClientRect();
-    const padding = 12;
-    const trackWidth = rect.width - (padding * 2);
-    const thumbPosition = padding + (progressPercentage / 100) * trackWidth;
-    return `${thumbPosition}px`;
-  };
-
-  const getVolumeThumbPosition = () => {
-    if (!volumeBarRef.current) return '6px'; // 기본 패딩 위치
-    
-    const rect = volumeBarRef.current.getBoundingClientRect();
-    const padding = 6;
-    const trackWidth = rect.width - (padding * 2);
-    const thumbPosition = padding + (volumePercentage / 100) * trackWidth;
-    return `${thumbPosition}px`;
-  };
+  // 클린업 함수
+  useEffect(() => {
+    return () => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
-    <div className="neu-video-controller">
-      {/* 컴팩트한 시간 및 프레임 정보 */}
-      <div className="flex items-center justify-between px-3 py-1 neu-bg-subtle rounded-md mx-3 mb-2">
-        <div className="flex items-center space-x-2 text-xs">
-          <span className="font-mono neu-text-secondary">@{fps}fps</span>
-          <span className="font-mono neu-text-secondary">|</span>
-          <span className="font-mono neu-text-primary">F: {getCurrentFrame()}/{getTotalFrames()}</span>
-        </div>
-        <div className="font-mono text-xs neu-text-primary">
-          {formatTime(currentTime, fps)} / {formatTime(duration, fps)}
-        </div>
-      </div>
-      
-      {/* 향상된 재생바 */}
-      <div className="px-3 pb-2">
-        <div 
-          ref={progressBarRef}
-          className="neu-progress-container relative h-10 flex items-center"
-          onMouseDown={handleProgressBarMouseDown}
+    <AnimatePresence initial={false}>
+      {isVisible && (
+        <motion.div
+          ref={controllerRef}
+          className="video-controller-container"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: '100%', opacity: 0 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
         >
-          {/* 트랙 */}
-          <div className="neu-progress-track" />
-          
-          {/* 진행 바 */}
-          <div 
-            className="neu-progress-fill"
-            style={{ width: `calc(${progressPercentage}% + 0px)` }}
+          <VideoControllerProgressBar 
+            currentTime={currentTime}
+            duration={duration}
+            isVideoLoaded={isVideoLoaded}
+            setCurrentTime={setCurrentTime}
+            onInteractionStart={handleInteractionStart}
+            onInteractionEnd={handleInteractionEnd}
+            fps={fps}
           />
           
-          {/* 썸 */}
-          <div 
-            className="neu-progress-thumb"
-            style={{ 
-              left: getThumbPosition(),
-              transition: isDragging ? 'none' : 'left 0.1s linear'
-            }}
-          />
-          
-          {/* 드래그 중 시간 표시 - 작게 표시 */}
-          {isDragging && (
-            <motion.div 
-              className="neu-card-micro absolute -top-8 text-xs neu-text-primary font-mono font-semibold"
-              style={{ 
-                left: getThumbPosition(),
-                transform: 'translateX(-50%)'
-              }}
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              {formatTime(currentTime, fps)}
-            </motion.div>
-          )}
-        </div>
-      </div>
-
-      {/* 컨트롤 버튼 레이아웃 개선 */}
-      <div className="flex items-center justify-between px-3 pb-3">
-        {/* 왼쪽 컨트롤 그룹 */}
-        <div className="flex items-center space-x-2">
-          <motion.button
-            onClick={handlePlayPause}
-            disabled={!isVideoLoaded}
-            className="neu-btn-primary p-3 disabled:opacity-40 neu-interactive"
-            title={isPlaying ? '일시정지 (Space)' : '재생 (Space)'}
-          >
-            {isPlaying ? (
-              <Pause className="w-5 h-5" />
-            ) : (
-              <Play className="w-5 h-5" />
-            )}
-          </motion.button>
-          
-          <div className="flex items-center space-x-1">
-            <motion.button
-              onClick={handleFrameBack}
-              disabled={!isVideoLoaded}
-              className="neu-btn-icon-sm disabled:opacity-40 neu-interactive"
-              title="이전 프레임 (Left Arrow)"
-            >
-              <SkipBack className="w-4 h-4" />
-            </motion.button>
-            
-            <motion.button
-              onClick={handleFrameForward}
-              disabled={!isVideoLoaded}
-              className="neu-btn-icon-sm disabled:opacity-40 neu-interactive"
-              title="다음 프레임 (Right Arrow)"
-            >
-              <SkipForward className="w-4 h-4" />
-            </motion.button>
-          </div>
-        </div>
-        
-        {/* 중앙 컨트롤 그룹 - 비워둠 */}
-        <div></div>
-        
-        {/* 오른쪽 컨트롤 그룹 */}
-        <div className="flex items-center space-x-2">
-          <div 
-            className="flex items-center"
-            onMouseEnter={() => setIsVolumeHovered(true)}
-            onMouseLeave={() => setIsVolumeHovered(false)}
-          >
-            <motion.button
-              onClick={onMuteToggle}
-              className="neu-btn-icon-sm neu-interactive"
-              title={isMuted ? '음소거 해제' : '음소거'}
-            >
-              {isMuted ? (
-                <VolumeX className="w-4 h-4" />
-              ) : (
-                <Volume2 className="w-4 h-4" />
-              )}
-            </motion.button>
-            
-            <motion.div 
-              className="overflow-visible"
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ 
-                width: isVolumeHovered || isDraggingVolume ? 80 : 0,
-                opacity: isVolumeHovered || isDraggingVolume ? 1 : 0
-              }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-            >
-              <div 
-                ref={volumeBarRef}
-                className="neu-volume-container relative h-8 flex items-center cursor-pointer neu-interactive"
-                onMouseDown={handleVolumeBarMouseDown}
-                style={{ width: '80px' }}
+          <div className="video-controller-controls">
+            <div className="video-controller-left">
+              <VideoControllerPlayButton 
+                isPlaying={isPlaying} 
+                isVideoLoaded={isVideoLoaded}
+                onToggle={handlePlayPause}
+              />
+              
+              <button 
+                className="video-controller-button" 
+                onClick={handleSkipForward}
+                title="5초 앞으로"
               >
-                {/* 볼륨 트랙 */}
-                <div className="neu-volume-track" />
-                
-                {/* 볼륨 진행 바 */}
-                <div 
-                  className="neu-volume-fill"
-                  style={{ width: `calc(${volumePercentage}% + 0px)` }}
-                />
-                
-                {/* 볼륨 썸 */}
-                <div 
-                  className="neu-volume-thumb"
-                  style={{ 
-                    left: getVolumeThumbPosition(),
-                    transition: isDraggingVolume ? 'none' : 'transform 0.1s ease'
-                  }}
-                />
-                
-                {/* 드래그 중 볼륨 표시 */}
-                {isDraggingVolume && (
-                  <motion.div 
-                    className="neu-card-micro absolute -top-6 text-xs neu-text-primary font-mono whitespace-nowrap"
-                    style={{ 
-                      left: getVolumeThumbPosition(),
-                      transform: 'translateX(-50%)'
-                    }}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    {Math.round(volume * 100)}%
-                  </motion.div>
-                )}
-              </div>
-            </motion.div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 19L22 12L13 5V19Z" fill="currentColor"/>
+                  <path d="M2 19L11 12L2 5V19Z" fill="currentColor"/>
+                </svg>
+              </button>
+              
+              <VideoControllerVolumeButton 
+                volume={volume}
+                isMuted={isMuted}
+                onVolumeChange={onVolumeChange}
+                onMuteToggle={onMuteToggle}
+                onInteractionStart={handleInteractionStart}
+                onInteractionEnd={handleInteractionEnd}
+              />
+              
+              <VideoControllerTimeDisplay 
+                currentTime={currentTime}
+                duration={duration}
+                frameNumber={Math.floor((currentTime * fps) / 1000)}
+                fps={fps}
+              />
+            </div>
+            
+            <div className="video-controller-right">
+              <VideoControllerAdditionalButtons
+                onSettings={onSettings}
+                onFullscreen={onFullscreen}
+              />
+            </div>
           </div>
-          
-          <motion.button
-            onClick={onSettings}
-            className="neu-btn-icon-sm neu-interactive"
-            title="비디오 설정"
-          >
-            <Settings className="w-4 h-4" />
-          </motion.button>
-          
-          <motion.button
-            onClick={onFullscreen}
-            className="neu-btn-icon-sm neu-interactive"
-            title="전체화면"
-          >
-            <Maximize className="w-4 h-4" />
-          </motion.button>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };

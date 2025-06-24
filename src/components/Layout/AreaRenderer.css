@@ -30,7 +30,8 @@
 .area-block.dragging {
   /* 🔧 드래그 중 최적화 */
   will-change: transform, padding;
-  contain: layout style paint;
+  /* paint containment을 제거하여 그림자 클리핑 방지 */
+  contain: layout style;
 }
 
 .area-border {
@@ -66,7 +67,7 @@ body.dragging-active {
   cursor: grabbing !important;
   user-select: none !important;
   /* 🔧 성능 최적화: 불필요한 레이아웃 계산 방지 */
-  overflow: hidden;
+  overflow: visible;
 }
 
 body.dragging-active * {

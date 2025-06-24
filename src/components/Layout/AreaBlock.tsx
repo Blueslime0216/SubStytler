@@ -17,7 +17,7 @@ interface AreaBlockProps {
   renderPanel?: (area: Area) => React.ReactNode;
 }
 
-const BORDER_THICKNESS = 8;
+const BORDER_THICKNESS = 20;
 
 const AreaBlockComponent: React.FC<AreaBlockProps> = ({
   area,
@@ -30,7 +30,7 @@ const AreaBlockComponent: React.FC<AreaBlockProps> = ({
 }) => {
   // 🎨 패딩 값: 기본 상태는 넓고, 호버 시 좁아짐 (자연스러운 효과)
   const basePadding = 28;    // 기본: 넓은 패딩
-  const hoverPadding = 10;   // 호버: 더 좁은 패딩
+  const dragPadding = 10;    // 드래그 중: 축소 패딩
 
   // 🔧 성능 최적화: 메모이제이션된 패딩 계산
   const getPaddingValues = React.useMemo(() => {
@@ -41,36 +41,29 @@ const AreaBlockComponent: React.FC<AreaBlockProps> = ({
       paddingLeft: basePadding,
     };
 
-    let affectedBorder: LinkedArea | undefined;
+    // 드래그 중이 아닐 때는 패딩 변화를 주지 않음
+    if (!dragging) return defaultPadding;
 
-    if (dragging) {
-      // 드래그 중에는 dragging 상태를 기준으로 패딩을 결정 (안정적)
-      const allAffected: LinkedArea[] = [{ id: dragging.areaId, dir: dragging.dir }, ...dragging.linked];
-      affectedBorder = allAffected.find(a => a.id === area.id);
-    } else if (hoveredBorder) {
-      // 호버 중에는 hoveredBorder 상태를 사용
-      const { areaId: hId, dir: hDir } = hoveredBorder;
-      const linked = getLinkedBorders(hId, hDir);
-      const allAffected: LinkedArea[] = [{ id: hId, dir: hDir }, ...linked];
-      affectedBorder = allAffected.find(a => a.id === area.id);
-    }
+    // 드래그로 영향을 받는 영역인지 확인
+    const allAffected: LinkedArea[] = [{ id: dragging.areaId, dir: dragging.dir }, ...dragging.linked];
+    const affectedBorder = allAffected.find(a => a.id === area.id);
 
     if (!affectedBorder) return defaultPadding;
 
     // 해당 방향의 패딩만 감소
     switch (affectedBorder.dir) {
       case 'left':
-        return { ...defaultPadding, paddingLeft: hoverPadding };
+        return { ...defaultPadding, paddingLeft: dragPadding };
       case 'right':
-        return { ...defaultPadding, paddingRight: hoverPadding };
+        return { ...defaultPadding, paddingRight: dragPadding };
       case 'top':
-        return { ...defaultPadding, paddingTop: hoverPadding };
+        return { ...defaultPadding, paddingTop: dragPadding };
       case 'bottom':
-        return { ...defaultPadding, paddingBottom: hoverPadding };
+        return { ...defaultPadding, paddingBottom: dragPadding };
       default:
         return defaultPadding;
     }
-  }, [area.id, dragging, hoveredBorder, getLinkedBorders]);
+  }, [area.id, dragging]);
 
   // 🔧 성능 최적화: 기본 스타일 메모이제이션
   const baseStyle = React.useMemo((): React.CSSProperties => ({
@@ -197,7 +190,7 @@ const AreaBlockComponent: React.FC<AreaBlockProps> = ({
       initial={false}
       animate={getPaddingValues}
       transition={{
-        duration: dragging ? 0 : 0.15, // 🔧 드래그 중에는 즉시 반응, 평상시 더 빠른 애니메이션
+        duration: 0.1, // 드래그 시작 및 종료 모두 0.1초 애니메이션
         ease: "easeOut",
         type: "tween"
       }}
@@ -239,10 +232,8 @@ export const AreaBlock = React.memo(AreaBlockComponent, (prevProps, nextProps) =
     prevProps.dragging?.dir !== nextProps.dragging?.dir
   );
   
-  const hoveredBorderChanged = (
-    prevProps.hoveredBorder?.areaId !== nextProps.hoveredBorder?.areaId ||
-    prevProps.hoveredBorder?.dir !== nextProps.hoveredBorder?.dir
-  );
+  // 호버 상태는 패딩에 영향을 주지 않으므로 리렌더링 조건에서 제외
+  const hoveredBorderChanged = false;
   
   // 변경사항이 없으면 리렌더링 방지
   return !areaChanged && !draggingChanged && !hoveredBorderChanged;

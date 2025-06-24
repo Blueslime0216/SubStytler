@@ -11,6 +11,7 @@ import { useToast } from '../../hooks/useToast';
 
 export const VideoPreviewPanel: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState<string | null>(null);
   const [volume, setVolume] = useState(1);
@@ -21,6 +22,8 @@ export const VideoPreviewPanel: React.FC = () => {
   
   const { uploadState, processVideoFile } = useVideoUpload(videoRef);
   useVideoSync(videoRef, isVideoLoaded);
+
+  const videoAreaRef = useRef<HTMLDivElement>(null);
 
   // Video event handlers
   useEffect(() => {
@@ -141,6 +144,19 @@ export const VideoPreviewPanel: React.FC = () => {
     console.log('Open video settings');
   };
 
+  const handleFullscreen = () => {
+    const panel = panelRef.current;
+    if (!panel) return;
+    
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      panel.requestFullscreen().catch(err => {
+        console.error('Error attempting to enable fullscreen mode:', err);
+      });
+    }
+  };
+
   const handleRetry = () => {
     setVideoError(null);
     setIsVideoLoaded(false);
@@ -204,6 +220,7 @@ export const VideoPreviewPanel: React.FC = () => {
 
   return (
     <div 
+      ref={panelRef}
       className="h-full w-full min-w-0 min-h-0 flex flex-col neu-bg-base neu-video-panel"
       style={{
         borderRadius: '18px',
@@ -214,11 +231,23 @@ export const VideoPreviewPanel: React.FC = () => {
     >
       <input {...getInputProps()} />
       
-      <div className="flex-1 w-full h-full min-w-0 min-h-0 relative">
+      <div ref={videoAreaRef} className="flex-1 w-full h-full min-w-0 min-h-0 relative">
         <VideoPreviewPlayer
           videoRef={videoRef}
           hasVideo={hasVideo}
           videoUrl={currentProject?.videoMeta?.url}
+        />
+        
+        {/* 비디오 오버레이 */}
+        <VideoPreviewOverlays
+          isLoading={uploadState.isUploading}
+          uploadProgress={uploadState.uploadProgress}
+          hasVideo={hasVideo}
+          videoError={videoError}
+          onRetry={handleRetry}
+          onUpload={handleManualFileSelect}
+          isDragActive={isDragActive}
+          isVideoLoaded={isVideoLoaded}
         />
         
         {/* 🎯 비디오가 없을 때만 클릭 가능한 업로드 영역 */}
@@ -248,26 +277,20 @@ export const VideoPreviewPanel: React.FC = () => {
           </div>
         )}
         
-        <VideoPreviewOverlays
-          hasVideo={!!hasVideo}
-          uploadState={uploadState}
-          isVideoLoaded={isVideoLoaded}
-          videoError={videoError}
-          isDragActive={isDragActive}
-          getRootProps={() => ({})} // 🎯 빈 객체 반환으로 중복 방지
-          getInputProps={() => ({})} // 🎯 빈 객체 반환으로 중복 방지
-          onRetry={handleRetry}
-        />
+        {/* 비디오 컨트롤러 */}
+        {hasVideo && (
+          <VideoPreviewController
+            isVideoLoaded={isVideoLoaded}
+            volume={volume}
+            isMuted={isMuted}
+            onVolumeChange={handleVolumeChange}
+            onMuteToggle={handleMuteToggle}
+            onSettings={handleSettings}
+            onFullscreen={handleFullscreen}
+            parentRef={videoAreaRef}
+          />
+        )}
       </div>
-      
-      <VideoPreviewController
-        isVideoLoaded={isVideoLoaded}
-        volume={volume}
-        isMuted={isMuted}
-        onVolumeChange={handleVolumeChange}
-        onMuteToggle={handleMuteToggle}
-        onSettings={handleSettings}
-      />
     </div>
   );
 };

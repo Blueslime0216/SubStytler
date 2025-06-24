@@ -8,6 +8,8 @@ interface VideoPreviewControllerProps {
   onVolumeChange: (v: number) => void;
   onMuteToggle: () => void;
   onSettings: () => void;
+  onFullscreen: () => void;
+  parentRef?: React.RefObject<HTMLElement>;
 }
 
 const VideoPreviewController: React.FC<VideoPreviewControllerProps> = (props) => (
@@ -17,8 +19,9 @@ const VideoPreviewController: React.FC<VideoPreviewControllerProps> = (props) =>
     isMuted={props.isMuted}
     onVolumeChange={props.onVolumeChange}
     onMuteToggle={props.onMuteToggle}
-    onFullscreen={() => {}}
+    onFullscreen={props.onFullscreen}
     onSettings={props.onSettings}
+    parentRef={props.parentRef}
   />
 );
 

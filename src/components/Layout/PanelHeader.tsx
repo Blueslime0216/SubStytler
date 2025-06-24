@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { PanelType } from '../../types/project';
 import { panelConfig } from '../../config/panelConfig';
+import type { BorderDir } from './hooks/areaDragUtils';
 
 interface PanelHeaderProps {
   type: PanelType;
@@ -10,10 +11,10 @@ interface PanelHeaderProps {
   isActionsOpen: boolean;
   setIsActionsOpen: (v: boolean) => void;
   canRemove: boolean;
-  onRemoveClick: () => void;
+  onCover: (dir: BorderDir) => void;
   titleButtonRef: React.RefObject<HTMLButtonElement>;
   actionsButtonRef: React.RefObject<HTMLButtonElement>;
-  removeButtonRef: React.RefObject<HTMLButtonElement>;
+  coverButtonRef?: React.RefObject<HTMLDivElement>;
 }
 
 export const PanelHeader: React.FC<PanelHeaderProps> = ({
@@ -23,10 +24,10 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   isActionsOpen,
   setIsActionsOpen,
   canRemove,
-  onRemoveClick,
+  onCover,
   titleButtonRef,
   actionsButtonRef,
-  removeButtonRef,
+  coverButtonRef,
 }) => {
   const config = panelConfig[type];
   const IconComponent = config.icon;
@@ -87,7 +88,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
         </div>
       </div>
 
-      {/* 🛠️ 액션 버튼들 */}
+      {/* 🛠️ 액션 / 덮기 버튼들 */}
       <div className="flex items-center space-x-2">
         {/* ➕ 분할 버튼 */}
         <motion.button
@@ -126,44 +127,51 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
           </motion.svg>
         </motion.button>
         
-        {/* ❌ 제거 버튼 */}
-        <motion.button
-          ref={removeButtonRef}
-          onClick={onRemoveClick}
-          disabled={!canRemove}
-          className={`neu-btn-icon p-2 ${canRemove ? 'cursor-pointer neu-interactive' : 'opacity-40 cursor-not-allowed'}`}
-          title={canRemove ? "패널 닫기" : "마지막 패널은 닫을 수 없습니다"}
-          whileHover={canRemove ? { scale: 1.05 } : {}}
-          whileTap={canRemove ? { scale: 0.95 } : {}}
-          style={{
-            borderRadius: '10px',
-            background: canRemove ? 'var(--neu-base)' : 'var(--neu-dark)',
-            boxShadow: canRemove
-              ? `
-                  4px 4px 12px rgba(13, 17, 23, 0.6),
-                  -2px -2px 8px rgba(45, 55, 72, 0.4)
-                `
-              : 'none',
-            transition: 'all 0.2s ease',
-          }}
-        >
-          {canRemove ? (
-            <motion.svg 
-              className="w-3.5 h-3.5" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-              whileHover={{ rotate: 90 }}
-              transition={{ duration: 0.2 }}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </motion.svg>
-          ) : (
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
-          )}
-        </motion.button>
+        {/* 🔄 덮기(제거) 방향 버튼 그룹 */}
+        {canRemove && (
+          <div
+            ref={coverButtonRef}
+            className="grid grid-cols-3 grid-rows-3 gap-0.5 select-none"
+            style={{ width: '44px', height: '44px' }}
+          >
+            {['top', 'left', 'right', 'bottom'].map(dir => {
+              // 좌표 매핑: 가운데 칸 비움
+              const positionStyle: Record<string, React.CSSProperties> = {
+                top: { gridColumn: '2', gridRow: '1' },
+                left: { gridColumn: '1', gridRow: '2' },
+                right: { gridColumn: '3', gridRow: '2' },
+                bottom: { gridColumn: '2', gridRow: '3' },
+              } as const;
+
+              const iconPaths: Record<string, string> = {
+                top: 'M12 6l-4 4h8l-4-4z',
+                bottom: 'M12 18l4-4H8l4 4z',
+                left: 'M6 12l4 4V8l-4 4z',
+                right: 'M18 12l-4-4v8l4-4z',
+              } as const;
+
+              return (
+                <motion.button
+                  key={dir}
+                  onClick={() => onCover(dir as BorderDir)}
+                  className="neu-btn-icon p-1 neu-interactive flex items-center justify-center"
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{
+                    ...positionStyle[dir],
+                    borderRadius: '6px',
+                    background: 'var(--neu-base)',
+                    boxShadow: `4px 4px 8px rgba(13,17,23,0.4), -2px -2px 6px rgba(45,55,72,0.3)`
+                  }}
+                >
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                    <path d={iconPaths[dir]} />
+                  </svg>
+                </motion.button>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
