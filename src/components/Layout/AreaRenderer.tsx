@@ -40,7 +40,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
         console.log(`🎯 Area ${index} 렌더링:`, area);
         return (
           <AreaBlock
-            key={`${area.id}-${area.x}-${area.y}`} // 🔧 고유 키 생성
+            key={`${area.id}-${area.x}-${area.y}-${area.width}-${area.height}`}
             area={area}
             dragging={dragging}
             hoveredBorder={hoveredBorder}

@@ -8,7 +8,8 @@ import { StateCreator } from 'zustand';
 export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
   setAreas: (areas: any[]) => {
     console.log('📝 setAreas 호출:', areas);
-    set({ areas });
+    // 항상 새로운 배열로 복사하여 불변성 보장
+    set({ areas: areas.map((a: any) => ({ ...a })) });
   },
 
   splitArea: (areaId: string, direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {

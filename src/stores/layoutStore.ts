@@ -1,14 +1,15 @@
 import { create } from 'zustand';
 import { AreaConfig, PanelType } from '../types/project';
 import { createLayoutActions } from './layoutActions';
+import { Area } from '../types/area';
 
 interface LayoutState {
-  areas: any[]; // Area 시스템 사용
+  areas: Area[];
   draggedPanel: PanelType | null;
   dropTarget: { areaId: string; position: 'top' | 'bottom' | 'left' | 'right' | 'center' } | null;
   
   // Actions (injected from createLayoutActions)
-  setAreas: (areas: any[]) => void;
+  setAreas: (areas: Area[]) => void;
   splitArea: (areaId: string, direction: 'horizontal' | 'vertical', newPanelType: PanelType) => void;
   mergePanels: (sourceId: string, targetId: string) => void;
   resizeArea: (areaId: string, size: number) => void;
@@ -25,7 +26,7 @@ export const useLayoutStore = create<LayoutState>((set, get, store) => ({
     { id: 'video', x: 0, y: 0, width: 60, height: 100, minWidth: 15, minHeight: 20 },
     { id: 'timeline', x: 60, y: 0, width: 40, height: 55, minWidth: 15, minHeight: 20 },
     { id: 'text', x: 60, y: 55, width: 40, height: 45, minWidth: 15, minHeight: 20 },
-  ],
+  ] as Area[],
   draggedPanel: null,
   dropTarget: null,
 

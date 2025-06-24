@@ -14,9 +14,10 @@ interface PanelProps {
   type: PanelType;
   className?: string;
   areaId?: string;
+  children: React.ReactNode;
 }
 
-export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) => {
+export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId, children }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
@@ -62,11 +63,10 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
 
   return (
     <motion.div
-      className={`neu-panel flex flex-col h-full ${className}`}
-      // ❌ 등장 애니메이션 제거 - 요청사항
-      initial={false}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0 }} // 즉시 표시
+      className={`neu-panel ${className}`}
+      initial={{ opacity: 1, scale: 1 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
     >
       <PanelHeader
         type={type}

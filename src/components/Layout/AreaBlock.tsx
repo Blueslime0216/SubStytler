@@ -41,17 +41,24 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
       paddingLeft: basePadding,
     };
 
-    if (!hoveredBorder) return defaultPadding;
+    let affectedBorder: LinkedArea | undefined;
 
-    const { areaId: hId, dir: hDir } = hoveredBorder;
-    const linked = getLinkedBorders(hId, hDir);
-    const affected = [{ id: hId, dir: hDir }, ...linked];
-    const current = affected.find(a => a.id === area.id);
+    if (dragging) {
+      // 드래그 중에는 dragging 상태를 기준으로 패딩을 결정 (안정적)
+      const allAffected: LinkedArea[] = [{ id: dragging.areaId, dir: dragging.dir }, ...dragging.linked];
+      affectedBorder = allAffected.find(a => a.id === area.id);
+    } else if (hoveredBorder) {
+      // 호버 중에는 hoveredBorder 상태를 사용
+      const { areaId: hId, dir: hDir } = hoveredBorder;
+      const linked = getLinkedBorders(hId, hDir);
+      const allAffected: LinkedArea[] = [{ id: hId, dir: hDir }, ...linked];
+      affectedBorder = allAffected.find(a => a.id === area.id);
+    }
 
-    if (!current) return defaultPadding;
+    if (!affectedBorder) return defaultPadding;
 
     // 해당 방향의 패딩만 감소
-    switch (current.dir) {
+    switch (affectedBorder.dir) {
       case 'left':
         return { ...defaultPadding, paddingLeft: hoverPadding };
       case 'right':
@@ -107,6 +114,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     <motion.div
       className={`area-block ${dragging ? 'dragging' : ''}`}
       style={baseStyle}
+      initial={paddingValues}
       animate={paddingValues}
       transition={{
         duration: dragging ? 0 : 0.2, // 🔧 드래그 중에는 즉시 반응 (깜박임 방지)
