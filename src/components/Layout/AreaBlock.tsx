@@ -28,9 +28,9 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
   onBorderMouseDown,
   renderPanel,
 }) => {
-  // 🎨 패딩 값: 기본 상태는 넓고, 호버 시 좁아짐 (깜박임 방지)
-  const basePadding = 28;    // 기본: 넓은 패딩
-  const hoverPadding = 14;   // 호버: 좁은 패딩
+  // 🎨 패딩 값: 기본 상태는 넓고, 호버 시 좁아짐
+  const basePadding = 28;
+  const hoverPadding = 14;
 
   // 현재 영역의 패딩 계산
   const getPaddingValues = () => {
@@ -40,6 +40,9 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
       paddingBottom: basePadding,
       paddingLeft: basePadding,
     };
+
+    // 🔧 드래그 중에는 패딩 변경 없음 (깜박임 방지)
+    if (dragging) return defaultPadding;
 
     if (!hoveredBorder) return defaultPadding;
 
@@ -76,8 +79,12 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     height: `${area.height}%`,
     background: 'transparent',
     boxSizing: 'border-box',
-    overflow: 'visible', // 🔧 그림자 표시
+    overflow: 'visible',
     zIndex: 200,
+    // 🔧 하드웨어 가속 강제 활성화
+    transform: 'translate3d(0, 0, 0)',
+    backfaceVisibility: 'hidden',
+    willChange: dragging ? 'transform' : 'padding',
   };
 
   const handleBorderMouseEnter = (dir: BorderDir) => {
@@ -93,22 +100,26 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     onBorderMouseDown(e, area.id, dir);
   };
 
-  console.log(`🎯 AreaBlock 렌더링: ${area.id}`, { 
-    position: { x: area.x, y: area.y }, 
-    size: { width: area.width, height: area.height },
-    padding: paddingValues
-  });
-
   return (
     <motion.div
       className={`area-block ${dragging ? 'dragging' : ''}`}
       style={baseStyle}
       animate={paddingValues}
       transition={{
-        duration: dragging ? 0 : 0.2, // 🔧 드래그 중에는 즉시 반응 (깜박임 방지)
+        // 🔧 드래그 중에는 완전히 애니메이션 비활성화
+        duration: dragging ? 0 : 0.15,
         ease: "easeOut",
-        type: "tween"
+        type: "tween",
+        // 🔧 불필요한 애니메이션 속성 제거
+        bounce: 0,
+        damping: 30,
+        stiffness: 300,
       }}
+      // 🔧 드래그 중 최적화 설정
+      drag={false}
+      dragConstraints={false}
+      dragElastic={0}
+      dragMomentum={false}
     >
       {/* 좌측 경계 */}
       <div
@@ -123,6 +134,9 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           zIndex: 10,
           background: 'transparent',
           opacity: 0,
+          // 🔧 하드웨어 가속
+          transform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
         }}
         onMouseDown={e => handleBorderMouseDown(e, 'left')}
         onMouseEnter={() => handleBorderMouseEnter('left')}
@@ -143,6 +157,9 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           zIndex: 10,
           background: 'transparent',
           opacity: 0,
+          // 🔧 하드웨어 가속
+          transform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
         }}
         onMouseDown={e => handleBorderMouseDown(e, 'right')}
         onMouseEnter={() => handleBorderMouseEnter('right')}
@@ -163,6 +180,9 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           zIndex: 10,
           background: 'transparent',
           opacity: 0,
+          // 🔧 하드웨어 가속
+          transform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
         }}
         onMouseDown={e => handleBorderMouseDown(e, 'top')}
         onMouseEnter={() => handleBorderMouseEnter('top')}
@@ -183,6 +203,9 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
           zIndex: 10,
           background: 'transparent',
           opacity: 0,
+          // 🔧 하드웨어 가속
+          transform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden',
         }}
         onMouseDown={e => handleBorderMouseDown(e, 'bottom')}
         onMouseEnter={() => handleBorderMouseEnter('bottom')}
@@ -196,7 +219,10 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
         height: '100%', 
         overflow: 'visible', 
         position: 'relative', 
-        zIndex: 2 
+        zIndex: 2,
+        // 🔧 하드웨어 가속
+        transform: 'translate3d(0, 0, 0)',
+        backfaceVisibility: 'hidden',
       }}>
         {renderPanel ? renderPanel(area) : (
           <div className="w-full h-full flex items-center justify-center neu-text-secondary">
