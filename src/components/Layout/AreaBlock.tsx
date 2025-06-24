@@ -28,9 +28,9 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
   onBorderMouseDown,
   renderPanel,
 }) => {
-  // 기본 패딩 값
-  const basePadding = 14;
-  const hoverPadding = 28;
+  // 🔄 패딩 값 반전: 기본 상태는 넓고, 호버 시 좁아짐
+  const basePadding = 28;    // 기본 상태: 넓은 패딩
+  const hoverPadding = 14;   // 호버 상태: 좁은 패딩
 
   // 현재 영역이 호버 상태인지 확인하고 패딩 계산
   const getPaddingValues = () => {
@@ -50,7 +50,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
 
     if (!current) return defaultPadding;
 
-    // 해당 방향의 패딩만 증가
+    // 해당 방향의 패딩만 감소 (좁아짐)
     switch (current.dir) {
       case 'left':
         return { ...defaultPadding, paddingLeft: hoverPadding };
@@ -100,7 +100,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
       style={baseStyle}
       animate={paddingValues}
       transition={{
-        duration: dragging ? 0 : 0.3, // 🎯 0.3초로 단축, 드래그 중에는 즉시 반응
+        duration: dragging ? 0 : 0.3, // 0.3초 트랜지션, 드래그 중에는 즉시 반응
         ease: [0.25, 0.46, 0.45, 0.94], // 자연스러운 cubic-bezier
         type: "tween"
       }}
