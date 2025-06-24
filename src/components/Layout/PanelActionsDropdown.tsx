@@ -22,10 +22,10 @@ export const PanelActionsDropdown: React.FC<PanelActionsDropdownProps> = ({
     if (isOpen && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const dropdownHeight = 140; // 높이 조정
+      const dropdownHeight = 140;
       
       let top = rect.bottom + 8;
-      let left = rect.right - 180; // 너비 조정
+      let left = rect.right - 180;
       
       if (top + dropdownHeight > viewportHeight) {
         top = rect.top - dropdownHeight - 8;
@@ -38,6 +38,13 @@ export const PanelActionsDropdown: React.FC<PanelActionsDropdownProps> = ({
       setPosition({ top, left });
     }
   }, [isOpen, triggerRef]);
+
+  // 🔧 분할 핸들러 - 로깅 추가
+  const handleSplit = (direction: 'horizontal' | 'vertical') => {
+    console.log('🔀 분할 버튼 클릭:', direction);
+    onSplitPanel(direction, 'empty'); // 기본적으로 빈 패널로 분할
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -76,10 +83,7 @@ export const PanelActionsDropdown: React.FC<PanelActionsDropdownProps> = ({
             
             {/* 🔀 가로 분할 버튼 */}
             <motion.button
-              onClick={() => {
-                console.log('🔀 가로 분할 실행');
-                onSplitPanel('horizontal', 'empty'); // 🆕 빈 패널로 분할
-              }}
+              onClick={() => handleSplit('horizontal')}
               className="w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left cursor-pointer neu-interactive"
               style={{
                 background: 'var(--neu-base)',
@@ -117,10 +121,7 @@ export const PanelActionsDropdown: React.FC<PanelActionsDropdownProps> = ({
             
             {/* 🔀 세로 분할 버튼 */}
             <motion.button
-              onClick={() => {
-                console.log('🔀 세로 분할 실행');
-                onSplitPanel('vertical', 'empty'); // 🆕 빈 패널로 분할
-              }}
+              onClick={() => handleSplit('vertical')}
               className="w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left cursor-pointer neu-interactive"
               style={{
                 background: 'var(--neu-base)',
