@@ -58,12 +58,15 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
     handleRemoveClick();
   };
 
+  console.log('🎨 Panel 렌더링:', { type, areaId, config: config.title });
+
   return (
     <motion.div
       className={`neu-panel flex flex-col h-full ${className}`}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      // ❌ 등장 애니메이션 제거 - 요청사항
+      initial={false}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0 }} // 즉시 표시
     >
       <PanelHeader
         type={type}
@@ -77,6 +80,7 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
         actionsButtonRef={actionsButtonRef}
         removeButtonRef={removeButtonRef}
       />
+      
       {/* Panel Content */}
       <PanelBody type={type} />
 

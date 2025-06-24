@@ -28,7 +28,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
   onBorderMouseDown,
   renderPanel,
 }) => {
-  // 🎨 패딩 값: 기본 상태는 넓고, 호버 시 좁아짐 (깜박임 방지)
+  // 🎨 패딩 값: 기본 상태는 넓고, 호버 시 좁아짐 (자연스러운 효과)
   const basePadding = 28;    // 기본: 넓은 패딩
   const hoverPadding = 14;   // 호버: 좁은 패딩
 
@@ -78,6 +78,10 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     boxSizing: 'border-box',
     overflow: 'visible', // 🔧 그림자 표시
     zIndex: 200,
+    // 🔧 깜박임 방지를 위한 최적화
+    backfaceVisibility: 'hidden',
+    transform: 'translateZ(0)',
+    willChange: dragging ? 'padding' : 'auto',
   };
 
   const handleBorderMouseEnter = (dir: BorderDir) => {

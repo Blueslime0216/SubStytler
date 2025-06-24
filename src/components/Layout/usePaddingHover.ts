@@ -7,12 +7,8 @@ export function usePaddingHover(dragging: any) {
   // 🔧 드래그가 끝나면 호버 상태 초기화 (깜박임 방지)
   useEffect(() => {
     if (!dragging) {
-      // 약간의 지연을 두어 자연스러운 전환
-      const timer = setTimeout(() => {
-        setHoveredBorder(null);
-      }, 100);
-      
-      return () => clearTimeout(timer);
+      // 🔧 즉시 초기화 - 지연 없음
+      setHoveredBorder(null);
     }
   }, [dragging]);
 

@@ -11,10 +11,10 @@
   background: transparent;
   overflow: visible; /* 🔧 그림자 표시를 위해 visible */
   box-sizing: border-box;
-  /* 🔧 모든 CSS 트랜지션 제거 - Framer Motion이 제어 */
+  /* 🔧 모든 CSS 트랜지션 제거 - Framer Motion이 완전 제어 */
 }
 
-/* 드래그 중 표시 */
+/* 🔧 드래그 중 표시 - 애니메이션 없음 */
 .area-block.dragging {
   /* Framer Motion에서 duration: 0으로 처리하므로 CSS는 불필요 */
 }
@@ -35,7 +35,19 @@
 }
 
 /* 🔧 깜박임 방지를 위한 최적화 */
+.area-block,
 .area-block * {
   backface-visibility: hidden;
   transform: translateZ(0);
+}
+
+/* 🔧 드래그 중 성능 최적화 */
+.area-block.dragging,
+.area-block.dragging * {
+  will-change: transform;
+  pointer-events: none; /* 드래그 중 불필요한 이벤트 차단 */
+}
+
+.area-block.dragging .area-border {
+  pointer-events: auto; /* 경계는 드래그 가능하게 유지 */
 }

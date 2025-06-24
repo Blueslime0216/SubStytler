@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Area } from '../../../types/area';
 import { BorderDir, LinkedArea, detectLinkedAreas, clamp, EPSILON } from './areaDragUtils';
 
@@ -29,6 +29,7 @@ export function useAreaDrag(
   const draggingRef = useRef<typeof dragging>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const areasRef = useRef<Area[]>(areas);
+  const animationFrameId = useRef<number | null>(null);
 
   // keep refs updated
   useEffect(() => {
@@ -40,7 +41,7 @@ export function useAreaDrag(
   }, [areas]);
 
   // Function to get linked borders for hover effect
-  const getLinkedBorders = (areaId: string, dir: BorderDir): LinkedArea[] => {
+  const getLinkedBorders = useCallback((areaId: string, dir: BorderDir): LinkedArea[] => {
     const area = areas.find(a => a.id === areaId);
     if (!area) return [];
     
@@ -49,21 +50,20 @@ export function useAreaDrag(
     const linked: LinkedArea[] = [];
     detectLinkedAreas(areas, area, dir, visited, linked);
     return linked;
-  };
+  }, [areas]);
 
-  // 🔧 드래그 중 깜박임 방지를 위한 최적화된 마우스 이벤트 처리
+  // 🔧 최적화된 드래그 처리 - 깜박임 완전 제거
   useEffect(() => {
     if (!dragging) return;
 
-    let animationFrameId: number;
-
     const onMouseMove = (e: MouseEvent) => {
-      // 🔧 requestAnimationFrame으로 성능 최적화
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
+      // 🔧 이전 프레임 취소
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
       }
 
-      animationFrameId = requestAnimationFrame(() => {
+      // 🔧 requestAnimationFrame으로 성능 최적화
+      animationFrameId.current = requestAnimationFrame(() => {
         const drag = draggingRef.current;
         if (!drag) return;
         
@@ -122,6 +122,7 @@ export function useAreaDrag(
           }
         }
 
+        // 🔧 배치 업데이트 - 한 번에 처리
         setAreas(newAreas);
         
         if (move !== 0 && draggingRef.current) {
@@ -135,8 +136,9 @@ export function useAreaDrag(
     };
 
     const onMouseUp = () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+        animationFrameId.current = null;
       }
       setDragging(null);
     };
@@ -146,27 +148,31 @@ export function useAreaDrag(
     window.addEventListener('mouseup', onMouseUp);
     
     return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+        animationFrameId.current = null;
       }
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
     };
   }, [dragging, setAreas]);
 
-  const onBorderMouseDown = (
+  const onBorderMouseDown = useCallback((
     e: React.MouseEvent,
     areaId: string,
     dir: BorderDir,
   ) => {
     e.preventDefault();
+    e.stopPropagation();
+    
     const area = areas.find(a => a.id === areaId)!;
     const visited = new Set<string>();
     visited.add(area.id);
     const linked: LinkedArea[] = [];
     detectLinkedAreas(areas, area, dir, visited, linked);
+    
     setDragging({ areaId, dir, lastX: e.clientX, lastY: e.clientY, linked });
-  };
+  }, [areas]);
 
   return { containerRef, onBorderMouseDown, dragging, getLinkedBorders };
 }
