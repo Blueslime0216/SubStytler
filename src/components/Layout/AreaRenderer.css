@@ -11,13 +11,22 @@
   background: #f6f8fa;
   overflow: visible;
   box-sizing: border-box;
-  /* 기본 패딩 */
-  padding: 14px;
-  /* 1초 부드러운 패딩 트랜지션 - cubic-bezier로 자연스러운 애니메이션 */
-  transition: padding 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  
+  /* 기본 패딩 - 명시적으로 설정 */
+  padding-top: 14px;
+  padding-right: 14px;
+  padding-bottom: 14px;
+  padding-left: 14px;
+  
+  /* 🎯 핵심: 각 패딩 방향별 개별 트랜지션 */
+  transition: 
+    padding-top 1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    padding-right 1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    padding-bottom 1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    padding-left 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* 호버 시 패딩 변경 - 각 방향별로 개별 적용 */
+/* 🚀 호버 시 패딩 변경 - 강력한 우선순위로 적용 */
 .area-block.hover-padding-left {
   padding-left: 28px !important;
 }
@@ -34,7 +43,7 @@
   padding-bottom: 28px !important;
 }
 
-/* 드래그 중에는 트랜지션 비활성화 - 즉시 반응 */
+/* ⚡ 드래그 중에는 모든 트랜지션 완전 비활성화 */
 .area-block.dragging {
   transition: none !important;
 }
@@ -45,7 +54,7 @@
   z-index: 10;
   opacity: 0;
   border-radius: 4px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .area-border-vertical {
@@ -58,28 +67,53 @@
 
 /* 호버 시 경계 영역 시각적 피드백 */
 .area-border:hover {
-  background: rgba(99, 179, 237, 0.1);
+  background: rgba(99, 179, 237, 0.15);
   opacity: 1;
   box-shadow: 
-    0 0 8px rgba(99, 179, 237, 0.3),
+    0 0 8px rgba(99, 179, 237, 0.4),
     inset 0 0 4px rgba(99, 179, 237, 0.2);
 }
 
 /* 드래그 중 경계 영역 강조 */
 .area-border:active,
 .area-block.dragging .area-border {
-  background: rgba(99, 179, 237, 0.2);
+  background: rgba(99, 179, 237, 0.25);
   opacity: 1;
   box-shadow: 
-    0 0 12px rgba(99, 179, 237, 0.5),
+    0 0 12px rgba(99, 179, 237, 0.6),
     inset 0 0 6px rgba(99, 179, 237, 0.3);
 }
 
-/* 디버깅용 - 패딩 변화 확인 */
+/* 🎨 패딩 변화 시 미세한 시각적 피드백 */
 .area-block.hover-padding-left,
 .area-block.hover-padding-right,
 .area-block.hover-padding-top,
 .area-block.hover-padding-bottom {
-  /* 패딩 변화가 시각적으로 확인되도록 배경색 살짝 변경 */
-  background: rgba(99, 179, 237, 0.02);
+  background: rgba(99, 179, 237, 0.03);
+  box-shadow: inset 0 0 8px rgba(99, 179, 237, 0.1);
+}
+
+/* 🔧 디버깅용 - 개발자 도구에서 확인 가능 */
+.area-block[data-debug="true"] {
+  border: 2px dashed rgba(255, 0, 0, 0.3);
+}
+
+.area-block[data-debug="true"].hover-padding-left {
+  border-left-color: rgba(0, 255, 0, 0.8);
+  border-left-width: 4px;
+}
+
+.area-block[data-debug="true"].hover-padding-right {
+  border-right-color: rgba(0, 255, 0, 0.8);
+  border-right-width: 4px;
+}
+
+.area-block[data-debug="true"].hover-padding-top {
+  border-top-color: rgba(0, 255, 0, 0.8);
+  border-top-width: 4px;
+}
+
+.area-block[data-debug="true"].hover-padding-bottom {
+  border-bottom-color: rgba(0, 255, 0, 0.8);
+  border-bottom-width: 4px;
 }
