@@ -14,7 +14,7 @@ export const VideoErrorOverlay: React.FC<VideoErrorOverlayProps> = ({
   if (!error) return null;
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center neu-bg-base/70 backdrop-blur-sm">
+    <div className="absolute inset-0 flex items-center justify-center neu-bg-base/70 backdrop-blur-sm z-20">
       <motion.div 
         className="neu-card text-center p-6 max-w-md mx-4"
         initial={{ opacity: 0, scale: 0.9, y: 20 }}

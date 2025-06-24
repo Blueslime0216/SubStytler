@@ -19,7 +19,7 @@ interface AreaBlockProps {
 
 const BORDER_THICKNESS = 8;
 
-export const AreaBlock: React.FC<AreaBlockProps> = ({
+const AreaBlockComponent: React.FC<AreaBlockProps> = ({
   area,
   dragging,
   hoveredBorder,
@@ -30,7 +30,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
 }) => {
   // 🎨 패딩 값: 기본 상태는 넓고, 호버 시 좁아짐 (자연스러운 효과)
   const basePadding = 28;    // 기본: 넓은 패딩
-  const hoverPadding = 14;   // 호버: 좁은 패딩
+  const hoverPadding = 10;   // 호버: 더 좁은 패딩
 
   // 현재 영역의 패딩 계산
   const getPaddingValues = () => {
@@ -104,17 +104,11 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     onBorderMouseDown(e, area.id, dir);
   };
 
-  console.log(`🎯 AreaBlock 렌더링: ${area.id}`, { 
-    position: { x: area.x, y: area.y }, 
-    size: { width: area.width, height: area.height },
-    padding: paddingValues
-  });
-
   return (
     <motion.div
       className={`area-block ${dragging ? 'dragging' : ''}`}
       style={baseStyle}
-      initial={paddingValues}
+      initial={false}
       animate={paddingValues}
       transition={{
         duration: dragging ? 0 : 0.2, // 🔧 드래그 중에는 즉시 반응 (깜박임 방지)
@@ -219,3 +213,17 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     </motion.div>
   );
 };
+
+// 성능 최적화: React.memo로 감싸서 불필요한 리렌더링 방지
+export const AreaBlock = React.memo(AreaBlockComponent, (prevProps, nextProps) => {
+  // 최적화된 비교 로직: 필요한 속성만 비교하여 불필요한 리렌더링 방지
+  return (
+    prevProps.area.id === nextProps.area.id &&
+    prevProps.area.x === nextProps.area.x &&
+    prevProps.area.y === nextProps.area.y &&
+    prevProps.area.width === nextProps.area.width &&
+    prevProps.area.height === nextProps.area.height &&
+    prevProps.dragging === nextProps.dragging &&
+    prevProps.hoveredBorder === nextProps.hoveredBorder
+  );
+});

@@ -24,12 +24,14 @@ interface UseAreaDragReturn {
 export function useAreaDrag(
   areas: Area[],
   setAreas: (areas: Area[]) => void,
+  setHoveredBorder?: (v: { areaId: string; dir: BorderDir } | null) => void,
 ): UseAreaDragReturn {
   const [dragging, setDragging] = useState<UseAreaDragReturn['dragging']>(null);
   const draggingRef = useRef<typeof dragging>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const areasRef = useRef<Area[]>(areas);
   const animationFrameId = useRef<number | null>(null);
+  const lastUpdateTimeRef = useRef<number>(0);
 
   // keep refs updated
   useEffect(() => {
@@ -56,11 +58,19 @@ export function useAreaDrag(
   useEffect(() => {
     if (!dragging) return;
 
+    // 드래그 시작 시 body에 클래스 추가
+    document.body.classList.add('dragging-active');
+
     const onMouseMove = (e: MouseEvent) => {
       // 🔧 이전 프레임 취소
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
+
+      // 🔧 프레임 제한 - 60fps 보장 (약 16.7ms 간격)
+      const now = performance.now();
+      const elapsed = now - lastUpdateTimeRef.current;
+      if (elapsed < 16) return; // 16.7ms 미만이면 처리 건너뜀
 
       // 🔧 requestAnimationFrame으로 성능 최적화
       animationFrameId.current = requestAnimationFrame(() => {
@@ -124,6 +134,7 @@ export function useAreaDrag(
 
         // 🔧 배치 업데이트 - 한 번에 처리
         setAreas(newAreas);
+        lastUpdateTimeRef.current = now;
         
         if (move !== 0 && draggingRef.current) {
           if (isHorizontal) {
@@ -135,27 +146,39 @@ export function useAreaDrag(
       });
     };
 
-    const onMouseUp = () => {
+    const onMouseUp = (e: MouseEvent) => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
         animationFrameId.current = null;
       }
+      
+      // 드래그 종료 시 body에서 클래스 제거
+      document.body.classList.remove('dragging-active');
+      
       setDragging(null);
+      // 드래그 종료 시 커서가 area-border 위에 있는지 검사
+      if (setHoveredBorder) {
+        const el = document.elementFromPoint(e.clientX, e.clientY);
+        if (!el || !(el as HTMLElement).classList.contains('area-border')) {
+          setHoveredBorder(null);
+        }
+      }
     };
 
     // 🔧 passive 이벤트 리스너로 성능 최적화
     window.addEventListener('mousemove', onMouseMove, { passive: true });
-    window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('mouseup', onMouseUp as EventListener);
     
     return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
         animationFrameId.current = null;
       }
+      document.body.classList.remove('dragging-active');
       window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('mouseup', onMouseUp as EventListener);
     };
-  }, [dragging, setAreas]);
+  }, [dragging, setAreas, setHoveredBorder]);
 
   const onBorderMouseDown = useCallback((
     e: React.MouseEvent,
@@ -172,6 +195,7 @@ export function useAreaDrag(
     detectLinkedAreas(areas, area, dir, visited, linked);
     
     setDragging({ areaId, dir, lastX: e.clientX, lastY: e.clientY, linked });
+    lastUpdateTimeRef.current = performance.now();
   }, [areas]);
 
   return { containerRef, onBorderMouseDown, dragging, getLinkedBorders };

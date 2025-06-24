@@ -14,7 +14,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
   getInputProps
 }) => {
   return (
-    <div className="absolute inset-0 flex flex-col">
+    <div className="absolute inset-0 flex flex-col z-10">
       <motion.div 
         {...getRootProps()} 
         className={`flex-1 flex flex-col items-center justify-center m-4 rounded-2xl transition-all duration-300 cursor-pointer ${

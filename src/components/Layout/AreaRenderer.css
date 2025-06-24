@@ -4,6 +4,10 @@
   height: 100%;
   background: transparent;
   overflow: visible; /* 🔧 그림자 표시를 위해 visible */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
 }
 
 .area-block {
@@ -50,4 +54,18 @@
 
 .area-block.dragging .area-border {
   pointer-events: auto; /* 경계는 드래그 가능하게 유지 */
+}
+
+/* 전체 페이지 드래그 중 최적화 */
+body.dragging-active {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+
+body.dragging-active * {
+  pointer-events: none !important;
+}
+
+body.dragging-active .area-border {
+  pointer-events: auto !important;
 }

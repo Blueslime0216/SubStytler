@@ -11,7 +11,7 @@ export const VideoLoadingOverlay: React.FC<VideoLoadingOverlayProps> = ({
   if (!isLoading) return null;
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center neu-bg-base/70 backdrop-blur-sm">
+    <div className="absolute inset-0 flex items-center justify-center neu-bg-base/70 backdrop-blur-sm z-20">
       <motion.div 
         className="neu-card text-center p-6"
         initial={{ opacity: 0, scale: 0.9 }}

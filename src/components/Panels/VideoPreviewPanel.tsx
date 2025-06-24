@@ -27,7 +27,21 @@ export const VideoPreviewPanel: React.FC = () => {
     const video = videoRef.current;
     if (!video) return;
 
+    // 비디오 엘리먼트 스타일 직접 설정
+    video.style.display = 'block';
+    video.style.width = '100%';
+    video.style.height = '100%';
+    video.style.objectFit = 'contain';
+    video.style.backgroundColor = 'black';
+
     const handleCanPlay = () => {
+      console.log('Video can play event triggered');
+      setIsVideoLoaded(true);
+      setVideoError(null);
+    };
+
+    const handleLoadedData = () => {
+      console.log('Video loaded data event triggered');
       setIsVideoLoaded(true);
       setVideoError(null);
     };
@@ -44,15 +58,18 @@ export const VideoPreviewPanel: React.FC = () => {
     };
 
     const handleLoadStart = () => {
+      console.log('Video load start event triggered');
       setVideoError(null);
     };
 
     video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('loadeddata', handleLoadedData);
     video.addEventListener('error', handleError);
     video.addEventListener('loadstart', handleLoadStart);
 
     return () => {
       video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('error', handleError);
       video.removeEventListener('loadstart', handleLoadStart);
     };
@@ -125,28 +142,60 @@ export const VideoPreviewPanel: React.FC = () => {
   const handleRetry = () => {
     setVideoError(null);
     setIsVideoLoaded(false);
-    if (videoRef.current) {
+    if (videoRef.current && currentProject?.videoMeta?.url) {
+      videoRef.current.src = currentProject.videoMeta.url;
       videoRef.current.load();
     }
   };
 
+  const hasVideo = !!(currentProject?.videoMeta && currentProject.videoMeta.url);
+  const [forceRender, setForceRender] = useState(0);
+
+  // 비디오 메타가 바뀔 때마다 강제로 리렌더링하고 isVideoLoaded를 초기화
   useEffect(() => {
+    setForceRender(f => f + 1);
+    // 새 비디오가 설정되면 로드 상태 초기화
+    setIsVideoLoaded(false);
+    
+    // 디버깅: 비디오 메타데이터 변경 로깅
+    console.log('Video metadata changed:', {
+      hasUrl: !!currentProject?.videoMeta?.url,
+      url: currentProject?.videoMeta?.url?.substring(0, 30) + '...',
+      duration: currentProject?.videoMeta?.duration,
+      dimensions: currentProject?.videoMeta ? 
+        `${currentProject.videoMeta.width}x${currentProject.videoMeta.height}` : 'none'
+    });
+    
+    // 비디오 엘리먼트에 URL 직접 설정
+    if (videoRef.current && currentProject?.videoMeta?.url) {
+      videoRef.current.src = currentProject.videoMeta.url;
+      videoRef.current.load();
+    }
+  }, [currentProject?.videoMeta]);
+
+  // 비디오 로드 상태 디버깅
+  useEffect(() => {
+    console.log('Video loaded state:', { isVideoLoaded, videoError, hasVideo });
+  }, [isVideoLoaded, videoError, hasVideo]);
+
+  // Object URL 해제는 언마운트 시점에만
+  useEffect(() => {
+    const urlToRevoke = currentProject?.videoMeta?.url;
     return () => {
-      if (currentProject?.videoMeta?.url) {
-        URL.revokeObjectURL(currentProject.videoMeta.url);
+      if (urlToRevoke) {
+        URL.revokeObjectURL(urlToRevoke);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const hasVideo = currentProject?.videoMeta;
-
   return (
-    <div className="h-full flex flex-col neu-bg-base neu-video-panel">
-      <div className="flex-1 relative">
+    <div className="h-full w-full min-w-0 min-h-0 flex flex-col neu-bg-base neu-video-panel">
+      <div className="flex-1 w-full h-full min-w-0 min-h-0 relative">
         <VideoPreviewPlayer
           videoRef={videoRef}
-          hasVideo={!!hasVideo}
-          videoUrl={hasVideo?.url}
+          hasVideo={hasVideo}
+          videoUrl={currentProject?.videoMeta?.url}
         />
         
         <VideoPreviewOverlays

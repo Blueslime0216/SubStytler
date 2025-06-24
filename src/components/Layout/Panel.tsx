@@ -17,7 +17,7 @@ interface PanelProps {
   children: React.ReactNode;
 }
 
-export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId, children }) => {
+const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, children }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
@@ -58,8 +58,6 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId, chil
     if (!canRemove) return;
     handleRemoveClick();
   };
-
-  console.log('🎨 Panel 렌더링:', { type, areaId, config: config.title });
 
   return (
     <motion.div
@@ -109,3 +107,9 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId, chil
     </motion.div>
   );
 };
+
+// 성능 최적화: React.memo로 감싸서 불필요한 리렌더링 방지
+export const Panel = React.memo(PanelComponent, (prevProps, nextProps) => {
+  // 패널 타입이 같으면 리렌더링 방지
+  return prevProps.type === nextProps.type && prevProps.areaId === nextProps.areaId;
+});

@@ -63,10 +63,8 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         throw new Error('Video element not available');
       }
 
-      // Reset video element
-      video.src = '';
-      video.load();
-
+      console.log('Setting video URL:', url);
+      
       // Set up video loading promise
       const videoLoadPromise = new Promise<{
         duration: number;
@@ -74,22 +72,31 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         height: number;
       }>((resolve, reject) => {
         const timeout = setTimeout(() => {
+          console.error('Video loading timed out after 30 seconds');
           reject(new Error('Video loading timed out after 30 seconds'));
         }, 30000);
 
         const handleLoadedMetadata = () => {
           cleanup();
           
+          console.log('Video metadata loaded successfully:', {
+            duration: video.duration,
+            width: video.videoWidth,
+            height: video.videoHeight
+          });
+          
           const duration = video.duration;
           const width = video.videoWidth;
           const height = video.videoHeight;
 
           if (duration <= 0) {
+            console.error('Invalid video duration:', duration);
             reject(new Error('Invalid video duration'));
             return;
           }
 
           if (width <= 0 || height <= 0) {
+            console.error('Invalid video dimensions:', { width, height });
             reject(new Error('Invalid video dimensions'));
             return;
           }
@@ -196,7 +203,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         uploadStage: ''
       });
     }
-  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, currentProject, videoRef]);
+  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, currentProject]);
 
   return {
     uploadState,

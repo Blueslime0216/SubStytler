@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AreaRenderer } from './components/Layout/AreaRenderer';
 import { useLayoutStore } from './stores/layoutStore';
 import { shallow } from 'zustand/shallow';
@@ -12,29 +12,26 @@ export default function App() {
   );
 
   // 🎯 동적 패널 렌더링 로직 - 모든 ID 패턴 지원
-  const renderPanel = (area: Area) => {
-    console.log('🎨 패널 렌더링 시도:', area.id);
-    
-    // 1️⃣ 직접 매칭 시도
-    if (panelRegistry[area.id as keyof typeof panelRegistry]) {
-      console.log('✅ 직접 매칭 성공:', area.id);
-      const Component = panelRegistry[area.id as keyof typeof panelRegistry];
-      return <Component />;
-    }
-    
-    // 2️⃣ 패턴 매칭 시도 (예: "empty-1735113234567" → "empty")
-    const baseType = area.id.split('-')[0];
-    if (panelRegistry[baseType as keyof typeof panelRegistry]) {
-      console.log('✅ 패턴 매칭 성공:', baseType);
-      const Component = panelRegistry[baseType as keyof typeof panelRegistry];
-      return <Component />;
-    }
-    
-    // 3️⃣ 기본값: 빈 패널
-    console.log('⚠️ 매칭 실패, 빈 패널 사용:', area.id);
-    const EmptyComponent = panelRegistry.empty;
-    return <EmptyComponent />;
-  };
+  const renderPanel = useMemo(() => {
+    return (area: Area) => {
+      // 1️⃣ 직접 매칭 시도
+      if (panelRegistry[area.id as keyof typeof panelRegistry]) {
+        const Component = panelRegistry[area.id as keyof typeof panelRegistry];
+        return <Component />;
+      }
+      
+      // 2️⃣ 패턴 매칭 시도 (예: "empty-1735113234567" → "empty")
+      const baseType = area.id.split('-')[0];
+      if (panelRegistry[baseType as keyof typeof panelRegistry]) {
+        const Component = panelRegistry[baseType as keyof typeof panelRegistry];
+        return <Component />;
+      }
+      
+      // 3️⃣ 기본값: 빈 패널
+      const EmptyComponent = panelRegistry.empty;
+      return <EmptyComponent />;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-neu-base text-white" style={{ overflow: 'visible' }}>
