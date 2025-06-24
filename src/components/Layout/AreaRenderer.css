@@ -2,28 +2,28 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background: #f3f4f6;
-  overflow: hidden;
+  background: transparent;
+  overflow: visible; /* 🔧 그림자 표시를 위해 visible */
 }
 
 .area-block {
   position: absolute;
-  background: #f6f8fa;
-  overflow: visible;
+  background: transparent;
+  overflow: visible; /* 🔧 그림자 표시를 위해 visible */
   box-sizing: border-box;
-  /* Framer Motion이 패딩을 제어하므로 CSS 트랜지션 제거 */
+  /* 🔧 모든 CSS 트랜지션 제거 - Framer Motion이 제어 */
 }
 
 /* 드래그 중 표시 */
 .area-block.dragging {
-  /* Framer Motion에서 duration: 0으로 처리 */
+  /* Framer Motion에서 duration: 0으로 처리하므로 CSS는 불필요 */
 }
 
 .area-border {
   position: absolute;
   z-index: 10;
   border-radius: 4px;
-  /* 모든 호버 효과 제거 - 패딩 애니메이션만 유지 */
+  /* 🔧 모든 시각적 효과 제거 - 순수한 패딩 애니메이션만 */
 }
 
 .area-border-vertical {
@@ -34,4 +34,8 @@
   cursor: ns-resize;
 }
 
-/* 모든 시각적 효과 제거 - 순수한 패딩 애니메이션만 */
+/* 🔧 깜박임 방지를 위한 최적화 */
+.area-block * {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}

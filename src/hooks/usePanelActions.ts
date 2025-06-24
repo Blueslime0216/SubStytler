@@ -1,29 +1,27 @@
 import { PanelType, AreaConfig } from '../types/project';
 import { useLayoutStore } from '../stores/layoutStore';
 import { panelConfig } from '../config/panelConfig';
-import { countPanels } from '../utils/layoutUtils';
 
 export const usePanelActions = (
   areaId: string | undefined,
   type: PanelType,
-  areas: AreaConfig[],
+  areas: any[], // Area 시스템 사용
   setIsDropdownOpen: (open: boolean) => void,
   setIsActionsOpen: (open: boolean) => void,
   setShowRemoveConfirm: (show: boolean) => void
 ) => {
   const { changePanelType, splitArea, removeArea } = useLayoutStore();
 
-  const totalPanels = countPanels(areas);
+  const totalPanels = areas.length; // Area 시스템에서는 단순히 배열 길이
   const canRemove = totalPanels > 1;
 
-  // 🆕 현재 패널 타입을 제외한 모든 패널 (빈 패널 포함)
+  // 현재 패널 타입을 제외한 모든 패널 (빈 패널 포함)
   const availablePanels = Object.entries(panelConfig).filter(([panelType]) => panelType !== type);
 
   const handlePanelChange = (newPanelType: PanelType) => {
     console.log('🔄 패널 변경 시도:', { areaId, currentType: type, newType: newPanelType });
     
     if (areaId && newPanelType !== type) {
-      // 🎯 실제 패널 타입 변경 실행
       changePanelType(areaId, newPanelType);
       console.log('✅ 패널 변경 완료:', newPanelType);
     } else {
@@ -37,7 +35,6 @@ export const usePanelActions = (
     console.log('🔀 패널 분할 시도:', { areaId, direction, newPanelType });
     
     if (areaId) {
-      // 🎯 실제 분할 실행
       splitArea(areaId, direction, newPanelType);
       console.log('✅ 패널 분할 완료');
     } else {

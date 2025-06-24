@@ -3,12 +3,12 @@ import { AreaConfig, PanelType } from '../types/project';
 import { createLayoutActions } from './layoutActions';
 
 interface LayoutState {
-  areas: AreaConfig[];
+  areas: any[]; // Area 시스템 사용
   draggedPanel: PanelType | null;
   dropTarget: { areaId: string; position: 'top' | 'bottom' | 'left' | 'right' | 'center' } | null;
   
   // Actions (injected from createLayoutActions)
-  setAreas: (areas: AreaConfig[]) => void;
+  setAreas: (areas: any[]) => void;
   splitArea: (areaId: string, direction: 'horizontal' | 'vertical', newPanelType: PanelType) => void;
   mergePanels: (sourceId: string, targetId: string) => void;
   resizeArea: (areaId: string, size: number) => void;
@@ -20,19 +20,19 @@ interface LayoutState {
 }
 
 export const useLayoutStore = create<LayoutState>((set, get, store) => ({
-  // State
+  // State - Area 시스템 기본 레이아웃
   areas: [
     { id: 'video', x: 0, y: 0, width: 60, height: 100, minWidth: 15, minHeight: 20 },
     { id: 'timeline', x: 60, y: 0, width: 40, height: 55, minWidth: 15, minHeight: 20 },
     { id: 'text', x: 60, y: 55, width: 40, height: 45, minWidth: 15, minHeight: 20 },
-  ] as unknown as any,
+  ],
   draggedPanel: null,
   dropTarget: null,
 
   // Slice actions
   ...createLayoutActions(set, get, store),
 
-  // Local setters that didn't need full extraction
+  // Local setters
   setDraggedPanel: (panelType: PanelType | null) => set({ draggedPanel: panelType }),
   setDropTarget: (target) => set({ dropTarget: target }),
 }));
