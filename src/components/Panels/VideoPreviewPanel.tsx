@@ -84,7 +84,7 @@ export const VideoPreviewPanel: React.FC = () => {
     }
   }, [volume, isMuted]);
 
-  // Dropzone setup - 조건부로 적용
+  // Dropzone setup - 전체 패널에 적용
   const onDrop = React.useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
     if (rejectedFiles.length > 0) {
       const rejection = rejectedFiles[0];
@@ -121,9 +121,7 @@ export const VideoPreviewPanel: React.FC = () => {
     },
     multiple: false,
     maxSize: 500 * 1024 * 1024,
-    disabled: uploadState.isUploading,
-    noClick: true, // 🔧 기본 클릭 비활성화
-    noKeyboard: true // 🔧 키보드 이벤트 비활성화
+    disabled: uploadState.isUploading
   });
 
   const handleVolumeChange = (newVolume: number) => {
@@ -191,42 +189,22 @@ export const VideoPreviewPanel: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 🎯 업로드 영역 클릭 핸들러 - 중간 영역만 활성화
-  const handleVideoAreaClick = (e: React.MouseEvent) => {
-    // 🔧 비디오가 이미 있으면 업로드 비활성화
-    if (hasVideo && isVideoLoaded) {
-      return;
-    }
-    
-    // 🔧 업로드 중이면 비활성화
-    if (uploadState.isUploading) {
-      return;
-    }
-    
-    // 🔧 파일 선택 다이얼로그 열기
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'video/*';
-    input.onchange = (event) => {
-      const file = (event.target as HTMLInputElement).files?.[0];
-      if (file) {
-        processVideoFile(file);
-      }
-    };
-    input.click();
-  };
-
+  // 드롭존 적용 여부 결정 
+  // 비디오가 없거나, 비디오가 있지만 로드되지 않았을 때만 드롭존 활성화
+  const shouldEnableDropzone = !hasVideo;
+  
   return (
     <div 
       className="h-full w-full min-w-0 min-h-0 flex flex-col neu-bg-base neu-video-panel"
-      {...getRootProps()}
+      {...(shouldEnableDropzone ? getRootProps() : {})}
       style={{
+        cursor: shouldEnableDropzone ? 'pointer' : 'default',
         background: isDragActive ? 'var(--neu-accent)' : 'var(--neu-base)',
         borderRadius: '18px',
         transition: 'all 0.2s ease'
       }}
     >
-      <input {...getInputProps()} />
+      {shouldEnableDropzone && <input {...getInputProps()} />}
       
       <div className="flex-1 w-full h-full min-w-0 min-h-0 relative">
         <VideoPreviewPlayer
@@ -234,19 +212,6 @@ export const VideoPreviewPanel: React.FC = () => {
           hasVideo={hasVideo}
           videoUrl={currentProject?.videoMeta?.url}
         />
-        
-        {/* 🎯 중간 영역 클릭 감지 - 비디오가 없거나 로드되지 않았을 때만 */}
-        {(!hasVideo || !isVideoLoaded) && !uploadState.isUploading && (
-          <div 
-            className="absolute inset-0 z-15"
-            onClick={handleVideoAreaClick}
-            style={{
-              cursor: 'pointer',
-              background: 'transparent'
-            }}
-            title="클릭하여 비디오 업로드"
-          />
-        )}
         
         {/* 드래그 활성화 시에만 간단한 메시지 표시 */}
         {isDragActive && !hasVideo && (
