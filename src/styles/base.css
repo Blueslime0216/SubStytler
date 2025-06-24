@@ -28,6 +28,8 @@ body.dragging-active {
     animation-delay: 0s !important;
     transition-duration: 0s !important;
     transition-delay: 0s !important;
+    /* 🔧 Framer Motion 애니메이션도 비활성화 */
+    transform-origin: center !important;
   }
   
   /* 커서 변경 */
@@ -38,6 +40,14 @@ body.dragging-active {
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
   -ms-user-select: none !important;
+}
+
+/* 🔧 드래그 중 Framer Motion 컴포넌트 애니메이션 비활성화 */
+body.dragging-active [data-framer-component],
+body.dragging-active .motion-div,
+body.dragging-active .motion-button {
+  transition: none !important;
+  animation: none !important;
 }
 
 /* Critical: Global overflow fix for all containers */

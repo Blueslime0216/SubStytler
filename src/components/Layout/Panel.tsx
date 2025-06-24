@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
 import { PanelType } from '../../types/project';
 import { useLayoutStore } from '../../stores/layoutStore';
 import { PanelBody } from './PanelBody';
@@ -59,11 +58,16 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
   };
 
   return (
-    <motion.div
+    <div
       className={`neu-panel flex flex-col h-full ${className}`}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      style={{
+        // 🔧 모든 애니메이션 완전 비활성화
+        transition: 'none !important',
+        animation: 'none !important',
+        // 🔧 하드웨어 가속
+        transform: 'translate3d(0, 0, 0)',
+        backfaceVisibility: 'hidden',
+      }}
     >
       <PanelHeader
         type={type}
@@ -102,6 +106,6 @@ export const Panel: React.FC<PanelProps> = ({ type, className = '', areaId }) =>
         onConfirm={onRemovePanel}
         triggerRef={removeButtonRef}
       />
-    </motion.div>
+    </div>
   );
 };

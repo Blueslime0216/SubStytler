@@ -1,4 +1,4 @@
-/* Panel System - Increased Shadow Sizes by 3/2 (1.5x) */
+/* Panel System - 모든 애니메이션 완전 제거 */
 
 .neu-panel {
   background: var(--neu-base);
@@ -9,8 +9,13 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transform: translateZ(0);
   height: 100%;
+  /* 🔧 모든 애니메이션 완전 비활성화 */
+  transition: none !important;
+  animation: none !important;
+  /* 🔧 하드웨어 가속 */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .neu-panel::before {
@@ -26,9 +31,10 @@
     rgba(13, 17, 23, 0.05) 100%);
   pointer-events: none;
   border-radius: inherit;
+  /* 🔧 애니메이션 비활성화 */
+  transition: none !important;
+  animation: none !important;
 }
-
-/* Removed hover effects - no transform or shadow changes */
 
 .neu-panel-header {
   background: var(--neu-base);
@@ -40,6 +46,9 @@
   border-radius: 18px 18px 0 0;
   flex-shrink: 0;
   z-index: 10;
+  /* 🔧 애니메이션 비활성화 */
+  transition: none !important;
+  animation: none !important;
 }
 
 .neu-panel-header::after {
@@ -54,6 +63,9 @@
     rgba(45, 55, 72, 0.4) 50%, 
     transparent 100%);
   opacity: 0.6;
+  /* 🔧 애니메이션 비활성화 */
+  transition: none !important;
+  animation: none !important;
 }
 
 .neu-panel-content {
@@ -63,9 +75,12 @@
   min-height: 0;
   position: relative;
   z-index: 1;
+  /* 🔧 애니메이션 비활성화 */
+  transition: none !important;
+  animation: none !important;
 }
 
-/* All Panel Types - Increased Shadow Sizes by 3/2 (1.5x) */
+/* All Panel Types - 모든 애니메이션 제거 */
 .neu-video-panel,
 .neu-timeline,
 .neu-text-editor-panel,
@@ -81,6 +96,12 @@
   box-shadow: var(--neu-shadow-panel);
   border: 2px solid rgba(45, 55, 72, 0.3);
   background: var(--neu-base);
+  /* 🔧 모든 애니메이션 완전 비활성화 */
+  transition: none !important;
+  animation: none !important;
+  /* 🔧 하드웨어 가속 */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .neu-video-panel::before,
@@ -104,6 +125,15 @@
     rgba(13, 17, 23, 0.05) 100%);
   pointer-events: none;
   border-radius: inherit;
+  /* 🔧 애니메이션 비활성화 */
+  transition: none !important;
+  animation: none !important;
 }
 
-/* Removed all hover effects for panel types */
+/* 🔧 전역 애니메이션 비활성화 */
+.neu-panel *,
+.neu-panel-header *,
+.neu-panel-content * {
+  transition: none !important;
+  animation: none !important;
+}
