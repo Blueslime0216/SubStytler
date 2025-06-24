@@ -27,10 +27,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
   onBorderMouseDown,
   renderPanel,
 }) => {
-  // 패딩 계산 로직 - 1초 트랜지션 적용
-  const basePadding = 14;
-  const hoverPadding = 28;
-  
+  // 기본 스타일 - 패딩은 CSS 클래스에서 처리
   const style: React.CSSProperties = {
     position: 'absolute',
     left: `${area.x}%`,
@@ -39,15 +36,12 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     height: `${area.height}%`,
     background: 'transparent',
     boxSizing: 'border-box',
-    paddingTop: basePadding,
-    paddingRight: basePadding,
-    paddingBottom: basePadding,
-    paddingLeft: basePadding,
     overflow: 'visible',
     zIndex: 200,
   };
 
-  // 호버된 경계에 따른 패딩 조정
+  // 호버된 경계에 따른 CSS 클래스 결정
+  let paddingClass = '';
   if (hoveredBorder) {
     const { areaId: hId, dir: hDir } = hoveredBorder;
     const linked = getLinkedBorders(hId, hDir);
@@ -57,16 +51,16 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
     if (current) {
       switch (current.dir) {
         case 'left': 
-          style.paddingLeft = hoverPadding; 
+          paddingClass = 'hover-padding-left';
           break;
         case 'right': 
-          style.paddingRight = hoverPadding; 
+          paddingClass = 'hover-padding-right';
           break;
         case 'top': 
-          style.paddingTop = hoverPadding; 
+          paddingClass = 'hover-padding-top';
           break;
         case 'bottom': 
-          style.paddingBottom = hoverPadding; 
+          paddingClass = 'hover-padding-bottom';
           break;
       }
     }
@@ -87,7 +81,7 @@ export const AreaBlock: React.FC<AreaBlockProps> = ({
 
   return (
     <div 
-      className={`area-block ${dragging ? 'dragging' : ''}`} 
+      className={`area-block ${dragging ? 'dragging' : ''} ${paddingClass}`}
       style={style}
     >
       {/* 좌측 경계 */}
