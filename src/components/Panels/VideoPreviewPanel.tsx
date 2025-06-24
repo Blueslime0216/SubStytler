@@ -32,7 +32,7 @@ export const VideoPreviewPanel: React.FC = () => {
     video.style.width = '100%';
     video.style.height = '100%';
     video.style.objectFit = 'contain';
-    video.style.backgroundColor = 'black';
+    video.style.backgroundColor = 'var(--neu-base)';
 
     const handleCanPlay = () => {
       console.log('Video can play event triggered');
@@ -84,7 +84,7 @@ export const VideoPreviewPanel: React.FC = () => {
     }
   }, [volume, isMuted]);
 
-  // Dropzone setup
+  // Dropzone setup - 전체 패널에 적용
   const onDrop = React.useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
     if (rejectedFiles.length > 0) {
       const rejection = rejectedFiles[0];
@@ -190,13 +190,40 @@ export const VideoPreviewPanel: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-full w-full min-w-0 min-h-0 flex flex-col neu-bg-base neu-video-panel">
+    <div 
+      className="h-full w-full min-w-0 min-h-0 flex flex-col neu-bg-base neu-video-panel"
+      {...(!hasVideo ? getRootProps() : {})} // 비디오가 없을 때만 드롭존 적용
+      style={{
+        cursor: !hasVideo ? 'pointer' : 'default',
+        background: isDragActive ? 'var(--neu-accent)' : 'var(--neu-base)',
+        border: isDragActive ? '2px dashed var(--neu-primary)' : '2px solid transparent',
+        borderRadius: '18px',
+        transition: 'all 0.2s ease'
+      }}
+    >
+      {!hasVideo && <input {...getInputProps()} />}
+      
       <div className="flex-1 w-full h-full min-w-0 min-h-0 relative">
         <VideoPreviewPlayer
           videoRef={videoRef}
           hasVideo={hasVideo}
           videoUrl={currentProject?.videoMeta?.url}
         />
+        
+        {/* 드래그 활성화 시에만 간단한 메시지 표시 */}
+        {isDragActive && !hasVideo && (
+          <div className="absolute inset-0 flex items-center justify-center z-30">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl neu-shadow-1 flex items-center justify-center"
+                   style={{ background: 'var(--neu-primary)' }}>
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium neu-text-primary">Drop video here</h3>
+            </div>
+          </div>
+        )}
         
         <VideoPreviewOverlays
           hasVideo={!!hasVideo}

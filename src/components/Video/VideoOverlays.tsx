@@ -37,16 +37,8 @@ export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
       {/* 비디오가 성공적으로 로드되지 않았을 때만 오버레이 표시 */}
       {!videoSuccessfullyLoaded && (
         <>
-          {showUploadInterface && (
-            <div className="pointer-events-auto">
-              <VideoUploadOverlay
-                isDragActive={isDragActive}
-                getRootProps={getRootProps}
-                getInputProps={getInputProps}
-              />
-            </div>
-          )}
-
+          {/* 업로드 인터페이스는 완전히 제거 - 빈 공간만 유지 */}
+          
           {uploadState.isUploading && (
             <VideoProgressOverlay uploadState={uploadState} />
           )}
