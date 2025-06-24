@@ -27,38 +27,6 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
   const removeButtonRef = useRef<HTMLButtonElement>(null);
   
   const { areas } = useLayoutStore();
-  
-  // 🔧 실제 area ID 찾기 - 패턴 매칭으로 정확한 ID 확보
-  const realAreaId = React.useMemo(() => {
-    if (!areaId) return undefined;
-    
-    // 1️⃣ 직접 매칭 시도
-    const directMatch = areas.find(area => area.id === areaId);
-    if (directMatch) {
-      console.log('🎯 직접 매칭 성공:', areaId);
-      return areaId;
-    }
-    
-    // 2️⃣ 패턴 매칭 시도 (type 기반으로 찾기)
-    const baseType = type; // 현재 패널 타입
-    const patternMatch = areas.find(area => {
-      const areaBaseType = area.id.split('-')[0];
-      return areaBaseType === baseType;
-    });
-    
-    if (patternMatch) {
-      console.log('🔍 패턴 매칭 성공:', { 
-        originalAreaId: areaId, 
-        foundAreaId: patternMatch.id, 
-        baseType 
-      });
-      return patternMatch.id;
-    }
-    
-    console.warn('⚠️ area ID를 찾을 수 없습니다:', { areaId, type, availableAreas: areas.map(a => a.id) });
-    return areaId; // 기본값으로 원래 ID 반환
-  }, [areaId, type, areas]);
-
   const {
     canRemove,
     availablePanels,
@@ -66,22 +34,16 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     handleSplitPanel,
     handleRemovePanel,
     handleRemoveClick
-  } = usePanelActions(realAreaId, type, areas, setIsDropdownOpen, setIsActionsOpen, setShowRemoveConfirm);
+  } = usePanelActions(areaId, type, areas, setIsDropdownOpen, setIsActionsOpen, setShowRemoveConfirm);
 
   const config = panelConfig[type];
   const IconComponent = config.icon;
 
   // 🔧 성능 최적화: 이벤트 핸들러 메모이제이션
   const onPanelChange = React.useCallback((newPanelType: PanelType) => {
-    console.log('🎨 Panel.tsx에서 패널 변경 요청:', { 
-      originalAreaId: areaId, 
-      realAreaId, 
-      currentType: type, 
-      newType: newPanelType 
-    });
     handlePanelChange(newPanelType);
     setIsDropdownOpen(false);
-  }, [handlePanelChange, areaId, realAreaId, type]);
+  }, [handlePanelChange]);
 
   const onSplitPanel = React.useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
     handleSplitPanel(direction, newPanelType);
@@ -103,7 +65,8 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
       className={`neu-panel ${className}`}
       initial={{ opacity: 1, scale: 1 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.15, ease: 'easeOut' }}
+      transition={{ duration: 0.15, ease: 'easeOut' }} // 🔧 더 빠른 애니메이션
+      // 🔧 성능 최적화: 레이아웃 최적화
       style={{
         contain: 'layout style',
         willChange: 'auto'
@@ -159,6 +122,7 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
 
 // 🔧 성능 최적화: React.memo로 감싸서 불필요한 리렌더링 방지 + 더 정교한 비교
 export const Panel = React.memo(PanelComponent, (prevProps, nextProps) => {
+  // 🔧 패널 타입과 areaId가 같으면 리렌더링 방지
   return prevProps.type === nextProps.type && 
          prevProps.areaId === nextProps.areaId &&
          prevProps.className === nextProps.className;

@@ -24,48 +24,17 @@ export const usePanelActions = (
 
   // 🔧 성능 최적화: 메모이제이션된 이벤트 핸들러
   const handlePanelChange = useCallback((newPanelType: PanelType) => {
-    console.log('🔄 usePanelActions 패널 변경 시도:', { 
-      areaId, 
-      currentType: type, 
-      newType: newPanelType,
-      timestamp: Date.now(),
-      availableAreas: areas.map(a => ({ id: a.id, type: a.id.split('-')[0] }))
-    });
+    console.log('🔄 패널 변경 시도:', { areaId, currentType: type, newType: newPanelType });
     
-    if (!areaId) {
-      console.error('❌ areaId가 없습니다!');
-      return;
-    }
-    
-    if (newPanelType === type) {
-      console.warn('⚠️ 같은 타입으로 변경 시도');
-      return;
-    }
-    
-    // 🔧 실제 area 존재 확인
-    const targetArea = areas.find(area => area.id === areaId);
-    if (!targetArea) {
-      console.error('❌ 대상 area를 찾을 수 없습니다:', { 
-        areaId, 
-        availableAreas: areas.map(a => a.id) 
-      });
-      return;
-    }
-    
-    try {
-      console.log('🎯 changePanelType 호출:', { areaId, newPanelType });
+    if (areaId && newPanelType !== type) {
       changePanelType(areaId, newPanelType);
       console.log('✅ 패널 변경 완료:', newPanelType);
-      
-      // 🔧 상태 업데이트 후 약간의 지연을 두고 드롭다운 닫기
-      setTimeout(() => {
-        setIsDropdownOpen(false);
-      }, 100);
-      
-    } catch (error) {
-      console.error('❌ 패널 변경 실패:', error);
+    } else {
+      console.warn('⚠️ 패널 변경 실패:', { areaId, newPanelType, currentType: type });
     }
-  }, [areaId, type, changePanelType, setIsDropdownOpen, areas]);
+    
+    setIsDropdownOpen(false);
+  }, [areaId, type, changePanelType, setIsDropdownOpen]);
 
   const handleSplitPanel = useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
     console.log('🔀 패널 분할 시도:', { areaId, direction, newPanelType });
