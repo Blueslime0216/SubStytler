@@ -151,7 +151,7 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                 </p>
               </div>
               
-              {/* 🔄 애니메이션 인디케이터 */}
+              {/* 🔄 정적 인디케이터 (회전 제거) */}
               <motion.div
                 className="w-8 h-8 rounded-full flex items-center justify-center"
                 style={{
@@ -161,12 +161,9 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                     -2px -2px 8px rgba(45, 55, 72, 0.4)
                   `,
                 }}
-                animate={{ rotate: 360 }}
-                transition={{ 
-                  duration: 8, 
-                  repeat: Infinity, 
-                  ease: "linear" 
-                }}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.2 }}
               >
                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -176,7 +173,7 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
           </motion.div>
 
           {/* 🎯 패널 옵션 그리드 */}
-          <div className="relative z-10 space-y-3 max-h-80 overflow-y-auto pr-2">
+          <div className="relative z-10 space-y-3 max-h-80 overflow-y-auto pr-2 neu-panel-selector">
             {availablePanels.map(([panelType, panelConfig], index) => {
               const PanelIcon = panelConfig.icon;
               const isSelected = selectedIndex === index;
@@ -195,10 +192,7 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                     duration: 0.3,
                     ease: "easeOut"
                   }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    transition: { duration: 0.2 }
-                  }}
+                  // ❌ 확대 호버 효과 제거
                   whileTap={{ 
                     scale: 0.98,
                     transition: { duration: 0.1 }
@@ -240,7 +234,7 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                   />
 
                   <div className="flex items-center space-x-4 relative z-10">
-                    {/* 🎨 아이콘 컨테이너 */}
+                    {/* 🎨 아이콘 컨테이너 (확대 효과 제거) */}
                     <motion.div 
                       className="flex-shrink-0"
                       style={{
@@ -265,11 +259,7 @@ export const PanelDropdown: React.FC<PanelDropdownProps> = ({
                         justifyContent: 'center',
                         transition: 'all 0.3s ease',
                       }}
-                      whileHover={{ 
-                        scale: 1.1,
-                        rotate: 5,
-                        transition: { duration: 0.2 }
-                      }}
+                      // ❌ 호버 시 확대 및 회전 효과 제거
                     >
                       <PanelIcon 
                         className={`w-5 h-5 ${
