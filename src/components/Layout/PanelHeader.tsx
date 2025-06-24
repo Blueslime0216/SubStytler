@@ -34,108 +34,57 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   return (
     <div className="neu-panel-header flex items-center justify-between flex-shrink-0">
       <div className="flex items-center space-x-3 flex-1">
-        {/* 🎯 뉴모피즘 패널 선택 버튼 */}
+        {/* 🎯 심플한 뉴모피즘 패널 선택 버튼 */}
         <motion.button
           ref={titleButtonRef}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="relative cursor-pointer neu-interactive group overflow-hidden"
+          className="neu-btn-icon p-2 cursor-pointer neu-interactive"
           title={`${config.title} - 클릭하여 패널 변경`}
-          whileHover={{ 
-            scale: 1.05,
-            transition: { duration: 0.2 }
-          }}
-          whileTap={{ 
-            scale: 0.95,
-            transition: { duration: 0.1 }
-          }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '14px',
+            borderRadius: '12px',
             background: isDropdownOpen
               ? 'linear-gradient(145deg, var(--neu-accent), var(--neu-surface))'
-              : 'linear-gradient(145deg, var(--neu-base), var(--neu-accent))',
+              : 'var(--neu-base)',
             boxShadow: isDropdownOpen
               ? `
-                  inset 4px 4px 12px rgba(13, 17, 23, 0.6),
-                  inset -2px -2px 8px rgba(45, 55, 72, 0.4)
+                  inset 3px 3px 8px rgba(13, 17, 23, 0.6),
+                  inset -1px -1px 6px rgba(45, 55, 72, 0.4)
                 `
               : `
-                  6px 6px 18px rgba(13, 17, 23, 0.6),
-                  -3px -3px 12px rgba(45, 55, 72, 0.4)
+                  4px 4px 12px rgba(13, 17, 23, 0.6),
+                  -2px -2px 8px rgba(45, 55, 72, 0.4)
                 `,
-            border: isDropdownOpen 
-              ? '2px solid rgba(99, 179, 237, 0.5)'
-              : '2px solid rgba(45, 55, 72, 0.3)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            transition: 'all 0.2s ease',
           }}
         >
-          {/* ✨ 호버 글로우 효과 */}
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            initial={{ opacity: 0 }}
-            whileHover={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            style={{
-              background: `
-                radial-gradient(circle at 50% 50%, rgba(99, 179, 237, 0.2) 0%, transparent 70%)
-              `,
-              borderRadius: '14px',
-            }}
-          />
-
-          {/* 🎨 아이콘 */}
           <motion.div
             animate={{ 
               rotate: isDropdownOpen ? 180 : 0,
-              scale: isDropdownOpen ? 1.1 : 1,
             }}
             transition={{ 
-              duration: 0.3,
-              ease: [0.25, 0.46, 0.45, 0.94]
+              duration: 0.2,
+              ease: "easeInOut"
             }}
           >
             <IconComponent 
-              className={`w-5 h-5 ${
-                isDropdownOpen ? 'neu-text-primary' : 'neu-text-accent'
-              } transition-colors duration-300 relative z-10`} 
+              className={`w-4 h-4 ${
+                isDropdownOpen ? 'neu-text-primary' : 'neu-text-secondary'
+              } transition-colors duration-200`} 
             />
           </motion.div>
-
-          {/* 🔄 활성 상태 인디케이터 */}
-          {isDropdownOpen && (
-            <motion.div
-              className="absolute top-1 right-1 w-2 h-2 rounded-full"
-              style={{
-                background: 'linear-gradient(145deg, var(--neu-primary), var(--neu-primary-dark))',
-                boxShadow: '0 0 8px rgba(99, 179, 237, 0.6)',
-              }}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            />
-          )}
         </motion.button>
 
         {/* 📝 패널 정보 */}
-        <motion.div 
-          className="text-left"
-          animate={{ 
-            x: isDropdownOpen ? 4 : 0,
-            transition: { duration: 0.3 }
-          }}
-        >
+        <div className="text-left">
           <div className="neu-body-primary text-xs font-semibold">
             {config.title}
           </div>
           <div className="neu-caption text-xs opacity-70">
             {config.description}
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* 🛠️ 액션 버튼들 */}

@@ -37,8 +37,11 @@ export const usePanelActions = (
     console.log('🔀 패널 분할 시도:', { areaId, direction, newPanelType });
     
     if (areaId) {
+      // 🎯 실제 분할 실행
       splitArea(areaId, direction, newPanelType);
       console.log('✅ 패널 분할 완료');
+    } else {
+      console.warn('⚠️ areaId가 없어서 분할할 수 없습니다');
     }
     
     setIsActionsOpen(false);

@@ -11,7 +11,7 @@ import { StateCreator } from 'zustand';
 /**
  * Returns a partial zustand slice containing all layout actions.
  * The slice is kept separated from the store definition so that the main store file
- * stays lightweight (\u003c 100 lines).
+ * stays lightweight (<100 lines).
  */
 export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
   setAreas: (areas: AreaConfig[]) => {
@@ -23,37 +23,66 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     console.log('🔀 splitArea 호출:', { areaId, direction, newPanelType });
     const { areas } = get();
 
-    const splitAreaRecursive = (area: AreaConfig): AreaConfig => {
-      if (area.id === areaId && area.type === 'panel') {
-        return {
-          id: area.id,
-          type: 'split',
-          direction,
-          size: area.size,
-          minSize: area.minSize,
-          maxSize: area.maxSize,
-          children: [
-            { ...area, id: `${area.id}-1`, size: 50, minSize: 15, maxSize: 85 },
-            {
-              id: `${area.id}-2`,
-              type: 'panel',
-              panelType: newPanelType,
-              size: 50,
-              minSize: 15,
-              maxSize: 85,
-            },
-          ],
-        };
-      }
+    // 🔍 현재 areas 구조 확인
+    console.log('📊 현재 areas 구조:', areas);
 
-      if (area.children) {
-        return { ...area, children: area.children.map(splitAreaRecursive) };
+    const splitAreaRecursive = (area: any): any => {
+      console.log('🔍 검사 중인 area:', area);
+      
+      // 🎯 Area 시스템에서는 id로 직접 매칭
+      if (area.id === areaId) {
+        console.log('✅ 분할할 area 발견:', area);
+        
+        // 🆕 새로운 area 생성
+        const newAreaId = `${areaId}-split-${Date.now()}`;
+        const newArea = {
+          id: newAreaId,
+          x: direction === 'horizontal' ? area.x : area.x + area.width / 2,
+          y: direction === 'horizontal' ? area.y + area.height / 2 : area.y,
+          width: direction === 'horizontal' ? area.width : area.width / 2,
+          height: direction === 'horizontal' ? area.height / 2 : area.height,
+          minWidth: area.minWidth || 15,
+          minHeight: area.minHeight || 20,
+        };
+
+        // 🔄 기존 area 크기 조정
+        const updatedArea = {
+          ...area,
+          width: direction === 'horizontal' ? area.width : area.width / 2,
+          height: direction === 'horizontal' ? area.height / 2 : area.height,
+        };
+
+        console.log('🆕 새로운 area:', newArea);
+        console.log('🔄 수정된 기존 area:', updatedArea);
+
+        return [updatedArea, newArea];
       }
 
       return area;
     };
 
-    const newAreas = areas.map(splitAreaRecursive).map(validateAndFixConstraints);
+    // 🔄 모든 areas에 대해 분할 시도
+    const newAreas = [];
+    let splitOccurred = false;
+
+    for (const area of areas) {
+      const result = splitAreaRecursive(area);
+      if (Array.isArray(result)) {
+        // 분할이 발생한 경우
+        newAreas.push(...result);
+        splitOccurred = true;
+        console.log('✅ 분할 성공!');
+      } else {
+        newAreas.push(result);
+      }
+    }
+
+    if (!splitOccurred) {
+      console.warn('⚠️ 분할할 area를 찾지 못했습니다:', areaId);
+      console.log('📋 사용 가능한 area IDs:', areas.map(a => a.id));
+      return;
+    }
+
     console.log('✅ splitArea 완료, 새로운 areas:', newAreas);
     set({ areas: newAreas });
   },
@@ -87,24 +116,19 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     console.log('🔄 changePanelType 호출:', { areaId, newPanelType });
     const { areas } = get();
 
-    const changePanelTypeRecursive = (area: AreaConfig): AreaConfig => {
-      if (area.id === areaId && area.type === 'panel') {
-        console.log('✅ 패널 타입 변경 발견:', { 
-          oldType: area.panelType, 
-          newType: newPanelType,
-          areaId: area.id 
+    // 🎯 Area 시스템에서는 panelType이 아닌 id를 직접 변경
+    const newAreas = areas.map(area => {
+      if (area.id === areaId) {
+        console.log('✅ 패널 타입 변경:', { 
+          areaId: area.id,
+          newType: newPanelType
         });
-        return { ...area, panelType: newPanelType };
+        // Area 시스템에서는 id 자체가 패널 타입을 나타냄
+        return { ...area, id: newPanelType };
       }
-
-      if (area.children) {
-        return { ...area, children: area.children.map(changePanelTypeRecursive) };
-      }
-
       return area;
-    };
+    });
 
-    const newAreas = areas.map(changePanelTypeRecursive);
     console.log('🔄 changePanelType 완료, 새로운 areas:', newAreas);
     set({ areas: newAreas });
   },
