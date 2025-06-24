@@ -79,7 +79,7 @@
   overflow: hidden;
   position: relative;
   box-shadow: var(--neu-shadow-panel);
-  border: 2px solid rgba(45, 55, 72, 0.3);
+  /* border: 2px solid rgba(45, 55, 72, 0.3); */
   background: var(--neu-base);
 }
 

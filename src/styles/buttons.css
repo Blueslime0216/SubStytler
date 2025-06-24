@@ -158,3 +158,52 @@
   box-shadow: var(--neu-shadow-1), 0 0 0 3px var(--neu-interactive-border);
   cursor: pointer;
 }
+
+/* 뉴모피즘 버튼 스타일 */
+
+.neu-btn-icon-sm {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--neu-base);
+  border: 1px solid rgba(45, 55, 72, 0.3);
+  box-shadow: 
+    3px 3px 6px rgba(13, 17, 23, 0.7),
+    -2px -2px 4px rgba(45, 55, 72, 0.5),
+    inset 1px 1px 2px rgba(45, 55, 72, 0.2);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.neu-btn-icon-sm:hover {
+  box-shadow: 
+    4px 4px 8px rgba(13, 17, 23, 0.8),
+    -2px -2px 6px rgba(45, 55, 72, 0.6),
+    inset 1px 1px 2px rgba(45, 55, 72, 0.3);
+  transform: translateY(-1px);
+}
+
+.neu-btn-icon-sm:active {
+  box-shadow: 
+    inset 3px 3px 5px rgba(13, 17, 23, 0.7),
+    inset -1px -1px 3px rgba(45, 55, 72, 0.5);
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .neu-btn-icon-sm {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neu-btn-icon-sm {
+    transition: none;
+  }
+}

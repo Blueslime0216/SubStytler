@@ -5,6 +5,9 @@
 @import './styles/components.css';
 @import './styles/timeline.css';
 @import './styles/progress.css';
+@import './styles/volume.css';
+@import './styles/buttons.css';
+@import './styles/tooltip.css';
 @import './styles/video.css';
 @import './styles/layout.css';
 @import './styles/resize.css';

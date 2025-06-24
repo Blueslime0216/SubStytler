@@ -35,7 +35,11 @@ export const useTimelineInteraction = (containerRef: React.RefObject<HTMLDivElem
     if (!isDragging || !containerRef.current) return;
     
     const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
+    let x = e.clientX - rect.left;
+    
+    // Clamp x to be within the container bounds
+    x = Math.max(0, Math.min(x, rect.width));
+
     const time = pixelToTime(x);
     
     setCurrentTime(snapToFrame(time));

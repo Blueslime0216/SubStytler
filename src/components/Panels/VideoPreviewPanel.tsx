@@ -189,19 +189,22 @@ export const VideoPreviewPanel: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 드롭존 적용 여부 결정 
+  // 비디오가 없거나, 비디오가 있지만 로드되지 않았을 때만 드롭존 활성화
+  const shouldEnableDropzone = !hasVideo;
+  
   return (
     <div 
       className="h-full w-full min-w-0 min-h-0 flex flex-col neu-bg-base neu-video-panel"
-      {...(!hasVideo ? getRootProps() : {})} // 비디오가 없을 때만 드롭존 적용
+      {...(shouldEnableDropzone ? getRootProps() : {})}
       style={{
-        cursor: !hasVideo ? 'pointer' : 'default',
+        cursor: shouldEnableDropzone ? 'pointer' : 'default',
         background: isDragActive ? 'var(--neu-accent)' : 'var(--neu-base)',
-        border: isDragActive ? '2px dashed var(--neu-primary)' : '2px solid transparent',
         borderRadius: '18px',
         transition: 'all 0.2s ease'
       }}
     >
-      {!hasVideo && <input {...getInputProps()} />}
+      {shouldEnableDropzone && <input {...getInputProps()} />}
       
       <div className="flex-1 w-full h-full min-w-0 min-h-0 relative">
         <VideoPreviewPlayer
