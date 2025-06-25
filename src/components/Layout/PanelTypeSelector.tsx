@@ -124,13 +124,16 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
           boxShadow: isOpen 
             ? `inset 4px 4px 12px rgba(13, 17, 23, 0.6), inset -2px -2px 8px rgba(45, 55, 72, 0.4)`
             : `4px 4px 12px rgba(13, 17, 23, 0.6), -2px -2px 8px rgba(45, 55, 72, 0.4)`,
-          background: isOpen 
-            ? 'linear-gradient(145deg, var(--neu-accent), var(--neu-surface))'
+          backgroundColor: isOpen 
+            ? 'var(--neu-accent)'
             : 'var(--neu-base)'
         }}
         transition={animationConfig}
         style={{
           transition: 'all 0.2s ease',
+          background: isOpen 
+            ? 'linear-gradient(145deg, var(--neu-accent), var(--neu-surface))'
+            : 'var(--neu-base)'
         }}
       >
         <AnimatePresence mode="wait">
@@ -205,7 +208,7 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
                         }`}
                         style={{
                           background: isSelected 
-                            ? 'linear-gradient(145deg, var(--neu-primary), var(--neu-primary-dark))'
+                            ? 'var(--neu-primary)'
                             : 'var(--neu-base)',
                           boxShadow: isSelected
                             ? `inset 2px 2px 6px rgba(13, 17, 23, 0.6), inset -1px -1px 4px rgba(45, 55, 72, 0.4)`
