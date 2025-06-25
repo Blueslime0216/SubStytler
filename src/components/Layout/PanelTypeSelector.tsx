@@ -19,7 +19,6 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const selectorRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
 
   // 패널 타입 목록 생성 (현재 타입을 중앙에 배치)
   const panelTypes = Object.keys(panelConfig) as PanelType[];
@@ -106,8 +105,8 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
     type: "tween" as const
   };
 
-  const iconSize = 48; // 각 아이콘의 너비
-  const iconSpacing = 16; // 아이콘 간 간격
+  const iconSize = 40; // 각 아이콘의 너비
+  const iconSpacing = 12; // 아이콘 간 간격
   const totalIconWidth = iconSize + iconSpacing;
 
   return (
@@ -115,25 +114,24 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
       {/* 메인 선택기 버튼 */}
       <motion.button
         onClick={toggleSelector}
-        className="neu-btn-icon p-2 cursor-pointer neu-interactive relative overflow-hidden"
+        className="relative overflow-hidden cursor-pointer neu-interactive flex items-center justify-center"
         title={`${currentConfig.title} - 클릭하여 패널 변경`}
         initial={false}
         animate={{
-          width: isOpen ? 160 : 48, // 2배 확장
+          width: isOpen ? 180 : 48, // 더 넓게 확장
+          height: 48,
           borderRadius: isOpen ? 24 : 12,
-          boxShadow: isOpen 
-            ? `inset 4px 4px 12px rgba(13, 17, 23, 0.6), inset -2px -2px 8px rgba(45, 55, 72, 0.4)`
-            : `4px 4px 12px rgba(13, 17, 23, 0.6), -2px -2px 8px rgba(45, 55, 72, 0.4)`,
-          backgroundColor: isOpen 
-            ? 'var(--neu-accent)'
-            : 'var(--neu-base)'
         }}
         transition={animationConfig}
         style={{
-          transition: 'all 0.2s ease',
           background: isOpen 
-            ? 'linear-gradient(145deg, var(--neu-accent), var(--neu-surface))'
-            : 'var(--neu-base)'
+            ? 'var(--neu-accent)'
+            : 'var(--neu-base)',
+          boxShadow: isOpen 
+            ? `inset 4px 4px 12px rgba(13, 17, 23, 0.6), inset -2px -2px 8px rgba(45, 55, 72, 0.4)`
+            : `4px 4px 12px rgba(13, 17, 23, 0.6), -2px -2px 8px rgba(45, 55, 72, 0.4)`,
+          border: '2px solid rgba(45, 55, 72, 0.3)',
+          transition: 'all 0.2s ease',
         }}
       >
         <AnimatePresence mode="wait">
@@ -145,9 +143,9 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={animationConfig}
-              className="flex items-center justify-center"
+              className="flex items-center justify-center w-full h-full"
             >
-              <CurrentIcon className="w-4 h-4 neu-text-secondary transition-colors duration-200" />
+              <CurrentIcon className="w-5 h-5 neu-text-secondary transition-colors duration-200" />
             </motion.div>
           ) : (
             // 열린 상태: 아이콘 캐러셀
@@ -164,7 +162,7 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
               <motion.div
                 className="flex items-center absolute"
                 animate={{
-                  x: -selectedIndex * totalIconWidth + 56 // 중앙 정렬을 위한 오프셋
+                  x: -selectedIndex * totalIconWidth + 78 // 중앙 정렬을 위한 오프셋 조정
                 }}
                 transition={animationConfig}
                 style={{
@@ -203,16 +201,15 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
                       }}
                     >
                       <motion.div
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                          isSelected ? 'neu-shadow-inset' : 'neu-shadow-subtle'
-                        }`}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center"
                         style={{
                           background: isSelected 
                             ? 'var(--neu-primary)'
                             : 'var(--neu-base)',
                           boxShadow: isSelected
-                            ? `inset 2px 2px 6px rgba(13, 17, 23, 0.6), inset -1px -1px 4px rgba(45, 55, 72, 0.4)`
-                            : `2px 2px 6px rgba(13, 17, 23, 0.4), -1px -1px 4px rgba(45, 55, 72, 0.3)`
+                            ? `inset 2px 2px 6px rgba(13, 17, 23, 0.6), inset -1px -1px 4px rgba(45, 55, 72, 0.4), 0 0 8px rgba(99, 179, 237, 0.4)`
+                            : `2px 2px 6px rgba(13, 17, 23, 0.4), -1px -1px 4px rgba(45, 55, 72, 0.3)`,
+                          border: '1px solid rgba(45, 55, 72, 0.3)',
                         }}
                         animate={{
                           boxShadow: isSelected
@@ -234,15 +231,15 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
 
               {/* 좌우 그라데이션 마스크 */}
               <div 
-                className="absolute left-0 top-0 bottom-0 w-4 pointer-events-none"
+                className="absolute left-0 top-0 bottom-0 w-6 pointer-events-none"
                 style={{
-                  background: 'linear-gradient(90deg, var(--neu-base), transparent)'
+                  background: 'linear-gradient(90deg, var(--neu-accent), transparent)'
                 }}
               />
               <div 
-                className="absolute right-0 top-0 bottom-0 w-4 pointer-events-none"
+                className="absolute right-0 top-0 bottom-0 w-6 pointer-events-none"
                 style={{
-                  background: 'linear-gradient(270deg, var(--neu-base), transparent)'
+                  background: 'linear-gradient(270deg, var(--neu-accent), transparent)'
                 }}
               />
             </motion.div>
@@ -258,12 +255,12 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={animationConfig}
-            className="absolute top-full left-0 mt-2 px-2 py-1 rounded-lg text-xs"
+            className="absolute top-full left-0 mt-2 px-3 py-2 rounded-lg text-xs font-medium"
             style={{
               background: 'var(--neu-base)',
-              boxShadow: 'var(--neu-shadow-subtle)',
-              border: '1px solid rgba(45, 55, 72, 0.3)',
-              color: 'var(--neu-text-secondary)',
+              boxShadow: `4px 4px 12px rgba(13, 17, 23, 0.6), -2px -2px 8px rgba(45, 55, 72, 0.4)`,
+              border: '2px solid rgba(45, 55, 72, 0.3)',
+              color: 'var(--neu-text-primary)',
               whiteSpace: 'nowrap',
               zIndex: 1000
             }}

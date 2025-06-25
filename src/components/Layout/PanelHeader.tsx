@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { PanelType } from '../../types/project';
 import { PanelTypeSelector } from './PanelTypeSelector';
+import { panelConfig } from '../../config/panelConfig';
 import type { BorderDir } from './hooks/areaDragUtils';
 
 interface PanelHeaderProps {
@@ -28,9 +29,12 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   actionsButtonRef,
   coverButtonRef,
 }) => {
+  // 현재 패널 타입의 설정 가져오기
+  const config = panelConfig[type];
+
   return (
-    <div className="neu-panel-header flex items-center justify-between flex-shrink-0">
-      <div className="flex items-center space-x-3 flex-1">
+    <div className="neu-panel-header flex items-center justify-between flex-shrink-0 px-4 py-3">
+      <div className="flex items-center space-x-4 flex-1 min-w-0">
         {/* 🎯 새로운 패널 타입 선택기 */}
         <PanelTypeSelector
           currentType={type}
@@ -40,17 +44,17 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
 
         {/* 📝 패널 정보 */}
         <div className="text-left min-w-0 flex-1">
-          <div className="neu-body-primary text-xs font-semibold truncate">
-            {type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+          <div className="neu-body-primary text-sm font-semibold truncate text-white">
+            {config.title}
           </div>
-          <div className="neu-caption text-xs opacity-70 truncate">
-            Interactive panel
+          <div className="neu-caption text-xs opacity-70 truncate text-gray-300">
+            {config.description}
           </div>
         </div>
       </div>
 
       {/* 🛠️ 액션 / 덮기 버튼들 */}
-      <div className="flex items-center space-x-2 flex-shrink-0">
+      <div className="flex items-center space-x-3 flex-shrink-0">
         {/* ➕ 분할 버튼 */}
         <motion.button
           ref={actionsButtonRef}
@@ -62,16 +66,17 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
           style={{
             borderRadius: '10px',
             background: isActionsOpen
-              ? 'linear-gradient(145deg, var(--neu-accent), var(--neu-surface))'
+              ? 'var(--neu-accent)'
               : 'var(--neu-base)',
             boxShadow: isActionsOpen
               ? `inset 3px 3px 8px rgba(13, 17, 23, 0.6), inset -1px -1px 6px rgba(45, 55, 72, 0.4)`
               : `4px 4px 12px rgba(13, 17, 23, 0.6), -2px -2px 8px rgba(45, 55, 72, 0.4)`,
+            border: '2px solid rgba(45, 55, 72, 0.3)',
             transition: 'all 0.2s ease',
           }}
         >
           <motion.svg 
-            className="w-3.5 h-3.5" 
+            className="w-3.5 h-3.5 text-white" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -116,10 +121,11 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                     ...positionStyle[dir],
                     borderRadius: '6px',
                     background: 'var(--neu-base)',
-                    boxShadow: `4px 4px 8px rgba(13,17,23,0.4), -2px -2px 6px rgba(45,55,72,0.3)`
+                    boxShadow: `4px 4px 8px rgba(13,17,23,0.4), -2px -2px 6px rgba(45,55,72,0.3)`,
+                    border: '1px solid rgba(45, 55, 72, 0.3)',
                   }}
                 >
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                  <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor">
                     <path d={iconPaths[dir]} />
                   </svg>
                 </motion.button>
