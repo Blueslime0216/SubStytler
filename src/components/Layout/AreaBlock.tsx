@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Area } from '../../types/area';
-import { BorderDir, LinkedArea } from './hooks/areaDragUtils';
+import { BorderDir, LinkedArea, getAdjacentAreas } from './hooks/areaDragUtils';
 
 interface AreaBlockProps {
+  areas: Area[]; // All areas in the layout – needed to decide which borders should be draggable
   area: Area;
   dragging: any;
   hoveredBorder: { areaId: string; dir: BorderDir } | null;
@@ -20,6 +21,7 @@ interface AreaBlockProps {
 const BORDER_THICKNESS = 20;
 
 const AreaBlockComponent: React.FC<AreaBlockProps> = ({
+  areas,
   area,
   dragging,
   hoveredBorder,
@@ -96,92 +98,73 @@ const AreaBlockComponent: React.FC<AreaBlockProps> = ({
     onBorderMouseDown(e, area.id, dir);
   }, [setHoveredBorder, onBorderMouseDown, area.id]);
 
-  // 🔧 성능 최적화: 경계 요소들을 메모이제이션
-  const borderElements = React.useMemo(() => [
+  // 🔧 경계 요소들을 메모이제이션하여 필요할 때만 렌더링
+  const borderElements = React.useMemo(() => {
+    // 각 방향에 인접 영역이 있는지 계산
+    const interactive: Record<BorderDir, boolean> = {
+      left: getAdjacentAreas(areas, area, 'left').length > 0,
+      right: getAdjacentAreas(areas, area, 'right').length > 0,
+      top: getAdjacentAreas(areas, area, 'top').length > 0,
+      bottom: getAdjacentAreas(areas, area, 'bottom').length > 0,
+    };
+
+    const elems: React.ReactNode[] = [];
+
+    const maybeAdd = (dir: BorderDir, style: React.CSSProperties, cursor: string) => {
+      if (!interactive[dir]) return;
+      elems.push(
+        <div
+          key={dir}
+          className={`area-border ${dir === 'left' || dir === 'right' ? 'area-border-vertical' : 'area-border-horizontal'}`}
+          style={{
+            ...style,
+            position: 'absolute',
+            cursor,
+            zIndex: 10,
+            background: 'transparent',
+            opacity: 0,
+          }}
+          onMouseDown={e => handleBorderMouseDown(e, dir)}
+          onMouseEnter={() => handleBorderMouseEnter(dir)}
+          onMouseLeave={handleBorderMouseLeave}
+        />
+      );
+    };
+
     // 좌측 경계
-    <div
-      key="left"
-      className="area-border area-border-vertical"
-      style={{
-        left: 0,
-        top: 0,
-        width: BORDER_THICKNESS,
-        height: '100%',
-        position: 'absolute',
-        cursor: 'ew-resize',
-        zIndex: 10,
-        background: 'transparent',
-        opacity: 0,
-      }}
-      onMouseDown={e => handleBorderMouseDown(e, 'left')}
-      onMouseEnter={() => handleBorderMouseEnter('left')}
-      onMouseLeave={handleBorderMouseLeave}
-      title="드래그하여 좌측 경계 조정"
-    />,
-    
+    maybeAdd('left', {
+      left: 0,
+      top: 0,
+      width: BORDER_THICKNESS,
+      height: '100%',
+    }, 'ew-resize');
+
     // 우측 경계
-    <div
-      key="right"
-      className="area-border area-border-vertical"
-      style={{
-        right: 0,
-        top: 0,
-        width: BORDER_THICKNESS,
-        height: '100%',
-        position: 'absolute',
-        cursor: 'ew-resize',
-        zIndex: 10,
-        background: 'transparent',
-        opacity: 0,
-      }}
-      onMouseDown={e => handleBorderMouseDown(e, 'right')}
-      onMouseEnter={() => handleBorderMouseEnter('right')}
-      onMouseLeave={handleBorderMouseLeave}
-      title="드래그하여 우측 경계 조정"
-    />,
-    
+    maybeAdd('right', {
+      right: 0,
+      top: 0,
+      width: BORDER_THICKNESS,
+      height: '100%',
+    }, 'ew-resize');
+
     // 상단 경계
-    <div
-      key="top"
-      className="area-border area-border-horizontal"
-      style={{
-        left: 0,
-        top: 0,
-        width: '100%',
-        height: BORDER_THICKNESS,
-        position: 'absolute',
-        cursor: 'ns-resize',
-        zIndex: 10,
-        background: 'transparent',
-        opacity: 0,
-      }}
-      onMouseDown={e => handleBorderMouseDown(e, 'top')}
-      onMouseEnter={() => handleBorderMouseEnter('top')}
-      onMouseLeave={handleBorderMouseLeave}
-      title="드래그하여 상단 경계 조정"
-    />,
-    
+    maybeAdd('top', {
+      left: 0,
+      top: 0,
+      width: '100%',
+      height: BORDER_THICKNESS,
+    }, 'ns-resize');
+
     // 하단 경계
-    <div
-      key="bottom"
-      className="area-border area-border-horizontal"
-      style={{
-        left: 0,
-        bottom: 0,
-        width: '100%',
-        height: BORDER_THICKNESS,
-        position: 'absolute',
-        cursor: 'ns-resize',
-        zIndex: 10,
-        background: 'transparent',
-        opacity: 0,
-      }}
-      onMouseDown={e => handleBorderMouseDown(e, 'bottom')}
-      onMouseEnter={() => handleBorderMouseEnter('bottom')}
-      onMouseLeave={handleBorderMouseLeave}
-      title="드래그하여 하단 경계 조정"
-    />
-  ], [handleBorderMouseDown, handleBorderMouseEnter, handleBorderMouseLeave]);
+    maybeAdd('bottom', {
+      left: 0,
+      bottom: 0,
+      width: '100%',
+      height: BORDER_THICKNESS,
+    }, 'ns-resize');
+
+    return elems;
+  }, [areas, area, handleBorderMouseDown, handleBorderMouseEnter, handleBorderMouseLeave]);
 
   return (
     <motion.div
@@ -234,7 +217,8 @@ export const AreaBlock = React.memo(AreaBlockComponent, (prevProps, nextProps) =
   
   // 호버 상태는 패딩에 영향을 주지 않으므로 리렌더링 조건에서 제외
   const hoveredBorderChanged = false;
+  const areasChanged = prevProps.areas !== nextProps.areas;
   
   // 변경사항이 없으면 리렌더링 방지
-  return !areaChanged && !draggingChanged && !hoveredBorderChanged;
+  return !areaChanged && !draggingChanged && !hoveredBorderChanged && !areasChanged;
 });

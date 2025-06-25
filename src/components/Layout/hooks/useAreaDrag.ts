@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Area } from '../../../types/area';
 import { BorderDir, LinkedArea, detectLinkedAreas, clamp, EPSILON } from './areaDragUtils';
+import { useHistoryStore } from '../../../stores/historyStore';
 
 const BORDER_THICKNESS = 8;
 const SNAP_THRESHOLD = 2; // percent distance to trigger snapping
@@ -259,6 +260,9 @@ export function useAreaDrag(
         pendingUpdate.current = null;
       }
       
+      // 드래그 종료 후 레이아웃 스냅샷 저장 (Redo 용)
+      useHistoryStore.getState().record(areasRef.current);
+      
       // 드래그 종료 시 body에서 클래스 제거
       document.body.classList.remove('dragging-active');
       
@@ -305,6 +309,9 @@ export function useAreaDrag(
     // 🔧 성능 최적화: 캐시된 연결 영역 사용
     const linked = getLinkedBorders(areaId, dir);
     
+    // 드래그 시작 시 레이아웃 스냅샷 저장 (Undo 용)
+    useHistoryStore.getState().record(areas);
+
     setDragging({ areaId, dir, lastX: e.clientX, lastY: e.clientY, linked });
     lastUpdateTimeRef.current = performance.now();
   }, [areas, getLinkedBorders]);

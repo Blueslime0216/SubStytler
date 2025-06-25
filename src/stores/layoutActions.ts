@@ -2,6 +2,7 @@ import { PanelType } from '../types/project';
 import { StateCreator } from 'zustand';
 import { detectLinkedAreas, EPSILON } from '../components/Layout/hooks/areaDragUtils';
 import { Area } from '../types/area';
+import { useHistoryStore } from './historyStore';
 
 /**
  * 🎯 Area 시스템 전용 레이아웃 액션 - 성능 최적화 + ID 문제 해결
@@ -90,6 +91,8 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     });
 
     set({ areas: newAreas });
+    // 📜 히스토리 기록
+    useHistoryStore.getState().record(newAreas);
   },
 
   changePanelType: (areaId: string, newPanelType: PanelType) => {
@@ -127,6 +130,8 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     });
 
     set({ areas: newAreas });
+    // 📜 히스토리 기록
+    useHistoryStore.getState().record(newAreas);
   },
 
   removeArea: (areaId: string) => {
@@ -151,6 +156,8 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     });
 
     set({ areas: newAreas });
+    // 📜 히스토리 기록
+    useHistoryStore.getState().record(newAreas);
   },
 
   /**
@@ -234,6 +241,8 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
 
     console.log('✅ 영역 덮기 완료:', { base: areaId, removed: removeIds, dir });
     set({ areas: newAreas });
+    // 📜 히스토리 기록
+    useHistoryStore.getState().record(newAreas);
   },
 
   // 🔧 기타 액션들 (현재 사용하지 않음)

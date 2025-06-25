@@ -4,12 +4,16 @@ import { useLayoutStore } from './stores/layoutStore';
 import { shallow } from 'zustand/shallow';
 import { panelRegistry } from './config/panelRegistry';
 import { Area } from './types/area';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(
     state => ({ areas: state.areas, setAreas: state.setAreas }),
     shallow,
   );
+
+  // Register global keyboard shortcuts
+  useKeyboardShortcuts();
 
   // 🎯 동적 패널 렌더링 로직 - 모든 ID 패턴 지원
   const renderPanel = useMemo(() => {

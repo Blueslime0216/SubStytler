@@ -181,8 +181,7 @@ const VideoControllerVolumeButton: React.FC<VideoControllerVolumeButtonProps> = 
           <div 
             className="video-controller-volume-thumb"
             style={{ 
-              left: `${isMuted ? 0 : volume * 100}%`,
-              transform: 'translateX(-50%)'
+              left: `${isMuted ? 0 : volume * 100}%`
             }}
           ></div>
         </div>

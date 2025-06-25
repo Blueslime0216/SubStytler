@@ -37,7 +37,6 @@
 .area-border {
   position: absolute;
   z-index: 10;
-  border-radius: 4px;
   /* 🔧 성능 최적화: 하드웨어 가속 */
   transform: translateZ(0);
   backface-visibility: hidden;

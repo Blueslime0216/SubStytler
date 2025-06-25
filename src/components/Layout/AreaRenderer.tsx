@@ -38,6 +38,7 @@ export const AreaRenderer: React.FC<AreaRendererProps> = ({ areas, setAreas, ren
         return (
           <AreaBlock
             key={area.id}
+            areas={areas}
             area={area}
             dragging={dragging}
             hoveredBorder={hoveredBorder}

@@ -302,6 +302,7 @@ video {
 .video-controller-volume-slider.visible {
   width: 80px;
   opacity: 1;
+  overflow: visible;
 }
 
 .video-controller-volume-track-container {
