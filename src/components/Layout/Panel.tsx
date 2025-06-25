@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { PanelType } from '../../types/project';
 import { useLayoutStore } from '../../stores/layoutStore';
 import { PanelBody } from './PanelBody';
-import { PanelDropdown } from './PanelDropdown';
 import { PanelActionsDropdown } from './PanelActionsDropdown';
 import { usePanelActions } from '../../hooks/usePanelActions';
 import { PanelHeader } from './PanelHeader';
@@ -11,7 +10,7 @@ import { extractPanelType } from '../../config/panelRegistry';
 import { BorderDir } from './hooks/areaDragUtils';
 
 interface PanelProps {
-  type?: PanelType; // 🎯 선택적으로 변경
+  type?: PanelType;
   className?: string;
   areaId?: string;
   children?: React.ReactNode;
@@ -21,20 +20,18 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
   // 🎯 패널 타입 결정 - areaId에서 추출하거나 전달받은 type 사용
   const actualType = type || (areaId ? extractPanelType(areaId) : 'empty');
   
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const [, setShowRemoveConfirm] = useState(false);
   
   const titleButtonRef = useRef<HTMLButtonElement>(null);
   const actionsButtonRef = useRef<HTMLButtonElement>(null);
   
-  const { areas } = useLayoutStore();
+  const { areas, changePanelType } = useLayoutStore();
   const {
     canRemove,
     availablePanels,
-    handlePanelChange,
     handleSplitPanel,
-  } = usePanelActions(areaId, actualType, areas, setIsDropdownOpen, setIsActionsOpen, setShowRemoveConfirm);
+  } = usePanelActions(areaId, actualType, areas, () => {}, setIsActionsOpen, setShowRemoveConfirm);
 
   // 덮기(제거) 기능
   const coverArea = useLayoutStore(state => state.coverArea);
@@ -44,6 +41,19 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     coverArea(areaId, dir);
   }, [areaId, canRemove, coverArea]);
 
+  // 🎯 패널 타입 변경 핸들러
+  const handleTypeChange = React.useCallback((newPanelType: PanelType) => {
+    if (!areaId) {
+      console.warn('⚠️ areaId가 없어서 패널 변경할 수 없습니다');
+      return;
+    }
+    
+    if (newPanelType !== actualType) {
+      changePanelType(areaId, newPanelType);
+      console.log('✅ 패널 변경 완료:', newPanelType);
+    }
+  }, [areaId, actualType, changePanelType]);
+
   console.log('🎨 Panel 렌더링:', {
     areaId,
     providedType: type,
@@ -52,12 +62,6 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
   });
 
   // 🔧 성능 최적화: 이벤트 핸들러 메모이제이션
-  const onPanelChange = React.useCallback((newPanelType: PanelType) => {
-    console.log('🔄 패널 변경 요청:', { areaId, from: actualType, to: newPanelType });
-    handlePanelChange(newPanelType);
-    setIsDropdownOpen(false);
-  }, [handlePanelChange, areaId, actualType]);
-
   const onSplitPanel = React.useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
     console.log('🔀 패널 분할 요청:', { areaId, direction, newPanelType });
     handleSplitPanel(direction, newPanelType);
@@ -69,8 +73,7 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
       className={`neu-panel ${className}`}
       initial={{ opacity: 1, scale: 1 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.15, ease: 'easeOut' }} // 🔧 더 빠른 애니메이션
-      // 🔧 성능 최적화: 레이아웃 최적화
+      transition={{ duration: 0.15, ease: 'easeOut' }}
       style={{
         contain: 'layout style',
         willChange: 'auto'
@@ -78,12 +81,13 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     >
       <PanelHeader
         type={actualType}
-        isDropdownOpen={isDropdownOpen}
-        setIsDropdownOpen={setIsDropdownOpen}
+        isDropdownOpen={false} // 더 이상 사용하지 않음
+        setIsDropdownOpen={() => {}} // 더 이상 사용하지 않음
         isActionsOpen={isActionsOpen}
         setIsActionsOpen={setIsActionsOpen}
         canRemove={canRemove}
         onCover={handleCoverPanel}
+        onTypeChange={handleTypeChange} // 🆕 새로운 핸들러 추가
         titleButtonRef={titleButtonRef}
         actionsButtonRef={actionsButtonRef}
         coverButtonRef={undefined}
@@ -92,17 +96,7 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
       {/* Panel Content */}
       <PanelBody type={actualType} />
 
-      {/* Dropdowns - 조건부 렌더링으로 성능 최적화 */}
-      {isDropdownOpen && (
-        <PanelDropdown
-          isOpen={isDropdownOpen}
-          onClose={() => setIsDropdownOpen(false)}
-          triggerRef={titleButtonRef}
-          availablePanels={availablePanels}
-          onPanelChange={onPanelChange}
-        />
-      )}
-
+      {/* Actions Dropdown - 조건부 렌더링으로 성능 최적화 */}
       {isActionsOpen && (
         <PanelActionsDropdown
           isOpen={isActionsOpen}
