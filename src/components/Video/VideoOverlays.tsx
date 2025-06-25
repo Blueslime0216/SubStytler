@@ -38,18 +38,18 @@ export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
       {/* 업로드 중 표시 */}
       {isLoading && (
         <VideoProgressOverlay progress={uploadProgress} />
-      )}
-      
+          )}
+          
       {/* 로딩 표시는 업로드 중이 아니고, 비디오가 로드되지 않았을 때만 */}
       {hasVideo && !videoError && !isLoading && !isVideoLoaded && (
-        <VideoLoadingOverlay isLoading={true} />
-      )}
+            <VideoLoadingOverlay isLoading={true} />
+          )}
 
       {/* 에러 표시 */}
-      {videoError && (
-        <div className="pointer-events-auto">
-          <VideoErrorOverlay error={videoError} onRetry={onRetry} />
-        </div>
+          {videoError && (
+            <div className="pointer-events-auto">
+              <VideoErrorOverlay error={videoError} onRetry={onRetry} />
+            </div>
       )}
       
       {/* 자막 오버레이 - 비디오가 로드되었을 때 표시 */}

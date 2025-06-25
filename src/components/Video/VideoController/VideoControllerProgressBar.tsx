@@ -49,20 +49,21 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
     setCurrentTime(newTime);
   };
   
-  // 마우스 움직임에 따른 시간 업데이트
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!progressBarRef.current) return;
-    
-    // 호버 시 시간 툴팁 표시
-    const hoverTime = getTimeFromPosition(e.clientX);
+  // 프로그레스바 내부 이동 시
+  const handleLocalMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const newTime = getTimeFromPosition(e.clientX);
     setHoverPosition(e.clientX);
-    
-    // 드래그 중이라면 실제 시간 변경
     if (isDragging && isVideoLoaded) {
-      e.preventDefault();
-      const newTime = Math.max(0, Math.min(duration, hoverTime));
-      setCurrentTime(newTime);
+      setCurrentTime(Math.max(0, Math.min(duration, newTime)));
     }
+  };
+
+  // document mousemove는 드래그 중일 때만
+  const handleDocMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
+    const newTime = getTimeFromPosition(e.clientX);
+    setCurrentTime(Math.max(0, Math.min(duration, newTime)));
+    setHoverPosition(e.clientX);
   };
   
   // 드래그 종료
@@ -80,13 +81,14 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
   
   // 이벤트 리스너 등록/해제
   useEffect(() => {
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
+    if (isDragging) {
+      document.addEventListener('mousemove', handleDocMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleDocMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
   }, [isDragging, isVideoLoaded, duration]);
   
   // 툴팁 시간 계산 및 위치 계산
@@ -108,6 +110,7 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
       ref={progressBarRef}
       className="video-controller-progress-container"
       onMouseDown={handleMouseDown}
+      onMouseMove={handleLocalMouseMove}
       onMouseLeave={handleMouseLeave}
     >
       {/* 배경 트랙 */}
@@ -123,8 +126,7 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
       <div 
         className="video-controller-progress-thumb"
         style={{ 
-          left: `${progressPercentage}%`,
-          transform: 'translateX(-50%)'
+          left: `${progressPercentage}%`
         }}
       ></div>
       

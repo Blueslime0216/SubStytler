@@ -14,7 +14,6 @@ interface VideoControllerProps {
   isMuted: boolean;
   onVolumeChange: (volume: number) => void;
   onMuteToggle: () => void;
-  onFullscreen: () => void;
   onSettings: () => void;
   parentRef?: React.RefObject<HTMLElement>;
 }
@@ -25,7 +24,6 @@ export const VideoController: React.FC<VideoControllerProps> = ({
   isMuted,
   onVolumeChange,
   onMuteToggle,
-  onFullscreen,
   onSettings,
   parentRef
 }) => {
@@ -42,6 +40,18 @@ export const VideoController: React.FC<VideoControllerProps> = ({
   const [isInteracting, setIsInteracting] = useState(false);
   const controllerRef = useRef<HTMLDivElement>(null);
   const hideTimeoutRef = useRef<number | null>(null);
+  const [isPinned, setIsPinned] = useState(false);
+
+  const togglePin = () => setIsPinned(p => !p);
+
+  // modify visibility logic: ensure always visible when pinned
+  const safeSetVisible = (v:boolean)=>{
+    if(isPinned){
+      setIsVisible(true);
+    } else {
+      setIsVisible(v);
+    }
+  };
 
   // 마우스 진입 시 컨트롤러 표시
   const handleMouseEnter = () => {
@@ -54,14 +64,14 @@ export const VideoController: React.FC<VideoControllerProps> = ({
 
   // 마우스 떠날 때 컨트롤러 숨기기 (지연 처리)
   const handleMouseLeave = () => {
-    if (isInteracting) return;
+    if (isInteracting || isPinned) return;
     
     if (hideTimeoutRef.current) {
       clearTimeout(hideTimeoutRef.current);
     }
     
     hideTimeoutRef.current = window.setTimeout(() => {
-      setIsVisible(false);
+      if(!isPinned) setIsVisible(false);
       hideTimeoutRef.current = null;
     }, 100); // 0.1초 후 사라짐
   };
@@ -97,12 +107,12 @@ export const VideoController: React.FC<VideoControllerProps> = ({
         hideTimeoutRef.current = null;
       }
       setIsVisible(true);
-    };
+  };
     const handleLeave = () => {
-      if (isInteracting) return;
+      if (isInteracting || isPinned) return;
       if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
       hideTimeoutRef.current = window.setTimeout(() => {
-        setIsVisible(false);
+        if(!isPinned) setIsVisible(false);
         hideTimeoutRef.current = null;
       }, 100);
     };
@@ -112,7 +122,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
       el.removeEventListener('mouseenter', handleEnter);
       el.removeEventListener('mouseleave', handleLeave);
     };
-  }, [parentRef, isInteracting]);
+  }, [parentRef, isInteracting, isPinned]);
 
   // 글로벌 마우스 위치 기반 가드 – 커서가 비디오 영역이나 컨트롤러 위에 있으면 항상 보이도록
   useEffect(() => {
@@ -131,10 +141,10 @@ export const VideoController: React.FC<VideoControllerProps> = ({
     document.addEventListener('mousemove', handleGlobalMove);
     return () => document.removeEventListener('mousemove', handleGlobalMove);
   }, [parentRef]);
-
+      
   // 클린업 함수
   useEffect(() => {
-    return () => {
+      return () => {
       if (hideTimeoutRef.current) {
         clearTimeout(hideTimeoutRef.current);
       }
@@ -153,7 +163,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: '100%', opacity: 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-        >
+            >
           <VideoControllerProgressBar 
             currentTime={currentTime}
             duration={duration}
@@ -198,15 +208,16 @@ export const VideoController: React.FC<VideoControllerProps> = ({
                 frameNumber={Math.floor((currentTime * fps) / 1000)}
                 fps={fps}
               />
-            </div>
-            
+          </div>
+          
             <div className="video-controller-right">
               <VideoControllerAdditionalButtons
                 onSettings={onSettings}
-                onFullscreen={onFullscreen}
+                onPinToggle={togglePin}
+                isPinned={isPinned}
               />
-            </div>
-          </div>
+        </div>
+      </div>
         </motion.div>
       )}
     </AnimatePresence>

@@ -144,19 +144,6 @@ export const VideoPreviewPanel: React.FC = () => {
     console.log('Open video settings');
   };
 
-  const handleFullscreen = () => {
-    const panel = panelRef.current;
-    if (!panel) return;
-    
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      panel.requestFullscreen().catch(err => {
-        console.error('Error attempting to enable fullscreen mode:', err);
-      });
-    }
-  };
-
   const handleRetry = () => {
     setVideoError(null);
     setIsVideoLoaded(false);
@@ -286,7 +273,6 @@ export const VideoPreviewPanel: React.FC = () => {
             onVolumeChange={handleVolumeChange}
             onMuteToggle={handleMuteToggle}
             onSettings={handleSettings}
-            onFullscreen={handleFullscreen}
             parentRef={videoAreaRef}
           />
         )}

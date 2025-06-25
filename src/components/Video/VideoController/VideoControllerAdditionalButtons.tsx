@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import { Pin, PinOff } from 'lucide-react';
 
 interface VideoControllerAdditionalButtonsProps {
   onSettings: () => void;
-  onFullscreen: () => void;
+  onPinToggle: () => void;
+  isPinned: boolean;
 }
 
 const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButtonsProps> = ({
   onSettings,
-  onFullscreen
+  onPinToggle,
+  isPinned
 }) => {
   const [isSubtitleOn, setIsSubtitleOn] = useState(false);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
@@ -74,23 +77,24 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
         )}
       </div>
       
-      {/* 전체화면 버튼 */}
+      {/* 컨트롤러 고정 토글 버튼 */}
       <div className="video-controller-button-wrapper">
         <button 
-          className="video-controller-button"
-          onClick={onFullscreen}
-          onMouseEnter={() => handleMouseEnter('fullscreen')}
+          className={`video-controller-button ${isPinned ? 'active' : ''}`}
+          onClick={onPinToggle}
+          onMouseEnter={() => handleMouseEnter('pin')}
           onMouseLeave={handleMouseLeave}
-          title="전체화면"
+          title="컨트롤러 고정/해제"
         >
-          <svg className="video-controller-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 3H5C3.89543 3 3 3.89543 3 5V8M21 8V5C21 3.89543 20.1046 3 19 3H16M16 21H19C20.1046 21 21 20.1046 21 19V16M3 16V19C3 20.1046 3.89543 21 5 21H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          {isPinned ? (
+            <PinOff className="video-controller-icon" width={20} height={20} />
+          ) : (
+            <Pin className="video-controller-icon" width={20} height={20} />
+          )}
         </button>
-        
-        {showTooltip === 'fullscreen' && (
+        {showTooltip === 'pin' && (
           <div className="video-controller-tooltip">
-            전체화면
+            {isPinned ? '고정 해제' : '컨트롤러 고정'}
           </div>
         )}
       </div>
