@@ -1,9 +1,10 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PanelType } from '../../types/project';
 import { PanelTypeSelector } from './PanelTypeSelector';
 import { panelConfig } from '../../config/panelConfig';
 import type { BorderDir } from './hooks/areaDragUtils';
+import { SplitSquareHorizontal, SplitSquareVertical, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ChevronDown } from 'lucide-react';
 
 interface PanelHeaderProps {
   type: PanelType;
@@ -15,6 +16,7 @@ interface PanelHeaderProps {
   titleButtonRef: React.RefObject<HTMLButtonElement>;
   actionsButtonRef: React.RefObject<HTMLButtonElement>;
   coverButtonRef?: React.RefObject<HTMLDivElement>;
+  onSplitPanel: (direction: 'horizontal' | 'vertical', newPanelType: PanelType) => void;
 }
 
 export const PanelHeader: React.FC<PanelHeaderProps> = ({
@@ -27,9 +29,23 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   actionsButtonRef,
   coverButtonRef,
   titleButtonRef,
+  onSplitPanel,
 }) => {
   // 현재 패널 타입의 설정 가져오기
   const config = panelConfig[type];
+
+  const [showSplitOptions, setShowSplitOptions] = useState(false);
+  const [showCoverOptions, setShowCoverOptions] = useState(false);
+
+  const handleSplitButtonClick = () => {
+    setShowSplitOptions(!showSplitOptions);
+    setShowCoverOptions(false);
+  };
+
+  const handleCoverButtonClick = () => {
+    setShowCoverOptions(!showCoverOptions);
+    setShowSplitOptions(false);
+  };
 
   return (
     <div className="neu-panel-header flex items-center justify-between flex-shrink-0 px-4 py-3">
@@ -52,84 +68,140 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
         </div>
       </div>
 
-      {/* 🛠️ 액션 / 덮기 버튼들 */}
-      <div className="flex items-center space-x-3 flex-shrink-0">
-        {/* ➕ 분할 버튼 */}
-        <motion.button
-          ref={actionsButtonRef}
-          onClick={() => setIsActionsOpen(!isActionsOpen)}
-          className="neu-btn-icon p-2 cursor-pointer neu-interactive"
-          title="패널 분할"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          style={{
-            borderRadius: '10px',
-            background: isActionsOpen
-              ? 'var(--neu-accent)'
-              : 'var(--neu-base)',
-            boxShadow: isActionsOpen
-              ? `inset 3px 3px 8px rgba(13, 17, 23, 0.6), inset -1px -1px 6px rgba(45, 55, 72, 0.4)`
-              : `4px 4px 12px rgba(13, 17, 23, 0.6), -2px -2px 8px rgba(45, 55, 72, 0.4)`,
-            border: '2px solid rgba(45, 55, 72, 0.3)',
-            transition: 'all 0.2s ease',
-          }}
-        >
-          <motion.svg 
-            className="w-3.5 h-3.5 text-white" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-            animate={{ rotate: isActionsOpen ? 45 : 0 }}
-            transition={{ duration: 0.2 }}
+      {/* 🛠️ 액션 버튼들 */}
+      <div className="flex items-center space-x-3 flex-shrink-0 relative">
+        {/* 분할 버튼 영역 */}
+        <div className="relative">
+          <motion.button
+            onClick={handleSplitButtonClick}
+            className="neu-btn-icon p-2 cursor-pointer neu-interactive"
+            title="패널 분할"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              borderRadius: '10px',
+              background: showSplitOptions ? 'var(--neu-accent)' : 'var(--neu-base)',
+              boxShadow: showSplitOptions
+                ? `inset 3px 3px 8px rgba(13, 17, 23, 0.6), inset -1px -1px 6px rgba(45, 55, 72, 0.4)`
+                : `4px 4px 12px rgba(13, 17, 23, 0.6), -2px -2px 8px rgba(45, 55, 72, 0.4)`,
+              border: '2px solid rgba(45, 55, 72, 0.3)',
+              transition: 'all 0.2s ease',
+            }}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </motion.svg>
-        </motion.button>
-        
-        {/* 🔄 덮기(제거) 방향 버튼들 */}
-        {canRemove && (
-          <div
-            ref={coverButtonRef}
-            className="grid grid-cols-3 grid-rows-3 gap-0.5 select-none"
-            style={{ width: '44px', height: '44px' }}
-          >
-            {['top', 'left', 'right', 'bottom'].map(dir => {
-              // 좌표 매핑: 가운데 칸 비움
-              const positionStyle: Record<string, React.CSSProperties> = {
-                top: { gridColumn: '2', gridRow: '1' },
-                left: { gridColumn: '1', gridRow: '2' },
-                right: { gridColumn: '3', gridRow: '2' },
-                bottom: { gridColumn: '2', gridRow: '3' },
-              } as const;
+            <SplitSquareHorizontal className="w-3.5 h-3.5 text-white" />
+          </motion.button>
 
-              const iconPaths: Record<string, string> = {
-                top: 'M12 6l-4 4h8l-4-4z',
-                bottom: 'M12 18l4-4H8l4 4z',
-                left: 'M6 12l4 4V8l-4 4z',
-                right: 'M18 12l-4-4v8l4-4z',
-              } as const;
-
-              return (
+          {/* 분할 옵션 작은 팝업 */}
+          <AnimatePresence>
+            {showSplitOptions && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                transition={{ duration: 0.15 }}
+                className="absolute top-full right-0 mt-2 p-2 neu-split-options-container"
+                onMouseLeave={() => setShowSplitOptions(false)}
+              >
                 <motion.button
-                  key={dir}
-                  onClick={() => onCover(dir as BorderDir)}
-                  className="neu-btn-icon p-1 neu-interactive flex items-center justify-center"
-                  whileHover={{ scale: 1.08 }}
-                  whileTap={{ scale: 0.95 }}
-                  style={{
-                    ...positionStyle[dir],
-                    borderRadius: '6px',
-                    background: 'var(--neu-base)',
-                    boxShadow: `4px 4px 8px rgba(13,17,23,0.4), -2px -2px 6px rgba(45,55,72,0.3)`,
-                    border: '1px solid rgba(45, 55, 72, 0.3)',
-                  }}
+                  onClick={() => { onSplitPanel('vertical', 'empty'); setShowSplitOptions(false); }}
+                  className="neu-split-option-btn"
+                  title="가로 분할"
                 >
-                  <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d={iconPaths[dir]} />
-                  </svg>
+                  <SplitSquareHorizontal className="w-4 h-4" />
                 </motion.button>
-              );
-            })}
+                <motion.button
+                  onClick={() => { onSplitPanel('horizontal', 'empty'); setShowSplitOptions(false); }}
+                  className="neu-split-option-btn"
+                  title="세로 분할"
+                >
+                  <SplitSquareVertical className="w-4 h-4" />
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* 영역 덮기 버튼 (새로운 디자인) */}
+        {canRemove && (
+          <div className="relative">
+            <motion.button
+              onClick={handleCoverButtonClick}
+              className="neu-btn-icon p-2 cursor-pointer neu-interactive"
+              title="영역 덮기 방향 선택"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                borderRadius: '10px',
+                background: showCoverOptions ? 'var(--neu-accent)' : 'var(--neu-base)',
+                boxShadow: showCoverOptions
+                  ? `inset 3px 3px 8px rgba(13, 17, 23, 0.6), inset -1px -1px 6px rgba(45, 55, 72, 0.4)`
+                  : `4px 4px 12px rgba(13, 17, 23, 0.6), -2px -2px 8px rgba(45, 55, 72, 0.4)`,
+                border: '2px solid rgba(45, 55, 72, 0.3)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <ChevronDown className="w-3.5 h-3.5 text-white" />
+            </motion.button>
+
+            {/* 덮기 방향 옵션 팝업 */}
+            <AnimatePresence>
+              {showCoverOptions && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute top-full right-0 mt-2 p-2 neu-cover-options-container"
+                  onMouseLeave={() => setShowCoverOptions(false)}
+                >
+                  <div className="grid grid-cols-3 grid-rows-3 gap-1 w-24 h-24">
+                    {/* 상단 영역 */}
+                    <motion.button
+                      onClick={() => { onCover('top'); setShowCoverOptions(false); }}
+                      className="neu-cover-option-btn col-start-2 row-start-1"
+                      title="위쪽 영역 덮기"
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                    </motion.button>
+                    
+                    {/* 좌측 영역 */}
+                    <motion.button
+                      onClick={() => { onCover('left'); setShowCoverOptions(false); }}
+                      className="neu-cover-option-btn col-start-1 row-start-2"
+                      title="왼쪽 영역 덮기"
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                    </motion.button>
+                    
+                    {/* 우측 영역 */}
+                    <motion.button
+                      onClick={() => { onCover('right'); setShowCoverOptions(false); }}
+                      className="neu-cover-option-btn col-start-3 row-start-2"
+                      title="오른쪽 영역 덮기"
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </motion.button>
+                    
+                    {/* 하단 영역 */}
+                    <motion.button
+                      onClick={() => { onCover('bottom'); setShowCoverOptions(false); }}
+                      className="neu-cover-option-btn col-start-2 row-start-3"
+                      title="아래쪽 영역 덮기"
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ArrowDown className="w-3.5 h-3.5" />
+                    </motion.button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
       </div>

@@ -5,33 +5,39 @@ import { useTimelineInteraction } from '../../hooks/useTimelineInteraction';
 import TimelineToolbar from './TimelineToolbar';
 import TimelineRuler from './TimelineRuler';
 import SubtitleBlocks from './SubtitleBlocks';
+import TimelineOverviewBar from './TimelineOverviewBar';
 
 export const SubtitleTimelinePanel: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const interactionRef = useRef<HTMLDivElement>(null);
   const {
     currentTime,
     duration,
     fps,
-    zoom,
-    viewStart,
-    viewEnd,
-    setZoom,
-    setViewRange,
   } = useTimelineStore();
   const { currentProject, addSubtitle } = useProjectStore();
-  const { isDragging, handleMouseDown, handleMouseMove, handleMouseUp } = useTimelineInteraction(containerRef);
 
-  const handleZoom = (direction: 'in' | 'out') => {
-    const newZoom = direction === 'in' ? zoom * 1.5 : zoom / 1.5;
-    setZoom(newZoom);
-    const center = currentTime;
-    const currentViewDuration = viewEnd - viewStart;
-    const newViewDuration = currentViewDuration / (direction === 'in' ? 1.5 : 1 / 1.5);
-    const newStart = Math.max(0, center - newViewDuration / 2);
-    const newEnd = Math.min(duration, center + newViewDuration / 2);
-    setViewRange(newStart, newEnd);
+  const [zoom, setZoom] = React.useState(1);
+  const [viewStart, setViewStart] = React.useState(0);
+  const [viewEnd, setViewEnd] = React.useState(30000);
+
+  const setViewRange = (s:number,e:number)=>{setViewStart(s);setViewEnd(e);};
+
+  const { handleMouseDown, handleMouseMove, handleMouseUp, handleWheel } = useTimelineInteraction(interactionRef, {
+    zoom,
+    setZoom,
+    viewStart,
+    viewEnd,
+    setViewRange,
+  });
+
+  const timeToPixel = (time: number) => {
+    if (!interactionRef.current) return 0;
+    const containerWidth = interactionRef.current.clientWidth;
+    const viewDuration = viewEnd - viewStart;
+    if (viewDuration === 0) return 0;
+    return ((time - viewStart) / viewDuration) * containerWidth;
   };
-
+  
   const addNewSubtitle = () => {
     if (currentProject) {
       const newSubtitle = {
@@ -50,35 +56,36 @@ export const SubtitleTimelinePanel: React.FC = () => {
     }
   };
 
-  const timeToPixel = (time: number) => {
-    if (!containerRef.current) return 0;
-    const containerWidth = containerRef.current.clientWidth;
-    const viewDuration = viewEnd - viewStart;
-    return ((time - viewStart) / viewDuration) * containerWidth;
-  };
-
   return (
     <div className="h-full flex flex-col neu-timeline">
-      <TimelineToolbar onAddSubtitle={addNewSubtitle} onZoom={handleZoom} zoom={zoom} />
-      <div className="flex-1 flex flex-col">
+      <TimelineToolbar onAddSubtitle={addNewSubtitle} zoom={zoom} setZoom={setZoom} viewStart={viewStart} viewEnd={viewEnd} setViewRange={setViewRange} duration={duration} />
+      <div 
+        ref={interactionRef}
+        className="flex-1 flex flex-col relative"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp} // Stop panning if mouse leaves
+        onWheel={handleWheel}
+      >
         <TimelineRuler
           viewStart={viewStart}
           viewEnd={viewEnd}
           fps={fps}
           timeToPixel={timeToPixel}
-          containerWidth={containerRef.current?.clientWidth || 0}
+          containerWidth={interactionRef.current?.clientWidth || 0}
         />
         <div className="neu-timeline-track flex-1 relative overflow-hidden">
           <SubtitleBlocks
             subtitles={currentProject?.subtitles || []}
             currentTime={currentTime}
             timeToPixel={timeToPixel}
-            containerRef={containerRef}
-            handleMouseDown={handleMouseDown}
-            handleMouseMove={handleMouseMove}
-            handleMouseUp={handleMouseUp}
+            // Pass interaction ref to subtitle blocks if they need to calculate position relative to it
+            // but the interactions themselves are handled by the parent.
+            containerRef={interactionRef} 
           />
         </div>
+        <TimelineOverviewBar duration={duration} viewStart={viewStart} viewEnd={viewEnd} />
       </div>
     </div>
   );

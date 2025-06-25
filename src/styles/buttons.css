@@ -207,3 +207,79 @@
     transition: none;
   }
 }
+
+/* 🆕 분할 옵션 컨테이너 */
+.neu-split-options-container {
+  display: flex;
+  gap: 8px;
+  background: var(--neu-base);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 10px 10px 20px rgba(13, 17, 23, 0.8), -5px -5px 12px rgba(45, 55, 72, 0.6);
+  border: 2px solid rgba(45, 55, 72, 0.3);
+  z-index: 100;
+}
+
+.neu-split-option-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--neu-base);
+  box-shadow: 4px 4px 8px rgba(13, 17, 23, 0.6), -2px -2px 6px rgba(45, 55, 72, 0.4);
+  border: 1px solid rgba(45, 55, 72, 0.3);
+  color: var(--neu-text-secondary);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.neu-split-option-btn:hover {
+  box-shadow: 6px 6px 12px rgba(13, 17, 23, 0.7), -3px -3px 8px rgba(45, 55, 72, 0.5);
+  color: var(--neu-primary);
+  transform: translateY(-1px);
+}
+
+.neu-split-option-btn:active {
+  box-shadow: inset 2px 2px 4px rgba(13, 17, 23, 0.6), inset -1px -1px 3px rgba(45, 55, 72, 0.4);
+  transform: translateY(0);
+}
+
+/* 🆕 영역 덮기 옵션 컨테이너 */
+.neu-cover-options-container {
+  display: flex;
+  flex-direction: column;
+  background: var(--neu-base);
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: 10px 10px 20px rgba(13, 17, 23, 0.8), -5px -5px 12px rgba(45, 55, 72, 0.6);
+  border: 2px solid rgba(45, 55, 72, 0.3);
+  z-index: 100;
+}
+
+.neu-cover-option-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--neu-base);
+  box-shadow: 4px 4px 8px rgba(13, 17, 23, 0.6), -2px -2px 6px rgba(45, 55, 72, 0.4);
+  border: 1px solid rgba(45, 55, 72, 0.3);
+  color: var(--neu-text-secondary);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.neu-cover-option-btn:hover {
+  box-shadow: 6px 6px 12px rgba(13, 17, 23, 0.7), -3px -3px 8px rgba(45, 55, 72, 0.5);
+  color: var(--neu-error);
+  transform: translateY(-1px);
+}
+
+.neu-cover-option-btn:active {
+  box-shadow: inset 2px 2px 4px rgba(13, 17, 23, 0.6), inset -1px -1px 3px rgba(45, 55, 72, 0.4);
+  transform: translateY(0);
+}

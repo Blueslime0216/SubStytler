@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 interface VideoControllerVolumeButtonProps {
   volume: number;
@@ -159,33 +160,46 @@ const VideoControllerVolumeButton: React.FC<VideoControllerVolumeButtonProps> = 
         )}
       </div>
       
-      {/* 볼륨 슬라이더 (hover 또는 드래그 시에만 표시) */}
-      <div 
-        className={`video-controller-volume-slider ${(isVolumeHovered || isDragging) ? 'visible' : ''}`}
+      {/* 볼륨 슬라이더 - Framer Motion 으로 애니메이션 처리 */}
+      <motion.div
+        ref={volumeBarRef as React.RefObject<HTMLDivElement>}
+        className="video-controller-volume-slider"
+        animate={{
+          width: (isVolumeHovered || isDragging) ? 80 : 0,
+          opacity: (isVolumeHovered || isDragging) ? 1 : 0,
+          x: (isVolumeHovered || isDragging) ? 0 : -10,
+          overflow: 'visible'
+        }}
+        transition={{ 
+          duration: 0.2,
+          ease: [0.25, 0.1, 0.25, 1],
+          width: { duration: 0.5, ease: [0.34, 0.69, 0.1, 1] }
+        }}
+        style={{ 
+          marginLeft: 4,
+          originX: 0,
+          transformOrigin: "left center"
+        }}
+        onMouseDown={handleVolumeBarMouseDown}
+        onMouseUp={handleVolumeMouseUp}
+        onClick={(e)=>e.stopPropagation()}
       >
-        <div 
-          ref={volumeBarRef}
-          className="video-controller-volume-track-container"
-          onMouseDown={handleVolumeBarMouseDown}
-        >
+        {/* 고정 너비의 내부 컨테이너 - 와이퍼 효과를 위해 */}
+        <div style={{ 
+          width: "80px",
+          position: "relative",
+          height: "100%"
+        }}>
           {/* 트랙 배경 */}
-          <div className="video-controller-volume-track"></div>
-          
-          {/* 볼륨 진행 바 */}
-          <div 
-            className="video-controller-volume-fill"
-            style={{ width: `${isMuted ? 0 : volume * 100}%` }}
-          ></div>
-          
-          {/* 볼륨 썸 */}
-          <div 
-            className="video-controller-volume-thumb"
-            style={{ 
-              left: `${isMuted ? 0 : volume * 100}%`
-            }}
-          ></div>
+          <div className="video-controller-volume-track-container">
+            <div className="video-controller-volume-track"></div>
+            {/* 볼륨 진행 바 */}
+            <div className="video-controller-volume-fill" style={{ width: `${isMuted ? 0 : volume * 100}%` }}></div>
+            {/* 볼륨 썸 */}
+            <div className="video-controller-volume-thumb" style={{ left: `${isMuted ? 0 : volume * 100}%` }}></div>
+          </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

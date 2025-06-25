@@ -29,7 +29,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => ({
   fps: 30,
   zoom: 1,
   viewStart: 0,
-  viewEnd: 10,
+  viewEnd: 30000,
   frameDuration: 1000 / 30,
 
   setCurrentTime: (time: number) => {
@@ -39,10 +39,13 @@ export const useTimelineStore = create<TimelineState>((set, get) => ({
 
   setPlaying: (playing: boolean) => set({ isPlaying: playing }),
 
-  setDuration: (duration: number) => set({ 
-    duration,
-    viewEnd: Math.min(get().viewEnd, duration)
-  }),
+  setDuration: (duration: number) => {
+    const defaultWindow = 30000;
+    set({ 
+      duration,
+      viewEnd: Math.min(duration, defaultWindow)
+    });
+  },
 
   setFPS: (fps: number) => set({ 
     fps,

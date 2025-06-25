@@ -6,6 +6,7 @@ import VideoControllerProgressBar from './VideoController/VideoControllerProgres
 import VideoControllerVolumeButton from './VideoController/VideoControllerVolumeButton';
 import VideoControllerTimeDisplay from './VideoController/VideoControllerTimeDisplay';
 import VideoControllerAdditionalButtons from './VideoController/VideoControllerAdditionalButtons';
+import VideoControllerSkipForwardButton from './VideoController/VideoControllerSkipForwardButton';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface VideoControllerProps {
@@ -182,16 +183,10 @@ export const VideoController: React.FC<VideoControllerProps> = ({
                 onToggle={handlePlayPause}
               />
               
-              <button 
-                className="video-controller-button" 
-                onClick={handleSkipForward}
-                title="5초 앞으로"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13 19L22 12L13 5V19Z" fill="currentColor"/>
-                  <path d="M2 19L11 12L2 5V19Z" fill="currentColor"/>
-                </svg>
-              </button>
+              <VideoControllerSkipForwardButton
+                isVideoLoaded={isVideoLoaded}
+                onSkip={handleSkipForward}
+              />
               
               <VideoControllerVolumeButton 
                 volume={volume}

@@ -6,6 +6,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useTimelineStore } from '../stores/timelineStore';
 import { useProjectStore } from '../stores/projectStore';
 import { useHistoryStore } from '../stores/historyStore';
+import { useLayoutStore } from '../stores/layoutStore';
 
 export const useKeyboardShortcuts = () => {
   const { 
@@ -21,6 +22,9 @@ export const useKeyboardShortcuts = () => {
 
   // History actions
   const { undo, redo } = useHistoryStore();
+
+  // Layout actions
+  const { focusedAreaId, coverArea } = useLayoutStore();
 
   // Play/Pause
   useHotkeys('space', (e) => {
@@ -85,4 +89,33 @@ export const useKeyboardShortcuts = () => {
     const { duration } = useTimelineStore.getState();
     setCurrentTime(duration);
   });
+
+  // 영역 덮기 단축키 (Ctrl+Alt+방향키)
+  useHotkeys('ctrl+alt+up', (e) => {
+    e.preventDefault();
+    if (focusedAreaId) {
+      coverArea(focusedAreaId, 'top');
+    }
+  }, [focusedAreaId, coverArea]);
+
+  useHotkeys('ctrl+alt+down', (e) => {
+    e.preventDefault();
+    if (focusedAreaId) {
+      coverArea(focusedAreaId, 'bottom');
+    }
+  }, [focusedAreaId, coverArea]);
+
+  useHotkeys('ctrl+alt+left', (e) => {
+    e.preventDefault();
+    if (focusedAreaId) {
+      coverArea(focusedAreaId, 'left');
+    }
+  }, [focusedAreaId, coverArea]);
+
+  useHotkeys('ctrl+alt+right', (e) => {
+    e.preventDefault();
+    if (focusedAreaId) {
+      coverArea(focusedAreaId, 'right');
+    }
+  }, [focusedAreaId, coverArea]);
 };

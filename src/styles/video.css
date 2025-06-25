@@ -96,11 +96,13 @@ video {
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.7);
+  /* background: transparent; */
+  background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
   padding: 10px 0 12px 0;
   z-index: 30;
-  border-radius: 0 0 16px 16px;
+  margin-bottom: -1px;
+  border-radius: 16px 16px 0 0;
   overflow: visible;
 }
 
@@ -294,15 +296,8 @@ video {
 .video-controller-volume-slider {
   width: 0;
   overflow: hidden;
-  transition: width 0.2s ease, opacity 0.2s ease;
   opacity: 0;
   margin-left: 4px;
-}
-
-.video-controller-volume-slider.visible {
-  width: 80px;
-  opacity: 1;
-  overflow: visible;
 }
 
 .video-controller-volume-track-container {
@@ -332,6 +327,7 @@ video {
   height: 100%;
   background: white;
   border-radius: 2px;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .video-controller-volume-thumb {
@@ -343,7 +339,7 @@ video {
   border-radius: 50%;
   transform: translate(-50%, -50%);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-  transition: transform 0.1s ease;
+  transition: transform 0.1s ease, left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .video-controller-volume-track-container:hover .video-controller-volume-thumb {
@@ -373,10 +369,6 @@ video {
   
   .video-controller-fps {
     display: none;
-  }
-  
-  .video-controller-volume-slider.visible {
-    width: 60px;
   }
 }
 

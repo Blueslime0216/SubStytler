@@ -1,9 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PanelType } from '../../types/project';
 import { useLayoutStore } from '../../stores/layoutStore';
 import { PanelBody } from './PanelBody';
-import { PanelActionsDropdown } from './PanelActionsDropdown';
 import { usePanelActions } from '../../hooks/usePanelActions';
 import { PanelHeader } from './PanelHeader';
 import { extractPanelType } from '../../config/panelRegistry';
@@ -21,17 +20,16 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
   const actualType = type || (areaId ? extractPanelType(areaId) : 'empty');
   
   const [isActionsOpen, setIsActionsOpen] = useState(false);
-  const [, setShowRemoveConfirm] = useState(false);
   
   const titleButtonRef = useRef<HTMLButtonElement>(null);
   const actionsButtonRef = useRef<HTMLButtonElement>(null);
   
-  const { areas, changePanelType } = useLayoutStore();
+  const { areas, changePanelType, setFocusedArea } = useLayoutStore();
   const {
     canRemove,
     availablePanels,
     handleSplitPanel,
-  } = usePanelActions(areaId, actualType, areas, () => {}, setIsActionsOpen, setShowRemoveConfirm);
+  } = usePanelActions(areaId, actualType, areas, () => {}, setIsActionsOpen, () => {});
 
   // 덮기(제거) 기능
   const coverArea = useLayoutStore(state => state.coverArea);
@@ -77,7 +75,19 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     configFound: true
   });
 
-  // 🔧 성능 최적화: 이벤트 핸들러 메모이제이션
+  // 패널이 마운트되거나 areaId 변경 시 포커스 설정
+  useEffect(() => {
+    if (areaId) {
+      setFocusedArea(areaId);
+    }
+
+    return () => {
+      if (areaId && useLayoutStore.getState().focusedAreaId === areaId) {
+        setFocusedArea(null);
+      }
+    };
+  }, [areaId, setFocusedArea]);
+
   const onSplitPanel = React.useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
     console.log('🔀 패널 분할 요청:', { areaId, direction, newPanelType });
     handleSplitPanel(direction, newPanelType);
@@ -94,6 +104,7 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
         contain: 'layout style',
         willChange: 'auto'
       }}
+      onClick={() => areaId && setFocusedArea(areaId)}
     >
       <PanelHeader
         type={actualType}
@@ -105,20 +116,11 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
         titleButtonRef={titleButtonRef}
         actionsButtonRef={actionsButtonRef}
         coverButtonRef={undefined}
+        onSplitPanel={onSplitPanel}
       />
       
       {/* Panel Content */}
       <PanelBody type={actualType} />
-
-      {/* Actions Dropdown - 조건부 렌더링으로 성능 최적화 */}
-      {isActionsOpen && (
-        <PanelActionsDropdown
-          isOpen={isActionsOpen}
-          onClose={() => setIsActionsOpen(false)}
-          triggerRef={actionsButtonRef}
-          onSplitPanel={onSplitPanel}
-        />
-      )}
     </motion.div>
   );
 };

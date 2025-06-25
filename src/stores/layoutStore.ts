@@ -7,6 +7,7 @@ interface LayoutState {
   areas: Area[];
   draggedPanel: PanelType | null;
   dropTarget: { areaId: string; position: 'top' | 'bottom' | 'left' | 'right' | 'center' } | null;
+  focusedAreaId: string | null;
   
   // Actions (injected from createLayoutActions)
   setAreas: (areas: Area[]) => void;
@@ -19,6 +20,7 @@ interface LayoutState {
   addNewArea: (parentId: string, direction: 'horizontal' | 'vertical', panelType: PanelType) => void;
   removeArea: (areaId: string) => void;
   coverArea: (areaId: string, dir: 'left' | 'right' | 'top' | 'bottom') => void;
+  setFocusedArea: (areaId: string | null) => void;
 }
 
 export const useLayoutStore = create<LayoutState>((set, get, store) => ({
@@ -30,6 +32,7 @@ export const useLayoutStore = create<LayoutState>((set, get, store) => ({
   ] as Area[],
   draggedPanel: null,
   dropTarget: null,
+  focusedAreaId: null,
 
   // Slice actions
   ...createLayoutActions(set, get, store),
@@ -37,4 +40,5 @@ export const useLayoutStore = create<LayoutState>((set, get, store) => ({
   // Local setters
   setDraggedPanel: (panelType: PanelType | null) => set({ draggedPanel: panelType }),
   setDropTarget: (target) => set({ dropTarget: target }),
+  setFocusedArea: (areaId: string | null) => set({ focusedAreaId: areaId }),
 }));
