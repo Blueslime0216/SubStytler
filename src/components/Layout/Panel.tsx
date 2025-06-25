@@ -97,13 +97,11 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     >
       <PanelHeader
         type={actualType}
-        isDropdownOpen={false} // 더 이상 사용하지 않음
-        setIsDropdownOpen={() => {}} // 더 이상 사용하지 않음
         isActionsOpen={isActionsOpen}
         setIsActionsOpen={setIsActionsOpen}
         canRemove={canRemove}
         onCover={handleCoverPanel}
-        onTypeChange={handleTypeChange} // 🆕 새로운 핸들러 추가
+        onTypeChange={handleTypeChange}
         titleButtonRef={titleButtonRef}
         actionsButtonRef={actionsButtonRef}
         coverButtonRef={undefined}

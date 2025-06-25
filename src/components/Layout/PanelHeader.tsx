@@ -7,8 +7,6 @@ import type { BorderDir } from './hooks/areaDragUtils';
 
 interface PanelHeaderProps {
   type: PanelType;
-  isDropdownOpen: boolean;
-  setIsDropdownOpen: (v: boolean) => void;
   isActionsOpen: boolean;
   setIsActionsOpen: (v: boolean) => void;
   canRemove: boolean;
@@ -28,6 +26,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   onTypeChange,
   actionsButtonRef,
   coverButtonRef,
+  titleButtonRef,
 }) => {
   // 현재 패널 타입의 설정 가져오기
   const config = panelConfig[type];
@@ -87,7 +86,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
           </motion.svg>
         </motion.button>
         
-        {/* 🔄 덮기(제거) 방향 버튼 그룹 */}
+        {/* 🔄 덮기(제거) 방향 버튼들 */}
         {canRemove && (
           <div
             ref={coverButtonRef}
