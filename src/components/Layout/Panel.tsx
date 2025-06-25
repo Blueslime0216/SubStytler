@@ -41,16 +41,32 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     coverArea(areaId, dir);
   }, [areaId, canRemove, coverArea]);
 
-  // 🎯 패널 타입 변경 핸들러
+  // 🎯 패널 타입 변경 핸들러 - 로직 개선
   const handleTypeChange = React.useCallback((newPanelType: PanelType) => {
+    console.log('🔄 패널 타입 변경 요청:', { 
+      areaId, 
+      currentType: actualType, 
+      newType: newPanelType 
+    });
+    
     if (!areaId) {
       console.warn('⚠️ areaId가 없어서 패널 변경할 수 없습니다');
       return;
     }
     
     if (newPanelType !== actualType) {
-      changePanelType(areaId, newPanelType);
-      console.log('✅ 패널 변경 완료:', newPanelType);
+      try {
+        changePanelType(areaId, newPanelType);
+        console.log('✅ 패널 변경 완료:', { 
+          areaId, 
+          from: actualType, 
+          to: newPanelType 
+        });
+      } catch (error) {
+        console.error('❌ 패널 변경 실패:', error);
+      }
+    } else {
+      console.log('ℹ️ 동일한 패널 타입이므로 변경하지 않음');
     }
   }, [areaId, actualType, changePanelType]);
 
