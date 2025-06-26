@@ -146,4 +146,78 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       });
     }
   },
+
+  // Track management actions
+  addTrack: (name: string) => {
+    const { currentProject } = get();
+    if (currentProject) {
+      const newTrack = {
+        id: crypto.randomUUID(),
+        name,
+        language: 'en',
+        visible: true,
+        locked: false,
+      };
+      
+      set({
+        currentProject: {
+          ...currentProject,
+          tracks: [...currentProject.tracks, newTrack],
+        },
+        isModified: true,
+      });
+      
+      return newTrack.id;
+    }
+    
+    return null;
+  },
+
+  updateTrack: (id: string, updates: Partial<any>) => {
+    const { currentProject } = get();
+    if (currentProject) {
+      set({
+        currentProject: {
+          ...currentProject,
+          tracks: currentProject.tracks.map((track: any) => 
+            track.id === id ? { ...track, ...updates } : track
+          ),
+        },
+        isModified: true,
+      });
+    }
+  },
+
+  deleteTrack: (id: string) => {
+    const { currentProject } = get();
+    if (currentProject) {
+      // Delete the track
+      let updatedTracks = currentProject.tracks.filter((track: any) => track.id !== id);
+
+      // Ensure at least one track remains
+      if (updatedTracks.length === 0) {
+        updatedTracks = [{
+          id: 'default',
+          name: 'Default Track',
+          language: 'en',
+          visible: true,
+          locked: false,
+        }];
+      }
+      
+      // Also delete all subtitles in this track
+      const updatedSubtitles = currentProject.subtitles.filter(
+        (subtitle: SubtitleBlock) => subtitle.trackId !== id
+      );
+      
+      set({
+        currentProject: {
+          ...currentProject,
+          tracks: updatedTracks,
+          subtitles: updatedSubtitles,
+        },
+        isModified: true,
+      });
+    }
+  },
 }); 

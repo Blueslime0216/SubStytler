@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Project, SubtitleBlock, SubtitleStyle, VideoMeta } from '../types/project';
+import { Project, SubtitleBlock, SubtitleStyle, VideoMeta, SubtitleTrack } from '../types/project';
 import { createProjectActions } from './projectActions';
 
 interface ProjectState {
@@ -17,6 +17,11 @@ interface ProjectState {
   addStyle: (style: SubtitleStyle) => void;
   updateStyle: (id: string, updates: Partial<SubtitleStyle>) => void;
   deleteStyle: (id: string) => void;
+  
+  // Track management
+  addTrack: (name: string) => string | null;
+  updateTrack: (id: string, updates: Partial<SubtitleTrack>) => void;
+  deleteTrack: (id: string) => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({

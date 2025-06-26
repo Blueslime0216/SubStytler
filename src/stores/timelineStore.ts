@@ -25,11 +25,11 @@ interface TimelineState {
 export const useTimelineStore = create<TimelineState>((set, get) => ({
   currentTime: 0,
   isPlaying: false,
-  duration: 0,
+  duration: 60000,
   fps: 30,
   zoom: 1,
   viewStart: 0,
-  viewEnd: 30000,
+  viewEnd: 60000,
   frameDuration: 1000 / 30,
 
   setCurrentTime: (time: number) => {
@@ -40,10 +40,11 @@ export const useTimelineStore = create<TimelineState>((set, get) => ({
   setPlaying: (playing: boolean) => set({ isPlaying: playing }),
 
   setDuration: (duration: number) => {
-    const defaultWindow = 30000;
-    set({ 
+    set({
       duration,
-      viewEnd: Math.min(duration, defaultWindow)
+      zoom: 1,            // start fully zoomed-out
+      viewStart: 0,
+      viewEnd: duration,  // show entire range by default
     });
   },
 
@@ -52,7 +53,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => ({
     frameDuration: 1000 / fps
   }),
 
-  setZoom: (zoom: number) => set({ zoom: Math.max(0.1, Math.min(10, zoom)) }),
+  setZoom: (zoom: number) => set({ zoom: Math.max(1, Math.min(10, zoom)) }),
 
   setViewRange: (start: number, end: number) => set({ 
     viewStart: Math.max(0, start),

@@ -51,6 +51,124 @@
   cursor: pointer;
 }
 
+/* Track list styles */
+.neu-tracks-container {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  position: relative;
+}
+
+.neu-tracks-header {
+  width: 180px;
+  min-width: 120px;
+  max-width: 240px;
+  background: var(--neu-bg-surface);
+  border-right: 2px solid rgba(255, 255, 255, 0.08);
+  overflow-y: auto;
+  box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.neu-tracks-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.neu-track {
+  position: relative;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.neu-track-header {
+  padding: 8px 12px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--neu-bg-surface);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 500;
+  color: var(--neu-text-primary);
+  font-size: 0.85rem;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.neu-track-header:hover {
+  background: var(--neu-bg-raised);
+}
+
+.neu-track-header-active {
+  background: var(--neu-bg-raised);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.neu-track-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 4px;
+}
+
+.neu-track-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.neu-track-control-btn {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--neu-text-secondary);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+
+.neu-track-control-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.neu-track-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  color: var(--neu-text-secondary);
+  cursor: pointer;
+  background: var(--neu-bg-surface);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
+}
+
+.neu-track-add:hover {
+  background: var(--neu-bg-raised);
+  color: var(--neu-primary);
+}
+
+.neu-track-content {
+  position: relative;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: visible;
+}
+
 .neu-subtitle-block {
   background: linear-gradient(145deg, var(--neu-primary), var(--neu-primary-light));
   border-radius: 10px;
@@ -63,6 +181,7 @@
   border: 1px solid var(--neu-primary-light);
   cursor: move;
   transition: all 0.2s ease;
+  height: 36px; /* Fixed height for subtitle blocks */
 }
 
 .neu-subtitle-block::before {
@@ -106,4 +225,17 @@
 .neu-playhead {
   filter: drop-shadow(0 0 4px rgba(99, 179, 237, 0.6));
   z-index: 100;
+}
+
+.neu-track-resize-handle {
+  width: 6px;
+  cursor: col-resize;
+  background: rgba(255, 255, 255, 0.08);
+  transition: background 0.2s ease;
+  height: 100%;
+  z-index: 50;
+}
+
+.neu-track-resize-handle:hover {
+  background: rgba(255, 255, 255, 0.2);
 }

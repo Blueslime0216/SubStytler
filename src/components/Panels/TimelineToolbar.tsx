@@ -16,7 +16,7 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
 
   const [inputValue, setInputValue] = useState<string>(zoom.toFixed(1));
 
-  const MIN_ZOOM = 0.1;
+  const MIN_ZOOM = 1; // cannot zoom below full view
   const MAX_ZOOM = 10;
 
   const clampZoom = (val: number) => Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, val));

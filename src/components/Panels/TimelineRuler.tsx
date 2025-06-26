@@ -29,7 +29,7 @@ export const TimelineRuler: React.FC<TimelineRulerProps> = React.memo(({ viewSta
 
   for (let time = startStep; time <= viewEnd; time += majorStep) {
     const x = timeToPixel(time);
-    if (x < -100 || x > containerWidth + 100) continue; // Allow some overflow for labels
+    if (x < 0 || x > containerWidth) continue; // keep ticks inside content area
     majorTicks.push(
       <div key={`major-${time}`} className="absolute top-0 flex flex-col items-center" style={{ left: x }}>
         <div className="w-px h-4 bg-gray-400" />
