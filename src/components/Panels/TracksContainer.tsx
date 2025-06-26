@@ -4,6 +4,7 @@ import TrackHeader from './TrackHeader';
 import SubtitleBlock from './SubtitleBlock';
 import TimelineRuler from './TimelineRuler';
 import { useTimelineInteraction } from '../../hooks/useTimelineInteraction';
+import { Plus } from 'lucide-react';
 
 interface TracksContainerProps {
   currentTime: number;
@@ -168,10 +169,14 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
           />
         ))}
 
-        {/* Add track button */}
+        {/* Redesigned Add Track Button */}
         <div className="neu-track-add" onClick={handleAddTrack} title="Add new track">
-          <span className="material-icons mr-2 text-sm">add_circle_outline</span>
-          <span>Add Track</span>
+          <div className="track-add-content">
+            <div className="track-add-icon">
+              <Plus className="w-3 h-3" />
+            </div>
+            <span className="track-add-text">Add Track</span>
+          </div>
         </div>
       </div>
 
@@ -221,26 +226,16 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
           </div>
         ))}
 
-        {/* Playhead */}
+        {/* Redesigned Playhead */}
         <div
-          className="absolute top-0 w-1 h-full pointer-events-none z-20 neu-playhead"
+          className="neu-playhead"
           style={{
             left: timeToPixel(currentTime),
-            background: 'var(--neu-primary)',
-            transition: 'none',
           }}
-        >
-          <div
-            className="absolute -top-3 -left-3 w-6 h-6 rotate-45 neu-shadow-1"
-            style={{
-              background: 'var(--neu-primary)',
-              transition: 'none',
-            }}
-          />
-        </div>
+        />
       </div>
     </div>
   );
 };
 
-export default TracksContainer; 
+export default TracksContainer;

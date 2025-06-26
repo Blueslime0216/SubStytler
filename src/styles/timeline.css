@@ -211,7 +211,7 @@
     0 0 0 2px rgba(99, 179, 237, 0.3);
 }
 
-/* Track Controls */
+/* Track Controls - Always Visible */
 .track-controls {
   display: flex;
   align-items: center;
@@ -287,10 +287,6 @@
     0 0 8px rgba(246, 173, 85, 0.3);
 }
 
-.track-control-btn.volume {
-  color: var(--neu-success);
-}
-
 .track-control-btn.delete {
   color: var(--neu-error);
 }
@@ -315,21 +311,23 @@
   transform-origin: left;
 }
 
+/* ===== REDESIGNED TRACK ADD BUTTON ===== */
 .neu-track-add {
+  position: relative;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
-  color: var(--neu-text-secondary);
-  cursor: pointer;
   background: var(--neu-base);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all 0.2s ease;
-  font-size: 0.875rem;
-  font-weight: 500;
-  gap: 8px;
-  position: relative;
+  border: 2px dashed rgba(99, 179, 237, 0.3);
+  border-radius: 12px;
+  margin: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
   overflow: hidden;
+  box-shadow: 
+    inset 2px 2px 4px rgba(13, 17, 23, 0.3),
+    inset -1px -1px 3px rgba(45, 55, 72, 0.2);
 }
 
 .neu-track-add::before {
@@ -341,20 +339,77 @@
   bottom: 0;
   background: linear-gradient(145deg, 
     rgba(99, 179, 237, 0.05) 0%, 
-    transparent 100%);
+    transparent 50%,
+    rgba(99, 179, 237, 0.02) 100%);
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease;
+  border-radius: inherit;
 }
 
 .neu-track-add:hover {
-  color: var(--neu-primary);
+  border-color: rgba(99, 179, 237, 0.6);
   box-shadow: 
-    inset 2px 2px 4px rgba(99, 179, 237, 0.1),
-    inset -1px -1px 3px rgba(13, 17, 23, 0.1);
+    4px 4px 12px rgba(13, 17, 23, 0.6),
+    -2px -2px 8px rgba(45, 55, 72, 0.4),
+    inset 1px 1px 3px rgba(99, 179, 237, 0.1),
+    0 0 16px rgba(99, 179, 237, 0.2);
+  transform: translateY(-1px);
 }
 
 .neu-track-add:hover::before {
   opacity: 1;
+}
+
+.neu-track-add:active {
+  transform: translateY(0);
+  box-shadow: 
+    inset 3px 3px 6px rgba(13, 17, 23, 0.5),
+    inset -2px -2px 4px rgba(45, 55, 72, 0.3);
+}
+
+.track-add-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--neu-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: color 0.25s ease;
+  z-index: 1;
+  position: relative;
+}
+
+.neu-track-add:hover .track-add-content {
+  color: var(--neu-primary);
+}
+
+.track-add-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--neu-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    2px 2px 4px rgba(13, 17, 23, 0.6),
+    -1px -1px 3px rgba(45, 55, 72, 0.4);
+  transition: all 0.25s ease;
+}
+
+.neu-track-add:hover .track-add-icon {
+  background: linear-gradient(145deg, var(--neu-primary), var(--neu-primary-light));
+  color: white;
+  box-shadow: 
+    3px 3px 6px rgba(13, 17, 23, 0.7),
+    -2px -2px 4px rgba(45, 55, 72, 0.5),
+    0 0 8px rgba(99, 179, 237, 0.4);
+  transform: scale(1.1);
+}
+
+.track-add-text {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.025em;
 }
 
 .neu-track-content {
@@ -417,10 +472,59 @@
   opacity: 0.5;
 }
 
-/* Playhead Enhancement */
+/* ===== REDESIGNED PLAYHEAD ===== */
 .neu-playhead {
-  filter: drop-shadow(0 0 4px rgba(99, 179, 237, 0.6));
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 100%;
   z-index: 100;
+  pointer-events: none;
+  background: linear-gradient(180deg, 
+    var(--neu-primary-light) 0%,
+    var(--neu-primary) 50%,
+    var(--neu-primary-dark) 100%);
+  box-shadow: 
+    0 0 8px rgba(99, 179, 237, 0.8),
+    0 0 16px rgba(99, 179, 237, 0.4),
+    inset 1px 0 0 rgba(255, 255, 255, 0.3);
+  border-radius: 1.5px;
+  transition: none;
+}
+
+.neu-playhead::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -6px;
+  width: 15px;
+  height: 15px;
+  background: linear-gradient(145deg, 
+    var(--neu-primary-light) 0%,
+    var(--neu-primary) 50%,
+    var(--neu-primary-dark) 100%);
+  border-radius: 50%;
+  box-shadow: 
+    3px 3px 8px rgba(13, 17, 23, 0.8),
+    -2px -2px 6px rgba(45, 55, 72, 0.6),
+    0 0 12px rgba(99, 179, 237, 0.6),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.3);
+  border: 2px solid white;
+}
+
+.neu-playhead::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -2px;
+  width: 7px;
+  height: 7px;
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.3) 70%,
+    transparent 100%);
+  border-radius: 50%;
+  z-index: 1;
 }
 
 .neu-track-resize-handle {
@@ -459,6 +563,21 @@
   .track-language {
     font-size: 0.625rem;
   }
+  
+  .neu-track-add {
+    height: 48px;
+    margin: 6px;
+  }
+  
+  .track-add-content {
+    font-size: 0.8125rem;
+    gap: 8px;
+  }
+  
+  .track-add-icon {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 /* High contrast mode support */
@@ -474,18 +593,29 @@
   .color-dot {
     border: 2px solid var(--neu-text-primary);
   }
+  
+  .neu-track-add {
+    border: 2px solid var(--neu-primary);
+  }
+  
+  .neu-playhead {
+    box-shadow: 0 0 0 2px var(--neu-text-primary);
+  }
 }
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .neu-track-header-redesigned,
   .track-control-btn,
-  .active-indicator {
+  .active-indicator,
+  .neu-track-add,
+  .track-add-icon {
     transition: none;
   }
   
   .neu-track-header-redesigned::before,
-  .track-control-btn::before {
+  .track-control-btn::before,
+  .neu-track-add::before {
     transition: none;
   }
 }

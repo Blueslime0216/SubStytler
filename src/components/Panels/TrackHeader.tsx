@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Lock, Unlock, Trash2, MoreHorizontal, Volume2, VolumeX } from 'lucide-react';
+import { Eye, EyeOff, Lock, Unlock, Trash2 } from 'lucide-react';
 import { SubtitleTrack } from '../../types/project';
 
 interface TrackHeaderProps {
@@ -22,7 +22,6 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
 }) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [nameValue, setNameValue] = React.useState(track.name);
-  const [showActions, setShowActions] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handleDoubleClick = () => {
@@ -57,7 +56,6 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
     if (window.confirm(`Delete track "${track.name}" and all its subtitles?`)) {
       onDelete(track.id);
     }
-    setShowActions(false);
   };
 
   return (
@@ -66,8 +64,6 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      onMouseEnter={() => setShowActions(true)}
-      onMouseLeave={() => setShowActions(false)}
     >
       {/* Track Color Indicator */}
       <div className="track-color-indicator">
@@ -95,61 +91,41 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
         )}
       </div>
 
-      {/* Track Controls */}
-      <AnimatePresence>
-        {(showActions || isActive) && (
-          <motion.div 
-            className="track-controls"
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 10 }}
-            transition={{ duration: 0.15 }}
-          >
-            {/* Visibility Toggle */}
-            <motion.button
-              className={`track-control-btn visibility ${track.visible ? 'active' : ''}`}
-              onClick={() => onToggleVisibility(track.id, !track.visible)}
-              title={track.visible ? "Hide track" : "Show track"}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {track.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-            </motion.button>
+      {/* Track Controls - Always Visible */}
+      <div className="track-controls">
+        {/* Visibility Toggle */}
+        <motion.button
+          className={`track-control-btn visibility ${track.visible ? 'active' : ''}`}
+          onClick={() => onToggleVisibility(track.id, !track.visible)}
+          title={track.visible ? "Hide track" : "Show track"}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {track.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+        </motion.button>
 
-            {/* Lock Toggle */}
-            <motion.button
-              className={`track-control-btn lock ${track.locked ? 'active' : ''}`}
-              onClick={() => onToggleLock(track.id, !track.locked)}
-              title={track.locked ? "Unlock track" : "Lock track"}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {track.locked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
-            </motion.button>
+        {/* Lock Toggle */}
+        <motion.button
+          className={`track-control-btn lock ${track.locked ? 'active' : ''}`}
+          onClick={() => onToggleLock(track.id, !track.locked)}
+          title={track.locked ? "Unlock track" : "Lock track"}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {track.locked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+        </motion.button>
 
-            {/* Volume Indicator */}
-            <motion.button
-              className="track-control-btn volume"
-              title="Track volume"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Volume2 className="w-3.5 h-3.5" />
-            </motion.button>
-
-            {/* Delete Button */}
-            <motion.button
-              className="track-control-btn delete"
-              onClick={handleDelete}
-              title="Delete track"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* Delete Button */}
+        <motion.button
+          className="track-control-btn delete"
+          onClick={handleDelete}
+          title="Delete track"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </motion.button>
+      </div>
 
       {/* Active Track Indicator */}
       {isActive && (
