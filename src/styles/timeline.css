@@ -64,7 +64,6 @@
   min-width: 120px;
   max-width: 240px;
   background: var(--neu-bg-surface);
-  border-right: 2px solid rgba(255, 255, 255, 0.08);
   overflow-y: auto; /* ✅ Enable vertical scrolling */
   overflow-x: hidden; /* ✅ Hide horizontal scrollbar */
   height: 100%;
@@ -79,7 +78,7 @@
 
 .neu-tracks-content {
   flex: 1;
-  overflow: visible;
+  overflow: hidden !important;
   position: relative;
   z-index: 50; /* ✅ Lower z-index than header */
 }
@@ -425,8 +424,7 @@
   height: 50px;
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  overflow-x: hidden;
-  overflow-y: visible;
+  overflow: visible;
   transition: background-color 0.2s ease;
 }
 
@@ -531,14 +529,14 @@
 .neu-track-resize-handle {
   width: 6px;
   cursor: col-resize;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(255, 255, 255);
   transition: background 0.2s ease;
   height: 100%;
   z-index: 150;
 }
 
 .neu-track-resize-handle:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(255, 255, 255);
 }
 
 /* ✅ Custom Scrollbar Styles for Track Header */
