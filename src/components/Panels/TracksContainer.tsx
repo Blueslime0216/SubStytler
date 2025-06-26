@@ -17,6 +17,9 @@ interface TracksContainerProps {
   setViewRange: (s: number, e: number) => void;
   isHovered: boolean;
   setIsHovered: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedTrackId: string | null;
+  setSelectedTrackId: React.Dispatch<React.SetStateAction<string | null>>;
+  onSidebarWidthChange?: (width: number) => void;
 }
 
 export const TracksContainer: React.FC<TracksContainerProps> = ({
@@ -29,7 +32,10 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   setZoom,
   setViewRange,
   isHovered,
-  setIsHovered
+  setIsHovered,
+  selectedTrackId,
+  setSelectedTrackId,
+  onSidebarWidthChange
 }) => {
   const {
     currentProject,
@@ -39,9 +45,9 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
     updateSubtitle
   } = useProjectStore();
   
-  const [activeTrackId, setActiveTrackId] = useState<string | null>(null);
   const [draggedSubtitle, setDraggedSubtitle] = useState<{ id: string, sourceTrackId: string } | null>(null);
   const [dragOverTrackId, setDragOverTrackId] = useState<string | null>(null);
+  const [hasLeftOriginalTrack, setHasLeftOriginalTrack] = useState(false);
 
   const tracks = currentProject?.tracks || [];
   const subtitles = currentProject?.subtitles || [];
@@ -93,25 +99,36 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
     const trackNumber = tracks.length + 1;
     const trackId = addTrack(`Track ${trackNumber}`);
     if (trackId) {
-      setActiveTrackId(trackId);
+      setSelectedTrackId(trackId);
     }
   };
 
   const handleSubtitleDragStart = useCallback((subtitleId: string, trackId: string) => {
     setDraggedSubtitle({ id: subtitleId, sourceTrackId: trackId });
+    setHasLeftOriginalTrack(false);
   }, []);
 
   const handleSubtitleDragEnd = useCallback(() => {
     setDraggedSubtitle(null);
     setDragOverTrackId(null);
+    setHasLeftOriginalTrack(false);
   }, []);
 
   // Track hover detection for visual feedback during drag
   const handleTrackMouseEnter = useCallback((trackId: string) => {
-    if (draggedSubtitle && draggedSubtitle.sourceTrackId !== trackId) {
+    if (!draggedSubtitle) return;
+
+    if (!hasLeftOriginalTrack) {
+      // First time leaving original track
+      if (trackId !== draggedSubtitle.sourceTrackId) {
+        setHasLeftOriginalTrack(true);
+        setDragOverTrackId(trackId);
+      }
+    } else {
+      // Already left once, highlight any track we enter (including origin)
       setDragOverTrackId(trackId);
     }
-  }, [draggedSubtitle]);
+  }, [draggedSubtitle, hasLeftOriginalTrack]);
 
   const handleTrackMouseLeave = useCallback(() => {
     setDragOverTrackId(null);
@@ -153,10 +170,42 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
     };
   }, []);
 
+  /* ------------------------------------------------------------------
+     Scroll Sync between Track Header (left) and Track Content (right)
+     ------------------------------------------------------------------ */
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  const syncHeaderScroll = React.useCallback(() => {
+    if (!headerRef.current || !containerRef.current) return;
+    headerRef.current.scrollTop = containerRef.current.scrollTop;
+  }, [headerRef, containerRef]);
+
+  // When header is scrolled (e.g., via mouse wheel), sync content
+  const handleHeaderScroll = React.useCallback(() => {
+    if (!headerRef.current || !containerRef.current) return;
+    containerRef.current.scrollTop = headerRef.current.scrollTop;
+  }, [headerRef, containerRef]);
+
+  const handleContentScroll = React.useCallback(() => {
+    syncHeaderScroll();
+  }, [syncHeaderScroll]);
+
+  // Notify parent of sidebar width changes
+  React.useEffect(() => {
+    if (typeof onSidebarWidthChange === 'function') {
+      onSidebarWidthChange(sidebarWidth);
+    }
+  }, [sidebarWidth, onSidebarWidthChange]);
+
   return (
     <div className="neu-tracks-container">
       {/* Track headers */}
-      <div className="neu-tracks-header" style={{ width: sidebarWidth }}>
+      <div
+        className="neu-tracks-header"
+        style={{ width: sidebarWidth }}
+        ref={headerRef}
+        onScroll={handleHeaderScroll}
+      >
         {/* Spacer to align with Ruler */}
         <div style={{ height: RULER_HEIGHT }} />
 
@@ -164,7 +213,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
           <TrackHeader
             key={track.id}
             track={track}
-            isActive={activeTrackId === track.id}
+            isActive={selectedTrackId === track.id}
             onDelete={deleteTrack}
             onRename={(id, name) => updateTrack(id, { name })}
             onToggleVisibility={(id, visible) => updateTrack(id, { visible })}
@@ -196,6 +245,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => { setIsHovered(false); }}
         onWheel={handleWheel}
+        onScroll={handleContentScroll}
       >
         <TimelineRuler
           viewStart={viewStart}
@@ -212,7 +262,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
               dragOverTrackId === track.id ? 'bg-blue-500 bg-opacity-20' : ''
             }`}
             style={{ height: TRACK_HEIGHT }}
-            onClick={() => setActiveTrackId(track.id)}
+            onClick={() => setSelectedTrackId(track.id)}
             onMouseEnter={() => handleTrackMouseEnter(track.id)}
             onMouseLeave={handleTrackMouseLeave}
           >

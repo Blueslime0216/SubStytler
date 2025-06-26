@@ -44,15 +44,11 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   const left = timeToPixel(subtitle.startTime);
   const width = timeToPixel(subtitle.endTime) - left;
   
-  // Don't render if outside visible area
-  if (!containerRef.current || left + width < 0) {
-    return null;
-  }
-
+  // Determine visibility **without** causing early hook-return.
   const containerWidth = containerRef.current?.clientWidth || 0;
-  if (left > containerWidth) {
-    return null;
-  }
+  const BUFFER = 100; // px to allow block (and shadow) partially outside before hiding
+  const isOutsideView =
+    !containerRef.current || left + width < -BUFFER || left > containerWidth + BUFFER;
 
   const subtitleDuration = subtitle.endTime - subtitle.startTime;
 
@@ -81,7 +77,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     };
     
     setDragStartPos({ x: e.clientX, y: e.clientY });
-    setDragOffset({ x: offsetX, y: offsetY });
+    setDragOffset({ x: 0, y: 0 });
     setIsDragging(true);
     
     onDragStart(subtitle.id, subtitle.trackId);
@@ -89,12 +85,22 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging || !dragStartData.current) return;
-    
+
     const deltaX = e.clientX - dragStartPos.x;
-    const deltaY = e.clientY - dragStartPos.y;
-    
-    setDragOffset({ x: deltaX, y: deltaY });
-  }, [isDragging, dragStartPos]);
+
+    // Determine which track we're currently hovering over and snap vertically
+    const { containerRect } = dragStartData.current;
+    const relativeY = e.clientY - containerRect.top - 40; // 40px ruler height
+    const { currentProject } = useProjectStore.getState();
+    const tracksCount = currentProject?.tracks.length ?? 0;
+    let targetTrackIndex = Math.floor(relativeY / trackHeight);
+    targetTrackIndex = Math.max(0, Math.min(tracksCount - 1, targetTrackIndex));
+
+    const offsetTrack = targetTrackIndex - trackIndex;
+    const snappedY = offsetTrack * trackHeight;
+
+    setDragOffset({ x: deltaX, y: snappedY });
+  }, [isDragging, dragStartPos, trackHeight, trackIndex]);
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
     if (!isDragging || !dragStartData.current) return;
@@ -166,11 +172,16 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
+  // If the block is outside of the current viewport, render nothing **after** all hooks have been invoked.
+  if (isOutsideView) {
+    return null;
+  }
+
   return (
     <motion.div
       className="neu-subtitle-block absolute cursor-move flex items-center px-4 neu-interactive"
       style={{
-        left: Math.max(0, left + (isDragging ? dragOffset.x : 0)),
+        left: left + (isDragging ? dragOffset.x : 0),
         width: Math.max(32, width),
         top: `${7 + (isDragging ? dragOffset.y : 0)}px`,
         height: '36px',

@@ -68,12 +68,12 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     }
   }, [areaId, actualType, changePanelType]);
 
-  console.log('🎨 Panel 렌더링:', {
-    areaId,
-    providedType: type,
-    actualType,
-    configFound: true
-  });
+  // console.log('🎨 Panel 렌더링:', {
+  //   areaId,
+  //   providedType: type,
+  //   actualType,
+  //   configFound: true
+  // });
 
   // 패널이 마운트되거나 areaId 변경 시 포커스 설정
   useEffect(() => {

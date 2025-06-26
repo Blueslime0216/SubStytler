@@ -17,7 +17,7 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
   const [inputValue, setInputValue] = useState<string>(zoom.toFixed(1));
 
   const MIN_ZOOM = 1; // cannot zoom below full view
-  const MAX_ZOOM = 10;
+  const MAX_ZOOM = 100;
 
   const clampZoom = (val: number) => Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, val));
 
@@ -67,7 +67,7 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    const delta = e.deltaY < 0 ? 0.1 : -0.1;
+    const delta = e.deltaY < 0 ? 1 : -1;
     const tentative = clampZoom(parseFloat((zoom + delta).toFixed(2)));
     if (tentative === zoom) return; // at limit
     commitZoom(tentative);
@@ -103,7 +103,7 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
         <span className="neu-text-secondary text-sm select-none">Zoom</span>
 
         <button
-          onClick={() => adjustZoom(-0.1)}
+          onClick={() => adjustZoom(-1)}
           className="neu-card-micro neu-shadow-hover w-7 h-7 flex items-center justify-center rounded-md disabled:opacity-40"
           title="Zoom out"
           disabled={zoom <= MIN_ZOOM}
@@ -122,7 +122,7 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
         />
 
         <button
-          onClick={() => adjustZoom(0.1)}
+          onClick={() => adjustZoom(1)}
           className="neu-card-micro neu-shadow-hover w-7 h-7 flex items-center justify-center rounded-md disabled:opacity-40"
           title="Zoom in"
           disabled={zoom >= MAX_ZOOM}

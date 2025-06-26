@@ -66,16 +66,20 @@
   background: var(--neu-bg-surface);
   border-right: 2px solid rgba(255, 255, 255, 0.08);
   overflow-y: auto;
+  height: 100%;
   box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.1);
   padding: 0;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 50;
 }
 
 .neu-tracks-content {
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
 }
 
@@ -90,7 +94,7 @@
 /* ===== REDESIGNED TRACK HEADER ===== */
 .neu-track-header-redesigned {
   position: relative;
-  height: 60px;
+  height: 50px;
   display: flex;
   align-items: center;
   background: var(--neu-base);
@@ -417,7 +421,8 @@
   height: 50px;
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  overflow: visible;
+  overflow-x: hidden;
+  overflow-y: visible;
   transition: background-color 0.2s ease;
 }
 
@@ -485,7 +490,7 @@
   top: 0;
   width: 3px;
   height: 100%;
-  z-index: 100;
+  z-index: 5;
   pointer-events: none;
   background: linear-gradient(180deg, 
     var(--neu-primary-light) 0%,

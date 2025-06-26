@@ -98,7 +98,7 @@ export const useTimelineInteraction = (
     // Always zoom with wheel
     const zoomFactor = 1.1;
     let newZoom = e.deltaY < 0 ? zoom * zoomFactor : zoom / zoomFactor;
-    newZoom = Math.max(1, Math.min(10, newZoom));
+    newZoom = Math.max(1, Math.min(100, newZoom));
     setZoom(newZoom);
 
     const newViewDuration = duration / newZoom;

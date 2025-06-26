@@ -52,7 +52,15 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       const newProject: Project = {
         id: crypto.randomUUID(),
         name: 'Untitled',
-        tracks: [],
+        tracks: [
+          {
+            id: 'default',
+            name: 'Default Track',
+            language: 'en',
+            visible: true,
+            locked: false,
+          },
+        ],
         subtitles: [],
         styles: [],
         timeline: {

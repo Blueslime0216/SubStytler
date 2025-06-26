@@ -5,6 +5,7 @@ import TimelineToolbar from './TimelineToolbar';
 import TimelineOverviewBar from './TimelineOverviewBar';
 import { useHotkeys } from 'react-hotkeys-hook';
 import TracksContainer from './TracksContainer';
+import { SubtitleTrack } from '../../types/project';
 
 export const SubtitleTimelinePanel: React.FC = () => {
   const interactionRef = useRef<HTMLDivElement>(null);
@@ -28,6 +29,10 @@ export const SubtitleTimelinePanel: React.FC = () => {
 
   // Track mouse hover to activate hotkey only when timeline is under cursor
   const [isHovered, setIsHovered] = useState(false);
+
+  // Currently selected track id (updated by TracksContainer)
+  const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
+  const [sidebarWidth, setSidebarWidth] = useState<number>(180);
 
   // Sync local state with global state on mount and when global state changes
   useEffect(() => {
@@ -53,11 +58,27 @@ export const SubtitleTimelinePanel: React.FC = () => {
 
   const addNewSubtitle = () => {
     if (currentProject) {
-      // Use the first available track, or 'default' if none
-      const firstTrackId = currentProject.tracks.length > 0 
-        ? currentProject.tracks[0].id 
-        : 'default';
-      
+      // Determine target track: selected, else first, else default
+      let targetTrackId: string;
+      if (selectedTrackId) {
+        targetTrackId = selectedTrackId;
+      } else if (currentProject.tracks.length > 0) {
+        targetTrackId = currentProject.tracks[0].id;
+      } else {
+        // If no track exists, create one automatically
+        const newTrackId = crypto.randomUUID();
+        const defaultTrack: SubtitleTrack = {
+          id: newTrackId,
+          name: 'Default',
+          language: 'und',
+          locked: false,
+          visible: true
+        };
+        // Add to project store directly (simpler than creating action) – fallback
+        currentProject.tracks.push(defaultTrack);
+        targetTrackId = newTrackId;
+      }
+
       const newSubtitle = {
         id: crypto.randomUUID(),
         spans: [{
@@ -68,7 +89,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
         }],
         startTime: currentTime,
         endTime: currentTime + 2000,
-        trackId: firstTrackId
+        trackId: targetTrackId
       };
       addSubtitle(newSubtitle);
     }
@@ -105,7 +126,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
       <TimelineToolbar 
         onAddSubtitle={addNewSubtitle} 
         zoom={localZoom} 
-        setZoom={setZoom} 
+        setZoom={setZoom as any} 
         viewStart={localViewStart} 
         viewEnd={localViewEnd} 
         setViewRange={setViewRange} 
@@ -120,14 +141,22 @@ export const SubtitleTimelinePanel: React.FC = () => {
             viewEnd={localViewEnd}
             fps={fps}
             zoom={localZoom}
-            setZoom={setZoom}
+            setZoom={setZoom as any}
             setViewRange={setViewRange}
             isHovered={isHovered}
             setIsHovered={setIsHovered}
+            selectedTrackId={selectedTrackId}
+            setSelectedTrackId={setSelectedTrackId}
+            onSidebarWidthChange={setSidebarWidth}
           />
         </div>
         
-        <TimelineOverviewBar duration={duration} viewStart={localViewStart} viewEnd={localViewEnd} />
+        <TimelineOverviewBar
+          duration={duration}
+          viewStart={localViewStart}
+          viewEnd={localViewEnd}
+          sidebarOffset={sidebarWidth}
+        />
       </div>
     </div>
   );
