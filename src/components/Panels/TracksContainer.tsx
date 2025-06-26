@@ -245,8 +245,6 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
         className="neu-tracks-content flex-1 flex flex-col relative"
         style={{
           maxHeight: '100%', // ✅ Ensure proper height constraint
-          overflowY: 'auto', // ✅ Enable scrolling
-          overflowX: 'hidden' // ✅ Hide horizontal scroll
         }}
         ref={containerRef}
         onMouseDown={handleMouseDown}

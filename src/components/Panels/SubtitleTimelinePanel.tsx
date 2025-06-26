@@ -122,7 +122,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
   }, [duration, localZoom, localViewEnd, localViewStart, isInitialized]);
 
   return (
-    <div className="h-full flex flex-col neu-timeline" style={{ overflow: 'hidden' }}>
+    <div className="h-full flex flex-col neu-timeline" style={{ overflow: 'visible' }}>
       <TimelineToolbar 
         onAddSubtitle={addNewSubtitle} 
         zoom={localZoom} 
@@ -132,8 +132,8 @@ export const SubtitleTimelinePanel: React.FC = () => {
         setViewRange={setViewRange} 
         duration={duration} 
       />
-      <div className="flex-1 flex flex-col relative" style={{ minHeight: 0, overflow: 'hidden' }}>
-        <div className="flex-1 relative" style={{ minHeight: 0, overflow: 'hidden' }}>
+      <div className="flex-1 flex flex-col relative" style={{ minHeight: 0, overflow: 'visible' }}>
+        <div className="flex-1 relative" style={{ minHeight: 0, overflow: 'visible' }}>
           <TracksContainer 
             currentTime={currentTime}
             containerRef={interactionRef}
