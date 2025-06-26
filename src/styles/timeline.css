@@ -65,7 +65,8 @@
   max-width: 240px;
   background: var(--neu-bg-surface);
   border-right: 2px solid rgba(255, 255, 255, 0.08);
-  overflow-y: auto;
+  overflow-y: auto; /* ✅ Enable vertical scrolling */
+  overflow-x: hidden; /* ✅ Hide horizontal scrollbar */
   height: 100%;
   box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.1);
   padding: 0;
@@ -73,14 +74,15 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  z-index: 50;
+  z-index: 100; /* ✅ Higher z-index than content area */
 }
 
 .neu-tracks-content {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow-y: auto; /* ✅ Enable vertical scrolling */
+  overflow-x: hidden; /* ✅ Hide horizontal scrollbar */
   position: relative;
+  z-index: 50; /* ✅ Lower z-index than header */
 }
 
 .neu-track {
@@ -103,6 +105,7 @@
   transition: all 0.2s ease;
   cursor: pointer;
   overflow: hidden;
+  flex-shrink: 0; /* ✅ Prevent shrinking */
 }
 
 .neu-track-header-redesigned::before {
@@ -332,6 +335,7 @@
   box-shadow: 
     inset 2px 2px 4px rgba(13, 17, 23, 0.3),
     inset -1px -1px 3px rgba(45, 55, 72, 0.2);
+  flex-shrink: 0; /* ✅ Prevent shrinking */
 }
 
 .neu-track-add::before {
@@ -444,6 +448,7 @@
   transition: all 0.2s ease;
   height: 36px;
   user-select: none;
+  z-index: 10; /* ✅ Lower z-index than header */
 }
 
 .neu-subtitle-block::before {
@@ -490,7 +495,7 @@
   top: 0;
   width: 3px;
   height: 100%;
-  z-index: 5;
+  z-index: 75; /* ✅ Between content (50) and header (100) */
   pointer-events: none;
   background: linear-gradient(180deg, 
     var(--neu-primary-light) 0%,
@@ -545,11 +550,55 @@
   background: rgba(255, 255, 255, 0.08);
   transition: background 0.2s ease;
   height: 100%;
-  z-index: 50;
+  z-index: 150; /* ✅ Highest z-index for resize handle */
 }
 
 .neu-track-resize-handle:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+/* ✅ Custom Scrollbar Styles for Track Header */
+.neu-tracks-header::-webkit-scrollbar {
+  width: 8px;
+}
+
+.neu-tracks-header::-webkit-scrollbar-track {
+  background: var(--neu-base);
+  border-radius: 4px;
+}
+
+.neu-tracks-header::-webkit-scrollbar-thumb {
+  background: var(--neu-dark);
+  border-radius: 4px;
+  border: 1px solid var(--neu-base);
+  box-shadow: var(--neu-shadow-micro);
+}
+
+.neu-tracks-header::-webkit-scrollbar-thumb:hover {
+  background: var(--neu-darker);
+  box-shadow: var(--neu-shadow-subtle);
+}
+
+/* ✅ Custom Scrollbar Styles for Track Content */
+.neu-tracks-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.neu-tracks-content::-webkit-scrollbar-track {
+  background: var(--neu-base);
+  border-radius: 4px;
+}
+
+.neu-tracks-content::-webkit-scrollbar-thumb {
+  background: var(--neu-dark);
+  border-radius: 4px;
+  border: 1px solid var(--neu-base);
+  box-shadow: var(--neu-shadow-micro);
+}
+
+.neu-tracks-content::-webkit-scrollbar-thumb:hover {
+  background: var(--neu-darker);
+  box-shadow: var(--neu-shadow-subtle);
 }
 
 /* Responsive adjustments */

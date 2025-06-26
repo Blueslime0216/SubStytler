@@ -202,12 +202,17 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
       {/* Track headers */}
       <div
         className="neu-tracks-header"
-        style={{ width: sidebarWidth }}
+        style={{ 
+          width: sidebarWidth,
+          maxHeight: '100%', // ✅ Ensure proper height constraint
+          overflowY: 'auto', // ✅ Enable scrolling
+          overflowX: 'hidden' // ✅ Hide horizontal scroll
+        }}
         ref={headerRef}
         onScroll={handleHeaderScroll}
       >
         {/* Spacer to align with Ruler */}
-        <div style={{ height: RULER_HEIGHT }} />
+        <div style={{ height: RULER_HEIGHT, flexShrink: 0 }} />
 
         {tracks.map((track) => (
           <TrackHeader
@@ -238,6 +243,11 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
       {/* Right side: Ruler + tracks content */}
       <div 
         className="neu-tracks-content flex-1 flex flex-col relative"
+        style={{
+          maxHeight: '100%', // ✅ Ensure proper height constraint
+          overflowY: 'auto', // ✅ Enable scrolling
+          overflowX: 'hidden' // ✅ Hide horizontal scroll
+        }}
         ref={containerRef}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -261,7 +271,10 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
             className={`neu-track-content ${track.locked ? 'opacity-70' : ''} ${
               dragOverTrackId === track.id ? 'bg-blue-500 bg-opacity-20' : ''
             }`}
-            style={{ height: TRACK_HEIGHT }}
+            style={{ 
+              height: TRACK_HEIGHT,
+              flexShrink: 0 // ✅ Prevent track height from shrinking
+            }}
             onClick={() => setSelectedTrackId(track.id)}
             onMouseEnter={() => handleTrackMouseEnter(track.id)}
             onMouseLeave={handleTrackMouseLeave}
