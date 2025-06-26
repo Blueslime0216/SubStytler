@@ -143,22 +143,59 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     }
   }, [currentProject?.videoMeta?.url, analyzeAudio]);
 
-  // precomputed에서 뷰포트에 맞는 구간만 slice
+  // 리샘플링 함수 (선형 보간)
+  function resampleArray<T extends number | Uint8Array>(data: ArrayLike<T>, targetLength: number): T[] {
+    if (!data || data.length === 0 || targetLength <= 0) return [];
+    if (targetLength === 1) return [data[0]];
+    const result: T[] = [];
+    const srcLength = data.length;
+    for (let i = 0; i < targetLength; i++) {
+      const srcIdx = (i / (targetLength - 1)) * (srcLength - 1);
+      const left = Math.floor(srcIdx);
+      const right = Math.ceil(srcIdx);
+      if (left < 0 || right >= srcLength || data[left] === undefined || data[right] === undefined) {
+        result.push(data[0]);
+      } else if (left === right) {
+        result.push(data[left]);
+      } else {
+        if (typeof data[left] === 'number') {
+          const v = (data[left] as number) * (right - srcIdx) + (data[right] as number) * (srcIdx - left);
+          result.push(v as T);
+        } else {
+          const lArr = data[left] as Uint8Array;
+          const rArr = data[right] as Uint8Array;
+          const arr = new Uint8Array(lArr.length);
+          for (let j = 0; j < lArr.length; j++) {
+            arr[j] = Math.round(lArr[j] * (right - srcIdx) + rArr[j] * (srcIdx - left));
+          }
+          result.push(arr as T);
+        }
+      }
+    }
+    return result;
+  }
+
+  // precomputed에서 뷰포트에 맞는 구간을 width에 맞게 리샘플링
   const getViewWaveformData = useCallback((width: number): number[] => {
-    if (!precomputedWaveform || !audioDuration) return [];
+    if (!precomputedWaveform || !audioDuration || width <= 1) return [];
     const total = precomputedWaveform.length;
-    const startIdx = Math.floor((localViewStart / audioDuration) * total);
-    const endIdx = Math.ceil((localViewEnd / audioDuration) * total);
-    // Float32Array를 number[]로 변환
-    return Array.from(precomputedWaveform.slice(startIdx, endIdx));
+    const startRatio = localViewStart / audioDuration;
+    const endRatio = localViewEnd / audioDuration;
+    const startIdx = Math.floor(startRatio * total);
+    const endIdx = Math.ceil(endRatio * total);
+    const sliced = precomputedWaveform.slice(startIdx, endIdx);
+    return resampleArray(sliced, width);
   }, [precomputedWaveform, localViewStart, localViewEnd, audioDuration]);
 
   const getViewSpectrogramData = useCallback((width: number): Uint8Array[] => {
-    if (!precomputedSpectrogram || !audioDuration) return [];
+    if (!precomputedSpectrogram || !audioDuration || width <= 1) return [];
     const total = precomputedSpectrogram.length;
-    const startIdx = Math.floor((localViewStart / audioDuration) * total);
-    const endIdx = Math.ceil((localViewEnd / audioDuration) * total);
-    return precomputedSpectrogram.slice(startIdx, endIdx);
+    const startRatio = localViewStart / audioDuration;
+    const endRatio = localViewEnd / audioDuration;
+    const startIdx = Math.floor(startRatio * total);
+    const endIdx = Math.ceil(endRatio * total);
+    const sliced = precomputedSpectrogram.slice(startIdx, endIdx);
+    return resampleArray(sliced, width);
   }, [precomputedSpectrogram, localViewStart, localViewEnd, audioDuration]);
 
   // 시간/픽셀 변환 함수
@@ -180,63 +217,54 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
   // 웨이브폼 그리기
   const drawWaveform = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, data: number[]) => {
     if (!data.length) return;
-    
     const centerY = height / 2;
-    
-    // 웨이브폼 색상 설정
-    ctx.strokeStyle = '#3B82F6'; // 밝은 파란색
-    ctx.fillStyle = 'rgba(59, 130, 246, 0.3)'; // 반투명 파란색
+    ctx.strokeStyle = '#3B82F6';
+    ctx.fillStyle = 'rgba(59, 130, 246, 0.3)';
     ctx.lineWidth = 1;
     
-    // 채워진 웨이브폼 그리기
-    ctx.beginPath();
-    ctx.moveTo(0, centerY);
+    // 상단과 하단 점들을 미리 계산
+    const upperPoints: [number, number][] = [];
+    const lowerPoints: [number, number][] = [];
     
-    for (let i = 0; i < data.length; i++) {
-      const x = i;
-      const amplitude = Math.min(data[i] * 2, 1); // 진폭 조정
-      const y = centerY - amplitude * centerY * 0.9;
-      ctx.lineTo(x, y);
-    }
-    
-    // 하단부 완성
-    for (let i = data.length - 1; i >= 0; i--) {
-      const x = i;
+    for (let i = 0; i < width; i++) {
       const amplitude = Math.min(data[i] * 2, 1);
-      const y = centerY + amplitude * centerY * 0.9;
-      ctx.lineTo(x, y);
+      const upperY = centerY - amplitude * centerY * 0.9;
+      const lowerY = centerY + amplitude * centerY * 0.9;
+      upperPoints.push([i, upperY]);
+      lowerPoints.push([i, lowerY]);
     }
     
+    // 채우기 path 그리기
+    ctx.beginPath();
+    
+    // 상단 라인: 왼쪽에서 오른쪽으로
+    ctx.moveTo(upperPoints[0][0], upperPoints[0][1]);
+    for (let i = 1; i < upperPoints.length; i++) {
+      ctx.lineTo(upperPoints[i][0], upperPoints[i][1]);
+    }
+    
+    // 하단 라인: 오른쪽에서 왼쪽으로 (역순)
+    for (let i = lowerPoints.length - 1; i >= 0; i--) {
+      ctx.lineTo(lowerPoints[i][0], lowerPoints[i][1]);
+    }
+    
+    // 시작점으로 닫기
     ctx.closePath();
     ctx.fill();
     
-    // 테두리 그리기
+    // 상단 테두리
     ctx.beginPath();
-    for (let i = 0; i < data.length; i++) {
-      const x = i;
-      const amplitude = Math.min(data[i] * 2, 1);
-      const y = centerY - amplitude * centerY * 0.9;
-      
-      if (i === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
+    ctx.moveTo(upperPoints[0][0], upperPoints[0][1]);
+    for (let i = 1; i < upperPoints.length; i++) {
+      ctx.lineTo(upperPoints[i][0], upperPoints[i][1]);
     }
     ctx.stroke();
     
-    // 하단부 테두리
+    // 하단 테두리
     ctx.beginPath();
-    for (let i = 0; i < data.length; i++) {
-      const x = i;
-      const amplitude = Math.min(data[i] * 2, 1);
-      const y = centerY + amplitude * centerY * 0.9;
-      
-      if (i === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
+    ctx.moveTo(lowerPoints[0][0], lowerPoints[0][1]);
+    for (let i = 1; i < lowerPoints.length; i++) {
+      ctx.lineTo(lowerPoints[i][0], lowerPoints[i][1]);
     }
     ctx.stroke();
   }, []);
@@ -244,39 +272,27 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
   // 스펙트로그램 그리기
   const drawSpectrogram = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, data: Uint8Array[]) => {
     if (!data.length) return;
-    
     const binCount = data[0].length;
     const binHeight = height / binCount;
-    
-    for (let x = 0; x < data.length; x++) {
+    for (let x = 0; x < width; x++) {
       const freqData = data[x];
-      
       for (let i = 0; i < binCount; i++) {
         const intensity = freqData[i] / 255;
-        
-        // 히트맵 색상 생성
         let r = 0, g = 0, b = 0;
-        
         if (intensity < 0.33) {
-          // 파란색 - 청록색
           r = 0;
           g = Math.round(intensity * 3 * 255);
           b = 255;
         } else if (intensity < 0.66) {
-          // 청록색 - 노란색
           r = Math.round((intensity - 0.33) * 3 * 255);
           g = 255;
           b = Math.round((0.66 - intensity) * 3 * 255);
         } else {
-          // 노란색 - 빨간색
           r = 255;
           g = Math.round((1 - intensity) * 3 * 255);
           b = 0;
         }
-        
         ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-        
-        // 주파수 인덱스를 뒤집어서 낮은 주파수가 아래쪽에 오도록 함
         const y = height - (i + 1) * binHeight;
         ctx.fillRect(x, y, 1, binHeight + 1);
       }
@@ -352,23 +368,22 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     // 재생 헤드 그리기
     if (accurateTime >= localViewStart && accurateTime <= localViewEnd) {
       const playheadX = timeToPixel(accurateTime);
-      ctx.strokeStyle = '#EF4444'; // 빨간색
+      ctx.strokeStyle = '#EF4444';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(playheadX, 0);
       ctx.lineTo(playheadX, height);
       ctx.stroke();
-      
-      // 재생 헤드 핸들
-      ctx.fillStyle = '#EF4444';
+      // 재생 헤드 핸들 (드래그 가능)
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(playheadX, 10, 6, 0, Math.PI * 2);
+      ctx.arc(playheadX, 10, 8, 0, Math.PI * 2);
+      ctx.fillStyle = isDraggingIndicator ? '#FF8888' : '#EF4444';
       ctx.fill();
-      
-      // 흰색 테두리
       ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 2;
       ctx.stroke();
+      ctx.restore();
     }
   }, [localViewStart, localViewEnd, mode, timeToPixel, precomputedWaveform, precomputedSpectrogram, audioDuration, isAnalyzing, getViewWaveformData, getViewSpectrogramData, drawWaveform, drawSpectrogram, getAccurateTime]);
 
@@ -441,7 +456,16 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
       setLocalViewEnd(newEnd);
       return;
     }
-  }, [isPanning, dragStart, localViewStart, localViewEnd, duration]);
+    
+    // 왼쪽 버튼 드래그로 재생 헤더 이동
+    if (e.buttons === 1 && containerRef.current && !isPanning) {
+      const rect = containerRef.current.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      x = Math.max(0, Math.min(x, rect.width));
+      const time = pixelToTime(x);
+      setCurrentTime(snapToFrame(time));
+    }
+  }, [isPanning, dragStart, localViewStart, localViewEnd, duration, pixelToTime, setCurrentTime, snapToFrame]);
 
   // 마우스 업 처리
   const handleMouseUp = useCallback((e: React.MouseEvent) => {
@@ -502,6 +526,47 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     );
   }
 
+  // wheel 이벤트 passive: false로 등록
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const handler = (e: WheelEvent) => {
+      // handleWheel을 직접 호출
+      if (typeof handleWheel === 'function') {
+        // @ts-ignore
+        handleWheel(e);
+      }
+    };
+    container.addEventListener('wheel', handler, { passive: false });
+    return () => container.removeEventListener('wheel', handler);
+  }, [handleWheel]);
+
+  // 인디케이터 드래그 조작
+  const [isDraggingIndicator, setIsDraggingIndicator] = useState(false);
+  const handleIndicatorMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    setIsDraggingIndicator(true);
+    e.stopPropagation();
+  }, []);
+  useEffect(() => {
+    if (!isDraggingIndicator) return;
+    const handleMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      x = Math.max(0, Math.min(x, rect.width));
+      const time = pixelToTime(x);
+      setCurrentTime(snapToFrame(time));
+    };
+    const handleUp = () => setIsDraggingIndicator(false);
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleUp);
+    };
+  }, [isDraggingIndicator, pixelToTime, setCurrentTime, snapToFrame]);
+
   return (
     <div className="neu-audio-waveform-panel h-full neu-bg-base p-3 flex flex-col">
       {/* 모드 토글 버튼 */}
@@ -527,12 +592,6 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
         >
           <Layers size={16} />
         </button>
-        
-        {isAnalyzing && (
-          <div className="ml-auto px-2 flex items-center">
-            <div className="animate-pulse text-xs text-gray-400">분석 중...</div>
-          </div>
-        )}
       </div>
 
       {/* 캔버스 영역 */}
@@ -543,12 +602,40 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => setIsPanning(false)}
-        onWheel={handleWheel}
       >
         <canvas
           ref={canvasRef}
           className="w-full h-full"
         />
+        {/* 인디케이터 드래그 핸들 */}
+        {(() => {
+          // accurateTime, playheadX 계산
+          const width = containerRef.current?.clientWidth || 0;
+          const accurateTime = (() => {
+            if (videoRef.current && isPlaying) {
+              return videoRef.current.currentTime * 1000;
+            }
+            return currentTime;
+          })();
+          if (accurateTime < localViewStart || accurateTime > localViewEnd || width === 0) return null;
+          const playheadX = timeToPixel(accurateTime);
+          return (
+            <div
+              style={{
+                position: 'absolute',
+                left: playheadX - 12,
+                top: 0,
+                width: 24,
+                height: 32,
+                zIndex: 10,
+                cursor: 'ew-resize',
+                background: 'transparent',
+              }}
+              onMouseDown={handleIndicatorMouseDown}
+              title="드래그로 재생 위치 이동"
+            />
+          );
+        })()}
       </div>
     </div>
   );

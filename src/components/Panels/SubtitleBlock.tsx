@@ -48,7 +48,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   const containerWidth = containerRef.current?.clientWidth || 0;
   const BUFFER = 100; // px to allow block (and shadow) partially outside before hiding
   const isOutsideView =
-    !containerRef.current || left + width < -BUFFER || left > containerWidth + BUFFER;
+    !isDragging && (!containerRef.current || left + width < -BUFFER || left > containerWidth + BUFFER);
 
   const subtitleDuration = subtitle.endTime - subtitle.startTime;
 
