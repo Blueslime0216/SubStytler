@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, useState } from 'react';
+import React, { useRef, useLayoutEffect, useState, useEffect } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
 import TimelineToolbar from './TimelineToolbar';
@@ -12,17 +12,44 @@ export const SubtitleTimelinePanel: React.FC = () => {
     currentTime,
     duration,
     fps,
+    zoom: globalZoom,
+    viewStart: globalViewStart,
+    viewEnd: globalViewEnd,
+    setZoom: setGlobalZoom,
+    setViewRange: setGlobalViewRange,
   } = useTimelineStore();
   const { currentProject, addSubtitle } = useProjectStore();
 
-  const [zoom, setZoom] = React.useState(1);
-  const [viewStart, setViewStart] = React.useState(0);
-  const [viewEnd, setViewEnd] = React.useState(60000);
+  // Local state for this panel instance
+  const [localZoom, setLocalZoom] = useState(globalZoom);
+  const [localViewStart, setLocalViewStart] = useState(globalViewStart);
+  const [localViewEnd, setLocalViewEnd] = useState(globalViewEnd);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Track mouse hover to activate hotkey only when timeline is under cursor
   const [isHovered, setIsHovered] = useState(false);
 
-  const setViewRange = (s:number,e:number)=>{setViewStart(s);setViewEnd(e);};
+  // Sync local state with global state on mount and when global state changes
+  useEffect(() => {
+    if (!isInitialized) {
+      setLocalZoom(globalZoom);
+      setLocalViewStart(globalViewStart);
+      setLocalViewEnd(globalViewEnd);
+      setIsInitialized(true);
+    }
+  }, [globalZoom, globalViewStart, globalViewEnd, isInitialized]);
+
+  // Update global state when local state changes
+  const setViewRange = (s: number, e: number) => {
+    setLocalViewStart(s);
+    setLocalViewEnd(e);
+    setGlobalViewRange(s, e);
+  };
+
+  const setZoom = (z: number) => {
+    setLocalZoom(z);
+    setGlobalZoom(z);
+  };
 
   const addNewSubtitle = () => {
     if (currentProject) {
@@ -55,35 +82,32 @@ export const SubtitleTimelinePanel: React.FC = () => {
   }, { enabled: isHovered, enableOnFormTags: true }, [isHovered, addNewSubtitle]);
 
   // Keep the local view window in sync with the overall project duration.
-  //  • On first mount we align to the current store duration (60 s by default).
-  //  • When a video is uploaded (or removed) and the duration changes, we
-  //    extend/clamp the view range so that existing subtitles stay visible.
   useLayoutEffect(() => {
-    if (!interactionRef.current) return;
+    if (!interactionRef.current || !isInitialized) return;
 
     // If zoom === 1 we always want to cover the full duration.
-    if (zoom === 1) {
+    if (localZoom === 1) {
       setViewRange(0, duration);
       return;
     }
 
     // Otherwise, make sure the view window fits inside the new duration.
-    const viewDuration = viewEnd - viewStart;
-    if (viewEnd > duration) {
+    const viewDuration = localViewEnd - localViewStart;
+    if (localViewEnd > duration) {
       const newEnd = duration;
       const newStart = Math.max(0, newEnd - viewDuration);
       setViewRange(newStart, newEnd);
     }
-  }, [duration, zoom, viewEnd, viewStart]);
+  }, [duration, localZoom, localViewEnd, localViewStart, isInitialized]);
 
   return (
     <div className="h-full flex flex-col neu-timeline">
       <TimelineToolbar 
         onAddSubtitle={addNewSubtitle} 
-        zoom={zoom} 
+        zoom={localZoom} 
         setZoom={setZoom} 
-        viewStart={viewStart} 
-        viewEnd={viewEnd} 
+        viewStart={localViewStart} 
+        viewEnd={localViewEnd} 
         setViewRange={setViewRange} 
         duration={duration} 
       />
@@ -92,10 +116,10 @@ export const SubtitleTimelinePanel: React.FC = () => {
           <TracksContainer 
             currentTime={currentTime}
             containerRef={interactionRef}
-            viewStart={viewStart}
-            viewEnd={viewEnd}
+            viewStart={localViewStart}
+            viewEnd={localViewEnd}
             fps={fps}
-            zoom={zoom}
+            zoom={localZoom}
             setZoom={setZoom}
             setViewRange={setViewRange}
             isHovered={isHovered}
@@ -103,7 +127,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
           />
         </div>
         
-        <TimelineOverviewBar duration={duration} viewStart={viewStart} viewEnd={viewEnd} />
+        <TimelineOverviewBar duration={duration} viewStart={localViewStart} viewEnd={localViewEnd} />
       </div>
     </div>
   );

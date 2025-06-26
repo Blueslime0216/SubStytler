@@ -418,6 +418,11 @@
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   overflow: visible;
+  transition: background-color 0.2s ease;
+}
+
+.neu-track-content.bg-blue-500 {
+  background: rgba(59, 130, 246, 0.2) !important;
 }
 
 .neu-subtitle-block {
@@ -432,7 +437,8 @@
   border: 1px solid var(--neu-primary-light);
   cursor: move;
   transition: all 0.2s ease;
-  height: 36px; /* Fixed height for subtitle blocks */
+  height: 36px;
+  user-select: none;
 }
 
 .neu-subtitle-block::before {
@@ -450,6 +456,7 @@
   box-shadow: var(--neu-shadow-3), 0 0 12px rgba(99, 179, 237, 0.5);
   filter: brightness(1.1);
   cursor: move;
+  transform: scale(1.02);
 }
 
 .neu-subtitle-block:active {
@@ -609,7 +616,8 @@
   .track-control-btn,
   .active-indicator,
   .neu-track-add,
-  .track-add-icon {
+  .track-add-icon,
+  .neu-subtitle-block {
     transition: none;
   }
   

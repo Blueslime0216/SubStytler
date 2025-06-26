@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useProjectStore } from '../../stores/projectStore';
 import TrackHeader from './TrackHeader';
 import SubtitleBlock from './SubtitleBlock';
@@ -14,7 +14,7 @@ interface TracksContainerProps {
   fps: number;
   zoom: number;
   setZoom: React.Dispatch<React.SetStateAction<number>>;
-  setViewRange: (s:number,e:number)=>void;
+  setViewRange: (s: number, e: number) => void;
   isHovered: boolean;
   setIsHovered: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -41,6 +41,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   
   const [activeTrackId, setActiveTrackId] = useState<string | null>(null);
   const [draggedSubtitle, setDraggedSubtitle] = useState<{ id: string, sourceTrackId: string } | null>(null);
+  const [dragOverTrackId, setDragOverTrackId] = useState<string | null>(null);
 
   const tracks = currentProject?.tracks || [];
   const subtitles = currentProject?.subtitles || [];
@@ -55,30 +56,38 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   });
 
   // Wrap interaction handlers so they are disabled while resizing sidebar
-  const handleMouseDown = (e:React.MouseEvent)=>{
-    if(isResizingRef.current) return;
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (isResizingRef.current) return;
     tMouseDown(e);
   };
-  const handleMouseMove = (e:React.MouseEvent)=>{
-    if(isResizingRef.current) return;
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isResizingRef.current) return;
     tMouseMove(e);
   };
-  const handleMouseUp = (e:React.MouseEvent)=>{
-    if(isResizingRef.current) return;
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (isResizingRef.current) return;
     tMouseUp(e);
   };
-  const handleWheel = (e:React.WheelEvent)=>{
-    if(isResizingRef.current) return;
+  const handleWheel = (e: React.WheelEvent) => {
+    if (isResizingRef.current) return;
     tWheel(e);
   };
 
-  const timeToPixel = (time:number)=>{
-    if(!containerRef.current) return 0;
+  // Improved time/pixel conversion functions
+  const timeToPixel = useCallback((time: number): number => {
+    if (!containerRef.current) return 0;
     const width = containerRef.current.clientWidth;
     const viewDuration = viewEnd - viewStart;
-    if(viewDuration===0) return 0;
-    return ((time - viewStart)/viewDuration)*width;
-  };
+    if (viewDuration === 0) return 0;
+    return ((time - viewStart) / viewDuration) * width;
+  }, [viewStart, viewEnd, containerRef]);
+
+  const pixelToTime = useCallback((pixel: number): number => {
+    if (!containerRef.current) return 0;
+    const width = containerRef.current.clientWidth;
+    const viewDuration = viewEnd - viewStart;
+    return viewStart + (pixel / width) * viewDuration;
+  }, [viewStart, viewEnd, containerRef]);
 
   const handleAddTrack = () => {
     const trackNumber = tracks.length + 1;
@@ -88,42 +97,56 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
     }
   };
 
-  const handleSubtitleDragStart = (subtitleId: string, trackId: string) => {
+  const handleSubtitleDragStart = useCallback((subtitleId: string, trackId: string) => {
     setDraggedSubtitle({ id: subtitleId, sourceTrackId: trackId });
-  };
+  }, []);
 
-  const handleTrackDragOver = (trackId: string, e: React.DragEvent) => {
+  const handleSubtitleDragEnd = useCallback(() => {
+    setDraggedSubtitle(null);
+    setDragOverTrackId(null);
+  }, []);
+
+  const handleTrackDragOver = useCallback((trackId: string, e: React.DragEvent) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    
     if (draggedSubtitle && draggedSubtitle.sourceTrackId !== trackId) {
-      // Visual indication that this is a valid drop target
-      e.currentTarget.classList.add('bg-opacity-20', 'bg-blue-500');
+      setDragOverTrackId(trackId);
     }
-  };
+  }, [draggedSubtitle]);
 
-  const handleTrackDragLeave = (e: React.DragEvent) => {
-    e.currentTarget.classList.remove('bg-opacity-20', 'bg-blue-500');
-  };
+  const handleTrackDragLeave = useCallback((e: React.DragEvent) => {
+    // Only clear if we're actually leaving the track area
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setDragOverTrackId(null);
+    }
+  }, []);
 
-  const handleTrackDrop = (trackId: string, e: React.DragEvent) => {
+  const handleTrackDrop = useCallback((trackId: string, e: React.DragEvent) => {
     e.preventDefault();
-    e.currentTarget.classList.remove('bg-opacity-20', 'bg-blue-500');
+    setDragOverTrackId(null);
     
     if (draggedSubtitle && draggedSubtitle.sourceTrackId !== trackId) {
       // Move subtitle to new track
       updateSubtitle(draggedSubtitle.id, { trackId });
       setDraggedSubtitle(null);
     }
-  };
+  }, [draggedSubtitle, updateSubtitle]);
 
   const RULER_HEIGHT = 40;
+  const TRACK_HEIGHT = 50;
 
   // Sidebar width state for resizable track header
   const [sidebarWidth, setSidebarWidth] = useState(180);
-  const isResizingRef = React.useRef(false);
-  const startXRef = React.useRef(0);
-  const startWidthRef = React.useRef(180);
+  const isResizingRef = useRef(false);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(180);
 
-  const handleResizeMouseDown = (e:React.MouseEvent)=>{
+  const handleResizeMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     isResizingRef.current = true;
@@ -131,9 +154,9 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
     startWidthRef.current = sidebarWidth;
   };
 
-  React.useEffect(()=>{
-    const handleMove=(e:MouseEvent)=>{
-      if(!isResizingRef.current) return;
+  React.useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      if (!isResizingRef.current) return;
       const delta = e.clientX - startXRef.current;
       let newW = startWidthRef.current + delta;
       const min = 120;
@@ -141,19 +164,19 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
       newW = Math.max(min, Math.min(max, newW));
       setSidebarWidth(newW);
     };
-    const stop=()=>{ isResizingRef.current=false; };
+    const stop = () => { isResizingRef.current = false; };
     window.addEventListener('mousemove', handleMove);
     window.addEventListener('mouseup', stop);
-    return ()=>{
+    return () => {
       window.removeEventListener('mousemove', handleMove);
       window.removeEventListener('mouseup', stop);
     };
-  },[]);
+  }, []);
 
   return (
     <div className="neu-tracks-container">
       {/* Track headers */}
-      <div className="neu-tracks-header" style={{width: sidebarWidth}}>
+      <div className="neu-tracks-header" style={{ width: sidebarWidth }}>
         {/* Spacer to align with Ruler */}
         <div style={{ height: RULER_HEIGHT }} />
 
@@ -184,14 +207,15 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
       <div className="neu-track-resize-handle" onMouseDown={handleResizeMouseDown} />
 
       {/* Right side: Ruler + tracks content */}
-      <div className="neu-tracks-content flex-1 flex flex-col relative"
-           ref={containerRef}
-           onMouseDown={handleMouseDown}
-           onMouseMove={handleMouseMove}
-           onMouseUp={handleMouseUp}
-           onMouseEnter={()=>setIsHovered(true)}
-           onMouseLeave={()=>{ setIsHovered(false); }}
-           onWheel={handleWheel}
+      <div 
+        className="neu-tracks-content flex-1 flex flex-col relative"
+        ref={containerRef}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => { setIsHovered(false); }}
+        onWheel={handleWheel}
       >
         <TimelineRuler
           viewStart={viewStart}
@@ -201,10 +225,13 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
           containerWidth={containerRef.current?.clientWidth || 0}
         />
 
-        {tracks.map((track) => (
+        {tracks.map((track, trackIndex) => (
           <div
             key={track.id}
-            className={`neu-track-content ${track.locked ? 'opacity-70' : ''}`}
+            className={`neu-track-content ${track.locked ? 'opacity-70' : ''} ${
+              dragOverTrackId === track.id ? 'bg-blue-500 bg-opacity-20' : ''
+            }`}
+            style={{ height: TRACK_HEIGHT }}
             onClick={() => setActiveTrackId(track.id)}
             onDragOver={(e) => handleTrackDragOver(track.id, e)}
             onDragLeave={handleTrackDragLeave}
@@ -218,9 +245,13 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
                   key={subtitle.id}
                   subtitle={subtitle}
                   timeToPixel={timeToPixel}
+                  pixelToTime={pixelToTime}
                   containerRef={containerRef}
-                  onDragStart={() => handleSubtitleDragStart(subtitle.id, track.id)}
+                  onDragStart={handleSubtitleDragStart}
+                  onDragEnd={handleSubtitleDragEnd}
                   isLocked={track.locked}
+                  trackIndex={trackIndex}
+                  trackHeight={TRACK_HEIGHT}
                 />
               ))}
           </div>
