@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "dexie": "^3.2.4",
+    "fft.js": "^4.0.4",
     "framer-motion": "^10.16.16",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
