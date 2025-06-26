@@ -168,12 +168,12 @@ const AreaBlockComponent: React.FC<AreaBlockProps> = ({
 
   return (
     <motion.div
-      className={`area-block ${dragging ? 'dragging' : ''}`}
+      className={`area-block ${dragging ? 'dragging' : ''} bg-transparent rounded-neu shadow-none transition-all duration-200 border-none outline-none`}
       style={baseStyle}
       initial={false}
       animate={getPaddingValues}
       transition={{
-        duration: 0.1, // 드래그 시작 및 종료 모두 0.1초 애니메이션
+        duration: 0.1,
         ease: "easeOut",
         type: "tween"
       }}

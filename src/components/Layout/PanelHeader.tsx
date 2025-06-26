@@ -48,7 +48,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   };
 
   return (
-    <div className="neu-panel-header flex items-center justify-between flex-shrink-0 px-4 py-3">
+    <div className="neu-panel-header flex items-center justify-between flex-shrink-0 px-4 py-3 bg-neu-light shadow-neu-outset rounded-t-neu-lg border-none outline-none">
       <div className="flex items-center space-x-4 flex-1 min-w-0">
         {/* 🎯 새로운 패널 타입 선택기 */}
         <PanelTypeSelector
@@ -74,21 +74,12 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
         <div className="relative">
           <motion.button
             onClick={handleSplitButtonClick}
-            className="neu-btn-icon p-2 cursor-pointer neu-interactive"
+            className="neu-btn-icon p-2 cursor-pointer neu-interactive bg-neu-surface shadow-neu-inset rounded-neu border border-neu-dark transition-all duration-200"
             title="패널 분할"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            style={{
-              borderRadius: '10px',
-              background: showSplitOptions ? 'var(--neu-accent)' : 'var(--neu-base)',
-              boxShadow: showSplitOptions
-                ? `inset 3px 3px 8px rgba(13, 17, 23, 0.6), inset -1px -1px 6px rgba(45, 55, 72, 0.4)`
-                : `4px 4px 12px rgba(13, 17, 23, 0.6), -2px -2px 8px rgba(45, 55, 72, 0.4)`,
-              border: '2px solid rgba(45, 55, 72, 0.3)',
-              transition: 'all 0.2s ease',
-            }}
           >
-            <SplitSquareHorizontal className="w-3.5 h-3.5 text-white" />
+            <SplitSquareHorizontal className="w-3.5 h-3.5 text-neu-text-primary" />
           </motion.button>
 
           {/* 분할 옵션 작은 팝업 */}
@@ -126,21 +117,12 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
           <div className="relative">
             <motion.button
               onClick={handleCoverButtonClick}
-              className="neu-btn-icon p-2 cursor-pointer neu-interactive"
+              className="neu-btn-icon p-2 cursor-pointer neu-interactive bg-neu-surface shadow-neu-inset rounded-neu border border-neu-dark transition-all duration-200"
               title="영역 덮기 방향 선택"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              style={{
-                borderRadius: '10px',
-                background: showCoverOptions ? 'var(--neu-accent)' : 'var(--neu-base)',
-                boxShadow: showCoverOptions
-                  ? `inset 3px 3px 8px rgba(13, 17, 23, 0.6), inset -1px -1px 6px rgba(45, 55, 72, 0.4)`
-                  : `4px 4px 12px rgba(13, 17, 23, 0.6), -2px -2px 8px rgba(45, 55, 72, 0.4)`,
-                border: '2px solid rgba(45, 55, 72, 0.3)',
-                transition: 'all 0.2s ease',
-              }}
             >
-              <ChevronDown className="w-3.5 h-3.5 text-white" />
+              <ChevronDown className="w-3.5 h-3.5 text-neu-text-primary" />
             </motion.button>
 
             {/* 덮기 방향 옵션 팝업 */}

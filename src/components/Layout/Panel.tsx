@@ -96,14 +96,10 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
 
   return (
     <motion.div
-      className={`neu-panel ${className}`}
+      className={`neu-panel ${className} bg-gradient-to-br from-neu-surface to-neu-base shadow-neu-outset-strong shadow-neu-inset rounded-neu-lg transition-all duration-200 border-none outline-none`}
       initial={{ opacity: 1, scale: 1 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.15, ease: 'easeOut' }}
-      style={{
-        contain: 'layout style',
-        willChange: 'auto'
-      }}
       onClick={() => areaId && setFocusedArea(areaId)}
     >
       <PanelHeader

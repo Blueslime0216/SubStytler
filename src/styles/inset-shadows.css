@@ -1,46 +1,44 @@
-/* Inset Shadow System Variables */
+/* Inset Shadow System Variables - Neumorphism Light & Dark */
 
 :root {
-  /* Unified Inset Shadows - Background Harmonious */
+  /* Light Mode Inset Shadows */
   --neu-shadow-inset: 
-    inset 4px 4px 8px rgba(13, 17, 23, 0.6),
-    inset -2px -2px 6px rgba(45, 55, 72, 0.4);
-  
+    inset 4px 4px 12px #e3e6ee,
+    inset -4px -4px 12px #ffffff;
+
   --neu-shadow-inset-soft: 
-    inset 3px 3px 6px rgba(13, 17, 23, 0.5),
-    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
-  
+    inset 2px 2px 6px #e3e6ee,
+    inset -2px -2px 6px #ffffff;
+
   --neu-shadow-inset-deep: 
-    inset 6px 6px 12px rgba(13, 17, 23, 0.7),
-    inset -3px -3px 8px rgba(45, 55, 72, 0.5);
+    inset 8px 8px 16px #cfd3dc,
+    inset -8px -8px 16px #ffffff;
 }
 
-/* Ensure dark theme is always applied */
 [data-theme="dark"] {
   --neu-shadow-inset: 
     inset 4px 4px 8px rgba(13, 17, 23, 0.6),
     inset -2px -2px 6px rgba(45, 55, 72, 0.4);
-  
+
   --neu-shadow-inset-soft: 
     inset 3px 3px 6px rgba(13, 17, 23, 0.5),
     inset -1px -1px 4px rgba(45, 55, 72, 0.3);
-  
+
   --neu-shadow-inset-deep: 
     inset 6px 6px 12px rgba(13, 17, 23, 0.7),
     inset -3px -3px 8px rgba(45, 55, 72, 0.5);
 }
 
-/* Remove any light mode references */
 [data-theme="light"] {
   --neu-shadow-inset: 
-    inset 4px 4px 8px rgba(13, 17, 23, 0.6),
-    inset -2px -2px 6px rgba(45, 55, 72, 0.4);
-  
+    inset 4px 4px 12px #e3e6ee,
+    inset -4px -4px 12px #ffffff;
+
   --neu-shadow-inset-soft: 
-    inset 3px 3px 6px rgba(13, 17, 23, 0.5),
-    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
-  
+    inset 2px 2px 6px #e3e6ee,
+    inset -2px -2px 6px #ffffff;
+
   --neu-shadow-inset-deep: 
-    inset 6px 6px 12px rgba(13, 17, 23, 0.7),
-    inset -3px -3px 8px rgba(45, 55, 72, 0.5);
+    inset 8px 8px 16px #cfd3dc,
+    inset -8px -8px 16px #ffffff;
 }

@@ -8,7 +8,7 @@ interface PanelBodyProps {
 
 export const PanelBody: React.FC<PanelBodyProps> = ({ type }) => {
   return (
-    <div className="neu-panel-content flex-1 min-h-0">
+    <div className="neu-panel-content flex-1 min-h-0 rounded-b-neu-lg">
       <PanelContent type={type} />
     </div>
   );

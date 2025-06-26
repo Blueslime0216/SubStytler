@@ -42,18 +42,18 @@
 /* Remove any light mode references */
 [data-theme="light"] {
   --neu-shadow-pressed: 
-    inset 3px 3px 6px rgba(13, 17, 23, 0.6),
-    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
+    inset 3px 3px 6px #e3e6ee,
+    inset -1px -1px 4px #ffffff;
   
   --neu-shadow-hover: 
-    7px 7px 14px rgba(13, 17, 23, 0.8),
-    -3px -3px 9px rgba(45, 55, 72, 0.6);
+    7px 7px 14px #e3e6ee,
+    -3px -3px 9px #ffffff;
   
   --neu-shadow-active: 
-    inset 2px 2px 4px rgba(13, 17, 23, 0.5),
-    inset -1px -1px 3px rgba(45, 55, 72, 0.2);
+    inset 2px 2px 4px #cfd3dc,
+    inset -1px -1px 3px #ffffff;
   
-  --neu-interactive-bg: rgba(99, 179, 237, 0.15);
-  --neu-interactive-border: rgba(99, 179, 237, 0.4);
-  --neu-hover-brightness: 1.1;
+  --neu-interactive-bg: rgba(37, 99, 235, 0.08);
+  --neu-interactive-border: #60a5fa;
+  --neu-hover-brightness: 1.04;
 }

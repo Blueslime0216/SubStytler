@@ -1,31 +1,30 @@
-/* Color System Variables - Dark Mode Only */
+/* Color System Variables - Neumorphism Light & Dark */
 
 :root {
-  /* Dark Mode Base Colors - Stronger Contrast */
-  --neu-base: #1A202C;
-  --neu-light: #2D3748;
-  --neu-dark: #0D1117;
-  --neu-darker: #000000;
-  --neu-accent: #374151;
-  --neu-surface: #2D3748;
-  
-  /* Text Colors - Dark Mode - High Contrast */
-  --neu-text-primary: #F7FAFC;
-  --neu-text-secondary: #E2E8F0;
-  --neu-text-muted: #CBD5E0;
-  --neu-text-accent: #90CDF4;
-  
-  /* Semantic Colors - Dark Mode - Enhanced */
-  --neu-primary: #63B3ED;
-  --neu-primary-light: #90CDF4;
-  --neu-primary-dark: #4299E1;
-  --neu-success: #68D391;
-  --neu-warning: #F6AD55;
-  --neu-error: #FC8181;
-  --neu-info: #63B3ED;
+  /* Light Mode Base Colors */
+  --neu-base: #f2f3f7;
+  --neu-light: #ffffff;
+  --neu-dark: #e3e6ee;
+  --neu-darker: #cfd3dc;
+  --neu-accent: #e9eaf0;
+  --neu-surface: #f7f8fa;
+
+  /* Text Colors - Light Mode */
+  --neu-text-primary: #23272f;
+  --neu-text-secondary: #4b5563;
+  --neu-text-muted: #7b8494;
+  --neu-text-accent: #2563eb;
+
+  /* Semantic Colors - Light Mode */
+  --neu-primary: #2563eb;
+  --neu-primary-light: #60a5fa;
+  --neu-primary-dark: #1e40af;
+  --neu-success: #22c55e;
+  --neu-warning: #facc15;
+  --neu-error: #ef4444;
+  --neu-info: #2563eb;
 }
 
-/* Ensure dark theme is always applied */
 [data-theme="dark"] {
   --neu-base: #1A202C;
   --neu-light: #2D3748;
@@ -33,12 +32,12 @@
   --neu-darker: #000000;
   --neu-accent: #374151;
   --neu-surface: #2D3748;
-  
+
   --neu-text-primary: #F7FAFC;
   --neu-text-secondary: #E2E8F0;
   --neu-text-muted: #CBD5E0;
   --neu-text-accent: #90CDF4;
-  
+
   --neu-primary: #63B3ED;
   --neu-primary-light: #90CDF4;
   --neu-primary-dark: #4299E1;
@@ -48,26 +47,24 @@
   --neu-info: #63B3ED;
 }
 
-/* Remove any light mode references */
 [data-theme="light"] {
-  /* Redirect to dark mode */
-  --neu-base: #1A202C;
-  --neu-light: #2D3748;
-  --neu-dark: #0D1117;
-  --neu-darker: #000000;
-  --neu-accent: #374151;
-  --neu-surface: #2D3748;
-  
-  --neu-text-primary: #F7FAFC;
-  --neu-text-secondary: #E2E8F0;
-  --neu-text-muted: #CBD5E0;
-  --neu-text-accent: #90CDF4;
-  
-  --neu-primary: #63B3ED;
-  --neu-primary-light: #90CDF4;
-  --neu-primary-dark: #4299E1;
-  --neu-success: #68D391;
-  --neu-warning: #F6AD55;
-  --neu-error: #FC8181;
-  --neu-info: #63B3ED;
+  --neu-base: #f2f3f7;
+  --neu-light: #ffffff;
+  --neu-dark: #e3e6ee;
+  --neu-darker: #cfd3dc;
+  --neu-accent: #e9eaf0;
+  --neu-surface: #f7f8fa;
+
+  --neu-text-primary: #23272f;
+  --neu-text-secondary: #4b5563;
+  --neu-text-muted: #7b8494;
+  --neu-text-accent: #2563eb;
+
+  --neu-primary: #2563eb;
+  --neu-primary-light: #60a5fa;
+  --neu-primary-dark: #1e40af;
+  --neu-success: #22c55e;
+  --neu-warning: #facc15;
+  --neu-error: #ef4444;
+  --neu-info: #2563eb;
 }
