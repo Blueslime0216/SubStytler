@@ -87,78 +87,274 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.neu-track-header {
-  padding: 8px 12px;
-  height: 50px;
+/* ===== REDESIGNED TRACK HEADER ===== */
+.neu-track-header-redesigned {
+  position: relative;
+  height: 60px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: var(--neu-bg-surface);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  font-weight: 500;
-  color: var(--neu-text-primary);
-  font-size: 0.85rem;
-  position: relative;
+  background: var(--neu-base);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 8px 12px;
+  transition: all 0.2s ease;
   cursor: pointer;
-  user-select: none;
+  overflow: hidden;
+}
+
+.neu-track-header-redesigned::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, 
+    rgba(45, 55, 72, 0.05) 0%, 
+    transparent 50%, 
+    rgba(13, 17, 23, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.neu-track-header-redesigned:hover::before {
+  opacity: 1;
+}
+
+.neu-track-header-redesigned.active {
+  background: linear-gradient(145deg, 
+    rgba(99, 179, 237, 0.1) 0%, 
+    rgba(99, 179, 237, 0.05) 100%);
+  border-left: 3px solid var(--neu-primary);
+  box-shadow: 
+    inset 2px 2px 4px rgba(99, 179, 237, 0.1),
+    inset -1px -1px 3px rgba(13, 17, 23, 0.2);
+}
+
+/* Track Color Indicator */
+.track-color-indicator {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+  position: relative;
+}
+
+.color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 
+    2px 2px 4px rgba(13, 17, 23, 0.6),
+    -1px -1px 2px rgba(45, 55, 72, 0.4),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.1);
   transition: all 0.2s ease;
 }
 
-.neu-track-header:hover {
-  background: var(--neu-bg-raised);
+.neu-track-header-redesigned.active .color-dot {
+  box-shadow: 
+    2px 2px 4px rgba(13, 17, 23, 0.6),
+    -1px -1px 2px rgba(45, 55, 72, 0.4),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.1),
+    0 0 8px rgba(99, 179, 237, 0.6);
 }
 
-.neu-track-header-active {
-  background: var(--neu-bg-raised);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+/* Track Name Section */
+.track-name-section {
+  flex: 1;
+  min-width: 0;
+  margin-right: 8px;
 }
 
-.neu-track-name {
+.track-name-display {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.track-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--neu-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-right: 4px;
+  line-height: 1.2;
 }
 
-.neu-track-controls {
-  display: flex;
-  gap: 6px;
+.track-language {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--neu-text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
 }
 
-.neu-track-control-btn {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  background: transparent;
-  color: var(--neu-text-secondary);
-  cursor: pointer;
-  opacity: 0.6;
+.track-name-input {
+  width: 100%;
+  background: var(--neu-base);
+  border: 2px solid var(--neu-primary);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--neu-text-primary);
+  box-shadow: 
+    inset 2px 2px 4px rgba(13, 17, 23, 0.6),
+    inset -1px -1px 3px rgba(45, 55, 72, 0.4);
+  outline: none;
   transition: all 0.2s ease;
 }
 
-.neu-track-control-btn:hover {
+.track-name-input:focus {
+  box-shadow: 
+    inset 2px 2px 4px rgba(13, 17, 23, 0.6),
+    inset -1px -1px 3px rgba(45, 55, 72, 0.4),
+    0 0 0 2px rgba(99, 179, 237, 0.3);
+}
+
+/* Track Controls */
+.track-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.track-control-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--neu-base);
+  border: 1px solid rgba(45, 55, 72, 0.3);
+  box-shadow: 
+    3px 3px 6px rgba(13, 17, 23, 0.6),
+    -2px -2px 4px rgba(45, 55, 72, 0.4);
+  color: var(--neu-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.track-control-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--neu-interactive-bg);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  border-radius: inherit;
+}
+
+.track-control-btn:hover {
+  color: var(--neu-text-primary);
+  box-shadow: 
+    4px 4px 8px rgba(13, 17, 23, 0.7),
+    -2px -2px 6px rgba(45, 55, 72, 0.5);
+  border-color: var(--neu-interactive-border);
+}
+
+.track-control-btn:hover::before {
   opacity: 1;
-  background: rgba(255, 255, 255, 0.1);
+}
+
+.track-control-btn:active {
+  box-shadow: 
+    inset 2px 2px 4px rgba(13, 17, 23, 0.6),
+    inset -1px -1px 3px rgba(45, 55, 72, 0.4);
+}
+
+/* Specific Control Button States */
+.track-control-btn.visibility.active {
+  color: var(--neu-primary);
+  border-color: var(--neu-primary);
+  box-shadow: 
+    3px 3px 6px rgba(13, 17, 23, 0.6),
+    -2px -2px 4px rgba(45, 55, 72, 0.4),
+    0 0 8px rgba(99, 179, 237, 0.3);
+}
+
+.track-control-btn.lock.active {
+  color: var(--neu-warning);
+  border-color: var(--neu-warning);
+  box-shadow: 
+    3px 3px 6px rgba(13, 17, 23, 0.6),
+    -2px -2px 4px rgba(45, 55, 72, 0.4),
+    0 0 8px rgba(246, 173, 85, 0.3);
+}
+
+.track-control-btn.volume {
+  color: var(--neu-success);
+}
+
+.track-control-btn.delete {
+  color: var(--neu-error);
+}
+
+.track-control-btn.delete:hover {
+  color: var(--neu-error);
+  border-color: var(--neu-error);
+  box-shadow: 
+    4px 4px 8px rgba(13, 17, 23, 0.7),
+    -2px -2px 6px rgba(45, 55, 72, 0.5),
+    0 0 8px rgba(252, 129, 129, 0.3);
+}
+
+/* Active Track Indicator */
+.active-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--neu-primary), var(--neu-primary-light));
+  transform-origin: left;
 }
 
 .neu-track-add {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 12px;
   color: var(--neu-text-secondary);
   cursor: pointer;
-  background: var(--neu-bg-surface);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--neu-base);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.neu-track-add::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, 
+    rgba(99, 179, 237, 0.05) 0%, 
+    transparent 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 .neu-track-add:hover {
-  background: var(--neu-bg-raised);
   color: var(--neu-primary);
+  box-shadow: 
+    inset 2px 2px 4px rgba(99, 179, 237, 0.1),
+    inset -1px -1px 3px rgba(13, 17, 23, 0.1);
+}
+
+.neu-track-add:hover::before {
+  opacity: 1;
 }
 
 .neu-track-content {
@@ -238,4 +434,58 @@
 
 .neu-track-resize-handle:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .neu-track-header-redesigned {
+    height: 50px;
+    padding: 6px 8px;
+  }
+  
+  .track-control-btn {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .track-controls {
+    gap: 4px;
+  }
+  
+  .track-name {
+    font-size: 0.8125rem;
+  }
+  
+  .track-language {
+    font-size: 0.625rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .neu-track-header-redesigned {
+    border: 2px solid var(--neu-text-primary);
+  }
+  
+  .track-control-btn {
+    border: 2px solid var(--neu-text-primary);
+  }
+  
+  .color-dot {
+    border: 2px solid var(--neu-text-primary);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .neu-track-header-redesigned,
+  .track-control-btn,
+  .active-indicator {
+    transition: none;
+  }
+  
+  .neu-track-header-redesigned::before,
+  .track-control-btn::before {
+    transition: none;
+  }
 }
