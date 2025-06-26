@@ -10,11 +10,23 @@ interface AudioWaveformPanelProps {
   areaId?: string;
 }
 
+interface AudioData {
+  waveformData: Float32Array[];
+  spectrogramData: number[][];
+  sampleRate: number;
+  duration: number;
+}
+
 export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioBufferRef = useRef<AudioBuffer | null>(null);
+  
   const [mode, setMode] = useState<WaveformMode>('waveform');
   const [showModeMenu, setShowModeMenu] = useState(false);
+  const [audioData, setAudioData] = useState<AudioData | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   
   // Individual panel state for zoom and view
   const [localZoom, setLocalZoom] = useState(1);
@@ -35,6 +47,101 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     }
   }, [duration]);
 
+  // Extract and analyze audio from video
+  const analyzeAudio = useCallback(async () => {
+    if (!currentProject?.videoMeta?.url || isAnalyzing) return;
+    
+    setIsAnalyzing(true);
+    
+    try {
+      // Create audio context
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      
+      const audioContext = audioContextRef.current;
+      
+      // Fetch video file and extract audio
+      const response = await fetch(currentProject.videoMeta.url);
+      const arrayBuffer = await response.arrayBuffer();
+      
+      // Decode audio data
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      audioBufferRef.current = audioBuffer;
+      
+      // Extract waveform data (downsampled for performance)
+      const channels = [];
+      for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
+        channels.push(audioBuffer.getChannelData(channel));
+      }
+      
+      // Generate spectrogram data using FFT
+      const spectrogramData = generateSpectrogram(audioBuffer);
+      
+      setAudioData({
+        waveformData: channels,
+        spectrogramData,
+        sampleRate: audioBuffer.sampleRate,
+        duration: audioBuffer.duration * 1000 // Convert to milliseconds
+      });
+      
+    } catch (error) {
+      console.error('Failed to analyze audio:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }, [currentProject?.videoMeta?.url, isAnalyzing]);
+
+  // Generate spectrogram using FFT
+  const generateSpectrogram = useCallback((audioBuffer: AudioBuffer): number[][] => {
+    const channelData = audioBuffer.getChannelData(0); // Use first channel
+    const fftSize = 2048;
+    const hopSize = fftSize / 4;
+    const freqBins = fftSize / 2;
+    
+    const spectrogramData: number[][] = [];
+    
+    // Simple FFT implementation for demonstration
+    // In production, you'd use a proper FFT library
+    for (let i = 0; i < channelData.length - fftSize; i += hopSize) {
+      const frame = channelData.slice(i, i + fftSize);
+      const freqData = performFFT(frame);
+      spectrogramData.push(freqData);
+    }
+    
+    return spectrogramData;
+  }, []);
+
+  // Simple FFT implementation (for demonstration - use a proper library in production)
+  const performFFT = useCallback((frame: Float32Array): number[] => {
+    const N = frame.length;
+    const freqBins = N / 2;
+    const result: number[] = [];
+    
+    for (let k = 0; k < freqBins; k++) {
+      let real = 0;
+      let imag = 0;
+      
+      for (let n = 0; n < N; n++) {
+        const angle = -2 * Math.PI * k * n / N;
+        real += frame[n] * Math.cos(angle);
+        imag += frame[n] * Math.sin(angle);
+      }
+      
+      const magnitude = Math.sqrt(real * real + imag * imag) / N;
+      result.push(magnitude);
+    }
+    
+    return result;
+  }, []);
+
+  // Analyze audio when video changes
+  useEffect(() => {
+    if (currentProject?.videoMeta?.url) {
+      analyzeAudio();
+    }
+  }, [currentProject?.videoMeta?.url, analyzeAudio]);
+
   // Time/pixel conversion functions
   const timeToPixel = useCallback((time: number): number => {
     if (!containerRef.current) return 0;
@@ -51,44 +158,124 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     return localViewStart + (pixel / width) * viewDuration;
   }, [localViewStart, localViewEnd]);
 
-  // Generate sample waveform data
-  const generateWaveformData = useCallback((width: number, height: number) => {
-    const samples = width;
-    const waveformData = [];
-    const spectrogramData = [];
+  // Get waveform data for current view
+  const getViewWaveformData = useCallback((width: number): number[] => {
+    if (!audioData || !audioData.waveformData[0]) return [];
     
-    for (let i = 0; i < samples; i++) {
-      const time = localViewStart + (i / samples) * (localViewEnd - localViewStart);
+    const channelData = audioData.waveformData[0];
+    const sampleRate = audioData.sampleRate;
+    
+    const startSample = Math.floor((localViewStart / 1000) * sampleRate);
+    const endSample = Math.floor((localViewEnd / 1000) * sampleRate);
+    const viewSamples = endSample - startSample;
+    
+    if (viewSamples <= 0) return [];
+    
+    // Downsample to fit canvas width
+    const samplesPerPixel = Math.max(1, Math.floor(viewSamples / width));
+    const result: number[] = [];
+    
+    for (let i = 0; i < width; i++) {
+      const sampleStart = startSample + Math.floor(i * samplesPerPixel);
+      const sampleEnd = Math.min(sampleStart + samplesPerPixel, channelData.length);
       
-      // Waveform data (amplitude over time)
-      const amplitude = Math.sin(time / 1000) * Math.random() * 0.8 + 0.2;
-      waveformData.push(amplitude);
-      
-      // Spectrogram data (frequency bands)
-      const freqBands = [];
-      for (let freq = 0; freq < 64; freq++) {
-        const intensity = Math.sin((time + freq * 100) / 500) * Math.random() * 0.7 + 0.3;
-        freqBands.push(intensity);
+      // Calculate RMS for this pixel
+      let sum = 0;
+      let count = 0;
+      for (let j = sampleStart; j < sampleEnd; j++) {
+        if (j < channelData.length) {
+          sum += channelData[j] * channelData[j];
+          count++;
+        }
       }
-      spectrogramData.push(freqBands);
+      
+      const rms = count > 0 ? Math.sqrt(sum / count) : 0;
+      result.push(rms);
     }
     
-    return { waveformData, spectrogramData };
-  }, [localViewStart, localViewEnd]);
+    return result;
+  }, [audioData, localViewStart, localViewEnd]);
+
+  // Get spectrogram data for current view
+  const getViewSpectrogramData = useCallback((width: number): number[][] => {
+    if (!audioData || !audioData.spectrogramData.length) return [];
+    
+    const totalFrames = audioData.spectrogramData.length;
+    const startFrame = Math.floor((localViewStart / audioData.duration) * totalFrames);
+    const endFrame = Math.floor((localViewEnd / audioData.duration) * totalFrames);
+    const viewFrames = endFrame - startFrame;
+    
+    if (viewFrames <= 0) return [];
+    
+    // Downsample to fit canvas width
+    const framesPerPixel = Math.max(1, Math.floor(viewFrames / width));
+    const result: number[][] = [];
+    
+    for (let i = 0; i < width; i++) {
+      const frameStart = startFrame + Math.floor(i * framesPerPixel);
+      const frameEnd = Math.min(frameStart + framesPerPixel, totalFrames);
+      
+      // Average frames for this pixel
+      const freqBins = audioData.spectrogramData[0]?.length || 64;
+      const avgFrame: number[] = new Array(freqBins).fill(0);
+      let count = 0;
+      
+      for (let j = frameStart; j < frameEnd; j++) {
+        if (j < audioData.spectrogramData.length) {
+          const frame = audioData.spectrogramData[j];
+          for (let k = 0; k < freqBins; k++) {
+            avgFrame[k] += frame[k] || 0;
+          }
+          count++;
+        }
+      }
+      
+      if (count > 0) {
+        for (let k = 0; k < freqBins; k++) {
+          avgFrame[k] /= count;
+        }
+      }
+      
+      result.push(avgFrame);
+    }
+    
+    return result;
+  }, [audioData, localViewStart, localViewEnd]);
 
   // Draw waveform
   const drawWaveform = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, data: number[]) => {
+    if (!data.length) return;
+    
     const centerY = height / 2;
     
-    ctx.strokeStyle = 'var(--neu-primary)';
+    // Set waveform color - bright blue for visibility
+    ctx.strokeStyle = '#3B82F6'; // Bright blue
+    ctx.fillStyle = 'rgba(59, 130, 246, 0.3)'; // Semi-transparent blue fill
     ctx.lineWidth = 1;
+    
+    // Draw filled waveform
     ctx.beginPath();
+    ctx.moveTo(0, centerY);
     
     for (let i = 0; i < data.length; i++) {
       const x = (i / data.length) * width;
-      const amplitude = data[i];
-      const y1 = centerY - amplitude * centerY * 0.8;
-      const y2 = centerY + amplitude * centerY * 0.8;
+      const amplitude = Math.min(data[i] * 2, 1); // Scale amplitude
+      const y = centerY - amplitude * centerY * 0.9;
+      ctx.lineTo(x, y);
+    }
+    
+    // Complete the shape for filling
+    ctx.lineTo(width, centerY);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Draw the outline
+    ctx.beginPath();
+    for (let i = 0; i < data.length; i++) {
+      const x = (i / data.length) * width;
+      const amplitude = Math.min(data[i] * 2, 1);
+      const y1 = centerY - amplitude * centerY * 0.9;
+      const y2 = centerY + amplitude * centerY * 0.9;
       
       if (i === 0) {
         ctx.moveTo(x, y1);
@@ -102,8 +289,8 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     ctx.beginPath();
     for (let i = 0; i < data.length; i++) {
       const x = (i / data.length) * width;
-      const amplitude = data[i];
-      const y = centerY + amplitude * centerY * 0.8;
+      const amplitude = Math.min(data[i] * 2, 1);
+      const y = centerY + amplitude * centerY * 0.9;
       
       if (i === 0) {
         ctx.moveTo(x, y);
@@ -116,23 +303,34 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
 
   // Draw spectrogram
   const drawSpectrogram = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, data: number[][]) => {
-    const freqBands = data[0]?.length || 64;
-    const bandHeight = height / freqBands;
+    if (!data.length) return;
+    
+    const freqBins = data[0]?.length || 64;
+    const bandHeight = height / freqBins;
     
     for (let x = 0; x < data.length; x++) {
       const pixelX = (x / data.length) * width;
       const freqData = data[x];
       
-      for (let freq = 0; freq < freqBands; freq++) {
-        const intensity = freqData[freq];
+      for (let freq = 0; freq < freqBins; freq++) {
+        const intensity = Math.min(freqData[freq] * 10, 1); // Scale intensity
         const y = height - (freq + 1) * bandHeight;
         
-        // Create heat map colors
-        const hue = 240 - intensity * 240; // Blue to red
-        const saturation = 70 + intensity * 30;
-        const lightness = 20 + intensity * 60;
+        // Create heat map colors - from dark blue to bright red
+        let r, g, b;
+        if (intensity < 0.5) {
+          // Dark blue to cyan
+          r = 0;
+          g = Math.floor(intensity * 2 * 255);
+          b = 255;
+        } else {
+          // Cyan to red
+          r = Math.floor((intensity - 0.5) * 2 * 255);
+          g = 255 - Math.floor((intensity - 0.5) * 2 * 255);
+          b = 255 - Math.floor((intensity - 0.5) * 2 * 255);
+        }
         
-        ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
         ctx.fillRect(pixelX, y, Math.ceil(width / data.length) + 1, bandHeight);
       }
     }
@@ -155,12 +353,26 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     const width = rect.width;
     const height = rect.height;
 
-    // Clear canvas
-    ctx.fillStyle = 'var(--neu-base)';
+    // Clear canvas with dark background
+    ctx.fillStyle = '#1A202C'; // Dark background for visibility
     ctx.fillRect(0, 0, width, height);
 
-    // Generate data
-    const { waveformData, spectrogramData } = generateWaveformData(width, height);
+    if (!audioData) {
+      // Show loading or no data message
+      ctx.fillStyle = '#E2E8F0';
+      ctx.font = '14px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText(
+        isAnalyzing ? 'Analyzing audio...' : 'No audio data available',
+        width / 2,
+        height / 2
+      );
+      return;
+    }
+
+    // Get data for current view
+    const waveformData = getViewWaveformData(width);
+    const spectrogramData = getViewSpectrogramData(width);
 
     // Draw based on mode
     if (mode === 'spectrogram' || mode === 'mixed') {
@@ -178,20 +390,25 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     // Draw playhead
     if (currentTime >= localViewStart && currentTime <= localViewEnd) {
       const playheadX = timeToPixel(currentTime);
-      ctx.strokeStyle = 'var(--neu-error)';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#EF4444'; // Bright red for visibility
+      ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(playheadX, 0);
       ctx.lineTo(playheadX, height);
       ctx.stroke();
       
       // Playhead handle
-      ctx.fillStyle = 'var(--neu-error)';
+      ctx.fillStyle = '#EF4444';
       ctx.beginPath();
-      ctx.arc(playheadX, 10, 6, 0, Math.PI * 2);
+      ctx.arc(playheadX, 10, 8, 0, Math.PI * 2);
       ctx.fill();
+      
+      // White outline for better visibility
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 2;
+      ctx.stroke();
     }
-  }, [currentTime, localViewStart, localViewEnd, mode, timeToPixel, generateWaveformData, drawWaveform, drawSpectrogram]);
+  }, [currentTime, localViewStart, localViewEnd, mode, timeToPixel, audioData, isAnalyzing, getViewWaveformData, getViewSpectrogramData, drawWaveform, drawSpectrogram]);
 
   // Render when dependencies change
   useEffect(() => {
@@ -321,6 +538,9 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
           <span className="text-xs neu-text-secondary">
             {localZoom.toFixed(1)}x zoom
           </span>
+          {isAnalyzing && (
+            <span className="text-xs text-yellow-400">Analyzing...</span>
+          )}
         </div>
         
         <div className="flex items-center space-x-2">
