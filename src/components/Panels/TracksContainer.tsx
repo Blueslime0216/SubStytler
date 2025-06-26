@@ -106,36 +106,16 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
     setDragOverTrackId(null);
   }, []);
 
-  const handleTrackDragOver = useCallback((trackId: string, e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    
+  // Track hover detection for visual feedback during drag
+  const handleTrackMouseEnter = useCallback((trackId: string) => {
     if (draggedSubtitle && draggedSubtitle.sourceTrackId !== trackId) {
       setDragOverTrackId(trackId);
     }
   }, [draggedSubtitle]);
 
-  const handleTrackDragLeave = useCallback((e: React.DragEvent) => {
-    // Only clear if we're actually leaving the track area
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    const x = e.clientX;
-    const y = e.clientY;
-    
-    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
-      setDragOverTrackId(null);
-    }
-  }, []);
-
-  const handleTrackDrop = useCallback((trackId: string, e: React.DragEvent) => {
-    e.preventDefault();
+  const handleTrackMouseLeave = useCallback(() => {
     setDragOverTrackId(null);
-    
-    if (draggedSubtitle && draggedSubtitle.sourceTrackId !== trackId) {
-      // Move subtitle to new track
-      updateSubtitle(draggedSubtitle.id, { trackId });
-      setDraggedSubtitle(null);
-    }
-  }, [draggedSubtitle, updateSubtitle]);
+  }, []);
 
   const RULER_HEIGHT = 40;
   const TRACK_HEIGHT = 50;
@@ -233,9 +213,8 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
             }`}
             style={{ height: TRACK_HEIGHT }}
             onClick={() => setActiveTrackId(track.id)}
-            onDragOver={(e) => handleTrackDragOver(track.id, e)}
-            onDragLeave={handleTrackDragLeave}
-            onDrop={(e) => handleTrackDrop(track.id, e)}
+            onMouseEnter={() => handleTrackMouseEnter(track.id)}
+            onMouseLeave={handleTrackMouseLeave}
           >
             {/* Render subtitles for this track */}
             {subtitles
