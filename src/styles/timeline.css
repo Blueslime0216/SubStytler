@@ -489,13 +489,13 @@
   opacity: 0.5;
 }
 
-/* ===== REDESIGNED PLAYHEAD ===== */
+/* ===== REDESIGNED PLAYHEAD - FIXED Z-INDEX ===== */
 .neu-playhead {
   position: absolute;
   top: 0;
   width: 3px;
   height: 100%;
-  z-index: 75; /* ✅ Between content (50) and header (100) */
+  z-index: 25; /* 🔧 FIXED: Lower than track header (100) but higher than content (10) */
   pointer-events: none;
   background: linear-gradient(180deg, 
     var(--neu-primary-light) 0%,

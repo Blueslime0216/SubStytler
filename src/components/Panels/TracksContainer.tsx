@@ -265,6 +265,15 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
           containerWidth={containerRef.current?.clientWidth || 0}
         />
 
+        {/* 🎯 FIXED: Playhead positioned in content area with correct z-index */}
+        <div
+          className="neu-playhead"
+          style={{
+            left: timeToPixel(currentTime),
+            zIndex: 25, // 🔧 LOWER than track header (100) but higher than content (10)
+          }}
+        />
+
         {tracks.map((track, trackIndex) => (
           <div
             key={track.id}
@@ -298,14 +307,6 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
               ))}
           </div>
         ))}
-
-        {/* Redesigned Playhead */}
-        <div
-          className="neu-playhead"
-          style={{
-            left: timeToPixel(currentTime),
-          }}
-        />
       </div>
     </div>
   );
