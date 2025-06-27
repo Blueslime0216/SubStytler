@@ -22,7 +22,6 @@
 }
 
 .panel-selector-button.open {
-  box-shadow: var(--shadow-inset);
   border-radius: 12px;
   background: var(--bg-color);
 }
@@ -48,6 +47,7 @@
     inset 2px 2px 4px var(--shadow-color),
     inset -1px -1px 2px var(--highlight-color);
   border-radius: 8px;
+  background: var(--bg-color);
 }
 
 .panel-selector-icons {
@@ -55,6 +55,7 @@
   align-items: center;
   position: absolute;
   transition: transform 0.2s ease-out;
+  z-index: 2; /* 🔧 그라데이션보다 위에 위치 */
 }
 
 .panel-selector-icon-item {
@@ -125,17 +126,17 @@
   bottom: 0;
   width: 32px;
   pointer-events: none;
-  z-index: 1;
+  z-index: 1; /* 🔧 아이콘들보다 아래에 위치하여 그림자가 그라데이션에 가려지지 않게 */
 }
 
 .panel-selector-gradient-left {
   left: 0;
-  background: linear-gradient(90deg, var(--surface-color) 0%, transparent 100%);
+  background: linear-gradient(90deg, var(--bg-color) 0%, transparent 100%);
 }
 
 .panel-selector-gradient-right {
   right: 0;
-  background: linear-gradient(270deg, var(--surface-color) 0%, transparent 100%);
+  background: linear-gradient(270deg, var(--bg-color) 0%, transparent 100%);
 }
 
 .panel-selector-tooltip {
