@@ -1,6 +1,6 @@
 /* Utility Classes - Dark Mode Only */
 
-/* Text Utilities - Enhanced Contrast */
+/* Text Utilities */
 .neu-text-primary { 
   color: var(--text-primary); 
   font-weight: 600;
@@ -23,7 +23,7 @@
 .neu-bg-surface { background: var(--surface-color); }
 .neu-bg-accent { background: var(--mid-color); }
 
-/* Shadow Utilities - Enhanced */
+/* Shadow Utilities */
 .shadow-outset { box-shadow: var(--shadow-outset); }
 .shadow-inset { box-shadow: var(--shadow-inset); }
 .shadow-outset-strong { box-shadow: var(--shadow-outset-strong); }
@@ -48,15 +48,4 @@
   border: 2px solid var(--text-primary);
   background: var(--base-color);
   color: var(--text-primary);
-}
-
-/* Force dark theme in all scenarios - remove light mode references */
-@media (prefers-color-scheme: light) {
-  .neu-text-primary { color: #ffffff; }
-  .neu-text-secondary { color: #e0f7fa; }
-  .neu-text-muted { color: #b7e0e3; }
-  .neu-text-accent { color: #e0f7fa; }
-  .neu-bg-base { background: #5f9ea0; }
-  .neu-bg-surface { background: #5f9ea0; }
-  .neu-bg-accent { background: #7fb3b5; }
 }

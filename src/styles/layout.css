@@ -1,9 +1,9 @@
 /* Layout and Structure Styles - Core Layout Only */
 
 .neu-toolbar {
-  background: var(--neu-base);
+  background: var(--base-color);
   border-bottom: 2px solid rgba(255, 255, 255, 0.08);
-  box-shadow: var(--neu-shadow-2);
+  box-shadow: var(--shadow-outset-strong);
   padding: 12px 20px;
   position: relative;
   z-index: 10;
@@ -21,15 +21,15 @@
 }
 
 .neu-status-bar {
-  background: var(--neu-base);
+  background: var(--base-color);
   border-top: 2px solid rgba(255, 255, 255, 0.08);
-  color: var(--neu-text-primary);
+  color: var(--text-primary);
   font-size: 0.75rem;
   font-family: 'JetBrains Mono', monospace;
   font-weight: 500;
   padding: 8px 20px;
   position: relative;
-  box-shadow: var(--neu-shadow-1);
+  box-shadow: var(--shadow-outset);
   z-index: 10;
 }
 

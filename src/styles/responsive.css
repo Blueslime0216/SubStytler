@@ -74,7 +74,7 @@
   }
 }
 
-/* High Contrast Mode - Dark Theme Only */
+/* High Contrast Mode */
 @media (prefers-contrast: high) {
   :root {
     --text-primary: #FFFFFF;
@@ -98,7 +98,7 @@
   }
 }
 
-/* Print Styles - Dark Theme Friendly */
+/* Print Styles */
 @media print {
   * {
     background: white !important;
@@ -109,30 +109,5 @@
   .panel,
   .neu-card {
     border: 1px solid black !important;
-  }
-}
-
-/* Force dark theme regardless of system preference */
-@media (prefers-color-scheme: light) {
-  :root {
-    --base-color: #5f9ea0;
-    --surface-color: #5f9ea0;
-    --primary-color: #e0f7fa;
-    --text-primary: #ffffff;
-    --text-secondary: #e0f7fa;
-    --text-muted: #b7e0e3;
-    --text-accent: #e0f7fa;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --base-color: #5f9ea0;
-    --surface-color: #5f9ea0;
-    --primary-color: #e0f7fa;
-    --text-primary: #ffffff;
-    --text-secondary: #e0f7fa;
-    --text-muted: #b7e0e3;
-    --text-accent: #e0f7fa;
   }
 }
