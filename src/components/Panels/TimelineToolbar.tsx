@@ -91,24 +91,24 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
   }, [zoom]);
 
   return (
-    <div className="neu-toolbar flex items-center justify-between p-2 w-full">
+    <div className="timeline-toolbar">
       <button
         onClick={onAddSubtitle}
-        className="neu-card neu-shadow-hover px-4 py-1.5 rounded-md active:neu-shadow-pressed transition-shadow"
+        className="timeline-toolbar-btn"
       >
-        <span className="neu-text-primary font-semibold text-sm select-none">Add Subtitle</span>
+        <span className="timeline-toolbar-btn-label">Add Subtitle</span>
       </button>
 
-      <div className="flex items-center gap-3 neu-card neu-shadow-inset px-3 py-1.5 rounded-md">
-        <span className="neu-text-secondary text-sm select-none">Zoom</span>
+      <div className="timeline-toolbar-zoom">
+        <span className="timeline-toolbar-zoom-label">Zoom</span>
 
         <button
           onClick={() => adjustZoom(-1)}
-          className="neu-card-micro neu-shadow-hover w-7 h-7 flex items-center justify-center rounded-md disabled:opacity-40"
+          className="timeline-toolbar-zoom-btn"
           title="Zoom out"
           disabled={zoom <= MIN_ZOOM}
         >
-          <span className="font-bold select-none">−</span>
+          <span className="timeline-toolbar-zoom-btn-label">−</span>
         </button>
 
         <input
@@ -117,17 +117,17 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onWheel={handleWheel}
-          className="w-16 text-center bg-transparent outline-none neu-bg-surface neu-shadow-inset px-2 py-1 rounded-md focus:neu-shadow-hover"
+          className="timeline-toolbar-zoom-input"
           title="Scroll to zoom or type value"
         />
 
         <button
           onClick={() => adjustZoom(1)}
-          className="neu-card-micro neu-shadow-hover w-7 h-7 flex items-center justify-center rounded-md disabled:opacity-40"
+          className="timeline-toolbar-zoom-btn"
           title="Zoom in"
           disabled={zoom >= MAX_ZOOM}
         >
-          <span className="font-bold select-none">+</span>
+          <span className="timeline-toolbar-zoom-btn-label">+</span>
         </button>
       </div>
     </div>

@@ -32,8 +32,8 @@ export const TimelineRuler: React.FC<TimelineRulerProps> = React.memo(({ viewSta
     if (x < 0 || x > containerWidth) continue; // keep ticks inside content area
     majorTicks.push(
       <div key={`major-${time}`} className="absolute top-0 flex flex-col items-center" style={{ left: x }}>
-        <div className="w-px h-4 bg-gray-400" />
-        <span className="text-xs text-gray-500 font-mono mt-1 select-none">{formatTime(time, fps, false)}</span>
+        <div className="timeline-major-tick" />
+        <span className="timeline-major-label">{formatTime(time, fps, false)}</span>
       </div>
     );
   }
@@ -70,12 +70,12 @@ export const TimelineRuler: React.FC<TimelineRulerProps> = React.memo(({ viewSta
     const isHalfSecondTick = frame % (fps / 2) === 0;
 
     const height = isSecondTick ? 'h-3' : isHalfSecondTick ? 'h-2' : 'h-1.5';
-    const color = isSecondTick ? 'bg-gray-500' : 'bg-gray-600';
+    const colorClass = isSecondTick ? 'timeline-minor-tick-major' : 'timeline-minor-tick';
 
     minorTicks.push(
       <div
         key={`minor-${frame}`}
-        className={`absolute bottom-0 w-px ${height} ${color}`}
+        className={`absolute bottom-0 w-px ${height} ${colorClass}`}
         style={{ left: x }}
       />
     );

@@ -67,7 +67,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
     >
       {/* Track Color Indicator */}
       <div className="track-color-indicator">
-        <div className="color-dot" style={{ backgroundColor: track.visible ? 'var(--neu-primary)' : 'var(--neu-text-muted)' }} />
+        <div className={`color-dot${track.visible ? '' : ' color-dot-inactive'}`} />
       </div>
 
       {/* Track Name Section */}
@@ -95,24 +95,24 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
       <div className="track-controls">
         {/* Visibility Toggle */}
         <motion.button
-          className={`track-control-btn visibility ${track.visible ? 'active' : ''}`}
+          className={`track-control-btn visibility${track.visible ? ' active' : ''}`}
           onClick={() => onToggleVisibility(track.id, !track.visible)}
           title={track.visible ? "Hide track" : "Show track"}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          {track.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+          {track.visible ? <Eye className="track-icon" /> : <EyeOff className="track-icon" />}
         </motion.button>
 
         {/* Lock Toggle */}
         <motion.button
-          className={`track-control-btn lock ${track.locked ? 'active' : ''}`}
+          className={`track-control-btn lock${track.locked ? ' active' : ''}`}
           onClick={() => onToggleLock(track.id, !track.locked)}
           title={track.locked ? "Unlock track" : "Lock track"}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          {track.locked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+          {track.locked ? <Lock className="track-icon" /> : <Unlock className="track-icon" />}
         </motion.button>
 
         {/* Delete Button */}
@@ -123,7 +123,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Trash2 className="w-3.5 h-3.5" />
+          <Trash2 className="track-icon" />
         </motion.button>
       </div>
 

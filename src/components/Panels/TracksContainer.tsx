@@ -230,7 +230,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
         <div className="neu-track-add" onClick={handleAddTrack} title="Add new track">
           <div className="track-add-content">
             <div className="track-add-icon">
-              <Plus className="w-3 h-3" />
+              <Plus className="track-icon" />
             </div>
             <span className="track-add-text">Add Track</span>
           </div>
@@ -275,9 +275,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
         {tracks.map((track, trackIndex) => (
           <div
             key={track.id}
-            className={`neu-track-content ${track.locked ? 'opacity-70' : ''} ${
-              dragOverTrackId === track.id ? 'bg-blue-500 bg-opacity-20' : ''
-            }`}
+            className={`neu-track-content${track.locked ? ' track-locked' : ''}${dragOverTrackId === track.id ? ' track-drag-over' : ''}`}
             style={{ 
               height: TRACK_HEIGHT,
               flexShrink: 0 // ✅ Prevent track height from shrinking

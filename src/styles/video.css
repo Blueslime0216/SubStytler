@@ -58,29 +58,32 @@
 /* 비디오 엘리먼트 스타일 강화 */
 video {
   display: block;
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  background-color: var(--neu-base); /* 기본 배경색 사용 */
+  background-color: var(--surface-color); /* 기본 배경색 사용 */
   z-index: 5;
 }
 
 /* 비디오 컨테이너 스타일 */
+/* This class is no longer used and can be removed */
 .video-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--neu-base); /* 기본 배경색 사용 */
-  z-index: 1;
+  display: none;
+}
+
+.video-player-element {
+  display: block;
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+  background-color: transparent;
+  z-index: 10;
 }
 
 /* 오버레이 z-index 관리 */
 .video-overlay {
   z-index: 20;
+  overflow: hidden;
 }
 
 /* 비디오 로드 시 스타일 */
@@ -103,7 +106,8 @@ video {
   z-index: 30;
   margin-bottom: -1px;
   border-radius: 16px 16px 0 0;
-  overflow: visible;
+  overflow-y: hidden;
+  overflow-x: visible;
 }
 
 .video-controller-container.visible {

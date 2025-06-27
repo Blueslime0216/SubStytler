@@ -42,13 +42,13 @@ export const SubtitleBlocks: React.FC<SubtitleBlocksProps> = ({
         return (
           <motion.div
             key={subtitle.id}
-            className="neu-subtitle-block absolute h-10 cursor-move flex items-center px-4 neu-interactive"
+            className="neu-subtitle-block absolute cursor-move"
             style={{
               left: Math.max(0, left),
               width: Math.max(32, width),
-              top: 20, // Adjusted top position
-              transition: 'none',
+              top: 20,
               userSelect: 'none',
+              transition: 'none',
             }}
             drag="x"
             dragConstraints={containerRef}
@@ -84,7 +84,7 @@ export const SubtitleBlocks: React.FC<SubtitleBlocksProps> = ({
             title={`${subtitle.spans[0]?.text || 'Empty subtitle'} - Click and drag to move`}
             tabIndex={0}
           >
-            <div className="text-sm text-white font-semibold truncate">
+            <div className="subtitle-block-text">
               {subtitle.spans[0]?.text || 'Empty subtitle'}
             </div>
           </motion.div>

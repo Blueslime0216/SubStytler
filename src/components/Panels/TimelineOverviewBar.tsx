@@ -16,12 +16,11 @@ const TimelineOverviewBar: React.FC<Props> = ({ duration, viewStart, viewEnd, si
 
   return (
     <div
-      className="relative h-3 mt-2 neu-card neu-shadow-inset overflow-hidden rounded"
+      className="timeline-overview-bar-bg"
       style={{ marginLeft: sidebarOffset, width: `calc(100% - ${sidebarOffset}px)` }}
     >
-      {/* full bar background via neu-card */}
       <div
-        className="absolute top-0 h-full neu-bg-accent opacity-30"
+        className="timeline-overview-bar-window"
         style={{ left: `${startPercent}%`, width: `${widthPercent}%` }}
       />
     </div>

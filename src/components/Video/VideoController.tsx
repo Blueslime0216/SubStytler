@@ -160,6 +160,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
           className="video-controller-container"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          style={{ overflowY: 'hidden' }}
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: '100%', opacity: 0 }}

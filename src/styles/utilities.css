@@ -19,8 +19,8 @@
 }
 
 /* Background Utilities */
-.neu-bg-base { background: var(--neu-base); }
-.neu-bg-surface { background: var(--neu-surface); }
+.neu-bg-base { background: var(--base-color); }
+.neu-bg-surface { background: var(--surface-color); }
 .neu-bg-accent { background: var(--neu-accent); }
 
 /* Shadow Utilities - Enhanced */

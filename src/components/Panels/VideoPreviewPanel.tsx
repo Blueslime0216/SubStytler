@@ -30,13 +30,6 @@ export const VideoPreviewPanel: React.FC = () => {
     const video = videoRef.current;
     if (!video) return;
 
-    // 비디오 엘리먼트 스타일 직접 설정
-    video.style.display = 'block';
-    video.style.width = '100%';
-    video.style.height = '100%';
-    video.style.objectFit = 'contain';
-    video.style.backgroundColor = 'var(--neu-base)';
-
     const handleCanPlay = () => {
       console.log('Video can play event triggered');
       setIsVideoLoaded(true);
@@ -211,14 +204,19 @@ export const VideoPreviewPanel: React.FC = () => {
       className="h-full w-full min-w-0 min-h-0 flex flex-col neu-bg-base neu-video-panel"
       style={{
         borderRadius: '18px',
-        transition: 'all 0.2s ease'
+        transition: 'all 0.2s ease',
+        overflow: 'hidden'
       }}
       // 🎯 드래그 앤 드롭만 전체 패널에 적용
       {...getRootProps()}
     >
       <input {...getInputProps()} />
       
-      <div ref={videoAreaRef} className="flex-1 w-full h-full min-w-0 min-h-0 relative">
+      <div 
+        ref={videoAreaRef} 
+        className="flex-1 w-full h-full min-w-0 min-h-0 relative flex items-center justify-center" 
+        style={{ overflow: 'hidden' }}
+      >
         <VideoPreviewPlayer
           videoRef={videoRef}
           hasVideo={hasVideo}

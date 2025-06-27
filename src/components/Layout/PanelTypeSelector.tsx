@@ -130,7 +130,7 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
       {/* 메인 선택기 버튼 */}
       <motion.button
         onClick={toggleSelector}
-        className="relative cursor-pointer flex items-center justify-center panel-selector-button"
+        className={`relative cursor-pointer flex items-center justify-center panel-selector-button${isOpen ? ' open' : ''}`}
         title={`${currentConfig.title} - 클릭하여 패널 변경`}
         initial={false}
         animate={{
@@ -172,10 +172,28 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={animationConfig}
-              className="relative w-full h-full flex items-center justify-center panel-selector-carousel"
+              className={"relative w-full h-full flex items-center justify-center panel-selector-carousel open"}
               style={{ overflow: 'hidden' }}
               onWheel={handleWheel}
             >
+              {/* 그림자 레이어 */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={animationConfig}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  borderRadius: 8,
+                  pointerEvents: 'none',
+                  zIndex: 10,
+                  boxShadow: 'var(--shadow-inset)',
+                }}
+              />
               {/* 아이콘 캐러셀 컨테이너 */}
               <motion.div
                 className="flex items-center absolute panel-selector-icons"

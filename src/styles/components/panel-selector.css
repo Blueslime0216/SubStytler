@@ -11,7 +11,7 @@
   box-shadow: var(--shadow-outset);
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease, box-shadow 0.2s ease;
   overflow: hidden;
   position: relative;
 }
@@ -22,9 +22,7 @@
 }
 
 .panel-selector-button.open {
-  box-shadow: var(--shadow-inset);
-  border-radius: 12px;
-  background: var(--bg-color);
+  box-shadow: -1px -1px 2px var(--highlight-color), 2px 2px 4px var(--shadow-color);
 }
 
 .panel-selector-icon-container {
@@ -43,11 +41,27 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* 🔧 캐러셀 컨테이너는 들어간 것처럼 (inset) - 왼쪽 상단 어둡게, 오른쪽 하단 밝게 */
-  box-shadow: 
-    inset 2px 2px 4px var(--shadow-color),
-    inset -1px -1px 2px var(--highlight-color);
+  /* box-shadow 제거하고 가상 요소로 대체 */
   border-radius: 8px;
+  z-index: 1; /* 기본 z-index 낮춤 */
+}
+
+/* 그림자를 가상 요소로 구현 */
+.panel-selector-carousel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 8px;
+  pointer-events: none;
+  box-shadow: var(--shadow-inset);
+  z-index: 10;
+}
+
+.panel-selector-carousel.open::after {
+  opacity: 1;
 }
 
 .panel-selector-icons {
@@ -55,6 +69,7 @@
   align-items: center;
   position: absolute;
   transition: transform 0.2s ease-out;
+  z-index: 2; /* 그라데이션 아래 */
 }
 
 .panel-selector-icon-item {
@@ -125,7 +140,7 @@
   bottom: 0;
   width: 32px;
   pointer-events: none;
-  z-index: 1;
+  z-index: 5; /* 아이콘 위, 그림자 아래 */
 }
 
 .panel-selector-gradient-left {
