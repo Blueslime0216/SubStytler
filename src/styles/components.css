@@ -1,12 +1,3 @@
-@import './buttons.css';
-@import './panels.css';
-@import './forms.css';
-@import './cards.css';
-@import './dropdowns.css';
-@import './cursors.css';
-
-/* Import all component styles */
-
 /* 🎨 뉴모피즘 패널 선택기 전용 스타일 */
 .neu-panel-selector {
   /* 커스텀 스크롤바 */

@@ -1,49 +1,35 @@
-/* Import Design System Styles */
+/* Design System Variables */
 @import './styles/variables.css';
-@import './styles/base.css';
-@import './styles/typography.css';
-@import './styles/components.css';
-@import './styles/timeline.css';
-@import './styles/progress.css';
-@import './styles/volume.css';
-@import './styles/buttons.css';
-@import './styles/tooltip.css';
-@import './styles/video.css';
-@import './styles/layout.css';
-@import './styles/resize.css';
-@import './styles/toast.css';
-@import './styles/animations.css';
-@import './styles/focus.css';
-@import './styles/utilities.css';
-@import './styles/responsive.css';
 
-/* Base Styles */
+/* Core Base Styles */
 @import './styles/base.css';
 @import './styles/colors.css';
 @import './styles/typography.css';
 @import './styles/shadows.css';
 @import './styles/inset-shadows.css';
 @import './styles/interactive-states.css';
+@import './styles/components.css';
 
-/* Component Styles */
+/* Utilities */
+@import './styles/animations.css';
+@import './styles/layout.css';
+@import './styles/resize.css';
+@import './styles/focus.css';
+@import './styles/utilities.css';
+@import './styles/responsive.css';
+
+/* Components */
 @import './styles/buttons.css';
 @import './styles/forms.css';
 @import './styles/panels.css';
 @import './styles/area-blocks.css';
-
-/* Layout & Utilities */
-@import './styles/layout.css';
-@import './styles/utilities.css';
-@import './styles/animations.css';
-
-/* Specific Components */
+@import './styles/progress.css';
+@import './styles/volume.css';
+@import './styles/tooltip.css';
 @import './styles/video.css';
 @import './styles/timeline.css';
 @import './styles/toast.css';
-
-/* Component-specific styles */
 @import './styles/components/panel-selector.css';
-/* @import './styles/components/video.css'; */
 
 /* Tailwind */
 @tailwind base;

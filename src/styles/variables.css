@@ -1,7 +1,6 @@
 @import './colors.css';
 @import './shadows.css';
 @import './inset-shadows.css';
-@import './interactive-states.css';
 
 /* Enhanced Neumorphism Design System Variables - Import All */
 /* All variable files are imported above to comply with Tailwind's @import position rule */
