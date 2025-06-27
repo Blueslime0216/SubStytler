@@ -27,7 +27,7 @@
 /* Focus State */
 .interactive-default:focus {
   outline: none;
-  box-shadow: 
+  box-shadow:
     0 0 0 2px var(--primary-color),
     var(--shadow-outset);
 }
@@ -57,25 +57,10 @@
 
 .input-field:focus {
   outline: none;
-  box-shadow: 
+  box-shadow:
     0 0 0 2px var(--primary-color),
     var(--shadow-inset);
 }
 
 /* Button Variants */
-.btn-primary {
-  background-color: var(--primary-color);
-}
-
-.btn-success {
-  background-color: var(--success-color);
-}
-
-.btn-warning {
-  background-color: var(--warning-color);
-  color: var(--text-primary);
-}
-
-.btn-error {
-  background-color: var(--error-color);
-} 
+/* Variants for .btn-* are defined in buttons.css to avoid duplication */ 
