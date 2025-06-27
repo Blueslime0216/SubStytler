@@ -1,0 +1,187 @@
+/* Panel Type Selector - New Inset/Outset Theme */
+
+.panel-selector-container {
+  position: relative;
+  display: inline-block;
+}
+
+.panel-selector-button {
+  background: var(--surface-color);
+  border: 2px solid var(--border-color);
+  box-shadow: var(--shadow-outset);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.panel-selector-button:hover {
+  filter: brightness(1.05);
+  border-color: var(--primary-color);
+}
+
+.panel-selector-button.open {
+  box-shadow: var(--shadow-inset);
+  border-radius: 12px;
+  background: var(--bg-color);
+}
+
+.panel-selector-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.panel-selector-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.panel-selector-icons {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  transition: transform 0.2s ease-out;
+}
+
+.panel-selector-icon-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.panel-selector-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-outset-subtle);
+  transition: all 0.2s ease;
+}
+
+.panel-selector-icon-wrapper.selected {
+  background: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  box-shadow: var(--shadow-inset);
+  transform: scale(1.1);
+}
+
+.panel-selector-icon-wrapper:hover {
+  filter: brightness(1.1);
+  border-color: var(--primary-color);
+}
+
+.panel-selector-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.panel-selector-icon-wrapper.selected .panel-selector-icon {
+  color: white;
+}
+
+.panel-selector-gradient-left,
+.panel-selector-gradient-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 32px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.panel-selector-gradient-left {
+  left: 0;
+  background: linear-gradient(90deg, var(--surface-color) 0%, transparent 100%);
+}
+
+.panel-selector-gradient-right {
+  right: 0;
+  background: linear-gradient(270deg, var(--surface-color) 0%, transparent 100%);
+}
+
+.panel-selector-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: var(--surface-color);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-outset);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 1000;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .panel-selector-button {
+    border-radius: 6px;
+  }
+  
+  .panel-selector-button.open {
+    border-radius: 10px;
+  }
+  
+  .panel-selector-icon-wrapper {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+  }
+  
+  .panel-selector-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .panel-selector-tooltip {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .panel-selector-button {
+    border: 3px solid var(--text-primary);
+  }
+  
+  .panel-selector-icon-wrapper {
+    border: 2px solid var(--text-primary);
+  }
+  
+  .panel-selector-icon-wrapper.selected {
+    border: 3px solid var(--primary-color);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .panel-selector-button,
+  .panel-selector-icon-wrapper,
+  .panel-selector-icons {
+    transition: none;
+  }
+}

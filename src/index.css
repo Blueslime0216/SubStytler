@@ -41,6 +41,11 @@
 @import './styles/timeline.css';
 @import './styles/toast.css';
 
+/* Component-specific styles */
+@import './styles/components/panel-selector.css';
+@import './styles/components/timeline.css';
+@import './styles/components/video.css';
+
 /* Tailwind */
 @tailwind base;
 @tailwind components;
