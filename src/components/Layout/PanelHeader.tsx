@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PanelType } from '../../types/project';
 import { PanelTypeSelector } from './PanelTypeSelector';
 import { panelConfig } from '../../config/panelConfig';
 import type { BorderDir } from './hooks/areaDragUtils';
-import { 
-  SplitSquareHorizontal, 
-  SplitSquareVertical, 
-  ArrowUp, 
-  ArrowDown, 
-  ArrowLeft, 
-  ArrowRight, 
-  MoreHorizontal 
-} from 'lucide-react';
+import { SplitSquareHorizontal, SplitSquareVertical, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ChevronDown } from 'lucide-react';
 
 interface PanelHeaderProps {
   type: PanelType;
@@ -34,9 +27,13 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   onCover,
   onTypeChange,
   actionsButtonRef,
+  coverButtonRef,
+  titleButtonRef,
   onSplitPanel,
 }) => {
+  // 현재 패널 타입의 설정 가져오기
   const config = panelConfig[type];
+
   const [showSplitOptions, setShowSplitOptions] = useState(false);
   const [showCoverOptions, setShowCoverOptions] = useState(false);
 
@@ -50,25 +47,17 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
     setShowSplitOptions(false);
   };
 
-  const handleSplitAction = (direction: 'horizontal' | 'vertical') => {
-    onSplitPanel(direction, 'empty');
-    setShowSplitOptions(false);
-  };
-
-  const handleCoverAction = (dir: BorderDir) => {
-    onCover(dir);
-    setShowCoverOptions(false);
-  };
-
   return (
     <div className="panel-header">
-      <div className="flex items-center space-x-3 flex-1 min-w-0">
+      <div className="flex items-center space-x-4 flex-1 min-w-0">
+        {/* 패널 타입 선택기 */}
         <PanelTypeSelector
           currentType={type}
           onTypeChange={onTypeChange}
           className="flex-shrink-0"
         />
 
+        {/* 패널 정보 */}
         <div className="text-left min-w-0 flex-1">
           <div className="panel-title truncate">
             {config.title}
@@ -79,87 +68,124 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
         </div>
       </div>
 
+      {/* 액션 버튼들 */}
       <div className="panel-actions">
-        {/* Split Button */}
+        {/* 분할 버튼 영역 */}
         <div className="relative">
-          <button
+          <motion.button
             onClick={handleSplitButtonClick}
             className="panel-action-btn"
-            title="Split panel"
+            title="패널 분할"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <SplitSquareHorizontal className="w-3.5 h-3.5" />
-          </button>
+          </motion.button>
 
-          {showSplitOptions && (
-            <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 p-1">
-              <button
-                onClick={() => handleSplitAction('vertical')}
-                className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-gray-50 rounded"
-                title="Split horizontally"
+          {/* 분할 옵션 작은 팝업 */}
+          <AnimatePresence>
+            {showSplitOptions && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                transition={{ duration: 0.15 }}
+                className="absolute top-full right-0 mt-2 p-2 bg-surface shadow-outset rounded"
+                style={{ zIndex: 100 }}
+                onMouseLeave={() => setShowSplitOptions(false)}
               >
-                <SplitSquareHorizontal className="w-4 h-4" />
-                Horizontal
-              </button>
-              <button
-                onClick={() => handleSplitAction('horizontal')}
-                className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-gray-50 rounded"
-                title="Split vertically"
-              >
-                <SplitSquareVertical className="w-4 h-4" />
-                Vertical
-              </button>
-            </div>
-          )}
+                <motion.button
+                  onClick={() => { onSplitPanel('vertical', 'empty'); setShowSplitOptions(false); }}
+                  className="panel-action-btn mb-1"
+                  title="가로 분할"
+                >
+                  <SplitSquareHorizontal className="w-4 h-4" />
+                </motion.button>
+                <motion.button
+                  onClick={() => { onSplitPanel('horizontal', 'empty'); setShowSplitOptions(false); }}
+                  className="panel-action-btn"
+                  title="세로 분할"
+                >
+                  <SplitSquareVertical className="w-4 h-4" />
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        {/* Cover Button */}
+        {/* 영역 덮기 버튼 */}
         {canRemove && (
           <div className="relative">
-            <button
+            <motion.button
               onClick={handleCoverButtonClick}
               className="panel-action-btn"
-              title="Cover adjacent area"
+              title="영역 덮기 방향 선택"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <MoreHorizontal className="w-3.5 h-3.5" />
-            </button>
+              <ChevronDown className="w-3.5 h-3.5" />
+            </motion.button>
 
-            {showCoverOptions && (
-              <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                <div className="grid grid-cols-3 grid-rows-3 gap-1 p-2 w-24 h-24">
-                  <button
-                    onClick={() => handleCoverAction('top')}
-                    className="col-start-2 row-start-1 panel-action-btn"
-                    title="Cover top area"
-                  >
-                    <ArrowUp className="w-3 h-3" />
-                  </button>
-                  
-                  <button
-                    onClick={() => handleCoverAction('left')}
-                    className="col-start-1 row-start-2 panel-action-btn"
-                    title="Cover left area"
-                  >
-                    <ArrowLeft className="w-3 h-3" />
-                  </button>
-                  
-                  <button
-                    onClick={() => handleCoverAction('right')}
-                    className="col-start-3 row-start-2 panel-action-btn"
-                    title="Cover right area"
-                  >
-                    <ArrowRight className="w-3 h-3" />
-                  </button>
-                  
-                  <button
-                    onClick={() => handleCoverAction('bottom')}
-                    className="col-start-2 row-start-3 panel-action-btn"
-                    title="Cover bottom area"
-                  >
-                    <ArrowDown className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* 덮기 방향 옵션 팝업 */}
+            <AnimatePresence>
+              {showCoverOptions && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute top-full right-0 mt-2 p-2 bg-surface shadow-outset rounded"
+                  style={{ zIndex: 100 }}
+                  onMouseLeave={() => setShowCoverOptions(false)}
+                >
+                  <div className="grid grid-cols-3 grid-rows-3 gap-1 w-24 h-24">
+                    {/* 상단 영역 */}
+                    <motion.button
+                      onClick={() => { onCover('top'); setShowCoverOptions(false); }}
+                      className="panel-action-btn col-start-2 row-start-1"
+                      title="위쪽 영역 덮기"
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                    </motion.button>
+                    
+                    {/* 좌측 영역 */}
+                    <motion.button
+                      onClick={() => { onCover('left'); setShowCoverOptions(false); }}
+                      className="panel-action-btn col-start-1 row-start-2"
+                      title="왼쪽 영역 덮기"
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                    </motion.button>
+                    
+                    {/* 우측 영역 */}
+                    <motion.button
+                      onClick={() => { onCover('right'); setShowCoverOptions(false); }}
+                      className="panel-action-btn col-start-3 row-start-2"
+                      title="오른쪽 영역 덮기"
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </motion.button>
+                    
+                    {/* 하단 영역 */}
+                    <motion.button
+                      onClick={() => { onCover('bottom'); setShowCoverOptions(false); }}
+                      className="panel-action-btn col-start-2 row-start-3"
+                      title="아래쪽 영역 덮기"
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ArrowDown className="w-3.5 h-3.5" />
+                    </motion.button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
       </div>

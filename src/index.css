@@ -1,46 +1,47 @@
 /* Import Design System Styles */
 @import './styles/variables.css';
 @import './styles/base.css';
+@import './styles/typography.css';
+@import './styles/components.css';
+@import './styles/timeline.css';
+@import './styles/progress.css';
+@import './styles/volume.css';
+@import './styles/buttons.css';
+@import './styles/tooltip.css';
+@import './styles/video.css';
+@import './styles/layout.css';
+@import './styles/resize.css';
+@import './styles/toast.css';
+@import './styles/animations.css';
+@import './styles/focus.css';
+@import './styles/utilities.css';
+@import './styles/responsive.css';
+
+/* Base Styles */
+@import './styles/base.css';
+@import './styles/colors.css';
+@import './styles/typography.css';
+@import './styles/shadows.css';
+@import './styles/inset-shadows.css';
+@import './styles/interactive-states.css';
 
 /* Component Styles */
-@import './styles/components/buttons.css';
-@import './styles/components/panels.css';
-@import './styles/components/forms.css';
-@import './styles/components/video.css';
-@import './styles/components/timeline.css';
+@import './styles/buttons.css';
+@import './styles/forms.css';
+@import './styles/panels.css';
+@import './styles/area-blocks.css';
+
+/* Layout & Utilities */
+@import './styles/layout.css';
+@import './styles/utilities.css';
+@import './styles/animations.css';
+
+/* Specific Components */
+@import './styles/video.css';
+@import './styles/timeline.css';
+@import './styles/toast.css';
 
 /* Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Global Utility Classes */
-.text-primary { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
-.text-muted { color: var(--text-muted); }
-.text-accent { color: var(--text-accent); }
-
-.bg-surface { background: var(--surface); }
-.bg-surface-elevated { background: var(--surface-elevated); }
-
-.border-default { border-color: var(--border); }
-.border-strong { border-color: var(--border-strong); }
-
-.shadow-outset { box-shadow: var(--shadow-outset); }
-.shadow-inset { box-shadow: var(--shadow-inset); }
-.shadow-hover { box-shadow: var(--shadow-hover); }
-.shadow-active { box-shadow: var(--shadow-active); }
-
-/* Remove old neumorphism classes */
-.neu-card,
-.neu-btn,
-.neu-panel,
-.neu-shadow-1,
-.neu-shadow-2,
-.neu-interactive,
-.neu-text-primary,
-.neu-text-secondary,
-.neu-bg-base {
-  /* Reset to use new system */
-  all: unset;
-}

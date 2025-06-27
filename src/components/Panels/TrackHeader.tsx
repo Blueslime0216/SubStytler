@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Lock, Unlock, Trash2 } from 'lucide-react';
 import { SubtitleTrack } from '../../types/project';
 
@@ -58,63 +59,84 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
   };
 
   return (
-    <div className={`h-12 px-3 py-2 border-b border-border bg-surface-elevated flex items-center transition-colors ${
-      isActive ? 'bg-primary bg-opacity-10 border-l-2 border-l-primary' : 'hover:bg-surface'
-    }`}>
-      <div className="flex items-center flex-1 min-w-0">
-        <div className="w-3 h-3 rounded-full bg-primary mr-3 flex-shrink-0 shadow-outset" />
-        
-        <div className="flex-1 min-w-0">
-          {isEditing ? (
-            <input
-              ref={inputRef}
-              type="text"
-              value={nameValue}
-              onChange={(e) => setNameValue(e.target.value)}
-              onBlur={handleBlur}
-              onKeyDown={handleKeyDown}
-              className="w-full bg-surface border border-border rounded px-2 py-1 text-sm shadow-inset focus:border-primary focus:shadow-focus"
-              placeholder="Track name..."
-            />
-          ) : (
-            <div onDoubleClick={handleDoubleClick} className="cursor-pointer">
-              <div className="text-sm font-medium text-text-primary truncate">{track.name}</div>
-              <div className="text-xs text-text-secondary uppercase">{track.language}</div>
-            </div>
-          )}
-        </div>
+    <motion.div 
+      className={`neu-track-header-redesigned ${isActive ? 'active' : ''}`}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      {/* Track Color Indicator */}
+      <div className="track-color-indicator">
+        <div className="color-dot" style={{ backgroundColor: track.visible ? 'var(--neu-primary)' : 'var(--neu-text-muted)' }} />
       </div>
 
-      <div className="flex items-center gap-1 ml-2">
-        <button
-          className={`w-6 h-6 flex items-center justify-center rounded border border-border shadow-outset transition-all hover:shadow-hover ${
-            track.visible ? 'bg-surface text-text-primary' : 'bg-surface text-text-muted'
-          }`}
+      {/* Track Name Section */}
+      <div className="track-name-section">
+        {isEditing ? (
+          <input
+            ref={inputRef}
+            type="text"
+            value={nameValue}
+            onChange={(e) => setNameValue(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            className="track-name-input"
+            placeholder="Track name..."
+          />
+        ) : (
+          <div className="track-name-display" onDoubleClick={handleDoubleClick}>
+            <span className="track-name">{track.name}</span>
+            <span className="track-language">{track.language.toUpperCase()}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Track Controls - Always Visible */}
+      <div className="track-controls">
+        {/* Visibility Toggle */}
+        <motion.button
+          className={`track-control-btn visibility ${track.visible ? 'active' : ''}`}
           onClick={() => onToggleVisibility(track.id, !track.visible)}
           title={track.visible ? "Hide track" : "Show track"}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          {track.visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-        </button>
+          {track.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+        </motion.button>
 
-        <button
-          className={`w-6 h-6 flex items-center justify-center rounded border border-border shadow-outset transition-all hover:shadow-hover ${
-            track.locked ? 'bg-warning text-white' : 'bg-surface text-text-primary'
-          }`}
+        {/* Lock Toggle */}
+        <motion.button
+          className={`track-control-btn lock ${track.locked ? 'active' : ''}`}
           onClick={() => onToggleLock(track.id, !track.locked)}
           title={track.locked ? "Unlock track" : "Lock track"}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          {track.locked ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
-        </button>
+          {track.locked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+        </motion.button>
 
-        <button
-          className="w-6 h-6 flex items-center justify-center rounded border border-border shadow-outset transition-all hover:shadow-hover bg-surface text-error hover:bg-error hover:text-white"
+        {/* Delete Button */}
+        <motion.button
+          className="track-control-btn delete"
           onClick={handleDelete}
           title="Delete track"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <Trash2 className="w-3 h-3" />
-        </button>
+          <Trash2 className="w-3.5 h-3.5" />
+        </motion.button>
       </div>
-    </div>
+
+      {/* Active Track Indicator */}
+      {isActive && (
+        <motion.div 
+          className="active-indicator"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.3 }}
+        />
+      )}
+    </motion.div>
   );
 };
 
