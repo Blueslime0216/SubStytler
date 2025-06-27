@@ -39,6 +39,15 @@ export const PanelContent: React.FC<PanelContentProps> = ({ type }) => {
     );
   }
   
+  // 🎯 Timeline panel gets special treatment - no padding, full space
+  if (type === 'subtitle-timeline') {
+    return (
+      <div className="h-full w-full overflow-hidden">
+        <PanelComponent />
+      </div>
+    );
+  }
+  
   return (
     <div className="h-full w-full">
       <PanelComponent />

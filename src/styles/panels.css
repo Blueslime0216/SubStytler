@@ -46,6 +46,12 @@
   position: relative;
 }
 
+/* 🎯 Special handling for timeline and video panels - no padding */
+.timeline-panel .panel-content,
+.video-panel .panel-content {
+  padding: 0;
+}
+
 /* Panel Types */
 .panel-primary {
   border: 2px solid var(--primary-color);
@@ -80,12 +86,6 @@
   font-size: 12px;
   margin: 0;
   line-height: 1.2;
-}
-
-/* Specific Panel Types */
-.video-panel .panel-content,
-.timeline-panel .panel-content {
-  padding: 0;
 }
 
 /* Panel Resize Handle */
