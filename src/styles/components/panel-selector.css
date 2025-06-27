@@ -1,4 +1,4 @@
-/* Panel Type Selector - New Inset/Outset Theme */
+/* Panel Type Selector - New Inset/Outset Theme with Framer Motion Integration */
 
 .panel-selector-container {
   position: relative;
@@ -43,10 +43,11 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* 🔧 수정: 캐러셀 컨테이너는 들어간 것처럼 (inset) - 왼쪽 상단 어둡게, 오른쪽 하단 밝게 */
+  /* 🔧 캐러셀 컨테이너는 들어간 것처럼 (inset) - 왼쪽 상단 어둡게, 오른쪽 하단 밝게 */
   box-shadow: 
     inset 2px 2px 4px var(--shadow-color),
     inset -1px -1px 2px var(--highlight-color);
+  border-radius: 8px;
 }
 
 .panel-selector-icons {
@@ -73,30 +74,37 @@
   justify-content: center;
   background: var(--surface-color);
   border: 1px solid var(--border-color);
-  /* 🔧 수정: 기본 아이콘들은 튀어나온 것처럼 (outset) - 왼쪽 상단 밝게, 오른쪽 하단 어둡게 */
+  transition: all 0.2s ease;
+  /* 🔧 기본 아이콘들은 튀어나온 것처럼 (outset) - 왼쪽 상단 밝게, 오른쪽 하단 어둡게 */
   box-shadow: 
     -1px -1px 2px var(--highlight-color),
     2px 2px 4px var(--shadow-color);
-  transition: all 0.2s ease;
 }
 
 .panel-selector-icon-wrapper.selected {
   background: var(--primary-color);
   border: 2px solid var(--primary-color);
-  /* 🔧 수정: 선택된 아이콘은 들어간 것처럼 (inset) - 왼쪽 상단 어둡게, 오른쪽 하단 밝게 */
+  /* 🔧 선택된 아이콘은 들어간 것처럼 (inset) - 왼쪽 상단 어둡게, 오른쪽 하단 밝게 */
   box-shadow: 
     inset 2px 2px 4px var(--shadow-color),
     inset -1px -1px 2px var(--highlight-color);
-  /* 🔧 크기 변경 없음 */
 }
 
 .panel-selector-icon-wrapper:hover {
   filter: brightness(1.1);
   border-color: var(--primary-color);
-  /* 🔧 수정: 호버 시 튀어나온 효과 강화 - 크기 변경 없이 그림자만 강화 */
+  /* 🔧 호버 시 튀어나온 효과 강화 - 크기 변경 없이 그림자만 강화 */
   box-shadow: 
     -2px -2px 3px var(--highlight-color),
     3px 3px 6px var(--shadow-color);
+}
+
+/* 선택된 아이콘의 호버 효과는 별도 처리 */
+.panel-selector-icon-wrapper.selected:hover {
+  /* 선택된 상태에서는 inset 효과 유지하면서 강화 */
+  box-shadow: 
+    inset 3px 3px 6px var(--shadow-color),
+    inset -2px -2px 3px var(--highlight-color);
 }
 
 .panel-selector-icon {

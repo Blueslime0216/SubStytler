@@ -130,7 +130,7 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
       {/* 메인 선택기 버튼 */}
       <motion.button
         onClick={toggleSelector}
-        className="relative cursor-pointer flex items-center justify-center"
+        className="relative cursor-pointer flex items-center justify-center panel-selector-button"
         title={`${currentConfig.title} - 클릭하여 패널 변경`}
         initial={false}
         animate={{
@@ -141,13 +141,15 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
         transition={animationConfig}
         style={{
           background: 'var(--surface-color)',
-          boxShadow: isOpen 
-            ? 'var(--shadow-inset)'
-            : 'var(--shadow-outset)',
           border: '2px solid var(--border-color)',
           transition: 'all 0.2s ease',
           overflow: 'hidden',
         }}
+        whileHover={{ 
+          filter: 'brightness(1.05)',
+          borderColor: 'var(--primary-color)'
+        }}
+        whileTap={{ scale: 0.98 }}
       >
         <AnimatePresence mode="wait">
           {!isOpen ? (
@@ -170,13 +172,13 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={animationConfig}
-              className="relative w-full h-full flex items-center justify-center"
+              className="relative w-full h-full flex items-center justify-center panel-selector-carousel"
               style={{ overflow: 'hidden' }}
               onWheel={handleWheel}
             >
               {/* 아이콘 캐러셀 컨테이너 */}
               <motion.div
-                className="flex items-center absolute"
+                className="flex items-center absolute panel-selector-icons"
                 animate={{
                   x: -selectedIndex * totalIconWidth + centerOffset
                 }}
@@ -195,7 +197,7 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
                   return (
                     <motion.div
                       key={panelType}
-                      className="flex items-center justify-center cursor-pointer"
+                      className="flex items-center justify-center cursor-pointer panel-selector-icon-item"
                       style={{
                         width: iconSize,
                         height: iconSize,
@@ -217,27 +219,16 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
                       }}
                     >
                       <motion.div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center"
-                        style={{
-                          background: isSelected 
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center panel-selector-icon-wrapper ${isSelected ? 'selected' : ''}`}
+                        animate={{
+                          backgroundColor: isSelected 
                             ? 'var(--primary-color)'
                             : 'var(--surface-color)',
-                          boxShadow: isSelected
-                            ? 'var(--shadow-inset)'
-                            : 'var(--shadow-outset-subtle)',
-                          border: isSelected 
-                            ? '2px solid var(--primary-color)' 
-                            : '1px solid var(--border-color)',
-                        }}
-                        animate={{
-                          boxShadow: isSelected
-                            ? 'var(--shadow-inset)'
-                            : 'var(--shadow-outset-subtle)'
                         }}
                         transition={animationConfig}
                       >
                         <Icon 
-                          className={`w-4 h-4 transition-colors duration-200 ${
+                          className={`w-4 h-4 transition-colors duration-200 panel-selector-icon ${
                             isSelected ? 'text-white' : 'text-text-secondary'
                           }`} 
                         />
@@ -249,13 +240,13 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
 
               {/* 좌우 그라데이션 마스크 */}
               <div 
-                className="absolute left-0 top-0 bottom-0 w-8 pointer-events-none"
+                className="absolute left-0 top-0 bottom-0 w-8 pointer-events-none panel-selector-gradient-left"
                 style={{
                   background: 'linear-gradient(90deg, var(--surface-color) 0%, transparent 100%)'
                 }}
               />
               <div 
-                className="absolute right-0 top-0 bottom-0 w-8 pointer-events-none"
+                className="absolute right-0 top-0 bottom-0 w-8 pointer-events-none panel-selector-gradient-right"
                 style={{
                   background: 'linear-gradient(270deg, var(--surface-color) 0%, transparent 100%)'
                 }}
@@ -273,10 +264,9 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={animationConfig}
-            className="absolute top-full mt-2 px-3 py-2 rounded-lg text-xs font-medium"
+            className="absolute top-full mt-2 px-3 py-2 rounded-lg text-xs font-medium panel-selector-tooltip"
             style={{
               background: 'var(--surface-color)',
-              boxShadow: 'var(--shadow-outset)',
               border: '2px solid var(--border-color)',
               color: 'var(--text-primary)',
               whiteSpace: 'nowrap',
