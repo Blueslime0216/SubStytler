@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useTimelineStore } from '../stores/timelineStore';
 
 interface InteractionConfig {
@@ -16,7 +16,13 @@ export const useTimelineInteraction = (
   const { duration, setCurrentTime, snapToFrame } = useTimelineStore();
 
   const [isPanning, setIsPanning] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const isPanningRef = useRef(false);
+  const panStartXRef = useRef(0); // clientX where panning started
+  const panStartViewRef = useRef(0); // viewStart at pan start
+
+  // Cleanup refs to ensure we can remove listeners reliably
+  const globalMoveRef = useRef<(e:MouseEvent)=>void>();
+  const globalUpRef = useRef<(e:MouseEvent)=>void>();
 
   const pixelToTime = useCallback((pixel: number) => {
     if (!containerRef.current) return 0;
@@ -39,7 +45,51 @@ export const useTimelineInteraction = (
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button === 1) { // Middle mouse button
       setIsPanning(true);
-      setDragStart({ x: e.clientX, y: e.clientY });
+      isPanningRef.current = true;
+      panStartXRef.current = e.clientX;
+      panStartViewRef.current = viewStart;
+
+      // Attach global listeners so panning continues outside element
+      const onMove = (ev: MouseEvent) => {
+        if (!isPanningRef.current || !containerRef.current) return;
+
+        const dx = ev.clientX - panStartXRef.current; // total movement since pan start
+
+        const containerWidth = containerRef.current.clientWidth;
+        const viewDuration = viewEnd - viewStart;
+        const timeDelta = (dx / containerWidth) * viewDuration;
+
+        let newStart = panStartViewRef.current - timeDelta;
+        let newEnd = newStart + viewDuration;
+
+        if (newStart < 0) {
+          newStart = 0;
+          newEnd = viewDuration;
+        }
+        if (newEnd > duration) {
+          newEnd = duration;
+          newStart = duration - viewDuration;
+        }
+
+        setViewRange(newStart, newEnd);
+
+        // 디버깅: 실시간 값 콘솔 출력
+        console.log('[PAN] dx:', dx, 'newStart:', newStart, 'newEnd:', newEnd);
+      };
+
+      const onUp = (ev: MouseEvent) => {
+        if (ev.button === 1) {
+          setIsPanning(false);
+          isPanningRef.current = false;
+          window.removeEventListener('mousemove', onMove);
+          window.removeEventListener('mouseup', onUp);
+        }
+      };
+
+      globalMoveRef.current = onMove;
+      globalUpRef.current = onUp;
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
       e.preventDefault();
       return;
     }
@@ -56,18 +106,8 @@ export const useTimelineInteraction = (
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isPanning && containerRef.current) {
-      const dx = e.clientX - dragStart.x;
-      setDragStart({ x: e.clientX, y: e.clientY });
-
-      const containerWidth = containerRef.current.clientWidth;
-      const viewDuration = viewEnd - viewStart;
-      const timeDelta = (dx / containerWidth) * viewDuration;
-
-      const newStart = Math.max(0, viewStart - timeDelta);
-      const newEnd = Math.min(duration, newStart + viewDuration);
-      
-      setViewRange(newEnd - viewDuration, newEnd);
-      return;
+      // Prevent default to avoid text selection when panning inside element
+      e.preventDefault();
     }
     
     // For playhead dragging, if needed

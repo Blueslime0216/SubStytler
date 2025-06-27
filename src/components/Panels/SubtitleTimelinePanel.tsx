@@ -155,6 +155,9 @@ export const SubtitleTimelinePanel: React.FC = () => {
           duration={duration}
           viewStart={localViewStart}
           viewEnd={localViewEnd}
+          zoom={localZoom}
+          setZoom={setZoom as any}
+          setViewRange={setViewRange}
           sidebarOffset={sidebarWidth}
         />
       </div>
