@@ -58,9 +58,11 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
   };
 
   return (
-    <div className={`track-header ${isActive ? 'active' : ''}`}>
+    <div className={`h-12 px-3 py-2 border-b border-border bg-surface-elevated flex items-center transition-colors ${
+      isActive ? 'bg-primary bg-opacity-10 border-l-2 border-l-primary' : 'hover:bg-surface'
+    }`}>
       <div className="flex items-center flex-1 min-w-0">
-        <div className="w-3 h-3 rounded-full bg-blue-500 mr-3 flex-shrink-0" />
+        <div className="w-3 h-3 rounded-full bg-primary mr-3 flex-shrink-0 shadow-outset" />
         
         <div className="flex-1 min-w-0">
           {isEditing ? (
@@ -71,21 +73,23 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
               onChange={(e) => setNameValue(e.target.value)}
               onBlur={handleBlur}
               onKeyDown={handleKeyDown}
-              className="input input-sm w-full"
+              className="w-full bg-surface border border-border rounded px-2 py-1 text-sm shadow-inset focus:border-primary focus:shadow-focus"
               placeholder="Track name..."
             />
           ) : (
             <div onDoubleClick={handleDoubleClick} className="cursor-pointer">
-              <div className="track-name truncate">{track.name}</div>
-              <div className="text-xs text-gray-500 uppercase">{track.language}</div>
+              <div className="text-sm font-medium text-text-primary truncate">{track.name}</div>
+              <div className="text-xs text-text-secondary uppercase">{track.language}</div>
             </div>
           )}
         </div>
       </div>
 
-      <div className="track-controls">
+      <div className="flex items-center gap-1 ml-2">
         <button
-          className={`track-control-btn ${track.visible ? 'active' : ''}`}
+          className={`w-6 h-6 flex items-center justify-center rounded border border-border shadow-outset transition-all hover:shadow-hover ${
+            track.visible ? 'bg-surface text-text-primary' : 'bg-surface text-text-muted'
+          }`}
           onClick={() => onToggleVisibility(track.id, !track.visible)}
           title={track.visible ? "Hide track" : "Show track"}
         >
@@ -93,7 +97,9 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
         </button>
 
         <button
-          className={`track-control-btn ${track.locked ? 'active' : ''}`}
+          className={`w-6 h-6 flex items-center justify-center rounded border border-border shadow-outset transition-all hover:shadow-hover ${
+            track.locked ? 'bg-warning text-white' : 'bg-surface text-text-primary'
+          }`}
           onClick={() => onToggleLock(track.id, !track.locked)}
           title={track.locked ? "Unlock track" : "Lock track"}
         >
@@ -101,7 +107,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
         </button>
 
         <button
-          className="track-control-btn text-red-600"
+          className="w-6 h-6 flex items-center justify-center rounded border border-border shadow-outset transition-all hover:shadow-hover bg-surface text-error hover:bg-error hover:text-white"
           onClick={handleDelete}
           title="Delete track"
         >

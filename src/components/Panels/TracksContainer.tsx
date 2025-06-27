@@ -198,21 +198,16 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   }, [sidebarWidth, onSidebarWidthChange]);
 
   return (
-    <div className="neu-tracks-container">
+    <div className="flex flex-1 h-full bg-surface border border-border rounded-lg overflow-hidden">
       {/* Track headers */}
       <div
-        className="neu-tracks-header"
-        style={{ 
-          width: sidebarWidth,
-          maxHeight: '100%', // ✅ Ensure proper height constraint
-          overflowY: 'auto', // ✅ Enable scrolling
-          overflowX: 'hidden' // ✅ Hide horizontal scroll
-        }}
+        className="bg-surface-elevated border-r border-border overflow-y-auto overflow-x-hidden flex-shrink-0 flex flex-col"
+        style={{ width: sidebarWidth }}
         ref={headerRef}
         onScroll={handleHeaderScroll}
       >
         {/* Spacer to align with Ruler */}
-        <div style={{ height: RULER_HEIGHT, flexShrink: 0 }} />
+        <div style={{ height: RULER_HEIGHT, flexShrink: 0 }} className="bg-surface-elevated border-b border-border" />
 
         {tracks.map((track) => (
           <TrackHeader
@@ -226,26 +221,30 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
           />
         ))}
 
-        {/* Redesigned Add Track Button */}
-        <div className="neu-track-add" onClick={handleAddTrack} title="Add new track">
-          <div className="track-add-content">
-            <div className="track-add-icon">
+        {/* Add Track Button */}
+        <div 
+          className="h-14 m-2 flex items-center justify-center bg-surface border-2 border-dashed border-border-strong rounded-lg cursor-pointer hover:bg-surface-elevated hover:border-primary transition-all duration-200 flex-shrink-0"
+          onClick={handleAddTrack} 
+          title="Add new track"
+        >
+          <div className="flex items-center gap-2 text-text-secondary hover:text-primary transition-colors">
+            <div className="w-6 h-6 bg-surface border border-border rounded-full flex items-center justify-center shadow-outset">
               <Plus className="w-3 h-3" />
             </div>
-            <span className="track-add-text">Add Track</span>
+            <span className="text-sm font-medium">Add Track</span>
           </div>
         </div>
       </div>
 
       {/* Resize handle */}
-      <div className="neu-track-resize-handle" onMouseDown={handleResizeMouseDown} />
+      <div 
+        className="w-1 bg-border hover:bg-border-strong cursor-col-resize flex-shrink-0" 
+        onMouseDown={handleResizeMouseDown} 
+      />
 
       {/* Right side: Ruler + tracks content */}
       <div 
-        className="neu-tracks-content flex-1 flex flex-col relative"
-        style={{
-          maxHeight: '100%', // ✅ Ensure proper height constraint
-        }}
+        className="flex-1 flex flex-col relative overflow-hidden"
         ref={containerRef}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -263,24 +262,28 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
           containerWidth={containerRef.current?.clientWidth || 0}
         />
 
-        {/* 🎯 FIXED: Playhead positioned in content area with correct z-index */}
+        {/* Playhead positioned in content area */}
         <div
-          className="neu-playhead"
+          className="absolute top-0 w-0.5 h-full bg-error pointer-events-none z-20"
           style={{
             left: timeToPixel(currentTime),
-            zIndex: 25, // 🔧 LOWER than track header (100) but higher than content (10)
+            boxShadow: '1px 0 2px rgba(0, 0, 0, 0.3), -1px 0 2px rgba(0, 0, 0, 0.3)'
           }}
-        />
+        >
+          <div className="absolute top-0 -left-1.5 w-3 h-3 bg-error border-2 border-white rounded-b-full shadow-outset" />
+        </div>
 
         {tracks.map((track, trackIndex) => (
           <div
             key={track.id}
-            className={`neu-track-content ${track.locked ? 'opacity-70' : ''} ${
-              dragOverTrackId === track.id ? 'bg-blue-500 bg-opacity-20' : ''
+            className={`relative border-b border-border bg-surface transition-colors ${
+              track.locked ? 'opacity-70' : ''
+            } ${
+              dragOverTrackId === track.id ? 'bg-primary bg-opacity-20' : ''
             }`}
             style={{ 
               height: TRACK_HEIGHT,
-              flexShrink: 0 // ✅ Prevent track height from shrinking
+              flexShrink: 0
             }}
             onClick={() => setSelectedTrackId(track.id)}
             onMouseEnter={() => handleTrackMouseEnter(track.id)}

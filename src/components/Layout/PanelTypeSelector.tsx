@@ -58,19 +58,19 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
   }, [isOpen]);
 
   return (
-    <div ref={selectorRef} className={`panel-type-selector ${className}`}>
+    <div ref={selectorRef} className={`relative ${className}`}>
       <button
         onClick={toggleSelector}
-        className="panel-type-button"
+        className="flex items-center gap-2 px-3 py-1.5 bg-surface border border-border rounded shadow-outset hover:shadow-hover transition-all text-sm font-medium text-text-primary"
         title={`${currentConfig.title} - Click to change panel type`}
       >
         <CurrentIcon className="w-4 h-4" />
-        <span className="font-medium">{currentConfig.title}</span>
+        <span>{currentConfig.title}</span>
         <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="panel-type-dropdown">
+        <div className="absolute top-full left-0 mt-1 min-w-48 bg-surface border border-border-strong rounded-lg shadow-outset-strong z-50 overflow-hidden">
           {Object.entries(panelConfig).map(([panelType, config]) => {
             const Icon = config.icon;
             const isSelected = panelType === currentType;
@@ -79,16 +79,18 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
               <button
                 key={panelType}
                 onClick={() => handleOptionClick(panelType as PanelType)}
-                className={`panel-type-option ${isSelected ? 'selected' : ''}`}
+                className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-surface-elevated transition-colors ${
+                  isSelected ? 'bg-primary bg-opacity-10 text-primary' : 'text-text-primary'
+                }`}
                 title={config.description}
               >
-                <Icon className="w-4 h-4" />
-                <div className="flex-1 text-left">
-                  <div className="font-medium">{config.title}</div>
-                  <div className="text-xs opacity-75">{config.description}</div>
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm">{config.title}</div>
+                  <div className="text-xs text-text-secondary">{config.description}</div>
                 </div>
                 {isSelected && (
-                  <div className="w-2 h-2 bg-current rounded-full opacity-75" />
+                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
                 )}
               </button>
             );

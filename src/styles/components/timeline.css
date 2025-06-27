@@ -19,7 +19,7 @@
 }
 
 .timeline-ruler {
-  background: var(--surface);
+  background: var(--surface-elevated);
   border-bottom: 1px solid var(--border);
   padding: 8px 0;
   position: relative;
@@ -29,7 +29,7 @@
 }
 
 .timeline-tracks {
-  background: var(--bg);
+  background: var(--surface);
   position: relative;
 }
 

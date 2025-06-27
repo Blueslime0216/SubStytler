@@ -35,7 +35,7 @@ export const VideoPreviewPanel: React.FC = () => {
     video.style.width = '100%';
     video.style.height = '100%';
     video.style.objectFit = 'contain';
-    video.style.backgroundColor = 'var(--neu-base)';
+    video.style.backgroundColor = 'var(--bg)';
 
     const handleCanPlay = () => {
       console.log('Video can play event triggered');
@@ -208,17 +208,13 @@ export const VideoPreviewPanel: React.FC = () => {
   return (
     <div 
       ref={panelRef}
-      className="h-full w-full min-w-0 min-h-0 flex flex-col neu-bg-base neu-video-panel"
-      style={{
-        borderRadius: '18px',
-        transition: 'all 0.2s ease'
-      }}
+      className="h-full w-full min-w-0 min-h-0 flex flex-col bg-surface border border-border rounded-lg overflow-hidden"
       // 🎯 드래그 앤 드롭만 전체 패널에 적용
       {...getRootProps()}
     >
       <input {...getInputProps()} />
       
-      <div ref={videoAreaRef} className="flex-1 w-full h-full min-w-0 min-h-0 relative">
+      <div ref={videoAreaRef} className="flex-1 w-full h-full min-w-0 min-h-0 relative overflow-hidden">
         <VideoPreviewPlayer
           videoRef={videoRef}
           hasVideo={hasVideo}
@@ -244,21 +240,19 @@ export const VideoPreviewPanel: React.FC = () => {
             onClick={handleManualFileSelect}
             style={{
               cursor: 'pointer',
-              background: isDragActive ? 'rgba(99, 179, 237, 0.1)' : 'transparent',
-              borderRadius: '18px',
+              background: isDragActive ? 'rgba(49, 130, 206, 0.1)' : 'transparent',
               transition: 'background 0.2s ease'
             }}
           >
             {/* 🎯 드래그 활성화 시에만 메시지 표시 */}
             {isDragActive && (
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl neu-shadow-1 flex items-center justify-center"
-                     style={{ background: 'var(--neu-primary)' }}>
+                <div className="w-16 h-16 mx-auto mb-4 rounded-lg bg-primary flex items-center justify-center shadow-outset">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium neu-text-primary">Drop video here</h3>
+                <h3 className="text-lg font-medium text-primary">Drop video here</h3>
               </div>
             )}
           </div>
