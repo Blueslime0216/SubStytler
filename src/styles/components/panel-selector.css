@@ -43,6 +43,10 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  /* 🔧 수정: 그림자 방향을 왼쪽 상단에서 오는 빛으로 변경 */
+  box-shadow: 
+    inset 3px 3px 6px var(--shadow-color),
+    inset -2px -2px 4px var(--highlight-color);
 }
 
 .panel-selector-icons {
@@ -69,20 +73,30 @@
   justify-content: center;
   background: var(--surface-color);
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-outset-subtle);
+  /* 🔧 수정: 모든 아이콘이 튀어나온 것처럼 보이게 하는 그림자 */
+  box-shadow: 
+    2px 2px 4px var(--shadow-color),
+    -1px -1px 2px var(--highlight-color);
   transition: all 0.2s ease;
 }
 
 .panel-selector-icon-wrapper.selected {
   background: var(--primary-color);
   border: 2px solid var(--primary-color);
-  box-shadow: var(--shadow-inset);
-  transform: scale(1.1);
+  /* 🔧 수정: 선택된 아이콘은 들어간 것처럼 보이게 하는 그림자 (크기 변경 없음) */
+  box-shadow: 
+    inset 2px 2px 4px var(--shadow-color),
+    inset -1px -1px 2px var(--highlight-color);
+  /* 🔧 제거: transform: scale(1.1) 제거하여 크기 변경 없음 */
 }
 
 .panel-selector-icon-wrapper:hover {
   filter: brightness(1.1);
   border-color: var(--primary-color);
+  /* 🔧 호버 시에도 크기 변경 없이 그림자만 약간 강화 */
+  box-shadow: 
+    3px 3px 6px var(--shadow-color),
+    -2px -2px 3px var(--highlight-color);
 }
 
 .panel-selector-icon {
