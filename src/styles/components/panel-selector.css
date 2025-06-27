@@ -22,7 +22,8 @@
 }
 
 .panel-selector-button.open {
-  box-shadow: var(--shadow-inset);
+  /* 🔧 열린 상태에서는 외부 그림자 제거 */
+  box-shadow: none;
   border-radius: 12px;
   background: var(--bg-color);
 }
@@ -141,12 +142,14 @@
 
 .panel-selector-gradient-left {
   left: 0;
-  background: linear-gradient(90deg, var(--bg-color) 0%, transparent 100%);
+  /* 🔧 그라데이션 배경색을 원래대로 복원 */
+  background: linear-gradient(90deg, var(--surface-color) 0%, transparent 100%);
 }
 
 .panel-selector-gradient-right {
   right: 0;
-  background: linear-gradient(270deg, var(--bg-color) 0%, transparent 100%);
+  /* 🔧 그라데이션 배경색을 원래대로 복원 */
+  background: linear-gradient(270deg, var(--surface-color) 0%, transparent 100%);
 }
 
 .panel-selector-tooltip {
