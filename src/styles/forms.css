@@ -1,17 +1,17 @@
-/* Form Element Styles for Inset/Outset Theme */
+/* Form Element Styles for Inset/Outset Theme - Enhanced with Natural Shadows */
 
 /* Input Base */
 .input {
   display: block;
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px 14px;
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-primary);
   background-color: var(--bg-color);
   box-shadow: var(--shadow-inset);
-  border: none;
-  border-radius: 4px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
   transition: all 0.15s ease;
 }
 
@@ -21,32 +21,55 @@
   box-shadow: 
     0 0 0 2px var(--primary-color),
     var(--shadow-inset);
+  border-color: var(--primary-color);
+}
+
+/* Input Hover */
+.input:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-inset-strong);
 }
 
 /* Input Disabled */
 .input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: var(--shadow-inset-subtle);
 }
 
 /* Select */
 .select {
   display: block;
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px 14px;
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-primary);
   background-color: var(--bg-color);
   box-shadow: var(--shadow-inset);
-  border: none;
-  border-radius: 4px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 8px center;
+  background-position: right 12px center;
   background-size: 16px;
-  padding-right: 32px;
+  padding-right: 40px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.select:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-inset-strong);
+}
+
+.select:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 2px var(--primary-color),
+    var(--shadow-inset);
+  border-color: var(--primary-color);
 }
 
 /* Checkbox & Radio */
@@ -54,9 +77,9 @@
 .radio {
   position: relative;
   display: inline-block;
-  width: 18px;
-  height: 18px;
-  margin-right: 8px;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
   vertical-align: middle;
   cursor: pointer;
 }
@@ -74,24 +97,43 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   background-color: var(--bg-color);
   box-shadow: var(--shadow-inset);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  transition: all 0.15s ease;
 }
 
 .radio-mark {
   border-radius: 50%;
 }
 
+.checkbox-mark {
+  border-radius: 4px;
+}
+
+.checkbox:hover .checkbox-mark,
+.radio:hover .radio-mark {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-inset-strong);
+}
+
+.checkbox input:checked ~ .checkbox-mark,
+.radio input:checked ~ .radio-mark {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-outset-subtle);
+}
+
 .checkbox input:checked ~ .checkbox-mark:after {
   content: '';
   position: absolute;
-  left: 6px;
+  left: 7px;
   top: 3px;
   width: 5px;
   height: 10px;
-  border: solid var(--primary-color);
+  border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
@@ -99,10 +141,69 @@
 .radio input:checked ~ .radio-mark:after {
   content: '';
   position: absolute;
-  left: 6px;
-  top: 6px;
+  left: 7px;
+  top: 7px;
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--primary-color);
-} 
+  background-color: white;
+  box-shadow: var(--shadow-inset-subtle);
+}
+
+/* Enhanced Form Groups */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-help {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Input Groups */
+.input-group {
+  display: flex;
+  align-items: stretch;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-inset);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+.input-group .input {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  flex: 1;
+}
+
+.input-group-addon {
+  background: var(--surface-color);
+  padding: 10px 14px;
+  border-left: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  color: var(--text-secondary);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.input-group:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-inset-strong);
+}
+
+.input-group:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: 
+    0 0 0 2px var(--primary-color),
+    var(--shadow-inset);
+}

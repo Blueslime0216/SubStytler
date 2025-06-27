@@ -15,47 +15,55 @@
   --border-color-inset-top-left: var(--shadow-color);
   --border-color-inset-bottom-right: var(--highlight-color);
   
-  /* Box Shadows - Alternative to Border Method */
+  /* 🎯 자연스러운 그림자 시스템 - 패널 선택기 스타일 기반 */
+  
+  /* Outset (튀어나온) 그림자 - 기본 요소들 */
   --shadow-outset:
-    2px 0 0 0 var(--highlight-color),
-    0 2px 0 0 var(--highlight-color),
-    -2px 0 0 0 var(--shadow-color),
-    0 -2px 0 0 var(--shadow-color);
+    -1px -1px 2px var(--highlight-color),
+    2px 2px 4px var(--shadow-color);
     
-  --shadow-inset:
-    inset 2px 0 0 0 var(--shadow-color),
-    inset 0 2px 0 0 var(--shadow-color),
-    inset -2px 0 0 0 var(--highlight-color),
-    inset 0 -2px 0 0 var(--highlight-color);
-  
-  /* Stronger Variants */
-  --shadow-outset-strong:
-    3px 0 0 0 var(--highlight-color),
-    0 3px 0 0 var(--highlight-color),
-    -3px 0 0 0 var(--shadow-color),
-    0 -3px 0 0 var(--shadow-color);
-    
-  --shadow-inset-strong:
-    inset 3px 0 0 0 var(--shadow-color),
-    inset 0 3px 0 0 var(--shadow-color),
-    inset -3px 0 0 0 var(--highlight-color),
-    inset 0 -3px 0 0 var(--highlight-color);
-  
-  /* Subtle Variants */
   --shadow-outset-subtle:
-    1px 0 0 0 var(--highlight-color),
-    0 1px 0 0 var(--highlight-color),
-    -1px 0 0 0 var(--shadow-color),
-    0 -1px 0 0 var(--shadow-color);
+    -0.5px -0.5px 1px var(--highlight-color),
+    1px 1px 2px var(--shadow-color);
+    
+  --shadow-outset-strong:
+    -2px -2px 4px var(--highlight-color),
+    4px 4px 8px var(--shadow-color);
+  
+  /* Outset 호버 효과 */
+  --shadow-outset-hover:
+    -2px -2px 3px var(--highlight-color),
+    3px 3px 6px var(--shadow-color);
+    
+  --shadow-outset-active:
+    -1px -1px 1px var(--highlight-color),
+    1px 1px 3px var(--shadow-color);
+  
+  /* Inset (들어간) 그림자 - 선택된/활성화된 요소들 */
+  --shadow-inset:
+    inset 2px 2px 4px var(--shadow-color),
+    inset -1px -1px 2px var(--highlight-color);
     
   --shadow-inset-subtle:
-    inset 1px 0 0 0 var(--shadow-color),
-    inset 0 1px 0 0 var(--shadow-color),
-    inset -1px 0 0 0 var(--highlight-color),
-    inset 0 -1px 0 0 var(--highlight-color);
+    inset 1px 1px 2px var(--shadow-color),
+    inset -0.5px -0.5px 1px var(--highlight-color);
+    
+  --shadow-inset-strong:
+    inset 3px 3px 6px var(--shadow-color),
+    inset -2px -2px 3px var(--highlight-color);
+  
+  /* 특별한 효과들 */
+  --shadow-elevated:
+    -3px -3px 6px var(--highlight-color),
+    6px 6px 12px var(--shadow-color);
+    
+  --shadow-pressed:
+    inset 1px 1px 3px var(--shadow-color),
+    inset -1px -1px 2px var(--highlight-color);
   
   /* Button States */
   --shadow-button-normal: var(--shadow-outset);
+  --shadow-button-hover: var(--shadow-outset-hover);
   --shadow-button-pressed: var(--shadow-inset);
   --shadow-button-focus: 
     0 0 0 2px var(--primary-color),
@@ -76,4 +84,4 @@
   /* Inset Borders (Sunken Effect) */
   --border-color-inset-top-left: var(--shadow-color);
   --border-color-inset-bottom-right: var(--highlight-color);
-} 
+}

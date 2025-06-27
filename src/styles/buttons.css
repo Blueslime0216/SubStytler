@@ -1,4 +1,4 @@
-/* Button Styles for Inset/Outset Theme */
+/* Button Styles for Inset/Outset Theme - Enhanced with Natural Shadows */
 
 /* Base Button */
 .btn {
@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 8px;
   font-weight: 500;
   font-size: 14px;
   cursor: pointer;
@@ -14,19 +14,23 @@
   box-shadow: var(--shadow-outset);
   background-color: var(--surface-color);
   color: var(--text-primary);
-  border: none;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
   outline: none;
+  position: relative;
+  overflow: hidden;
 }
 
 /* Button Hover */
 .btn:hover {
   filter: brightness(1.05);
+  box-shadow: var(--shadow-outset-hover);
+  border-color: var(--primary-color);
 }
 
 /* Button Active */
 .btn:active {
-  box-shadow: var(--shadow-inset);
-  transform: translateY(1px);
+  box-shadow: var(--shadow-pressed);
+  transform: translateY(0.5px);
 }
 
 /* Button Focus */
@@ -38,36 +42,110 @@
 
 /* Button Sizes */
 .btn-sm {
-  padding: 4px 8px;
+  padding: 6px 12px;
   font-size: 12px;
+  border-radius: 6px;
+  box-shadow: var(--shadow-outset-subtle);
+}
+
+.btn-sm:hover {
+  box-shadow: var(--shadow-outset);
 }
 
 .btn-lg {
   padding: 12px 24px;
   font-size: 16px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-outset-strong);
+}
+
+.btn-lg:hover {
+  box-shadow: var(--shadow-elevated);
 }
 
 /* Button Variants */
 .btn-primary {
   background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-color);
+  filter: brightness(1.1);
 }
 
 .btn-success {
   background-color: var(--success-color);
+  color: white;
+  border-color: var(--success-color);
 }
 
 .btn-warning {
   background-color: var(--warning-color);
+  color: white;
+  border-color: var(--warning-color);
 }
 
 .btn-error {
   background-color: var(--error-color);
+  color: white;
+  border-color: var(--error-color);
 }
 
 /* Icon Button */
 .btn-icon {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   padding: 0;
-  border-radius: 4px;
-} 
+  border-radius: 8px;
+  box-shadow: var(--shadow-outset-subtle);
+}
+
+.btn-icon:hover {
+  box-shadow: var(--shadow-outset);
+}
+
+/* Panel Action Buttons */
+.panel-action-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  border-radius: 6px;
+  box-shadow: var(--shadow-outset-subtle);
+  cursor: pointer;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  transition: all 0.15s ease;
+}
+
+.panel-action-btn:hover {
+  filter: brightness(1.05);
+  box-shadow: var(--shadow-outset);
+  border-color: var(--primary-color);
+}
+
+.panel-action-btn:active {
+  box-shadow: var(--shadow-pressed);
+}
+
+/* Disabled State */
+.btn:disabled,
+.btn-icon:disabled,
+.panel-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: var(--shadow-outset-subtle);
+  filter: none;
+}
+
+.btn:disabled:hover,
+.btn-icon:disabled:hover,
+.panel-action-btn:disabled:hover {
+  box-shadow: var(--shadow-outset-subtle);
+  filter: none;
+  border-color: var(--border-color, rgba(255, 255, 255, 0.1));
+}
