@@ -70,18 +70,8 @@
     var(--shadow-outset);
 }
 
-/* Dark theme inherits from root */
-[data-theme="dark"] {
-  /* Same as root */
-}
-
-/* Light theme adjustments */
-[data-theme="light"] {
-  /* Outset Borders (Raised Effect) */
-  --border-color-outset-top-left: var(--highlight-color);
-  --border-color-outset-bottom-right: var(--shadow-color);
-  
-  /* Inset Borders (Sunken Effect) */
-  --border-color-inset-top-left: var(--shadow-color);
-  --border-color-inset-bottom-right: var(--highlight-color);
+/* Neumorphic Inset Shadow for Clickable Items - More Subtle */
+.neu-inset-interactive-sm {
+  box-shadow: inset 1px 1px 2px var(--shadow-color),
+    inset -1px -1px 2px var(--highlight-color);
 }
