@@ -1,34 +1,7 @@
-/* Color System Variables - Inset/Outset Theme */
+/* Color System Variables - Dark Mode Only */
 
 :root {
-  /* Base Colors */
-  --base-color: #e0f7fa;
-  --surface-color: #ffffff;
-  --primary-color: #5f9ea0;
-  --mid-color: #7fb3b5;
-  --dark-color: #4a7c7d;
-  --darker-color: #3a6061;
-  
-  /* UI Element Colors */
-  --bg-color: var(--base-color);
-  --highlight-color: #ffffff;
-  --shadow-color: #b7e0e3;
-  
-  /* Text Colors */
-  --text-primary: #222831;
-  --text-secondary: #5f9ea0;
-  --text-muted: #b7e0e3;
-  --text-accent: #5f9ea0;
-  
-  /* Semantic Colors */
-  --success-color: #8dd9a0;
-  --warning-color: #ffd166;
-  --error-color: #ef6f6c;
-  --info-color: #a5d8ff;
-}
-
-[data-theme="dark"] {
-  /* Base Colors */
+  /* Base Colors - Dark Theme */
   --base-color: #5f9ea0;
   --surface-color: #5f9ea0;
   --primary-color: #e0f7fa;
@@ -54,29 +27,52 @@
   --info-color: #a5d8ff;
 }
 
-[data-theme="light"] {
-  /* Base Colors */
-  --base-color: #e0f7fa;
-  --surface-color: #ffffff;
-  --primary-color: #5f9ea0;
-  --mid-color: #a6d0d2;
-  --dark-color: #5f9ea0;
-  --darker-color: #4a7c7d;
+/* Force dark theme - remove light theme variants */
+[data-theme="dark"] {
+  /* Same as root - ensure consistency */
+  --base-color: #5f9ea0;
+  --surface-color: #5f9ea0;
+  --primary-color: #e0f7fa;
+  --mid-color: #7fb3b5;
+  --dark-color: #4a7c7d;
+  --darker-color: #3a6061;
   
-  /* UI Element Colors */
   --bg-color: var(--base-color);
-  --highlight-color: #ffffff;
-  --shadow-color: #b7e0e3;
+  --highlight-color: #e0f7fa;
+  --shadow-color: #3a6061;
   
-  /* Text Colors */
-  --text-primary: #222831;
-  --text-secondary: #5f9ea0;
+  --text-primary: #ffffff;
+  --text-secondary: #e0f7fa;
   --text-muted: #b7e0e3;
-  --text-accent: #5f9ea0;
+  --text-accent: #e0f7fa;
   
-  /* Semantic Colors */
-  --success-color: #4caf50;
-  --warning-color: #ff9800;
-  --error-color: #f44336;
-  --info-color: #2196f3;
+  --success-color: #8dd9a0;
+  --warning-color: #ffd166;
+  --error-color: #ef6f6c;
+  --info-color: #a5d8ff;
+}
+
+/* Remove light theme - keep this for any legacy references but make it identical to dark */
+[data-theme="light"] {
+  /* Force dark theme values even if light is somehow triggered */
+  --base-color: #5f9ea0;
+  --surface-color: #5f9ea0;
+  --primary-color: #e0f7fa;
+  --mid-color: #7fb3b5;
+  --dark-color: #4a7c7d;
+  --darker-color: #3a6061;
+  
+  --bg-color: var(--base-color);
+  --highlight-color: #e0f7fa;
+  --shadow-color: #3a6061;
+  
+  --text-primary: #ffffff;
+  --text-secondary: #e0f7fa;
+  --text-muted: #b7e0e3;
+  --text-accent: #e0f7fa;
+  
+  --success-color: #8dd9a0;
+  --warning-color: #ffd166;
+  --error-color: #ef6f6c;
+  --info-color: #a5d8ff;
 }

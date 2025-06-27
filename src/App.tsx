@@ -13,17 +13,16 @@ export default function App() {
     shallow,
   );
 
-  // 테마 상태 및 토글 함수
+  // Theme is always dark mode now - but keep for compatibility
   const isDarkMode = useThemeStore(state => state.isDarkMode);
-  const toggleTheme = useThemeStore(state => state.toggleTheme);
 
   // Register global keyboard shortcuts
   useKeyboardShortcuts();
 
-  // 마운트 시 테마 동기화
+  // Force dark theme on mount and always
   React.useEffect(() => {
-    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-  }, [isDarkMode]);
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }, []); // Remove isDarkMode dependency since it's always true
 
   // 🎯 동적 패널 렌더링 로직 - 모든 ID 패턴 지원
   const renderPanel = useMemo(() => {
@@ -66,20 +65,7 @@ export default function App() {
         </div>
         <div className="flex items-center space-x-2">
           <div className="text-sm opacity-80">Untitled Project</div>
-          {/* 테마 토글 버튼 */}
-          <button
-            className="flex items-center justify-center w-8 h-8 ml-2 shadow-outset bg-surface"
-            title={isDarkMode ? '라이트 모드로 전환' : '다크 모드로 전환'}
-            onClick={toggleTheme}
-          >
-            {isDarkMode ? (
-              // Sun icon
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.95 7.07l-1.41-1.41M6.34 6.34L4.93 4.93m12.02 0l-1.41 1.41M6.34 17.66l-1.41 1.41"/></svg>
-            ) : (
-              // Moon icon
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/></svg>
-            )}
-          </button>
+          {/* Remove theme toggle button since we only have dark mode */}
         </div>
       </header>
 

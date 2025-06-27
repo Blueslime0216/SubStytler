@@ -1,37 +1,35 @@
-/* Utility Classes - Core Utilities Only */
+/* Utility Classes - Dark Mode Only */
 
 /* Text Utilities - Enhanced Contrast */
 .neu-text-primary { 
-  color: var(--neu-text-primary); 
+  color: var(--text-primary); 
   font-weight: 600;
 }
 .neu-text-secondary { 
-  color: var(--neu-text-secondary); 
+  color: var(--text-secondary); 
   font-weight: 500;
 }
 .neu-text-muted { 
-  color: var(--neu-text-muted); 
+  color: var(--text-muted); 
   font-weight: 400;
 }
 .neu-text-accent { 
-  color: var(--neu-text-accent); 
+  color: var(--text-accent); 
   font-weight: 600;
 }
 
 /* Background Utilities */
 .neu-bg-base { background: var(--base-color); }
 .neu-bg-surface { background: var(--surface-color); }
-.neu-bg-accent { background: var(--neu-accent); }
+.neu-bg-accent { background: var(--mid-color); }
 
 /* Shadow Utilities - Enhanced */
-.neu-shadow-1 { box-shadow: var(--neu-shadow-1); }
-.neu-shadow-2 { box-shadow: var(--neu-shadow-2); }
-.neu-shadow-3 { box-shadow: var(--neu-shadow-3); }
-.neu-shadow-4 { box-shadow: var(--neu-shadow-4); }
-.neu-shadow-inset { box-shadow: var(--neu-shadow-inset); }
-.neu-shadow-pressed { box-shadow: var(--neu-shadow-pressed); }
-.neu-shadow-hover { box-shadow: var(--neu-shadow-hover); }
-.neu-shadow-active { box-shadow: var(--neu-shadow-active); }
+.shadow-outset { box-shadow: var(--shadow-outset); }
+.shadow-inset { box-shadow: var(--shadow-inset); }
+.shadow-outset-strong { box-shadow: var(--shadow-outset-strong); }
+.shadow-inset-strong { box-shadow: var(--shadow-inset-strong); }
+.shadow-outset-subtle { box-shadow: var(--shadow-outset-subtle); }
+.shadow-inset-subtle { box-shadow: var(--shadow-inset-subtle); }
 
 /* Accessibility Helpers */
 .neu-sr-only {
@@ -47,18 +45,18 @@
 }
 
 .neu-high-contrast {
-  border: 2px solid var(--neu-text-primary);
-  background: var(--neu-base);
-  color: var(--neu-text-primary);
+  border: 2px solid var(--text-primary);
+  background: var(--base-color);
+  color: var(--text-primary);
 }
 
-/* Force dark theme in all scenarios */
+/* Force dark theme in all scenarios - remove light mode references */
 @media (prefers-color-scheme: light) {
-  .neu-text-primary { color: #F7FAFC; }
-  .neu-text-secondary { color: #E2E8F0; }
-  .neu-text-muted { color: #CBD5E0; }
-  .neu-text-accent { color: #90CDF4; }
-  .neu-bg-base { background: #1A202C; }
-  .neu-bg-surface { background: #2D3748; }
-  .neu-bg-accent { background: #374151; }
+  .neu-text-primary { color: #ffffff; }
+  .neu-text-secondary { color: #e0f7fa; }
+  .neu-text-muted { color: #b7e0e3; }
+  .neu-text-accent { color: #e0f7fa; }
+  .neu-bg-base { background: #5f9ea0; }
+  .neu-bg-surface { background: #5f9ea0; }
+  .neu-bg-accent { background: #7fb3b5; }
 }

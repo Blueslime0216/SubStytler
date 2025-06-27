@@ -3,7 +3,7 @@
 /* Scrollbar Styling */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--neu-dark) var(--neu-base);
+  scrollbar-color: var(--dark-color) var(--base-color);
 }
 
 ::-webkit-scrollbar {
@@ -12,85 +12,63 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--neu-base);
+  background: var(--base-color);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--neu-dark);
+  background: var(--dark-color);
   border-radius: 4px;
-  border: 1px solid var(--neu-base);
-  box-shadow: var(--neu-shadow-micro);
+  border: 1px solid var(--base-color);
+  box-shadow: var(--shadow-outset-subtle);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--neu-darker);
-  box-shadow: var(--neu-shadow-subtle);
+  background: var(--darker-color);
+  box-shadow: var(--shadow-outset);
 }
 
 ::-webkit-scrollbar-corner {
-  background: var(--neu-base);
+  background: var(--base-color);
 }
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
-  .neu-panel {
+  .panel {
     border-radius: 12px;
   }
   
-  .neu-panel-header {
+  .panel-header {
     padding: 6px 12px;
   }
   
-  .neu-btn, .neu-btn-primary {
+  .btn {
     padding: 8px 12px;
     font-size: 0.75rem;
   }
   
-  .neu-dropdown {
+  .panel-type-selector {
     max-width: calc(100vw - 32px);
     margin: 0 16px;
   }
   
-  .neu-progress-container {
-    padding: 8px 10px;
-    border-radius: 10px;
-  }
-  
-  .neu-progress-track {
-    left: 10px;
-    right: 10px;
-    height: 6px;
-  }
-  
-  .neu-progress-fill {
-    left: 10px;
-    height: 6px;
-  }
-  
-  .neu-progress-thumb {
-    width: 16px;
-    height: 16px;
-  }
-  
   /* Mobile shadow optimization */
-  .neu-shadow-1,
-  .neu-shadow-2,
-  .neu-shadow-3,
-  .neu-shadow-4 {
+  .shadow-outset,
+  .shadow-outset-strong,
+  .shadow-elevated {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
   
-  .neu-panel,
+  .panel,
   .neu-card {
-    background: var(--neu-base);
+    background: var(--base-color);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
   
-  .neu-btn,
-  .neu-btn-primary,
-  .neu-btn-icon {
+  .btn,
+  .btn-primary,
+  .btn-icon {
     min-height: 44px;
     min-width: 44px;
   }
@@ -99,48 +77,24 @@
 /* High Contrast Mode - Dark Theme Only */
 @media (prefers-contrast: high) {
   :root {
-    --neu-text-primary: #FFFFFF;
-    --neu-text-secondary: #CCCCCC;
-    --neu-interactive-border: #66B3FF;
-    --neu-shadow-1: 12px 12px 28px rgba(0, 0, 0, 0.8), -6px -6px 18px rgba(255, 255, 255, 0.2);
-    --neu-shadow-2: 16px 16px 36px rgba(0, 0, 0, 0.9), -8px -8px 22px rgba(255, 255, 255, 0.25);
+    --text-primary: #FFFFFF;
+    --text-secondary: #CCCCCC;
+    --primary-color: #66B3FF;
+    --shadow-outset: 12px 12px 28px rgba(0, 0, 0, 0.8), -6px -6px 18px rgba(255, 255, 255, 0.2);
+    --shadow-outset-strong: 16px 16px 36px rgba(0, 0, 0, 0.9), -8px -8px 22px rgba(255, 255, 255, 0.25);
   }
   
-  .neu-btn,
+  .btn,
   .neu-card,
-  .neu-panel {
-    border: 2px solid var(--neu-text-primary);
-  }
-  
-  .neu-progress-track {
-    border: 2px solid var(--neu-text-primary);
-  }
-  
-  .neu-progress-fill {
-    border: 2px solid var(--neu-primary);
-  }
-  
-  .neu-progress-thumb {
-    border: 3px solid var(--neu-primary);
+  .panel {
+    border: 2px solid var(--text-primary);
   }
 }
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-  .neu-pulse,
-  .neu-glow,
-  .neu-shimmer,
-  .neu-breathe {
-    animation: none;
-  }
-  
   * {
     transition-duration: 0.01ms !important;
-  }
-  
-  .neu-progress-thumb,
-  .neu-progress-container {
-    transition: none;
   }
 }
 
@@ -152,43 +106,33 @@
     box-shadow: none !important;
   }
   
-  .neu-panel,
+  .panel,
   .neu-card {
     border: 1px solid black !important;
   }
 }
 
-/* Ensure dark theme consistency across all media queries */
+/* Force dark theme regardless of system preference */
 @media (prefers-color-scheme: light) {
-  /* Force dark theme even if system prefers light */
   :root {
-    --neu-base: #1A202C;
-    --neu-light: #2D3748;
-    --neu-dark: #0D1117;
-    --neu-darker: #000000;
-    --neu-accent: #374151;
-    --neu-surface: #2D3748;
-    
-    --neu-text-primary: #F7FAFC;
-    --neu-text-secondary: #E2E8F0;
-    --neu-text-muted: #CBD5E0;
-    --neu-text-accent: #90CDF4;
+    --base-color: #5f9ea0;
+    --surface-color: #5f9ea0;
+    --primary-color: #e0f7fa;
+    --text-primary: #ffffff;
+    --text-secondary: #e0f7fa;
+    --text-muted: #b7e0e3;
+    --text-accent: #e0f7fa;
   }
 }
 
 @media (prefers-color-scheme: dark) {
-  /* Maintain dark theme */
   :root {
-    --neu-base: #1A202C;
-    --neu-light: #2D3748;
-    --neu-dark: #0D1117;
-    --neu-darker: #000000;
-    --neu-accent: #374151;
-    --neu-surface: #2D3748;
-    
-    --neu-text-primary: #F7FAFC;
-    --neu-text-secondary: #E2E8F0;
-    --neu-text-muted: #CBD5E0;
-    --neu-text-accent: #90CDF4;
+    --base-color: #5f9ea0;
+    --surface-color: #5f9ea0;
+    --primary-color: #e0f7fa;
+    --text-primary: #ffffff;
+    --text-secondary: #e0f7fa;
+    --text-muted: #b7e0e3;
+    --text-accent: #e0f7fa;
   }
 }
