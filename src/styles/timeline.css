@@ -64,8 +64,8 @@
 
 .neu-tracks-header {
   width: 180px;
-  min-width: 120px;
-  max-width: 240px;
+  min-width: 0;
+  max-width: none;
   background: var(--surface-color);
   overflow-y: auto;
   overflow-x: hidden;

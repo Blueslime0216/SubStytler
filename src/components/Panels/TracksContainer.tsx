@@ -143,6 +143,9 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   const startXRef = useRef(0);
   const startWidthRef = useRef(180);
 
+  // Reference to the entire tracks container to calculate percentage-based limits
+  const containerWrapperRef = useRef<HTMLDivElement>(null);
+
   const handleResizeMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -154,10 +157,17 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   React.useEffect(() => {
     const handleMove = (e: MouseEvent) => {
       if (!isResizingRef.current) return;
+
+      // Calculate raw new width in pixels
       const delta = e.clientX - startXRef.current;
       let newW = startWidthRef.current + delta;
-      const min = 120;
-      const max = 400;
+
+      // Determine percentage-based constraints using the wrapper's width
+      const wrapperWidth = containerWrapperRef.current?.clientWidth || window.innerWidth;
+      const handleWidth = 4; // width of the resize handle (keep in sync with CSS)
+      const min = 0; // allow collapsing completely
+      const max = wrapperWidth - handleWidth; // allow expanding to full width minus handle
+
       newW = Math.max(min, Math.min(max, newW));
       setSidebarWidth(newW);
     };
@@ -198,7 +208,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   }, [sidebarWidth, onSidebarWidthChange]);
 
   return (
-    <div className="neu-tracks-container">
+    <div className="neu-tracks-container" ref={containerWrapperRef}>
       {/* Track headers */}
       <div
         className="neu-tracks-header"
