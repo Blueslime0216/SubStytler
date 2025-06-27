@@ -1,0 +1,174 @@
+/* Timeline Components - Inset/Outset Theme */
+
+.timeline-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-outset);
+  overflow: hidden;
+}
+
+.timeline-toolbar {
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-inset);
+}
+
+.timeline-ruler {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 0;
+  position: relative;
+  font-size: 11px;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-inset);
+}
+
+.timeline-tracks {
+  background: var(--bg);
+  position: relative;
+}
+
+.timeline-track {
+  height: 50px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  background: var(--surface);
+}
+
+.timeline-track:hover {
+  background: var(--surface-elevated);
+}
+
+/* Track Header */
+.track-header {
+  width: 180px;
+  height: 50px;
+  background: var(--surface-elevated);
+  border-right: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  box-shadow: var(--shadow-outset);
+}
+
+.track-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+  min-width: 0;
+}
+
+.track-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.track-control-btn {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-outset);
+}
+
+.track-control-btn:hover {
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-hover);
+}
+
+.track-control-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* Subtitle Block */
+.subtitle-block {
+  position: absolute;
+  height: 36px;
+  background: var(--primary);
+  color: white;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: move;
+  box-shadow: var(--shadow-outset);
+  transition: all 0.15s ease;
+  z-index: 10;
+}
+
+.subtitle-block:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+.subtitle-block.dragging {
+  z-index: 1000;
+  box-shadow: var(--shadow-outset-strong);
+  transform: scale(1.05);
+}
+
+/* Playhead */
+.playhead {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--error);
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 
+    1px 0 2px rgba(0, 0, 0, 0.3),
+    -1px 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.playhead::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -6px;
+  width: 14px;
+  height: 14px;
+  background: var(--error);
+  border: 2px solid white;
+  border-radius: 0 0 50% 50%;
+  box-shadow: var(--shadow-outset);
+}
+
+/* Overview Bar */
+.timeline-overview {
+  height: 12px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  position: relative;
+  box-shadow: var(--shadow-inset);
+  margin-top: 8px;
+}
+
+.timeline-overview-viewport {
+  height: 100%;
+  background: var(--primary);
+  opacity: 0.3;
+  border-radius: 2px;
+  box-shadow: var(--shadow-outset);
+}

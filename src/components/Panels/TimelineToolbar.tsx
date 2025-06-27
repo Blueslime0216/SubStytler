@@ -1,41 +1,33 @@
 import React, { useState } from 'react';
+import { Plus, ZoomIn, ZoomOut } from 'lucide-react';
 import { useTimelineStore } from '../../stores/timelineStore';
 
 interface TimelineToolbarProps {
   onAddSubtitle: () => void;
   zoom: number;
-  setZoom: (v:number)=>void;
+  setZoom: (v: number) => void;
   viewStart: number;
   viewEnd: number;
-  setViewRange: (s:number,e:number)=>void;
+  setViewRange: (s: number, e: number) => void;
   duration: number;
 }
 
-export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle, zoom, setZoom, viewStart, viewEnd, setViewRange, duration }) => {
+export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ 
+  onAddSubtitle, 
+  zoom, 
+  setZoom, 
+  viewStart, 
+  viewEnd, 
+  setViewRange, 
+  duration 
+}) => {
   const { currentTime } = useTimelineStore();
-
   const [inputValue, setInputValue] = useState<string>(zoom.toFixed(1));
 
-  const MIN_ZOOM = 1; // cannot zoom below full view
+  const MIN_ZOOM = 1;
   const MAX_ZOOM = 100;
 
   const clampZoom = (val: number) => Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, val));
-
-  const recalcViewRange = (newZoom: number, pivotTime?: number) => {
-    const center = pivotTime ?? (viewStart + viewEnd) / 2;
-    const newViewDuration = duration / newZoom;
-    let newStart = center - newViewDuration / 2;
-    let newEnd = center + newViewDuration / 2;
-    if (newStart < 0) {
-      newStart = 0;
-      newEnd = newViewDuration;
-    }
-    if (newEnd > duration) {
-      newEnd = duration;
-      newStart = duration - newViewDuration;
-    }
-    setViewRange(newStart, newEnd);
-  };
 
   const commitZoom = (val: number) => {
     const z = clampZoom(parseFloat(val.toFixed(2)));
@@ -44,11 +36,9 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
       return;
     }
 
-    // Preserve current indicator relative position in view window
     const ratio = (currentTime - viewStart) / (viewEnd - viewStart);
     const newViewDuration = duration / z;
     let newStart = currentTime - ratio * newViewDuration;
-    // clamp within duration
     newStart = Math.max(0, Math.min(duration - newViewDuration, newStart));
     const newEnd = newStart + newViewDuration;
 
@@ -65,14 +55,6 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
     }
   };
 
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY < 0 ? 1 : -1;
-    const tentative = clampZoom(parseFloat((zoom + delta).toFixed(2)));
-    if (tentative === zoom) return; // at limit
-    commitZoom(tentative);
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       const num = parseFloat(inputValue);
@@ -82,7 +64,7 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
   };
 
   const adjustZoom = (delta: number) => {
-    const tentative = clampZoom(parseFloat((zoom+delta).toFixed(2)));
+    const tentative = clampZoom(parseFloat((zoom + delta).toFixed(2)));
     commitZoom(tentative);
   };
 
@@ -91,24 +73,26 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
   }, [zoom]);
 
   return (
-    <div className="neu-toolbar flex items-center justify-between p-2 w-full">
+    <div className="timeline-toolbar">
       <button
         onClick={onAddSubtitle}
-        className="neu-card neu-shadow-hover px-4 py-1.5 rounded-md active:neu-shadow-pressed transition-shadow"
+        className="btn btn-primary"
+        title="Add new subtitle"
       >
-        <span className="neu-text-primary font-semibold text-sm select-none">Add Subtitle</span>
+        <Plus className="w-4 h-4 mr-2" />
+        Add Subtitle
       </button>
 
-      <div className="flex items-center gap-3 neu-card neu-shadow-inset px-3 py-1.5 rounded-md">
-        <span className="neu-text-secondary text-sm select-none">Zoom</span>
-
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-gray-600">Zoom</span>
+        
         <button
           onClick={() => adjustZoom(-1)}
-          className="neu-card-micro neu-shadow-hover w-7 h-7 flex items-center justify-center rounded-md disabled:opacity-40"
+          className="btn btn-icon-sm"
           title="Zoom out"
           disabled={zoom <= MIN_ZOOM}
         >
-          <span className="font-bold select-none">−</span>
+          <ZoomOut className="w-3 h-3" />
         </button>
 
         <input
@@ -116,22 +100,21 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onWheel={handleWheel}
-          className="w-16 text-center bg-transparent outline-none neu-bg-surface neu-shadow-inset px-2 py-1 rounded-md focus:neu-shadow-hover"
-          title="Scroll to zoom or type value"
+          className="input input-sm w-16 text-center"
+          title="Zoom level"
         />
 
         <button
           onClick={() => adjustZoom(1)}
-          className="neu-card-micro neu-shadow-hover w-7 h-7 flex items-center justify-center rounded-md disabled:opacity-40"
+          className="btn btn-icon-sm"
           title="Zoom in"
           disabled={zoom >= MAX_ZOOM}
         >
-          <span className="font-bold select-none">+</span>
+          <ZoomIn className="w-3 h-3" />
         </button>
       </div>
     </div>
   );
 };
 
-export default TimelineToolbar; 
+export default TimelineToolbar;
