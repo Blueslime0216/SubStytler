@@ -16,7 +16,7 @@ interface PanelProps {
 }
 
 const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, children }) => {
-  // 🎯 패널 타입 결정 - areaId에서 추출하거나 전달받은 type 사용
+  // 패널 타입 결정 - areaId에서 추출하거나 전달받은 type 사용
   const actualType = type || (areaId ? extractPanelType(areaId) : 'empty');
   
   const [isActionsOpen, setIsActionsOpen] = useState(false);
@@ -39,41 +39,34 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     coverArea(areaId, dir);
   }, [areaId, canRemove, coverArea]);
 
-  // 🎯 패널 타입 변경 핸들러 - 로직 개선
+  // 패널 타입 변경 핸들러
   const handleTypeChange = React.useCallback((newPanelType: PanelType) => {
-    console.log('🔄 패널 타입 변경 요청:', { 
+    console.log('패널 타입 변경 요청:', { 
       areaId, 
       currentType: actualType, 
       newType: newPanelType 
     });
     
     if (!areaId) {
-      console.warn('⚠️ areaId가 없어서 패널 변경할 수 없습니다');
+      console.warn('areaId가 없어서 패널 변경할 수 없습니다');
       return;
     }
     
     if (newPanelType !== actualType) {
       try {
         changePanelType(areaId, newPanelType);
-        console.log('✅ 패널 변경 완료:', { 
+        console.log('패널 변경 완료:', { 
           areaId, 
           from: actualType, 
           to: newPanelType 
         });
       } catch (error) {
-        console.error('❌ 패널 변경 실패:', error);
+        console.error('패널 변경 실패:', error);
       }
     } else {
-      console.log('ℹ️ 동일한 패널 타입이므로 변경하지 않음');
+      console.log('동일한 패널 타입이므로 변경하지 않음');
     }
   }, [areaId, actualType, changePanelType]);
-
-  // console.log('🎨 Panel 렌더링:', {
-  //   areaId,
-  //   providedType: type,
-  //   actualType,
-  //   configFound: true
-  // });
 
   // 패널이 마운트되거나 areaId 변경 시 포커스 설정
   useEffect(() => {
@@ -89,14 +82,14 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
   }, [areaId, setFocusedArea]);
 
   const onSplitPanel = React.useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
-    console.log('🔀 패널 분할 요청:', { areaId, direction, newPanelType });
+    console.log('패널 분할 요청:', { areaId, direction, newPanelType });
     handleSplitPanel(direction, newPanelType);
     setIsActionsOpen(false);
   }, [handleSplitPanel, areaId]);
 
   return (
     <motion.div
-      className={`neu-panel ${className} bg-gradient-to-br from-neu-surface to-neu-base shadow-neu-outset-strong shadow-neu-inset rounded-neu-lg transition-all duration-200 border-none outline-none`}
+      className={`panel ${className} bg-bg shadow-outset rounded`}
       initial={{ opacity: 1, scale: 1 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.15, ease: 'easeOut' }}
@@ -121,9 +114,9 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
   );
 };
 
-// 🔧 성능 최적화: React.memo로 감싸서 불필요한 리렌더링 방지 + 더 정교한 비교
+// 성능 최적화: React.memo로 감싸서 불필요한 리렌더링 방지 + 더 정교한 비교
 export const Panel = React.memo(PanelComponent, (prevProps, nextProps) => {
-  // 🔧 패널 타입과 areaId가 같으면 리렌더링 방지
+  // 패널 타입과 areaId가 같으면 리렌더링 방지
   const prevType = prevProps.type || (prevProps.areaId ? extractPanelType(prevProps.areaId) : 'empty');
   const nextType = nextProps.type || (nextProps.areaId ? extractPanelType(nextProps.areaId) : 'empty');
   

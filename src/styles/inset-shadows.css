@@ -1,44 +1,83 @@
-/* Inset Shadow System Variables - Neumorphism Light & Dark */
+/* Border Style Utilities for Inset/Outset Theme */
 
-:root {
-  /* Light Mode Inset Shadows */
-  --neu-shadow-inset: 
-    inset 4px 4px 12px #e3e6ee,
-    inset -4px -4px 12px #ffffff;
-
-  --neu-shadow-inset-soft: 
-    inset 2px 2px 6px #e3e6ee,
-    inset -2px -2px 6px #ffffff;
-
-  --neu-shadow-inset-deep: 
-    inset 8px 8px 16px #cfd3dc,
-    inset -8px -8px 16px #ffffff;
+/* Outset (Raised) Border Style Classes */
+.border-outset {
+  border-style: outset;
+  border-width: 2px;
+  border-color: var(--border-color);
 }
 
-[data-theme="dark"] {
-  --neu-shadow-inset: 
-    inset 4px 4px 8px rgba(13, 17, 23, 0.6),
-    inset -2px -2px 6px rgba(45, 55, 72, 0.4);
-
-  --neu-shadow-inset-soft: 
-    inset 3px 3px 6px rgba(13, 17, 23, 0.5),
-    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
-
-  --neu-shadow-inset-deep: 
-    inset 6px 6px 12px rgba(13, 17, 23, 0.7),
-    inset -3px -3px 8px rgba(45, 55, 72, 0.5);
+.border-outset-custom {
+  border-style: solid;
+  border-width: 2px;
+  border-color: 
+    var(--border-color-outset-top-left)
+    var(--border-color-outset-bottom-right)
+    var(--border-color-outset-bottom-right)
+    var(--border-color-outset-top-left);
 }
 
-[data-theme="light"] {
-  --neu-shadow-inset: 
-    inset 4px 4px 12px #e3e6ee,
-    inset -4px -4px 12px #ffffff;
-
-  --neu-shadow-inset-soft: 
-    inset 2px 2px 6px #e3e6ee,
-    inset -2px -2px 6px #ffffff;
-
-  --neu-shadow-inset-deep: 
-    inset 8px 8px 16px #cfd3dc,
-    inset -8px -8px 16px #ffffff;
+/* Inset (Sunken) Border Style Classes */
+.border-inset {
+  border-style: inset;
+  border-width: 2px;
+  border-color: var(--border-color);
 }
+
+.border-inset-custom {
+  border-style: solid;
+  border-width: 2px;
+  border-color: 
+    var(--border-color-inset-top-left)
+    var(--border-color-inset-bottom-right)
+    var(--border-color-inset-bottom-right)
+    var(--border-color-inset-top-left);
+}
+
+/* Box Shadow Alternatives */
+.shadow-outset {
+  box-shadow: var(--shadow-outset);
+}
+
+.shadow-inset {
+  box-shadow: var(--shadow-inset);
+}
+
+.shadow-outset-strong {
+  box-shadow: var(--shadow-outset-strong);
+}
+
+.shadow-inset-strong {
+  box-shadow: var(--shadow-inset-strong);
+}
+
+.shadow-outset-subtle {
+  box-shadow: var(--shadow-outset-subtle);
+}
+
+.shadow-inset-subtle {
+  box-shadow: var(--shadow-inset-subtle);
+}
+
+/* Interactive Elements */
+.btn {
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  border: none;
+  box-shadow: var(--shadow-button-normal);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+.btn:active {
+  box-shadow: var(--shadow-button-pressed);
+  transform: translateY(1px);
+}
+
+.btn:focus {
+  box-shadow: var(--shadow-button-focus);
+  outline: none;
+} 

@@ -1,109 +1,119 @@
-/* Panel System - Increased Shadow Sizes by 3/2 (1.5x) */
+/* Panel System for Inset/Outset Theme */
 
-.neu-panel {
-  background: var(--neu-base);
-  border-radius: 18px;
-  position: relative;
-  box-shadow: var(--neu-shadow-panel);
-  border: 2px solid rgba(45, 55, 72, 0.3);
+/* Base Panel */
+.panel {
+  background-color: var(--bg-color);
+  border-radius: 4px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transform: translateZ(0);
   height: 100%;
+  box-shadow: var(--shadow-outset);
 }
 
-.neu-panel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(145deg, 
-    rgba(45, 55, 72, 0.1) 0%, 
-    transparent 50%, 
-    rgba(13, 17, 23, 0.05) 100%);
-  pointer-events: none;
-  border-radius: inherit;
+/* Panel Header */
+.panel-header {
+  background-color: var(--surface-color);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: var(--shadow-color);
 }
 
-/* Removed hover effects - no transform or shadow changes */
-
-.neu-panel-header {
-  background: var(--neu-base);
-  padding: 12px 18px;
-  border-bottom: 2px solid rgba(45, 55, 72, 0.3);
-  position: relative;
-  font-weight: 600;
-  color: var(--neu-text-primary);
-  border-radius: 18px 18px 0 0;
-  flex-shrink: 0;
-  z-index: 10;
-}
-
-.neu-panel-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(45, 55, 72, 0.4) 50%, 
-    transparent 100%);
-  opacity: 0.6;
-}
-
-.neu-panel-content {
-  border-radius: 0 0 18px 18px;
-  overflow: hidden;
+/* Panel Content */
+.panel-content {
   flex: 1;
-  min-height: 0;
-  position: relative;
-  z-index: 1;
+  overflow: auto;
+  padding: 16px;
+  box-shadow: var(--shadow-inset-subtle);
+  background-color: var(--bg-color);
 }
 
-/* All Panel Types - Increased Shadow Sizes by 3/2 (1.5x) */
-.neu-video-panel,
-.neu-timeline,
-.neu-text-editor-panel,
-.neu-style-manager-panel,
-.neu-script-viewer-panel,
-.neu-effects-library-panel,
-.neu-history-panel,
-.neu-notes-panel,
-.neu-audio-waveform-panel {
-  border-radius: 18px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: var(--neu-shadow-panel);
-  /* border: 2px solid rgba(45, 55, 72, 0.3); */
-  background: var(--neu-base);
+/* Panel Types */
+.panel-primary {
+  border: 2px solid var(--primary-color);
 }
 
-.neu-video-panel::before,
-.neu-timeline::before,
-.neu-text-editor-panel::before,
-.neu-style-manager-panel::before,
-.neu-script-viewer-panel::before,
-.neu-effects-library-panel::before,
-.neu-history-panel::before,
-.neu-notes-panel::before,
-.neu-audio-waveform-panel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(145deg, 
-    rgba(45, 55, 72, 0.1) 0%, 
-    transparent 50%, 
-    rgba(13, 17, 23, 0.05) 100%);
-  pointer-events: none;
-  border-radius: inherit;
+.panel-primary .panel-header {
+  background-color: var(--primary-color);
 }
 
-/* Removed all hover effects for panel types */
+/* Panel Actions */
+.panel-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.panel-action-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  border-radius: 2px;
+  box-shadow: var(--shadow-outset-subtle);
+  cursor: pointer;
+}
+
+.panel-action-btn:hover {
+  filter: brightness(1.05);
+}
+
+.panel-action-btn:active {
+  box-shadow: var(--shadow-inset-subtle);
+}
+
+/* Panel Title */
+.panel-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  font-size: 14px;
+}
+
+.panel-subtitle {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin: 0;
+}
+
+/* Specific Panel Types */
+.video-panel .panel-content,
+.timeline-panel .panel-content {
+  padding: 0;
+}
+
+/* Panel Resize Handle */
+.resize-handle {
+  background-color: var(--surface-color);
+  box-shadow: var(--shadow-outset-subtle);
+}
+
+.resize-handle:hover {
+  background-color: var(--primary-color);
+}
+
+/* Panel Type Selector */
+.panel-type-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-outset-subtle);
+  padding: 4px 8px;
+  border-radius: 2px;
+  background-color: var(--surface-color);
+  cursor: pointer;
+}
+
+.panel-type-selector:hover {
+  filter: brightness(1.05);
+}
+
+.panel-type-selector:active {
+  box-shadow: var(--shadow-inset-subtle);
+} 

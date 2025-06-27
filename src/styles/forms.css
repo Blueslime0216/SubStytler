@@ -1,107 +1,108 @@
-/* Input System - Enhanced Contrast */
+/* Form Element Styles for Inset/Outset Theme */
 
-.neu-input {
-  background: var(--neu-base);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 10px 14px;
-  box-shadow: var(--neu-shadow-inset-soft);
-  color: var(--neu-text-primary);
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  position: relative;
-  cursor: text;
+/* Input Base */
+.input {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  box-shadow: var(--shadow-inset);
+  border: none;
+  border-radius: 4px;
+  transition: all 0.15s ease;
 }
 
-.neu-input:focus {
+/* Input Focus */
+.input:focus {
   outline: none;
-  box-shadow: var(--neu-shadow-inset-deep), 0 0 0 3px var(--neu-interactive-border);
-  background: linear-gradient(145deg, var(--neu-base), var(--neu-surface));
-  border-color: var(--neu-primary);
-  cursor: text;
+  box-shadow: 
+    0 0 0 2px var(--primary-color),
+    var(--shadow-inset);
 }
 
-.neu-input::placeholder {
-  color: var(--neu-text-muted);
-  font-weight: 400;
+/* Input Disabled */
+.input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.neu-select {
-  background: var(--neu-base);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 10px 14px;
-  box-shadow: var(--neu-shadow-inset-soft);
-  color: var(--neu-text-primary);
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  cursor: pointer;
+/* Select */
+.select {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  box-shadow: var(--shadow-inset);
+  border: none;
+  border-radius: 4px;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 12px center;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-size: 14px;
-  padding-right: 40px;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 32px;
 }
 
-.neu-select:focus {
-  outline: none;
-  box-shadow: var(--neu-shadow-inset-deep), 0 0 0 3px var(--neu-interactive-border);
-  border-color: var(--neu-primary);
+/* Checkbox & Radio */
+.checkbox,
+.radio {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  vertical-align: middle;
   cursor: pointer;
 }
 
-.neu-select:hover {
-  cursor: pointer;
+.checkbox input,
+.radio input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
-/* Form Element Cursor Fixes */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="search"],
-input[type="url"],
-input[type="tel"],
-textarea {
-  cursor: text !important;
+.checkbox-mark,
+.radio-mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  background-color: var(--bg-color);
+  box-shadow: var(--shadow-inset);
 }
 
-input[type="text"]:hover,
-input[type="email"]:hover,
-input[type="password"]:hover,
-input[type="number"]:hover,
-input[type="search"]:hover,
-input[type="url"]:hover,
-input[type="tel"]:hover,
-textarea:hover {
-  cursor: text !important;
+.radio-mark {
+  border-radius: 50%;
 }
 
-input[type="checkbox"],
-input[type="radio"],
-input[type="color"],
-input[type="range"],
-input[type="file"],
-select {
-  cursor: pointer !important;
+.checkbox input:checked ~ .checkbox-mark:after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--primary-color);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
-input[type="checkbox"]:hover,
-input[type="radio"]:hover,
-input[type="color"]:hover,
-input[type="range"]:hover,
-input[type="file"]:hover,
-select:hover {
-  cursor: pointer !important;
-}
-
-label {
-  cursor: pointer !important;
-}
-
-label:hover {
-  cursor: pointer !important;
-}
+.radio input:checked ~ .radio-mark:after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+} 

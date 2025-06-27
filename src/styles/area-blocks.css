@@ -1,0 +1,36 @@
+/* Area Block Styles for Inset/Outset Theme */
+
+.area-block {
+  position: absolute;
+  background: transparent;
+  box-sizing: border-box;
+  overflow: visible;
+  z-index: 200;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.area-border {
+  position: absolute;
+  background: transparent;
+  z-index: 10;
+  opacity: 0;
+}
+
+.area-border-vertical {
+  cursor: ew-resize;
+}
+
+.area-border-horizontal {
+  cursor: ns-resize;
+}
+
+.area-border:hover {
+  background-color: rgba(127, 179, 181, 0.2);
+  opacity: 1;
+}
+
+.area-border-active {
+  background-color: rgba(127, 179, 181, 0.3);
+  opacity: 1;
+} 

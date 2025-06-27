@@ -48,38 +48,38 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   };
 
   return (
-    <div className="neu-panel-header flex items-center justify-between flex-shrink-0 px-4 py-3 bg-neu-light shadow-neu-outset rounded-t-neu-lg border-none outline-none">
+    <div className="panel-header">
       <div className="flex items-center space-x-4 flex-1 min-w-0">
-        {/* 🎯 새로운 패널 타입 선택기 */}
+        {/* 패널 타입 선택기 */}
         <PanelTypeSelector
           currentType={type}
           onTypeChange={onTypeChange}
           className="flex-shrink-0"
         />
 
-        {/* 📝 패널 정보 */}
+        {/* 패널 정보 */}
         <div className="text-left min-w-0 flex-1">
-          <div className="neu-body-primary text-sm font-semibold truncate text-white">
+          <div className="panel-title truncate">
             {config.title}
           </div>
-          <div className="neu-caption text-xs opacity-70 truncate text-gray-300">
+          <div className="panel-subtitle truncate">
             {config.description}
           </div>
         </div>
       </div>
 
-      {/* 🛠️ 액션 버튼들 */}
-      <div className="flex items-center space-x-3 flex-shrink-0 relative">
+      {/* 액션 버튼들 */}
+      <div className="panel-actions">
         {/* 분할 버튼 영역 */}
         <div className="relative">
           <motion.button
             onClick={handleSplitButtonClick}
-            className="neu-btn-icon p-2 cursor-pointer neu-interactive bg-neu-surface shadow-neu-inset rounded-neu border border-neu-dark transition-all duration-200"
+            className="panel-action-btn"
             title="패널 분할"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <SplitSquareHorizontal className="w-3.5 h-3.5 text-neu-text-primary" />
+            <SplitSquareHorizontal className="w-3.5 h-3.5" />
           </motion.button>
 
           {/* 분할 옵션 작은 팝업 */}
@@ -90,19 +90,20 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.9 }}
                 transition={{ duration: 0.15 }}
-                className="absolute top-full right-0 mt-2 p-2 neu-split-options-container"
+                className="absolute top-full right-0 mt-2 p-2 bg-surface shadow-outset rounded"
+                style={{ zIndex: 100 }}
                 onMouseLeave={() => setShowSplitOptions(false)}
               >
                 <motion.button
                   onClick={() => { onSplitPanel('vertical', 'empty'); setShowSplitOptions(false); }}
-                  className="neu-split-option-btn"
+                  className="panel-action-btn mb-1"
                   title="가로 분할"
                 >
                   <SplitSquareHorizontal className="w-4 h-4" />
                 </motion.button>
                 <motion.button
                   onClick={() => { onSplitPanel('horizontal', 'empty'); setShowSplitOptions(false); }}
-                  className="neu-split-option-btn"
+                  className="panel-action-btn"
                   title="세로 분할"
                 >
                   <SplitSquareVertical className="w-4 h-4" />
@@ -112,17 +113,17 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
           </AnimatePresence>
         </div>
 
-        {/* 영역 덮기 버튼 (새로운 디자인) */}
+        {/* 영역 덮기 버튼 */}
         {canRemove && (
           <div className="relative">
             <motion.button
               onClick={handleCoverButtonClick}
-              className="neu-btn-icon p-2 cursor-pointer neu-interactive bg-neu-surface shadow-neu-inset rounded-neu border border-neu-dark transition-all duration-200"
+              className="panel-action-btn"
               title="영역 덮기 방향 선택"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <ChevronDown className="w-3.5 h-3.5 text-neu-text-primary" />
+              <ChevronDown className="w-3.5 h-3.5" />
             </motion.button>
 
             {/* 덮기 방향 옵션 팝업 */}
@@ -133,14 +134,15 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.9 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute top-full right-0 mt-2 p-2 neu-cover-options-container"
+                  className="absolute top-full right-0 mt-2 p-2 bg-surface shadow-outset rounded"
+                  style={{ zIndex: 100 }}
                   onMouseLeave={() => setShowCoverOptions(false)}
                 >
                   <div className="grid grid-cols-3 grid-rows-3 gap-1 w-24 h-24">
                     {/* 상단 영역 */}
                     <motion.button
                       onClick={() => { onCover('top'); setShowCoverOptions(false); }}
-                      className="neu-cover-option-btn col-start-2 row-start-1"
+                      className="panel-action-btn col-start-2 row-start-1"
                       title="위쪽 영역 덮기"
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.95 }}
@@ -151,7 +153,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                     {/* 좌측 영역 */}
                     <motion.button
                       onClick={() => { onCover('left'); setShowCoverOptions(false); }}
-                      className="neu-cover-option-btn col-start-1 row-start-2"
+                      className="panel-action-btn col-start-1 row-start-2"
                       title="왼쪽 영역 덮기"
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.95 }}
@@ -162,7 +164,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                     {/* 우측 영역 */}
                     <motion.button
                       onClick={() => { onCover('right'); setShowCoverOptions(false); }}
-                      className="neu-cover-option-btn col-start-3 row-start-2"
+                      className="panel-action-btn col-start-3 row-start-2"
                       title="오른쪽 영역 덮기"
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.95 }}
@@ -173,7 +175,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                     {/* 하단 영역 */}
                     <motion.button
                       onClick={() => { onCover('bottom'); setShowCoverOptions(false); }}
-                      className="neu-cover-option-btn col-start-2 row-start-3"
+                      className="panel-action-btn col-start-2 row-start-3"
                       title="아래쪽 영역 덮기"
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.95 }}

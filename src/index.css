@@ -17,6 +17,31 @@
 @import './styles/utilities.css';
 @import './styles/responsive.css';
 
+/* Base Styles */
+@import './styles/base.css';
+@import './styles/colors.css';
+@import './styles/typography.css';
+@import './styles/shadows.css';
+@import './styles/inset-shadows.css';
+@import './styles/interactive-states.css';
+
+/* Component Styles */
+@import './styles/buttons.css';
+@import './styles/forms.css';
+@import './styles/panels.css';
+@import './styles/area-blocks.css';
+
+/* Layout & Utilities */
+@import './styles/layout.css';
+@import './styles/utilities.css';
+@import './styles/animations.css';
+
+/* Specific Components */
+@import './styles/video.css';
+@import './styles/timeline.css';
+@import './styles/toast.css';
+
+/* Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -1,70 +1,85 @@
-/* Color System Variables - Neumorphism Light & Dark */
+/* Color System Variables - Inset/Outset Theme */
 
 :root {
-  /* Light Mode Base Colors */
-  --neu-base: #f2f3f7;
-  --neu-light: #ffffff;
-  --neu-dark: #e3e6ee;
-  --neu-darker: #cfd3dc;
-  --neu-accent: #e9eaf0;
-  --neu-surface: #f7f8fa;
-
-  /* Text Colors - Light Mode */
-  --neu-text-primary: #23272f;
-  --neu-text-secondary: #4b5563;
-  --neu-text-muted: #7b8494;
-  --neu-text-accent: #2563eb;
-
-  /* Semantic Colors - Light Mode */
-  --neu-primary: #2563eb;
-  --neu-primary-light: #60a5fa;
-  --neu-primary-dark: #1e40af;
-  --neu-success: #22c55e;
-  --neu-warning: #facc15;
-  --neu-error: #ef4444;
-  --neu-info: #2563eb;
+  /* Base Colors */
+  --base-color: #5f9ea0;
+  --light-color: #e0f7fa;
+  --mid-color: #7fb3b5;
+  --dark-color: #4a7c7d;
+  --darker-color: #3a6061;
+  
+  /* UI Element Colors */
+  --bg-color: var(--base-color);
+  --surface-color: var(--mid-color);
+  --highlight-color: var(--light-color);
+  --shadow-color: var(--darker-color);
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #e0f7fa;
+  --text-muted: #b7e0e3;
+  --text-accent: #e0f7fa;
+  
+  /* Semantic Colors */
+  --primary-color: #7fb3b5;
+  --success-color: #8dd9a0;
+  --warning-color: #ffd166;
+  --error-color: #ef6f6c;
+  --info-color: #a5d8ff;
 }
 
 [data-theme="dark"] {
-  --neu-base: #1A202C;
-  --neu-light: #2D3748;
-  --neu-dark: #0D1117;
-  --neu-darker: #000000;
-  --neu-accent: #374151;
-  --neu-surface: #2D3748;
-
-  --neu-text-primary: #F7FAFC;
-  --neu-text-secondary: #E2E8F0;
-  --neu-text-muted: #CBD5E0;
-  --neu-text-accent: #90CDF4;
-
-  --neu-primary: #63B3ED;
-  --neu-primary-light: #90CDF4;
-  --neu-primary-dark: #4299E1;
-  --neu-success: #68D391;
-  --neu-warning: #F6AD55;
-  --neu-error: #FC8181;
-  --neu-info: #63B3ED;
+  /* Base Colors */
+  --base-color: #5f9ea0;
+  --light-color: #e0f7fa;
+  --mid-color: #7fb3b5;
+  --dark-color: #4a7c7d;
+  --darker-color: #3a6061;
+  
+  /* UI Element Colors */
+  --bg-color: var(--base-color);
+  --surface-color: var(--mid-color);
+  --highlight-color: var(--light-color);
+  --shadow-color: var(--darker-color);
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #e0f7fa;
+  --text-muted: #b7e0e3;
+  --text-accent: #e0f7fa;
+  
+  /* Semantic Colors */
+  --primary-color: #7fb3b5;
+  --success-color: #8dd9a0;
+  --warning-color: #ffd166;
+  --error-color: #ef6f6c;
+  --info-color: #a5d8ff;
 }
 
 [data-theme="light"] {
-  --neu-base: #f2f3f7;
-  --neu-light: #ffffff;
-  --neu-dark: #e3e6ee;
-  --neu-darker: #cfd3dc;
-  --neu-accent: #e9eaf0;
-  --neu-surface: #f7f8fa;
-
-  --neu-text-primary: #23272f;
-  --neu-text-secondary: #4b5563;
-  --neu-text-muted: #7b8494;
-  --neu-text-accent: #2563eb;
-
-  --neu-primary: #2563eb;
-  --neu-primary-light: #60a5fa;
-  --neu-primary-dark: #1e40af;
-  --neu-success: #22c55e;
-  --neu-warning: #facc15;
-  --neu-error: #ef4444;
-  --neu-info: #2563eb;
+  /* Base Colors */
+  --base-color: #7fb3b5;
+  --light-color: #ffffff;
+  --mid-color: #a6d0d2;
+  --dark-color: #5f9ea0;
+  --darker-color: #4a7c7d;
+  
+  /* UI Element Colors */
+  --bg-color: var(--light-color);
+  --surface-color: #e0f7fa;
+  --highlight-color: var(--light-color);
+  --shadow-color: var(--dark-color);
+  
+  /* Text Colors */
+  --text-primary: #2c3e50;
+  --text-secondary: #4a7c7d;
+  --text-muted: #7fb3b5;
+  --text-accent: #5f9ea0;
+  
+  /* Semantic Colors */
+  --primary-color: #5f9ea0;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --error-color: #f44336;
+  --info-color: #2196f3;
 }

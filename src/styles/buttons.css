@@ -1,285 +1,73 @@
-/* Button System - Enhanced Interactive Feedback */
+/* Button Styles for Inset/Outset Theme */
 
-.neu-btn {
-  font-weight: 600;
-  padding: 12px 18px;
-  border-radius: 16px;
-  transition: all 0.2s ease;
-  position: relative;
-  overflow: hidden;
-  background: var(--neu-base);
-  color: var(--neu-text-primary);
-  box-shadow: var(--neu-shadow-1);
-  border: 1px solid transparent;
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-.neu-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--neu-interactive-bg);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  border-radius: inherit;
-}
-
-.neu-btn:hover {
-  color: var(--neu-text-primary);
-  box-shadow: var(--neu-shadow-hover);
-  border-color: var(--neu-interactive-border);
-  filter: brightness(var(--neu-hover-brightness));
-  cursor: pointer;
-}
-
-.neu-btn:hover::before {
-  opacity: 1;
-}
-
-.neu-btn:active {
-  box-shadow: var(--neu-shadow-active);
-  cursor: pointer;
-}
-
-.neu-btn:focus {
-  outline: none;
-  box-shadow: var(--neu-shadow-1), 0 0 0 3px var(--neu-interactive-border);
-  cursor: pointer;
-}
-
-.neu-btn-primary {
-  background: linear-gradient(145deg, var(--neu-primary), var(--neu-primary-dark));
-  color: white;
-  font-weight: 600;
-  box-shadow: var(--neu-shadow-2), 0 0 12px rgba(99, 179, 237, 0.4);
-  padding: 12px 18px;
-  border-radius: 16px;
-  transition: all 0.2s ease;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--neu-primary-light);
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-.neu-btn-primary:hover {
-  background: linear-gradient(145deg, var(--neu-primary-light), var(--neu-primary));
-  color: white;
-  box-shadow: var(--neu-shadow-3), 0 0 16px rgba(99, 179, 237, 0.6);
-  filter: brightness(1.1);
-  cursor: pointer;
-}
-
-.neu-btn-primary:active {
-  box-shadow: var(--neu-shadow-active), 0 0 8px rgba(99, 179, 237, 0.3);
-  cursor: pointer;
-}
-
-.neu-btn-primary:focus {
-  outline: none;
-  box-shadow: var(--neu-shadow-2), 0 0 0 3px rgba(99, 179, 237, 0.5);
-  cursor: pointer;
-}
-
-.neu-btn-small {
-  padding: 10px 14px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 12px;
-  background: var(--neu-base);
-  color: var(--neu-text-primary);
-  box-shadow: var(--neu-shadow-subtle);
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.neu-btn-small:hover {
-  color: var(--neu-text-accent);
-  box-shadow: var(--neu-shadow-hover);
-  border-color: var(--neu-interactive-border);
-  filter: brightness(var(--neu-hover-brightness));
-  cursor: pointer;
-}
-
-.neu-btn-small:active {
-  box-shadow: var(--neu-shadow-active);
-  cursor: pointer;
-}
-
-.neu-btn-icon {
-  padding: 12px;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  background: var(--neu-base);
-  color: var(--neu-text-secondary);
-  box-shadow: var(--neu-shadow-1);
-  border: 1px solid transparent;
-  position: relative;
-  cursor: pointer;
-}
-
-.neu-btn-icon::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--neu-interactive-bg);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  border-radius: inherit;
-}
-
-.neu-btn-icon:hover {
-  color: var(--neu-text-primary);
-  box-shadow: var(--neu-shadow-hover);
-  border-color: var(--neu-interactive-border);
-  filter: brightness(var(--neu-hover-brightness));
-  cursor: pointer;
-}
-
-.neu-btn-icon:hover::before {
-  opacity: 1;
-}
-
-.neu-btn-icon:active {
-  box-shadow: var(--neu-shadow-active);
-  cursor: pointer;
-}
-
-.neu-btn-icon:focus {
-  outline: none;
-  box-shadow: var(--neu-shadow-1), 0 0 0 3px var(--neu-interactive-border);
-  cursor: pointer;
-}
-
-/* 뉴모피즘 버튼 스타일 */
-
-.neu-btn-icon-sm {
-  width: 28px;
-  height: 28px;
-  display: flex;
+/* Base Button */
+.btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  background: var(--neu-base);
-  border: 1px solid rgba(45, 55, 72, 0.3);
-  box-shadow: 
-    3px 3px 6px rgba(13, 17, 23, 0.7),
-    -2px -2px 4px rgba(45, 55, 72, 0.5),
-    inset 1px 1px 2px rgba(45, 55, 72, 0.2);
-  transition: all 0.2s ease;
-  position: relative;
-  overflow: hidden;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-outset);
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  border: none;
+  outline: none;
 }
 
-.neu-btn-icon-sm:hover {
+/* Button Hover */
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+/* Button Active */
+.btn:active {
+  box-shadow: var(--shadow-inset);
+  transform: translateY(1px);
+}
+
+/* Button Focus */
+.btn:focus {
   box-shadow: 
-    4px 4px 8px rgba(13, 17, 23, 0.8),
-    -2px -2px 6px rgba(45, 55, 72, 0.6),
-    inset 1px 1px 2px rgba(45, 55, 72, 0.3);
-  transform: translateY(-1px);
+    0 0 0 2px var(--primary-color),
+    var(--shadow-outset);
 }
 
-.neu-btn-icon-sm:active {
-  box-shadow: 
-    inset 3px 3px 5px rgba(13, 17, 23, 0.7),
-    inset -1px -1px 3px rgba(45, 55, 72, 0.5);
-  transform: translateY(0);
+/* Button Sizes */
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
 }
 
-@media (max-width: 768px) {
-  .neu-btn-icon-sm {
-    width: 24px;
-    height: 24px;
-  }
+.btn-lg {
+  padding: 12px 24px;
+  font-size: 16px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .neu-btn-icon-sm {
-    transition: none;
-  }
+/* Button Variants */
+.btn-primary {
+  background-color: var(--primary-color);
 }
 
-/* 🆕 분할 옵션 컨테이너 */
-.neu-split-options-container {
-  display: flex;
-  gap: 8px;
-  background: var(--neu-base);
-  border-radius: 16px;
-  padding: 12px;
-  box-shadow: 10px 10px 20px rgba(13, 17, 23, 0.8), -5px -5px 12px rgba(45, 55, 72, 0.6);
-  border: 2px solid rgba(45, 55, 72, 0.3);
-  z-index: 100;
+.btn-success {
+  background-color: var(--success-color);
 }
 
-.neu-split-option-btn {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  background: var(--neu-base);
-  box-shadow: 4px 4px 8px rgba(13, 17, 23, 0.6), -2px -2px 6px rgba(45, 55, 72, 0.4);
-  border: 1px solid rgba(45, 55, 72, 0.3);
-  color: var(--neu-text-secondary);
-  transition: all 0.2s ease;
-  cursor: pointer;
+.btn-warning {
+  background-color: var(--warning-color);
 }
 
-.neu-split-option-btn:hover {
-  box-shadow: 6px 6px 12px rgba(13, 17, 23, 0.7), -3px -3px 8px rgba(45, 55, 72, 0.5);
-  color: var(--neu-primary);
-  transform: translateY(-1px);
+.btn-error {
+  background-color: var(--error-color);
 }
 
-.neu-split-option-btn:active {
-  box-shadow: inset 2px 2px 4px rgba(13, 17, 23, 0.6), inset -1px -1px 3px rgba(45, 55, 72, 0.4);
-  transform: translateY(0);
-}
-
-/* 🆕 영역 덮기 옵션 컨테이너 */
-.neu-cover-options-container {
-  display: flex;
-  flex-direction: column;
-  background: var(--neu-base);
-  border-radius: 16px;
-  padding: 10px;
-  box-shadow: 10px 10px 20px rgba(13, 17, 23, 0.8), -5px -5px 12px rgba(45, 55, 72, 0.6);
-  border: 2px solid rgba(45, 55, 72, 0.3);
-  z-index: 100;
-}
-
-.neu-cover-option-btn {
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background: var(--neu-base);
-  box-shadow: 4px 4px 8px rgba(13, 17, 23, 0.6), -2px -2px 6px rgba(45, 55, 72, 0.4);
-  border: 1px solid rgba(45, 55, 72, 0.3);
-  color: var(--neu-text-secondary);
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.neu-cover-option-btn:hover {
-  box-shadow: 6px 6px 12px rgba(13, 17, 23, 0.7), -3px -3px 8px rgba(45, 55, 72, 0.5);
-  color: var(--neu-error);
-  transform: translateY(-1px);
-}
-
-.neu-cover-option-btn:active {
-  box-shadow: inset 2px 2px 4px rgba(13, 17, 23, 0.6), inset -1px -1px 3px rgba(45, 55, 72, 0.4);
-  transform: translateY(0);
-}
+/* Icon Button */
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 4px;
+} 

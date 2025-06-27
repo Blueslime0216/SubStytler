@@ -1,59 +1,81 @@
-/* Interactive State Variables */
+/* Interactive States for Inset/Outset Theme */
 
-:root {
-  /* Unified Interactive States */
-  --neu-shadow-pressed: 
-    inset 3px 3px 6px rgba(13, 17, 23, 0.6),
-    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
-  
-  --neu-shadow-hover: 
-    7px 7px 14px rgba(13, 17, 23, 0.8),
-    -3px -3px 9px rgba(45, 55, 72, 0.6);
-  
-  --neu-shadow-active: 
-    inset 2px 2px 4px rgba(13, 17, 23, 0.5),
-    inset -1px -1px 3px rgba(45, 55, 72, 0.2);
-  
-  /* Interactive Feedback - Consistent with Shadow Theme */
-  --neu-interactive-bg: rgba(99, 179, 237, 0.15);
-  --neu-interactive-border: rgba(99, 179, 237, 0.4);
-  --neu-hover-brightness: 1.1;
+/* Interactive Element Base */
+.interactive {
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
 }
 
-/* Ensure dark theme is always applied */
-[data-theme="dark"] {
-  --neu-shadow-pressed: 
-    inset 3px 3px 6px rgba(13, 17, 23, 0.6),
-    inset -1px -1px 4px rgba(45, 55, 72, 0.3);
-  
-  --neu-shadow-hover: 
-    7px 7px 14px rgba(13, 17, 23, 0.8),
-    -3px -3px 9px rgba(45, 55, 72, 0.6);
-  
-  --neu-shadow-active: 
-    inset 2px 2px 4px rgba(13, 17, 23, 0.5),
-    inset -1px -1px 3px rgba(45, 55, 72, 0.2);
-  
-  --neu-interactive-bg: rgba(99, 179, 237, 0.15);
-  --neu-interactive-border: rgba(99, 179, 237, 0.4);
-  --neu-hover-brightness: 1.1;
+/* Default State (Outset/Raised) */
+.interactive-default {
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-outset);
 }
 
-/* Remove any light mode references */
-[data-theme="light"] {
-  --neu-shadow-pressed: 
-    inset 3px 3px 6px #e3e6ee,
-    inset -1px -1px 4px #ffffff;
-  
-  --neu-shadow-hover: 
-    7px 7px 14px #e3e6ee,
-    -3px -3px 9px #ffffff;
-  
-  --neu-shadow-active: 
-    inset 2px 2px 4px #cfd3dc,
-    inset -1px -1px 3px #ffffff;
-  
-  --neu-interactive-bg: rgba(37, 99, 235, 0.08);
-  --neu-interactive-border: #60a5fa;
-  --neu-hover-brightness: 1.04;
+/* Hover State */
+.interactive-default:hover {
+  filter: brightness(1.05);
 }
+
+/* Active/Pressed State (Inset/Sunken) */
+.interactive-default:active {
+  box-shadow: var(--shadow-inset);
+  transform: translateY(1px);
+}
+
+/* Focus State */
+.interactive-default:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 2px var(--primary-color),
+    var(--shadow-outset);
+}
+
+/* Selected/Active State */
+.interactive-active {
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-inset);
+}
+
+/* Disabled State */
+.interactive-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: var(--shadow-outset-subtle);
+}
+
+/* Input Fields (Always Inset) */
+.input-field {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-inset);
+  border: none;
+  padding: 8px 12px;
+}
+
+.input-field:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 2px var(--primary-color),
+    var(--shadow-inset);
+}
+
+/* Button Variants */
+.btn-primary {
+  background-color: var(--primary-color);
+}
+
+.btn-success {
+  background-color: var(--success-color);
+}
+
+.btn-warning {
+  background-color: var(--warning-color);
+  color: var(--text-primary);
+}
+
+.btn-error {
+  background-color: var(--error-color);
+} 

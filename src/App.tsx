@@ -48,30 +48,29 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-neu-base text-white" style={{ overflow: 'visible' }}>
+    <div className="min-h-screen flex flex-col bg-bg text-text-primary">
       {/* Header */}
-      <header className="h-14 flex items-center justify-between px-4 shadow-neu-bottom relative z-20" style={{ background: 'var(--neu-base)' }}>
+      <header className="h-14 flex items-center justify-between px-4 shadow-outset bg-surface">
         <div className="flex items-center space-x-3">
-          <div className="neu-btn-icon w-8 h-8 flex items-center justify-center">
+          <div className="flex items-center justify-center w-8 h-8 shadow-outset bg-surface">
             <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5-9-5-9 5 9 5z"/></svg>
           </div>
           <div>
-            <div className="neu-title text-lg font-semibold">Sub-Stytler</div>
-            <div className="neu-caption text-xs opacity-60">Professional Editor</div>
+            <div className="heading-primary text-lg">Sub-Stytler</div>
+            <div className="caption text-xs">Professional Editor</div>
           </div>
         </div>
         <div className="flex items-center space-x-3">
-          <button className="neu-btn px-4 py-1.5 text-sm">Save Project</button>
-          <button className="neu-btn px-4 py-1.5 text-sm">Export YTT</button>
+          <button className="btn px-4 py-1.5 text-sm shadow-outset bg-surface">Save Project</button>
+          <button className="btn px-4 py-1.5 text-sm shadow-outset bg-surface">Export YTT</button>
         </div>
         <div className="flex items-center space-x-2">
           <div className="text-sm opacity-80">Untitled Project</div>
           {/* 테마 토글 버튼 */}
           <button
-            className="neu-btn-icon w-8 h-8 flex items-center justify-center ml-2"
+            className="flex items-center justify-center w-8 h-8 ml-2 shadow-outset bg-surface"
             title={isDarkMode ? '라이트 모드로 전환' : '다크 모드로 전환'}
             onClick={toggleTheme}
-            style={{ background: 'var(--neu-surface)', color: 'var(--neu-text-primary)' }}
           >
             {isDarkMode ? (
               // Sun icon
@@ -85,14 +84,8 @@ export default function App() {
       </header>
 
       {/* Main Content */}
-      <main
-        className="flex-1 h-full min-h-0 flex flex-col p-4"
-        style={{
-          overflow: 'visible',
-          position: 'relative',
-        }}
-      >
-        <div className="flex-1 h-full min-h-0 relative rounded-xl" style={{ overflow: 'visible' }}>
+      <main className="flex-1 h-full min-h-0 flex flex-col p-4 relative">
+        <div className="flex-1 h-full min-h-0 relative">
           <AreaRenderer
             areas={areas as any}
             setAreas={setAreas as any}
@@ -101,8 +94,8 @@ export default function App() {
         </div>
       </main>
 
-      {/* Footer (spacing only, no text) */}
-      <footer className="h-6" style={{ background: 'var(--neu-base-darker)' }} />
+      {/* Footer */}
+      <footer className="h-6 bg-surface shadow-inset-subtle" />
     </div>
   );
 }

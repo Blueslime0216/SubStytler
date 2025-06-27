@@ -31,8 +31,8 @@ const AreaBlockComponent: React.FC<AreaBlockProps> = ({
   renderPanel,
 }) => {
   // 🎨 패딩 값: 기본 상태는 넓고, 호버 시 좁아짐 (자연스러운 효과)
-  const basePadding = 28;    // 기본: 넓은 패딩
-  const dragPadding = 10;    // 드래그 중: 축소 패딩
+  const basePadding = 16;    // 기본: 넓은 패딩
+  const dragPadding = 8;    // 드래그 중: 축소 패딩
 
   // 🔧 성능 최적화: 메모이제이션된 패딩 계산
   const getPaddingValues = React.useMemo(() => {
@@ -190,7 +190,7 @@ const AreaBlockComponent: React.FC<AreaBlockProps> = ({
         zIndex: 2 
       }}>
         {renderPanel ? renderPanel(area) : (
-          <div className="w-full h-full flex items-center justify-center neu-text-secondary">
+          <div className="w-full h-full flex items-center justify-center text-text-secondary">
             <p className="text-sm">패널 ID: {area.id}</p>
           </div>
         )}
