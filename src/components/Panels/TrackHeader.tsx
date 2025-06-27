@@ -126,16 +126,6 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
           <Trash2 className="track-icon" />
         </motion.button>
       </div>
-
-      {/* Active Track Indicator */}
-      {isActive && (
-        <motion.div 
-          className="active-indicator"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.3 }}
-        />
-      )}
     </motion.div>
   );
 };
