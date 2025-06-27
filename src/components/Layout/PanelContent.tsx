@@ -49,7 +49,7 @@ export const PanelContent: React.FC<PanelContentProps> = ({ type }) => {
   }
   
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full overflow-hidden">
       <PanelComponent />
     </div>
   );

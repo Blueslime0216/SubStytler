@@ -2,12 +2,12 @@
 
 .neu-timeline {
   background: var(--surface-color);
-  border-radius: 18px;
-  box-shadow: var(--shadow-outset);
+  border-radius: 0;
+  box-shadow: none;
   overflow: hidden;
   position: relative;
-  border: 2px solid var(--shadow-color);
-  transition: box-shadow 0.2s, background 0.2s;
+  border: none;
+  transition: background 0.2s;
 }
 
 .neu-timeline::before {

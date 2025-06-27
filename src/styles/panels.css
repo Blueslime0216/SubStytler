@@ -41,15 +41,9 @@
 .panel-content {
   flex: 1;
   overflow: hidden;
-  padding: 16px;
+  padding: 0;
   background-color: var(--bg-color);
   position: relative;
-}
-
-/* 🎯 Special handling for timeline and video panels - no padding */
-.timeline-panel .panel-content,
-.video-panel .panel-content {
-  padding: 0;
 }
 
 /* Panel Types */
