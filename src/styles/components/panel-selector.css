@@ -48,9 +48,6 @@
     inset 2px 2px 4px var(--shadow-color),
     inset -1px -1px 2px var(--highlight-color);
   border-radius: 8px;
-  background: var(--bg-color);
-  /* 🎯 그림자가 그라데이션보다 위에 오도록 z-index 설정 */
-  z-index: 1;
 }
 
 .panel-selector-icons {
@@ -58,8 +55,6 @@
   align-items: center;
   position: absolute;
   transition: transform 0.2s ease-out;
-  /* 🎯 아이콘들이 캐러셀 컨테이너보다 위에 오도록 */
-  z-index: 3;
 }
 
 .panel-selector-icon-item {
@@ -68,8 +63,6 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  /* 🎯 아이콘 아이템들도 그라데이션보다 위에 */
-  z-index: 4;
 }
 
 .panel-selector-icon-wrapper {
@@ -86,9 +79,6 @@
   box-shadow: 
     -1px -1px 2px var(--highlight-color),
     2px 2px 4px var(--shadow-color);
-  /* 🎯 아이콘 래퍼가 가장 위에 */
-  z-index: 5;
-  position: relative;
 }
 
 .panel-selector-icon-wrapper.selected {
@@ -135,18 +125,17 @@
   bottom: 0;
   width: 32px;
   pointer-events: none;
-  /* 🎯 그라데이션이 캐러셀 컨테이너보다는 위에, 아이콘들보다는 아래에 */
-  z-index: 2;
+  z-index: 1;
 }
 
 .panel-selector-gradient-left {
   left: 0;
-  background: linear-gradient(90deg, var(--bg-color) 0%, transparent 100%);
+  background: linear-gradient(90deg, var(--surface-color) 0%, transparent 100%);
 }
 
 .panel-selector-gradient-right {
   right: 0;
-  background: linear-gradient(270deg, var(--bg-color) 0%, transparent 100%);
+  background: linear-gradient(270deg, var(--surface-color) 0%, transparent 100%);
 }
 
 .panel-selector-tooltip {
