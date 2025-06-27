@@ -43,7 +43,7 @@
 
 /* Component-specific styles */
 @import './styles/components/panel-selector.css';
-@import './styles/components/video.css';
+/* @import './styles/components/video.css'; */
 
 /* Tailwind */
 @tailwind base;
