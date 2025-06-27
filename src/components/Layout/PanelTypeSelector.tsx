@@ -239,9 +239,7 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
                       <motion.div
                         className={`w-8 h-8 rounded-lg flex items-center justify-center panel-selector-icon-wrapper ${isSelected ? 'selected' : ''}`}
                         animate={{
-                          backgroundColor: isSelected 
-                            ? 'var(--primary-color)'
-                            : 'var(--surface-color)',
+                          backgroundColor: 'transparent',
                         }}
                         transition={animationConfig}
                       >

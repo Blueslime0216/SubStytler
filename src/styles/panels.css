@@ -14,11 +14,6 @@
   transition: all 0.2s ease;
 }
 
-.panel:hover {
-  border-color: var(--primary-color);
-  filter: brightness(1.02);
-}
-
 /* Panel Header */
 .panel-header {
   background-color: var(--surface-color);
@@ -120,12 +115,6 @@
   transition: all 0.15s ease;
 }
 
-.panel-type-selector:hover {
-  filter: brightness(1.05);
-  box-shadow: var(--shadow-outset);
-  border-color: var(--primary-color);
-}
-
 .panel-type-selector:active {
   box-shadow: var(--shadow-pressed);
 }
@@ -155,11 +144,6 @@
   opacity: 0;
   transition: opacity 0.2s ease;
   pointer-events: none;
-}
-
-.neu-panel:hover {
-  border-color: var(--primary-color);
-  filter: brightness(1.02);
 }
 
 .neu-panel:hover::before {

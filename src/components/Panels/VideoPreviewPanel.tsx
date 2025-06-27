@@ -205,25 +205,33 @@ export const VideoPreviewPanel: React.FC = () => {
       style={{
         borderRadius: '18px',
         transition: 'all 0.2s ease',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        background: 'var(--base-color)'
       }}
-      // 🎯 드래그 앤 드롭만 전체 패널에 적용
       {...getRootProps()}
     >
       <input {...getInputProps()} />
-      
       <div 
         ref={videoAreaRef} 
-        className="flex-1 w-full h-full min-w-0 min-h-0 relative flex items-center justify-center" 
-        style={{ overflow: 'hidden' }}
+        className="neu-video-area"
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          minWidth: 0,
+          minHeight: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+          background: 'var(--base-color)'
+        }}
       >
         <VideoPreviewPlayer
           videoRef={videoRef}
           hasVideo={hasVideo}
           videoUrl={currentProject?.videoMeta?.url}
         />
-        
-        {/* 비디오 오버레이 */}
         <VideoPreviewOverlays
           isLoading={uploadState.isUploading}
           uploadProgress={uploadState.uploadProgress}
@@ -234,35 +242,38 @@ export const VideoPreviewPanel: React.FC = () => {
           isDragActive={isDragActive}
           isVideoLoaded={isVideoLoaded}
         />
-        
-        {/* 🎯 비디오가 없을 때만 클릭 가능한 업로드 영역 */}
         {!hasVideo && !uploadState.isUploading && (
           <div 
-            className="absolute inset-0 flex items-center justify-center z-30"
+            className="neu-video-upload-overlay"
             onClick={handleManualFileSelect}
             style={{
               cursor: 'pointer',
               background: isDragActive ? 'rgba(99, 179, 237, 0.1)' : 'transparent',
               borderRadius: '18px',
-              transition: 'background 0.2s ease'
+              transition: 'background 0.2s ease',
+              position: 'absolute',
+              inset: 0,
+              zIndex: 30
             }}
           >
-            {/* 🎯 드래그 활성화 시에만 메시지 표시 */}
             {isDragActive && (
-              <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl neu-shadow-1 flex items-center justify-center"
-                     style={{ background: 'var(--neu-primary)' }}>
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              // 수정 전
+              // <div className="text-center">
+              //   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl neu-shadow-1 flex items-center justify-center"
+              //        style={{ background: 'var(--neu-primary)' }}>
+              //     <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="neu-video-upload-message">
+                <div className="neu-shadow-1 neu-video-upload-icon">
+                  <svg className="neu-video-upload-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium neu-text-primary">Drop video here</h3>
+                {/* 수정 전 <h3 className="text-lg font-medium neu-text-primary">Drop video here</h3> */}
+                <h3 className="neu-text-primary">Drop video here</h3>
               </div>
             )}
           </div>
         )}
-        
-        {/* 비디오 컨트롤러 */}
         {hasVideo && (
           <VideoPreviewController
             isVideoLoaded={isVideoLoaded}

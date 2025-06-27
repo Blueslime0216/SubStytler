@@ -2,26 +2,25 @@
 
 :root {
   /* Base Colors */
-  --base-color: #5f9ea0;
-  --light-color: #e0f7fa;
+  --base-color: #e0f7fa;
+  --surface-color: #ffffff;
+  --primary-color: #5f9ea0;
   --mid-color: #7fb3b5;
   --dark-color: #4a7c7d;
   --darker-color: #3a6061;
   
   /* UI Element Colors */
   --bg-color: var(--base-color);
-  --surface-color: var(--mid-color);
-  --highlight-color: var(--light-color);
-  --shadow-color: var(--darker-color);
+  --highlight-color: #ffffff;
+  --shadow-color: #b7e0e3;
   
   /* Text Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #e0f7fa;
+  --text-primary: #222831;
+  --text-secondary: #5f9ea0;
   --text-muted: #b7e0e3;
-  --text-accent: #e0f7fa;
+  --text-accent: #5f9ea0;
   
   /* Semantic Colors */
-  --primary-color: #7fb3b5;
   --success-color: #8dd9a0;
   --warning-color: #ffd166;
   --error-color: #ef6f6c;
@@ -31,16 +30,16 @@
 [data-theme="dark"] {
   /* Base Colors */
   --base-color: #5f9ea0;
-  --light-color: #e0f7fa;
+  --surface-color: #5f9ea0;
+  --primary-color: #e0f7fa;
   --mid-color: #7fb3b5;
   --dark-color: #4a7c7d;
   --darker-color: #3a6061;
   
   /* UI Element Colors */
   --bg-color: var(--base-color);
-  --surface-color: var(--mid-color);
-  --highlight-color: var(--light-color);
-  --shadow-color: var(--darker-color);
+  --highlight-color: #e0f7fa;
+  --shadow-color: #3a6061;
   
   /* Text Colors */
   --text-primary: #ffffff;
@@ -49,7 +48,6 @@
   --text-accent: #e0f7fa;
   
   /* Semantic Colors */
-  --primary-color: #7fb3b5;
   --success-color: #8dd9a0;
   --warning-color: #ffd166;
   --error-color: #ef6f6c;
@@ -58,26 +56,25 @@
 
 [data-theme="light"] {
   /* Base Colors */
-  --base-color: #7fb3b5;
-  --light-color: #ffffff;
+  --base-color: #e0f7fa;
+  --surface-color: #ffffff;
+  --primary-color: #5f9ea0;
   --mid-color: #a6d0d2;
   --dark-color: #5f9ea0;
   --darker-color: #4a7c7d;
   
   /* UI Element Colors */
-  --bg-color: var(--light-color);
-  --surface-color: #e0f7fa;
-  --highlight-color: var(--light-color);
-  --shadow-color: var(--dark-color);
+  --bg-color: var(--base-color);
+  --highlight-color: #ffffff;
+  --shadow-color: #b7e0e3;
   
   /* Text Colors */
-  --text-primary: #2c3e50;
-  --text-secondary: #4a7c7d;
-  --text-muted: #7fb3b5;
+  --text-primary: #222831;
+  --text-secondary: #5f9ea0;
+  --text-muted: #b7e0e3;
   --text-accent: #5f9ea0;
   
   /* Semantic Colors */
-  --primary-color: #5f9ea0;
   --success-color: #4caf50;
   --warning-color: #ff9800;
   --error-color: #f44336;
