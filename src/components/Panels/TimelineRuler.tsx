@@ -31,7 +31,7 @@ export const TimelineRuler: React.FC<TimelineRulerProps> = React.memo(({ viewSta
     const x = timeToPixel(time);
     if (x < 0 || x > containerWidth) continue; // keep ticks inside content area
     majorTicks.push(
-      <div key={`major-${time}`} className="absolute top-0 flex flex-col items-center" style={{ left: x }}>
+      <div key={`major-${time}`} className="absolute top-0 flex flex-col items-center" style={{ left: x, transform: 'translateX(-50%)' }}>
         <div className="timeline-major-tick" />
         <span className="timeline-major-label">{formatTime(time, fps, 'seconds')}</span>
       </div>
