@@ -294,11 +294,14 @@
   background: var(--base-color);
 }
 
-.track-control-btn.lock.active {
-  color: var(--warning-color);
-  border-color: var(--warning-color);
+.track-control-btn.lock {
+  /* 잠금 해제(기본) 상태: 함몰된 효과 */
   box-shadow: var(--shadow-inset);
-  background: var(--base-color);
+}
+
+.track-control-btn.lock.active {
+  /* 잠겨 있는 상태: 튀어나온 효과 */
+  box-shadow: var(--shadow-outset);
 }
 
 .track-control-btn.delete {
@@ -1030,4 +1033,14 @@
   .timeline-toolbar-zoom-btn::before {
     transition: none;
   }
+}
+
+.neu-track-header-redesigned.active .track-control-btn.lock {
+  /* 선택된 트랙에서 잠금 해제(기본) 상태: 함몰 효과 */
+  box-shadow: var(--shadow-inset);
+}
+
+.neu-track-header-redesigned.active .track-control-btn.lock.active {
+  /* 선택된 트랙에서 잠겨 있는 상태: 튀어나온 효과 */
+  box-shadow: var(--shadow-outset);
 }
