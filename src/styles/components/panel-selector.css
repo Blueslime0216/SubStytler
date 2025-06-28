@@ -1,84 +1,66 @@
-/* Panel Type Selector - New Inset/Outset Theme with Framer Motion Integration */
+/* Enhanced Panel Type Selector - Modern Grid Layout */
 
-.panel-selector-container {
-  position: relative;
-  display: inline-block;
-}
-
-.panel-selector-button {
+.panel-selector-button-enhanced {
   background: var(--surface-color);
   border: 2px solid var(--border-color);
   box-shadow: var(--shadow-outset);
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   position: relative;
+  outline: none;
 }
 
-.panel-selector-button:hover {
+.panel-selector-button-enhanced:hover {
   filter: brightness(1.05);
+  box-shadow: var(--shadow-outset-hover);
 }
 
-.panel-selector-button.open {
-  box-shadow: -1px -1px 2px var(--highlight-color), 2px 2px 4px var(--shadow-color);
+.panel-selector-button-enhanced:focus {
+  box-shadow: 
+    var(--shadow-outset),
+    0 0 0 3px rgba(99, 179, 237, 0.3);
 }
 
-.panel-selector-icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Grid container */
+.panel-selector-grid-container {
   width: 100%;
   height: 100%;
-}
-
-.panel-selector-carousel {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  /* box-shadow 제거하고 가상 요소로 대체 */
-  border-radius: 8px;
-  z-index: 1; /* 기본 z-index 낮춤 */
 }
 
-/* 그림자를 가상 요소로 구현 */
-.panel-selector-carousel::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 8px;
-  pointer-events: none;
-  box-shadow: var(--shadow-inset);
-  z-index: 10;
+/* Panel grid layout */
+.panel-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
 }
 
-.panel-selector-carousel.open::after {
-  opacity: 1;
-}
-
-.panel-selector-icons {
-  display: flex;
-  align-items: center;
-  position: absolute;
-  transition: transform 0.2s ease-out;
-  z-index: 2; /* 그라데이션 아래 */
-}
-
-.panel-selector-icon-item {
+/* Grid item */
+.panel-selector-grid-item {
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border-radius: 8px;
   transition: all 0.2s ease;
+  position: relative;
+  background: transparent;
 }
 
+.panel-selector-grid-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Icon wrapper */
 .panel-selector-icon-wrapper {
   width: 32px;
   height: 32px;
@@ -86,82 +68,130 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-color);
+  background: var(--base-color);
   border: 1px solid var(--border-color);
   transition: all 0.2s ease;
-  /* 🔧 기본 아이콘들은 튀어나온 것처럼 (outset) - 왼쪽 상단 밝게, 오른쪽 하단 어둡게 */
-  box-shadow: 
-    -1px -1px 2px var(--highlight-color),
-    2px 2px 4px var(--shadow-color);
+  box-shadow: var(--shadow-outset-subtle);
+  position: relative;
+  overflow: hidden;
 }
 
+.panel-selector-icon-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    transparent 50%, 
+    rgba(0, 0, 0, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: inherit;
+}
+
+.panel-selector-icon-wrapper:hover::before {
+  opacity: 1;
+}
+
+/* Selected state */
 .panel-selector-icon-wrapper.selected {
-  background: transparent;
-  /* border: 2px solid var(--highlight-color); */
-  /* 🔧 선택된 아이콘은 들어간 것처럼 (inset) - 왼쪽 상단 어둡게, 오른쪽 하단 밝게 */
+  background: var(--primary-color);
+  border-color: var(--primary-color);
   box-shadow: 
-    inset 2px 2px 4px var(--shadow-color),
-    inset -1px -1px 2px var(--highlight-color);
-}
-
-.panel-selector-icon {
-  width: 16px;
-  height: 16px;
-  color: var(--text-secondary);
-  transition: color 0.2s ease;
+    var(--shadow-outset),
+    0 0 8px rgba(99, 179, 237, 0.4);
+  transform: scale(1.05);
 }
 
 .panel-selector-icon-wrapper.selected .panel-selector-icon {
   color: white;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
-.panel-selector-gradient-left,
-.panel-selector-gradient-right {
+/* Current panel indicator */
+.panel-selector-icon-wrapper.current {
+  border-color: var(--success-color);
+  box-shadow: 
+    var(--shadow-outset-subtle),
+    0 0 4px rgba(141, 217, 160, 0.3);
+}
+
+.panel-selector-icon-wrapper.current::after {
+  content: '';
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 32px;
-  pointer-events: none;
-  z-index: 5; /* 아이콘 위, 그림자 아래 */
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: var(--success-color);
+  border-radius: 50%;
+  border: 1px solid var(--surface-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.panel-selector-gradient-left {
-  left: 0;
-  background: linear-gradient(90deg, var(--surface-color) 0%, transparent 100%);
+/* Icon styling */
+.panel-selector-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
 }
 
-.panel-selector-gradient-right {
-  right: 0;
-  background: linear-gradient(270deg, var(--surface-color) 0%, transparent 100%);
-}
-
-.panel-selector-tooltip {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 8px;
-  padding: 6px 12px;
-  background: var(--surface-color);
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: var(--shadow-outset);
+.panel-selector-grid-item:hover .panel-selector-icon {
   color: var(--text-primary);
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
-  z-index: 1000;
+  transform: scale(1.1);
+}
+
+/* Info section */
+.panel-selector-info {
   text-align: center;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panel-selector-info-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.panel-selector-info-description {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+  opacity: 0.8;
+}
+
+/* Navigation hint */
+.panel-selector-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+  opacity: 0.7;
+  line-height: 1.2;
+  padding: 2px 4px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .panel-selector-button {
-    border-radius: 6px;
+  .panel-selector-button-enhanced {
+    border-radius: 10px;
   }
   
-  .panel-selector-button.open {
-    border-radius: 10px;
+  .panel-selector-grid-container {
+    padding: 10px;
+    gap: 6px;
+  }
+  
+  .panel-selector-grid {
+    gap: 4px;
   }
   
   .panel-selector-icon-wrapper {
@@ -171,19 +201,26 @@
   }
   
   .panel-selector-icon {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
   
-  .panel-selector-tooltip {
-    font-size: 11px;
-    padding: 4px 8px;
+  .panel-selector-info-title {
+    font-size: 12px;
+  }
+  
+  .panel-selector-info-description {
+    font-size: 10px;
+  }
+  
+  .panel-selector-hint {
+    font-size: 9px;
   }
 }
 
 /* High contrast mode */
 @media (prefers-contrast: high) {
-  .panel-selector-button {
+  .panel-selector-button-enhanced {
     border: 3px solid var(--text-primary);
   }
   
@@ -193,14 +230,51 @@
   
   .panel-selector-icon-wrapper.selected {
     border: 3px solid var(--primary-color);
+    background: var(--primary-color);
+  }
+  
+  .panel-selector-icon-wrapper.current {
+    border: 3px solid var(--success-color);
   }
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .panel-selector-button,
+  .panel-selector-button-enhanced,
   .panel-selector-icon-wrapper,
-  .panel-selector-icons {
+  .panel-selector-grid-item,
+  .panel-selector-icon {
     transition: none;
   }
+  
+  .panel-selector-icon-wrapper::before {
+    transition: none;
+  }
+}
+
+/* Focus management */
+.panel-selector-button-enhanced:focus-visible {
+  outline: none;
+  box-shadow: 
+    var(--shadow-outset),
+    0 0 0 3px rgba(99, 179, 237, 0.5);
+}
+
+/* Animation performance optimization */
+.panel-selector-grid-item,
+.panel-selector-icon-wrapper {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* Hover effects for better feedback */
+.panel-selector-grid-item:hover .panel-selector-icon-wrapper {
+  box-shadow: var(--shadow-outset);
+  border-color: var(--primary-color);
+}
+
+.panel-selector-grid-item:active .panel-selector-icon-wrapper {
+  transform: scale(0.95);
+  box-shadow: var(--shadow-inset-subtle);
 }
