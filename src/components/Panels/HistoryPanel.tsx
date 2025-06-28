@@ -25,7 +25,7 @@ export const HistoryPanel: React.FC = () => {
     const { clientX, clientY } = e;
     hoverTimer.current = window.setTimeout(() => {
       setTooltip({ entry, x: clientX, y: clientY });
-    }, 500);
+    }, 200);
   };
 
   const handleMouseLeave = () => {
