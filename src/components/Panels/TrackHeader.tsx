@@ -79,11 +79,6 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Track Color Indicator */}
-      <div className="track-color-indicator">
-        <div className={`color-dot${track.visible ? '' : ' color-dot-inactive'}`} />
-      </div>
-
       {/* Track Name Section */}
       <div className="track-name-section">
         {isEditing ? (

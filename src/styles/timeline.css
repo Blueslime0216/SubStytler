@@ -108,12 +108,16 @@
 /* ===== REDESIGNED TRACK HEADER ===== */
 .neu-track-header-redesigned {
   position: relative;
-  height: 50px;
+  height: 46px;
   display: flex;
   align-items: center;
   background: linear-gradient(145deg, rgba(45, 55, 72, 0.05) 0%, transparent 50%, rgba(13, 17, 23, 0.05) 100%), var(--surface-color);
   background-blend-mode: overlay;
   padding: 8px 12px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-left: 2px;
+  margin-right: 5px;
   transition: background 0.2s, box-shadow 0.2s, filter 0.2s;
   cursor: pointer;
   overflow: hidden;
@@ -130,6 +134,8 @@
   color: var(--text-primary);
   border-left: none;
   border-bottom: none;
+  margin-left: 10px;
+  margin-right: 5px;
   box-shadow: var(--shadow-outset);
   transform: translateY(-2px);
   z-index: 2;
