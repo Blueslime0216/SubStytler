@@ -498,7 +498,6 @@
   color: var(--text-primary);
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--dark-color);
   cursor: move;
   transition: all 0.2s ease;
   height: 36px;
@@ -506,7 +505,8 @@
   z-index: 20;
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .neu-subtitle-block::before {
