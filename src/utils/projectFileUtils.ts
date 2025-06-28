@@ -219,12 +219,16 @@ export const saveProjectToFile = async (
         };
       }
 
-      // Handle permission errors
-      if (error.name === 'NotAllowedError') {
-        return {
-          success: false,
-          message: 'Permission denied to save file'
-        };
+      // Handle permission errors and cross-origin restrictions
+      if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
+        console.warn('File System Access API blocked, falling back to download method:', error.message);
+        return await saveProjectFallback(project, options, videoElement);
+      }
+
+      // Handle cross-origin subframe restrictions
+      if (error.message && error.message.includes('Cross origin sub frames')) {
+        console.warn('Cross-origin file picker blocked, falling back to download method');
+        return await saveProjectFallback(project, options, videoElement);
       }
 
       throw error;
