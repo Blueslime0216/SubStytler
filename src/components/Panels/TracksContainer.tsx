@@ -229,6 +229,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
             key={track.id}
             track={track}
             isActive={selectedTrackId === track.id}
+            onSelect={() => setSelectedTrackId(track.id)}
             onDelete={deleteTrack}
             onRename={(id, name) => updateTrack(id, { name })}
             onToggleVisibility={(id, visible) => updateTrack(id, { visible })}
@@ -290,7 +291,6 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
               height: TRACK_HEIGHT,
               flexShrink: 0 // ✅ Prevent track height from shrinking
             }}
-            onClick={() => setSelectedTrackId(track.id)}
             onMouseEnter={() => handleTrackMouseEnter(track.id)}
             onMouseLeave={handleTrackMouseLeave}
           >

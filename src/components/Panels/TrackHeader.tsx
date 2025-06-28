@@ -6,6 +6,7 @@ import { SubtitleTrack } from '../../types/project';
 interface TrackHeaderProps {
   track: SubtitleTrack;
   isActive: boolean;
+  onSelect: () => void;
   onDelete: (id: string) => void;
   onRename: (id: string, name: string) => void;
   onToggleVisibility: (id: string, visible: boolean) => void;
@@ -15,6 +16,7 @@ interface TrackHeaderProps {
 export const TrackHeader: React.FC<TrackHeaderProps> = ({
   track,
   isActive,
+  onSelect,
   onDelete,
   onRename,
   onToggleVisibility,
@@ -61,6 +63,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
   return (
     <motion.div 
       className={`neu-track-header-redesigned ${isActive ? 'active' : ''}`}
+      onClick={onSelect}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
