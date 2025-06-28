@@ -24,6 +24,7 @@ interface HistoryEntry {
   snapshot: Snapshot;
   description: string;
   timestamp: number;
+  isInternal?: boolean; // 🆕 Flag to mark internal "Before" entries
 }
 
 interface HistoryState {
@@ -35,13 +36,19 @@ interface HistoryState {
    * History panel; if omitted, a generic one will be used so existing code
    * continues to work without modification.
    */
-  record: (snapshot: Snapshot, description?: string) => void;
+  record: (snapshot: Snapshot, description?: string, isInternal?: boolean) => void;
   undo: () => void;
   redo: () => void;
   /** Jump directly to a specific entry (identified by timestamp). */
   jumpTo: (timestamp: number) => void;
   /** Clear all history - useful for new projects */
   clear: () => void;
+  /** Get user-visible history entries (excludes internal "Before" entries) */
+  getVisibleHistory: () => {
+    pastStates: HistoryEntry[];
+    present: HistoryEntry | null;
+    futureStates: HistoryEntry[];
+  };
 }
 
 export const useHistoryStore = create<HistoryState>((set, get) => ({
@@ -49,7 +56,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
   present: null,
   futureStates: [],
 
-  record: (snapshot: Snapshot, description = 'State modified') => {
+  record: (snapshot: Snapshot, description = 'State modified', isInternal = false) => {
     const { present } = get();
 
     // 🔧 Skip recording if snapshot is identical to current present
@@ -57,7 +64,12 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       return;
     }
 
-    const newEntry: HistoryEntry = { snapshot, description, timestamp: Date.now() };
+    const newEntry: HistoryEntry = { 
+      snapshot, 
+      description, 
+      timestamp: Date.now(),
+      isInternal 
+    };
 
     set((state) => {
       return {
@@ -130,6 +142,17 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       present: null,
       futureStates: [],
     });
+  },
+
+  // 🆕 Get filtered history for UI display (excludes internal "Before" entries)
+  getVisibleHistory: () => {
+    const { pastStates, present, futureStates } = get();
+    
+    return {
+      pastStates: pastStates.filter(entry => !entry.isInternal),
+      present: present && !present.isInternal ? present : null,
+      futureStates: futureStates.filter(entry => !entry.isInternal)
+    };
   },
 }));
 

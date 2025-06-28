@@ -198,11 +198,12 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
   addTrack: (name: string) => {
     const { currentProject } = get();
     if (currentProject) {
-      // 🔧 Record state BEFORE adding track (this is crucial for undo)
+      // 🔧 Record state BEFORE adding track (marked as internal - hidden from UI)
       const { selectedTrackId } = useSelectedTrackStore.getState();
       useHistoryStore.getState().record(
         { tracks: currentProject.tracks, selectedTrackId },
-        'Before adding track'
+        'Before adding track',
+        true // 🆕 Mark as internal - this will be hidden from history panel
       );
 
       // Suppress selection history during this action to avoid duplicate entries
@@ -231,10 +232,11 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       // Update selected track
       selectedTrackStore.setSelectedTrackId(newTrack.id);
 
-      // 🔧 Record state AFTER adding track
+      // 🔧 Record state AFTER adding track (visible in UI)
       historyStore.record(
         { tracks: updatedTracks, selectedTrackId: newTrack.id },
-        `Added track "${name}"`
+        `Added track "${name}"`,
+        false // 🆕 Not internal - this will be visible in history panel
       );
 
       (historyStore as any)._suppressSelectionHistory = false;
@@ -246,11 +248,12 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
   updateTrack: (id: string, updates: Partial<any>) => {
     const { currentProject } = get();
     if (currentProject) {
-      // 🔧 Record state BEFORE updating track
+      // 🔧 Record state BEFORE updating track (marked as internal)
       const { selectedTrackId } = useSelectedTrackStore.getState();
       useHistoryStore.getState().record(
         { tracks: currentProject.tracks, selectedTrackId },
-        'Before updating track'
+        'Before updating track',
+        true // 🆕 Mark as internal
       );
 
       const updatedTracks = currentProject.tracks.map((track: any) => 
@@ -269,10 +272,11 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       if (updates.visible !== undefined) desc = `${updates.visible ? 'Showed' : 'Hid'} track`;
       if (updates.locked !== undefined) desc = `${updates.locked ? 'Locked' : 'Unlocked'} track`;
 
-      // 🔧 Record state AFTER updating track
+      // 🔧 Record state AFTER updating track (visible in UI)
       useHistoryStore.getState().record(
         { tracks: updatedTracks, selectedTrackId },
-        desc
+        desc,
+        false // 🆕 Not internal
       );
     }
   },
@@ -280,11 +284,12 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
   deleteTrack: (id: string) => {
     const { currentProject } = get();
     if (currentProject) {
-      // 🔧 Record state BEFORE deleting track
+      // 🔧 Record state BEFORE deleting track (marked as internal)
       const { selectedTrackId } = useSelectedTrackStore.getState();
       useHistoryStore.getState().record(
         { tracks: currentProject.tracks, selectedTrackId },
-        'Before deleting track'
+        'Before deleting track',
+        true // 🆕 Mark as internal
       );
 
       // Delete the track
@@ -315,10 +320,11 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
         isModified: true,
       });
 
-      // 🔧 Record state AFTER deleting track
+      // 🔧 Record state AFTER deleting track (visible in UI)
       useHistoryStore.getState().record(
         { tracks: updatedTracks, selectedTrackId },
-        'Deleted track'
+        'Deleted track',
+        false // 🆕 Not internal
       );
     }
   },

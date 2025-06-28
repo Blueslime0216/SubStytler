@@ -5,7 +5,10 @@ import { useHistoryStore } from '../../stores/historyStore';
 import { Portal } from '../UI/Portal';
 
 export const HistoryPanel: React.FC = () => {
-  const { pastStates, present, futureStates, undo, redo, jumpTo } = useHistoryStore();
+  const { undo, redo, jumpTo } = useHistoryStore();
+  
+  // 🆕 Use getVisibleHistory to get filtered history without "Before" entries
+  const { pastStates, present, futureStates } = useHistoryStore(state => state.getVisibleHistory());
 
   const [tooltip, setTooltip] = useState<{ entry: any; x: number; y: number } | null>(null);
   const hoverTimer = useRef<number | null>(null);
@@ -84,7 +87,7 @@ export const HistoryPanel: React.FC = () => {
         </div>
       </div>
 
-      {/* History list */}
+      {/* History list - now shows only user-visible entries */}
       <div className="flex-1 overflow-y-auto text-xs neu-text-secondary px-2 py-1 space-y-1">
         {/* Past (oldest at top) */}
         {pastStates.map((e, idx) => renderEntry(e, `${e.timestamp}-${idx}`))}
