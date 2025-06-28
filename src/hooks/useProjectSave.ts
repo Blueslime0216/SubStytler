@@ -1,11 +1,13 @@
 import { useCallback, useRef } from 'react';
 import { useProjectStore } from '../stores/projectStore';
+import { useTimelineStore } from '../stores/timelineStore';
 import { useToast } from './useToast';
 import { saveProjectToFile, loadProjectFromFile, SaveResult, LoadResult } from '../utils/projectFileUtils';
 import { VideoInfo } from '../utils/videoUtils';
 
 export const useProjectSave = () => {
   const { currentProject, loadProject, saveProject: updateProjectTimestamp } = useProjectStore();
+  const { setCurrentTime, setDuration, setFPS, setZoom, setViewRange, setPlaying } = useTimelineStore();
   const { success, error, info } = useToast();
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
 
@@ -147,12 +149,42 @@ export const useProjectSave = () => {
       delete project.videoMeta;
     }
 
+    // 🆕 Restore timeline state from saved project
+    if (project.timeline) {
+      // Set timeline duration and FPS first (if video metadata exists)
+      if (project.videoMeta?.duration) {
+        setDuration(project.videoMeta.duration);
+      }
+      if (project.videoMeta?.fps || project.timeline.fps) {
+        setFPS(project.videoMeta?.fps || project.timeline.fps || 30);
+      }
+
+      // Restore timeline position and view state
+      if (typeof project.timeline.currentTime === 'number') {
+        setCurrentTime(project.timeline.currentTime);
+      }
+      if (typeof project.timeline.zoom === 'number') {
+        setZoom(project.timeline.zoom);
+      }
+      if (typeof project.timeline.viewStart === 'number' && typeof project.timeline.viewEnd === 'number') {
+        setViewRange(project.timeline.viewStart, project.timeline.viewEnd);
+      }
+      
+      // 🆕 Restore playback state (but don't auto-play)
+      if (typeof project.timeline.isPlaying === 'boolean') {
+        // Always start paused when loading a project for safety
+        setPlaying(false);
+      }
+    }
+
+    // Load the project into the store
     loadProject(project);
+    
     success({
       title: 'Project Loaded',
       message: `"${project.name}" loaded successfully${videoFile ? ' with video' : ''}`
     });
-  }, [loadProject, success]);
+  }, [loadProject, success, setCurrentTime, setDuration, setFPS, setZoom, setViewRange, setPlaying]);
 
   return {
     saveProjectToFileSystem,

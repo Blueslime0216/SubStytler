@@ -1,5 +1,6 @@
 import { Project } from '../types/project';
 import { VideoInfo, extractVideoInfo } from './videoUtils';
+import { useTimelineStore } from '../stores/timelineStore';
 
 export interface SaveResult {
   success: boolean;
@@ -50,13 +51,26 @@ export const validateSavePath = (filePath: string): { valid: boolean; error?: st
 };
 
 /**
- * Sanitizes project data for serialization with enhanced video info
+ * Sanitizes project data for serialization with enhanced video info and timeline state
  */
 export const sanitizeProjectForSave = async (
   project: Project, 
   videoElement?: HTMLVideoElement
 ): Promise<any> => {
   const sanitized = { ...project };
+
+  // 🆕 Capture current timeline state from the timeline store
+  const timelineState = useTimelineStore.getState();
+  sanitized.timeline = {
+    ...sanitized.timeline,
+    currentTime: timelineState.currentTime,
+    zoom: timelineState.zoom,
+    viewStart: timelineState.viewStart,
+    viewEnd: timelineState.viewEnd,
+    // 🆕 Save additional timeline state for complete restoration
+    isPlaying: timelineState.isPlaying,
+    fps: timelineState.fps
+  };
 
   // Handle File objects in videoMeta - convert to comprehensive video info
   if (sanitized.videoMeta?.file) {
@@ -117,7 +131,7 @@ export const sanitizeProjectForSave = async (
 };
 
 /**
- * Creates the project file content as a JSON string with video info
+ * Creates the project file content as a JSON string with video info and timeline state
  */
 export const createProjectFileContent = async (
   project: Project, 
@@ -196,7 +210,7 @@ export const saveProjectToFile = async (
         };
       }
 
-      // Create file content with video info
+      // Create file content with video info and timeline state
       const fileContent = await createProjectFileContent(project, videoElement);
 
       // Create writable stream and write content
@@ -264,7 +278,7 @@ export const saveProjectFallback = async (
       };
     }
 
-    // Create file content with video info
+    // Create file content with video info and timeline state
     const fileContent = await createProjectFileContent(project, videoElement);
 
     // Create blob and download
@@ -302,7 +316,7 @@ export const saveProjectFallback = async (
 };
 
 /**
- * Loads a project from a file with video info
+ * Loads a project from a file with video info and timeline state
  */
 export const loadProjectFromFile = async (): Promise<LoadResult> => {
   try {
@@ -371,7 +385,7 @@ export const loadProjectFromFile = async (): Promise<LoadResult> => {
 };
 
 /**
- * Parses project file content with video info extraction
+ * Parses project file content with video info and timeline state extraction
  */
 export const parseProjectFile = (content: string): LoadResult => {
   try {
@@ -404,6 +418,16 @@ export const parseProjectFile = (content: string): LoadResult => {
     }
     if (!Array.isArray(project.styles)) {
       project.styles = [];
+    }
+
+    // 🆕 Ensure timeline state exists with defaults
+    if (!project.timeline) {
+      project.timeline = {
+        currentTime: 0,
+        zoom: 1,
+        viewStart: 0,
+        viewEnd: 60000
+      };
     }
 
     // Extract video info if available
