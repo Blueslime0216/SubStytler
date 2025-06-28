@@ -12,16 +12,7 @@ interface TimelineToolbarProps {
   duration: number;
 }
 
-export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ 
-  onAddSubtitle, 
-  onAddTrack, 
-  zoom, 
-  setZoom, 
-  viewStart, 
-  viewEnd, 
-  setViewRange, 
-  duration 
-}) => {
+export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle, onAddTrack, zoom, setZoom, viewStart, viewEnd, setViewRange, duration }) => {
   const { currentTime } = useTimelineStore();
 
   const [inputValue, setInputValue] = useState<string>(zoom.toFixed(1));
@@ -151,4 +142,4 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({
   );
 };
 
-export default TimelineToolbar;
+export default TimelineToolbar; 
