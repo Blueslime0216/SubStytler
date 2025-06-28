@@ -7,6 +7,10 @@ import { Area } from './types/area';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useThemeStore } from './stores/themeStore';
 import { useHistoryStore } from './stores/historyStore';
+import { useProjectSave } from './hooks/useProjectSave';
+import { ProjectFileMenu } from './components/UI/ProjectFileMenu';
+import { ToastContainer } from './components/UI/ToastContainer';
+import { useToast } from './hooks/useToast';
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(
@@ -19,6 +23,14 @@ export default function App() {
 
   // Register global keyboard shortcuts
   useKeyboardShortcuts();
+
+  // Project save functionality
+  const { saveProjectToFileSystem, canSave } = useProjectSave();
+  const [isFileMenuOpen, setIsFileMenuOpen] = React.useState(false);
+  const fileMenuTriggerRef = React.useRef<HTMLButtonElement>(null);
+
+  // Toast system
+  const { toasts, removeToast } = useToast();
 
   // Force dark theme on mount and always
   React.useEffect(() => {
@@ -58,6 +70,10 @@ export default function App() {
     };
   }, []);
 
+  const handleSaveProject = async () => {
+    await saveProjectToFileSystem();
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-bg text-text-primary">
       {/* Header */}
@@ -72,7 +88,20 @@ export default function App() {
           </div>
         </div>
         <div className="flex items-center space-x-3">
-          <button className="btn px-4 py-1.5 text-sm shadow-outset bg-surface">Save Project</button>
+          <button 
+            ref={fileMenuTriggerRef}
+            onClick={() => setIsFileMenuOpen(!isFileMenuOpen)}
+            className="btn px-4 py-1.5 text-sm shadow-outset bg-surface"
+          >
+            Project
+          </button>
+          <button 
+            onClick={handleSaveProject}
+            disabled={!canSave}
+            className="btn px-4 py-1.5 text-sm shadow-outset bg-surface disabled:opacity-50"
+          >
+            Save Project
+          </button>
           <button className="btn px-4 py-1.5 text-sm shadow-outset bg-surface">Export YTT</button>
         </div>
         <div className="flex items-center space-x-2">
@@ -94,6 +123,16 @@ export default function App() {
 
       {/* Footer */}
       <footer className="h-6 bg-surface shadow-inset-subtle" />
+
+      {/* Project File Menu */}
+      <ProjectFileMenu
+        isOpen={isFileMenuOpen}
+        onClose={() => setIsFileMenuOpen(false)}
+        triggerRef={fileMenuTriggerRef}
+      />
+
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </div>
   );
 }

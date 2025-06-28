@@ -7,6 +7,7 @@ import { useTimelineStore } from '../stores/timelineStore';
 import { useProjectStore } from '../stores/projectStore';
 import { useHistoryStore } from '../stores/historyStore';
 import { useLayoutStore } from '../stores/layoutStore';
+import { useProjectSave } from './useProjectSave';
 
 export const useKeyboardShortcuts = () => {
   const { 
@@ -19,6 +20,7 @@ export const useKeyboardShortcuts = () => {
   } = useTimelineStore();
   
   const { saveProject } = useProjectStore();
+  const { saveProjectToFileSystem } = useProjectSave();
 
   // History actions
   const { undo, redo, isBusy } = useHistoryStore();
@@ -48,11 +50,17 @@ export const useKeyboardShortcuts = () => {
     redo();
   }, [redo]);
 
-  // Save Project
-  useHotkeys('ctrl+s', (e) => {
+  // Save Project (Ctrl+S) - Save to file system
+  useHotkeys('ctrl+s, meta+s', (e) => {
+    e.preventDefault();
+    saveProjectToFileSystem();
+  }, [saveProjectToFileSystem]);
+
+  // Quick Save (Ctrl+Shift+S) - Update timestamp only
+  useHotkeys('ctrl+shift+s, meta+shift+s', (e) => {
     e.preventDefault();
     saveProject();
-  });
+  }, [saveProject]);
 
   // Frame Navigation
   useHotkeys('left', (e) => {

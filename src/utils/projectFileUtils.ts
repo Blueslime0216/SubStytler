@@ -1,0 +1,372 @@
+import { Project } from '../types/project';
+
+export interface SaveResult {
+  success: boolean;
+  message: string;
+  filePath?: string;
+}
+
+export interface SaveOptions {
+  filePath?: string;
+  createDirectories?: boolean;
+  overwrite?: boolean;
+}
+
+/**
+ * Validates a file path for saving project files
+ */
+export const validateSavePath = (filePath: string): { valid: boolean; error?: string } => {
+  if (!filePath || filePath.trim() === '') {
+    return { valid: false, error: 'File path cannot be empty' };
+  }
+
+  // Check for invalid characters in filename
+  const invalidChars = /[<>:"|?*\x00-\x1f]/;
+  const fileName = filePath.split(/[/\\]/).pop() || '';
+  
+  if (invalidChars.test(fileName)) {
+    return { valid: false, error: 'File name contains invalid characters' };
+  }
+
+  // Ensure .ssp extension
+  if (!filePath.toLowerCase().endsWith('.ssp')) {
+    return { valid: false, error: 'File must have .ssp extension' };
+  }
+
+  // Check filename length (most filesystems have 255 char limit)
+  if (fileName.length > 255) {
+    return { valid: false, error: 'File name is too long (max 255 characters)' };
+  }
+
+  return { valid: true };
+};
+
+/**
+ * Sanitizes project data for serialization
+ */
+export const sanitizeProjectForSave = (project: Project): any => {
+  const sanitized = { ...project };
+
+  // Handle File objects in videoMeta - convert to metadata only
+  if (sanitized.videoMeta?.file) {
+    const { file, ...videoMetaWithoutFile } = sanitized.videoMeta;
+    sanitized.videoMeta = {
+      ...videoMetaWithoutFile,
+      // Store file metadata for reference
+      fileInfo: {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified
+      }
+    };
+  }
+
+  // Ensure all required fields are present
+  if (!sanitized.id) {
+    sanitized.id = crypto.randomUUID();
+  }
+
+  if (!sanitized.createdAt) {
+    sanitized.createdAt = Date.now();
+  }
+
+  sanitized.updatedAt = Date.now();
+
+  return sanitized;
+};
+
+/**
+ * Creates the project file content as a JSON string
+ */
+export const createProjectFileContent = (project: Project): string => {
+  try {
+    const sanitizedProject = sanitizeProjectForSave(project);
+    
+    // Create the file structure with metadata
+    const fileContent = {
+      version: '1.0.0',
+      format: 'Sub-Stytler Project',
+      encoding: 'UTF-8',
+      createdBy: 'Sub-Stytler',
+      savedAt: new Date().toISOString(),
+      project: sanitizedProject
+    };
+
+    // Pretty print with 2-space indentation for readability
+    return JSON.stringify(fileContent, null, 2);
+  } catch (error) {
+    throw new Error(`Failed to serialize project data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+};
+
+/**
+ * Saves a project to a file using the File System Access API (modern browsers)
+ */
+export const saveProjectToFile = async (
+  project: Project, 
+  options: SaveOptions = {}
+): Promise<SaveResult> => {
+  try {
+    // Validate project data
+    if (!project) {
+      return {
+        success: false,
+        message: 'No project data provided'
+      };
+    }
+
+    if (!project.name || project.name.trim() === '') {
+      return {
+        success: false,
+        message: 'Project must have a name'
+      };
+    }
+
+    // Check if File System Access API is supported
+    if (!('showSaveFilePicker' in window)) {
+      return await saveProjectFallback(project, options);
+    }
+
+    try {
+      // Generate default filename
+      const defaultFileName = `${project.name.replace(/[<>:"|?*\x00-\x1f]/g, '_')}.ssp`;
+
+      // Show save file picker
+      const fileHandle = await (window as any).showSaveFilePicker({
+        suggestedName: defaultFileName,
+        types: [{
+          description: 'Sub-Stytler Project Files',
+          accept: {
+            'application/json': ['.ssp']
+          }
+        }]
+      });
+
+      // Validate the chosen path
+      const validation = validateSavePath(fileHandle.name);
+      if (!validation.valid) {
+        return {
+          success: false,
+          message: validation.error || 'Invalid file path'
+        };
+      }
+
+      // Create file content
+      const fileContent = createProjectFileContent(project);
+
+      // Create writable stream and write content
+      const writable = await fileHandle.createWritable();
+      await writable.write(new Blob([fileContent], { type: 'application/json' }));
+      await writable.close();
+
+      return {
+        success: true,
+        message: 'Project saved successfully',
+        filePath: fileHandle.name
+      };
+
+    } catch (error: any) {
+      // Handle user cancellation
+      if (error.name === 'AbortError') {
+        return {
+          success: false,
+          message: 'Save operation was cancelled'
+        };
+      }
+
+      // Handle permission errors
+      if (error.name === 'NotAllowedError') {
+        return {
+          success: false,
+          message: 'Permission denied to save file'
+        };
+      }
+
+      throw error;
+    }
+
+  } catch (error) {
+    console.error('Error saving project:', error);
+    return {
+      success: false,
+      message: `Failed to save project: ${error instanceof Error ? error.message : 'Unknown error'}`
+    };
+  }
+};
+
+/**
+ * Fallback save method for browsers that don't support File System Access API
+ */
+export const saveProjectFallback = async (
+  project: Project, 
+  options: SaveOptions = {}
+): Promise<SaveResult> => {
+  try {
+    // Generate filename
+    const fileName = options.filePath || `${project.name.replace(/[<>:"|?*\x00-\x1f]/g, '_')}.ssp`;
+    
+    // Validate filename
+    const validation = validateSavePath(fileName);
+    if (!validation.valid) {
+      return {
+        success: false,
+        message: validation.error || 'Invalid file name'
+      };
+    }
+
+    // Create file content
+    const fileContent = createProjectFileContent(project);
+
+    // Create blob and download
+    const blob = new Blob([fileContent], { 
+      type: 'application/json;charset=utf-8' 
+    });
+
+    // Create download link
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Clean up
+    URL.revokeObjectURL(url);
+
+    return {
+      success: true,
+      message: 'Project download initiated',
+      filePath: fileName
+    };
+
+  } catch (error) {
+    console.error('Error in fallback save:', error);
+    return {
+      success: false,
+      message: `Failed to save project: ${error instanceof Error ? error.message : 'Unknown error'}`
+    };
+  }
+};
+
+/**
+ * Loads a project from a file
+ */
+export const loadProjectFromFile = async (): Promise<{ success: boolean; project?: Project; message: string }> => {
+  try {
+    // Check if File System Access API is supported
+    if ('showOpenFilePicker' in window) {
+      try {
+        const [fileHandle] = await (window as any).showOpenFilePicker({
+          types: [{
+            description: 'Sub-Stytler Project Files',
+            accept: {
+              'application/json': ['.ssp']
+            }
+          }]
+        });
+
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        
+        return parseProjectFile(content);
+      } catch (error: any) {
+        if (error.name === 'AbortError') {
+          return {
+            success: false,
+            message: 'File selection was cancelled'
+          };
+        }
+        throw error;
+      }
+    } else {
+      // Fallback: use input element
+      return new Promise((resolve) => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.ssp';
+        
+        input.onchange = async (e) => {
+          const file = (e.target as HTMLInputElement).files?.[0];
+          if (!file) {
+            resolve({
+              success: false,
+              message: 'No file selected'
+            });
+            return;
+          }
+
+          try {
+            const content = await file.text();
+            resolve(parseProjectFile(content));
+          } catch (error) {
+            resolve({
+              success: false,
+              message: `Failed to read file: ${error instanceof Error ? error.message : 'Unknown error'}`
+            });
+          }
+        };
+
+        input.click();
+      });
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to load project: ${error instanceof Error ? error.message : 'Unknown error'}`
+    };
+  }
+};
+
+/**
+ * Parses project file content
+ */
+export const parseProjectFile = (content: string): { success: boolean; project?: Project; message: string } => {
+  try {
+    const parsed = JSON.parse(content);
+    
+    // Validate file format
+    if (!parsed.project) {
+      return {
+        success: false,
+        message: 'Invalid project file format'
+      };
+    }
+
+    const project = parsed.project as Project;
+
+    // Validate required fields
+    if (!project.id || !project.name) {
+      return {
+        success: false,
+        message: 'Project file is missing required fields'
+      };
+    }
+
+    // Ensure arrays exist
+    if (!Array.isArray(project.tracks)) {
+      project.tracks = [];
+    }
+    if (!Array.isArray(project.subtitles)) {
+      project.subtitles = [];
+    }
+    if (!Array.isArray(project.styles)) {
+      project.styles = [];
+    }
+
+    return {
+      success: true,
+      project,
+      message: 'Project loaded successfully'
+    };
+
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to parse project file: ${error instanceof Error ? error.message : 'Invalid JSON'}`
+    };
+  }
+};
