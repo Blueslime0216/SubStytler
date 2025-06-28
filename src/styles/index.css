@@ -1,0 +1,50 @@
+/* Design System Variables */
+@import './variables.css';
+
+/* Core Base Styles */
+@import './base.css';
+@import './colors.css';
+@import './typography.css';
+@import './shadows.css';
+@import './inset-shadows.css';
+@import './interactive-states.css';
+@import './components.css';
+
+/* Utilities */
+@import './animations.css';
+@import './layout.css';
+@import './resize.css';
+@import './focus.css';
+@import './utilities.css';
+@import './responsive.css';
+
+/* Components */
+@import './buttons.css';
+@import './forms.css';
+@import './panels.css';
+@import './area-blocks.css';
+@import './progress.css';
+@import './volume.css';
+@import './tooltip.css';
+@import './video.css';
+@import './components/timeline/timeline-base.css';
+@import './components/timeline/track-header.css';
+@import './components/timeline/track-inputs.css';
+@import './components/timeline/track-controls.css';
+@import './components/timeline/track-content.css';
+@import './components/timeline/subtitle-block.css';
+@import './components/timeline/playhead.css';
+@import './components/timeline/resize-handle.css';
+@import './components/timeline/toolbar.css';
+@import './components/timeline/zoom-controls.css';
+@import './components/timeline/responsive.css';
+@import './components/timeline/scrollbars.css';
+@import './toast.css';
+@import './components/panel-selector.css';
+@import './components/history.css';
+@import './components/text-editor.css';
+
+/* Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

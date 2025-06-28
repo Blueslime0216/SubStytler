@@ -1,0 +1,131 @@
+/* Responsive Styles for Timeline */
+
+/* Enhanced responsive design */
+@media (max-width: 768px) {
+  .timeline-toolbar {
+    gap: 12px;
+    padding: 8px 12px;
+  }
+  
+  .timeline-toolbar-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+  
+  .timeline-toolbar-zoom {
+    padding: 6px 12px;
+    gap: 8px;
+  }
+  
+  .timeline-toolbar-zoom-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  
+  .timeline-toolbar-zoom-input {
+    width: 50px;
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  
+  .timeline-toolbar-zoom-label {
+    font-size: 12px;
+  }
+  
+  .neu-track-header-redesigned {
+    height: 50px;
+    padding: 6px 8px;
+  }
+  
+  .track-control-btn {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .track-controls {
+    gap: 6px;
+  }
+  
+  .track-name {
+    font-size: 0.8125rem;
+  }
+  
+  .track-detail {
+    font-size: 0.625rem;
+  }
+  
+  .neu-track-add {
+    height: 48px;
+    margin: 6px;
+  }
+  
+  .track-add-content {
+    font-size: 0.8125rem;
+    gap: 8px;
+  }
+  
+  .track-add-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .track-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .neu-track-header-redesigned {
+    border: 2px solid var(--neu-text-primary);
+  }
+  
+  .track-control-btn {
+    border: 2px solid var(--neu-text-primary);
+  }
+  
+  .color-dot {
+    border: 2px solid var(--neu-text-primary);
+  }
+  
+  .neu-track-add {
+    border: 2px solid var(--neu-primary);
+  }
+  
+  .neu-playhead {
+    box-shadow: 0 0 0 2px var(--neu-text-primary);
+  }
+  
+  .timeline-toolbar-btn,
+  .timeline-toolbar-zoom-btn {
+    border: 3px solid var(--light-surface-color);
+  }
+  
+  .timeline-toolbar-zoom-input {
+    border: 3px solid var(--text-primary);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .neu-track-header-redesigned,
+  .track-control-btn,
+  .neu-track-add,
+  .track-add-icon,
+  .neu-subtitle-block,
+  .track-icon,
+  .timeline-toolbar-btn,
+  .timeline-toolbar-zoom-btn,
+  .timeline-toolbar-zoom-input {
+    transition: none;
+  }
+  
+  .neu-track-header-redesigned::before,
+  .track-control-btn::before,
+  .neu-track-add::before {
+    transition: none;
+  }
+}

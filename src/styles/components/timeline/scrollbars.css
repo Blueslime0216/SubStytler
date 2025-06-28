@@ -1,0 +1,45 @@
+/* Scrollbar Styles for Timeline */
+
+/* ✅ Custom Scrollbar Styles for Track Header */
+.neu-tracks-header::-webkit-scrollbar {
+  width: 8px;
+}
+
+.neu-tracks-header::-webkit-scrollbar-track {
+  background: var(--neu-base);
+  border-radius: 4px;
+}
+
+.neu-tracks-header::-webkit-scrollbar-thumb {
+  background: var(--neu-dark);
+  border-radius: 4px;
+  border: 1px solid var(--neu-base);
+  box-shadow: var(--neu-shadow-micro);
+}
+
+.neu-tracks-header::-webkit-scrollbar-thumb:hover {
+  background: var(--neu-darker);
+  box-shadow: var(--neu-shadow-subtle);
+}
+
+/* ✅ Custom Scrollbar Styles for Track Content */
+.neu-tracks-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.neu-tracks-content::-webkit-scrollbar-track {
+  background: var(--neu-base);
+  border-radius: 4px;
+}
+
+.neu-tracks-content::-webkit-scrollbar-thumb {
+  background: var(--neu-dark);
+  border-radius: 4px;
+  border: 1px solid var(--neu-base);
+  box-shadow: var(--neu-shadow-micro);
+}
+
+.neu-tracks-content::-webkit-scrollbar-thumb:hover {
+  background: var(--neu-darker);
+  box-shadow: var(--neu-shadow-subtle);
+}

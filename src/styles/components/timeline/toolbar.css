@@ -1,0 +1,86 @@
+/* Timeline Toolbar Styles */
+
+.timeline-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--surface-color);
+  box-shadow: var(--shadow-outset);
+  padding: 6px 12px;
+  z-index: 200;
+  border-bottom: 2px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  position: relative;
+}
+
+.timeline-toolbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0.6;
+}
+
+/* Enhanced Toolbar Buttons */
+.timeline-toolbar-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent; /* Maintain layout */
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-button-normal);
+  transition: all 0.2s ease;
+}
+
+.timeline-toolbar-btn:hover:not(:disabled) {
+  background: var(--surface-color);
+  color: var(--text-primary);
+  border-color: var(--mid-color);
+  box-shadow: var(--shadow-button-hover);
+  transform: translateY(-1px);
+}
+
+.timeline-toolbar-btn:active:not(:disabled) {
+  box-shadow: var(--shadow-button-pressed);
+  transform: translateY(0);
+}
+
+.timeline-toolbar-btn:focus {
+  outline: none;
+  box-shadow: var(--shadow-button-focus);
+}
+
+.timeline-toolbar-btn-label {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Enhanced Zoom Controls */
+.timeline-toolbar-zoom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--base-color);
+  padding: 8px 16px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-inset-subtle);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+}
+
+.timeline-toolbar-zoom-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-right: 4px;
+  letter-spacing: 0.02em;
+}

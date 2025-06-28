@@ -1,0 +1,91 @@
+/* Track Control Button States */
+
+/* Specific Control Button States */
+.track-control-btn.visibility.active {
+  color: var(--primary-color);
+  box-shadow: var(--shadow-inset);
+  background: var(--base-color);
+}
+
+.track-control-btn.lock {
+  /* 잠금 해제(기본) 상태: 함몰된 효과 */
+  box-shadow: var(--shadow-inset);
+}
+
+.track-control-btn.lock.active {
+  /* 잠겨 있는 상태: 튀어나온 효과 */
+  box-shadow: var(--shadow-outset);
+}
+
+.track-control-btn.delete {
+  color: var(--error-color);
+}
+
+.track-control-btn.delete:hover {
+  color: var(--error-color);
+  border-color: var(--error-color);
+  filter: brightness(1.1);
+}
+
+.track-control-btn.delete.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: var(--text-muted);
+  border-color: var(--text-muted);
+  box-shadow: var(--shadow-inset);
+}
+
+.track-control-btn.delete.disabled:hover {
+  transform: none;
+  filter: none;
+  border-color: var(--text-muted);
+  box-shadow: var(--shadow-inset);
+}
+
+/* Enhanced Track Icons */
+.track-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+  color: inherit;
+  transition: all 0.2s ease;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.track-control-btn:hover .track-icon {
+  transform: scale(1.1);
+}
+
+.track-control-btn:active .track-icon {
+  transform: scale(0.95);
+}
+
+.track-control-btn.delete .track-icon {
+  color: var(--error-color);
+}
+
+.track-control-btn.delete.disabled .track-icon {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Active Track Indicator */
+.active-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--light-surface-color);
+  transform-origin: left;
+}
+
+.neu-track-header-redesigned.active .track-control-btn.lock {
+  /* 선택된 트랙에서 잠금 해제(기본) 상태: 함몰 효과 */
+  box-shadow: var(--shadow-inset);
+}
+
+.neu-track-header-redesigned.active .track-control-btn.lock.active {
+  /* 선택된 트랙에서 잠겨 있는 상태: 튀어나온 효과 */
+  box-shadow: var(--shadow-outset);
+}

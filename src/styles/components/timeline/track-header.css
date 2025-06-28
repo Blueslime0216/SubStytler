@@ -1,0 +1,122 @@
+/* Track Header Styles */
+
+.neu-track-header-redesigned {
+  position: relative;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(145deg, rgba(45, 55, 72, 0.05) 0%, transparent 50%, rgba(13, 17, 23, 0.05) 100%), var(--surface-color);
+  background-blend-mode: overlay;
+  padding: 8px 12px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-left: 2px;
+  margin-right: 5px;
+  transition: background 0.2s, box-shadow 0.2s, filter 0.2s;
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-inset);
+}
+
+.neu-track-header-redesigned:hover {
+  filter: brightness(1.07);
+}
+
+.neu-track-header-redesigned.active {
+  background: var(--base-color);
+  color: var(--text-primary);
+  border-left: none;
+  border-bottom: none;
+  margin-left: 10px;
+  margin-right: 5px;
+  box-shadow: var(--shadow-outset);
+  transform: translateY(-2px);
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+
+.neu-track-header-redesigned.active .track-name {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.neu-track-header-redesigned.active .track-detail {
+  color: var(--text-secondary);
+}
+
+.neu-track-header-redesigned.active .track-control-btn {
+  color: var(--text-primary);
+  box-shadow: var(--shadow-outset);
+  scale: 1.05;
+}
+
+.neu-track-header-redesigned.active .track-control-btn:hover {
+  background: var(--mid-color);
+  color: var(--primary-color);
+  filter: brightness(1.1);
+}
+
+/* Track Color Indicator */
+.track-color-indicator {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+  position: relative;
+}
+
+.track-color-indicator .color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--light-surface-color);
+  box-shadow: var(--shadow-outset-subtle);
+  transition: box-shadow 0.2s;
+}
+
+.color-dot-inactive {
+  background: var(--text-muted);
+  opacity: 0.5;
+  filter: grayscale(0.5) brightness(1.2);
+}
+
+/* Track Name Section */
+.track-name-section {
+  flex: 1;
+  min-width: 0;
+  margin-right: 8px;
+}
+
+.track-name-display {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.track-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  display: block;
+  min-height: calc(0.875rem * 1.2);
+  padding: 1px 0;
+}
+
+.track-detail {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+  display: block;
+  min-height: calc(0.6875rem * 1.2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  padding: 1px 0;
+}

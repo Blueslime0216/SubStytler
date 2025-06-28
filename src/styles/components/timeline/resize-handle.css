@@ -1,0 +1,55 @@
+/* Resize Handle Styles */
+
+.neu-track-resize-handle {
+  position: absolute;
+  top: 0;
+  width: 4px;
+  cursor: col-resize;
+  background: var(--surface-color);
+  transition: all 0.2s ease;
+  height: 100%;
+  flex-shrink: 0;
+  z-index: 150; /* Ensure it stays above content for easy grabbing */
+  position: relative;
+  box-shadow: var(--shadow-outset);
+  opacity: 1;
+}
+
+.neu-track-resize-handle:hover {
+  filter: brightness(1.1);
+  transition: background 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+
+.neu-track-resize-handle:active {
+  filter: brightness(1.2);
+}
+
+/* Absolute positioning for the playhead */
+.neu-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+}
+
+/* Overview Bar */
+.timeline-overview-bar-bg {
+  position: relative;
+  height: 8px;
+  background: var(--surface-color);
+  border-radius: 6px;
+  box-shadow: var(--shadow-inset-subtle);
+  margin: 8px 0;
+}
+
+.timeline-overview-bar-window {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: var(--light-surface-color);
+  border-radius: 6px;
+  box-shadow: var(--shadow-outset-subtle);
+}

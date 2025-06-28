@@ -1,0 +1,99 @@
+/* Track Input Styles */
+
+.track-detail:empty::before {
+  content: 'empty';
+  color: var(--text-muted);
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.track-name-input,
+.track-detail-input {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  outline: none;
+  font-family: inherit;
+  line-height: inherit;
+  color: inherit;
+  width: 100%;
+}
+
+.track-name-input {
+  padding: 1px 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.track-detail-input {
+  padding: 1px 0;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.track-name-input:focus,
+.track-detail-input:focus {
+  background-color: var(--dark-color);
+  outline: 1px solid var(--light-surface-color);
+  border-radius: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  margin-left: -4px;
+  margin-right: -4px;
+}
+
+/* Track Controls */
+.track-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.track-control-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--surface-color);
+  border: 2px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  box-shadow: var(--shadow-outset);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.track-control-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.05) 0%, 
+    transparent 50%, 
+    rgba(0, 0, 0, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: inherit;
+}
+
+.track-control-btn:hover {
+  filter: brightness(1.05);
+}
+
+.track-control-btn:hover .track-icon {
+  transform: scale(1.1);
+}
+
+.track-control-btn:active {
+  box-shadow: var(--shadow-pressed);
+  transform: translateY(0);
+}

@@ -1,0 +1,82 @@
+/* Zoom Controls Styles */
+
+.timeline-toolbar-zoom-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-button-normal);
+}
+
+.timeline-toolbar-zoom-btn:hover:not(:disabled) {
+  background: var(--surface-color);
+  color: var(--text-primary);
+  border-color: var(--mid-color);
+  box-shadow: var(--shadow-button-hover);
+  transform: translateY(-1px);
+}
+
+.timeline-toolbar-zoom-btn:active:not(:disabled) {
+  box-shadow: var(--shadow-button-pressed);
+  transform: translateY(0);
+}
+
+.timeline-toolbar-zoom-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: var(--text-muted);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: var(--shadow-outset-subtle);
+  transform: none;
+}
+
+.timeline-toolbar-zoom-btn:disabled:hover {
+  transform: none;
+  filter: none;
+  box-shadow: var(--shadow-outset-subtle);
+}
+
+.timeline-toolbar-zoom-btn-label {
+  position: relative;
+  z-index: 1;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.timeline-toolbar-zoom-input {
+  width: 60px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background: var(--surface-color);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  text-align: center;
+  box-shadow: var(--shadow-inset-subtle);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.timeline-toolbar-zoom-input:hover {
+  border-color: var(--light-surface-color);
+  box-shadow: var(--shadow-inset);
+}
+
+.timeline-toolbar-zoom-input:focus {
+  border-color: var(--light-surface-color);
+  box-shadow: 
+    0 0 0 2px rgba(99, 179, 237, 0.3),
+    var(--shadow-inset);
+}

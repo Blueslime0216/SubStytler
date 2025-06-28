@@ -1,0 +1,106 @@
+/* Base Timeline Component Styles */
+
+.neu-timeline {
+  background: var(--surface-color);
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+  position: relative;
+  border: none;
+  transition: background 0.2s;
+}
+
+.neu-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--mid-color), var(--light-surface-color));
+  opacity: 0.8;
+}
+
+.neu-timeline-ruler {
+  background: var(--surface-color);
+  box-shadow: var(--shadow-outset);
+  padding: 12px 0;
+  position: relative;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.neu-timeline-ruler::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0.6;
+}
+
+.neu-timeline-track {
+  background: var(--surface-color);
+  position: relative;
+  border: 1px solid var(--shadow-color);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.neu-timeline-track:hover {
+  background: var(--base-color);
+  box-shadow: var(--shadow-outset-subtle);
+}
+
+/* Track list styles */
+.neu-tracks-container {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  position: relative;
+}
+
+.neu-tracks-header {
+  width: 180px;
+  min-width: 0;
+  max-width: none;
+  background: var(--surface-color);
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 100;
+}
+
+.neu-tracks-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.neu-tracks-content {
+  flex: 1;
+  overflow: hidden !important;
+  position: relative;
+  z-index: 50;
+}
+
+.neu-track {
+  position: relative;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}

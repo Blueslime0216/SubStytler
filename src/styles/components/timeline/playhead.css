@@ -1,0 +1,106 @@
+/* Playhead and Timeline Ruler Styles */
+
+.neu-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  display: flex;
+  flex-direction: column;
+  user-select: none; /* Disable text selection */
+}
+
+.neu-playhead-line {
+  position: absolute;
+  top: 1.2rem;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--light-surface-color);
+  box-shadow: 0 0 2px var(--light-surface-color), 0 0 1px var(--light-surface-color);
+}
+
+.neu-playhead-head {
+  position: absolute;
+  top: calc((2.5rem - 14px) / 2); /* Center in ruler's height */
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background: var(--light-surface-color);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 2px var(--light-surface-color), 0 0 1px var(--light-surface-color);
+}
+
+.neu-playhead::before {
+  content: none;
+}
+
+/* Frame Grid Enhancement */
+.neu-frame-grid-line {
+  display: none; /* Hidden by default */
+}
+
+.neu-timeline:hover .neu-frame-grid-line {
+  display: block;
+}
+
+/* Timeline Ruler Ticks and Labels */
+.timeline-major-tick {
+  position: absolute;
+  background: var(--text-primary);
+  width: 2px;
+  height: 16px;
+  margin-bottom: 2px;
+  opacity: 0.85;
+}
+
+.timeline-major-label {
+  font-size: 0.75rem;
+  color: var(--neu-text-secondary, #4a7c7d);
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 2px;
+  user-select: none;
+}
+
+.timeline-minor-tick {
+  width: 1px;
+  height: 8px;
+  background: var(--neu-border, #e0f7fa);
+  opacity: 0.4;
+}
+
+.timeline-minor-tick-major {
+  width: 1px;
+  height: 12px;
+  background: var(--neu-border, #7fb3b5);
+  opacity: 0.7;
+}
+
+/* 주요 시간 레이블 */
+.timeline-major-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  user-select: none;
+  margin-top: 2px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+
+/* 주요 보조 눈금 */
+.timeline-minor-tick-major {
+  background: var(--mid-color);
+  width: 1px;
+  height: 12px;
+  opacity: 0.7;
+}
+
+/* 일반 보조 눈금 */
+.timeline-minor-tick {
+  background: var(--mid-color);
+  width: 1px;
+  height: 8px;
+  opacity: 0.4;
+}
