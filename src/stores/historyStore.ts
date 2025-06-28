@@ -40,6 +40,8 @@ interface HistoryState {
   redo: () => void;
   /** Jump directly to a specific entry (identified by timestamp). */
   jumpTo: (timestamp: number) => void;
+  /** Clear all history - useful for new projects */
+  clear: () => void;
 }
 
 export const useHistoryStore = create<HistoryState>((set, get) => ({
@@ -50,12 +52,14 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
   record: (snapshot: Snapshot, description = 'State modified') => {
     const { present } = get();
 
-    if (present && present.snapshot === snapshot) return;
+    // 🔧 Skip recording if snapshot is identical to current present
+    if (present && JSON.stringify(present.snapshot) === JSON.stringify(snapshot)) {
+      return;
+    }
 
     const newEntry: HistoryEntry = { snapshot, description, timestamp: Date.now() };
 
     set((state) => {
-      // Always create pastStates entry for proper undo functionality
       return {
         pastStates: state.present ? [...state.pastStates, state.present] : [],
         present: newEntry,
@@ -119,6 +123,14 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
 
     set({ pastStates: newPast, present: newPresent, futureStates: newFuture });
   },
+
+  clear: () => {
+    set({
+      pastStates: [],
+      present: null,
+      futureStates: [],
+    });
+  },
 }));
 
 // Flag to suppress recording during internal snapshot application
@@ -129,33 +141,35 @@ let isApplyingSnapshot = false;
  */
 function applySnapshot(snapshot: Snapshot) {
   isApplyingSnapshot = true;
-  // Layout areas snapshot (array of areas)
-  if (Array.isArray(snapshot) && snapshot.length && 'x' in snapshot[0] && 'y' in snapshot[0]) {
-    useLayoutStore.getState().setAreas(snapshot as Area[]);
-    isApplyingSnapshot = false;
-    return;
-  }
-
-  // Track snapshot
-  if (snapshot && Array.isArray(snapshot.tracks)) {
-    const { currentProject } = useProjectStore.getState();
-    if (currentProject) {
-      useProjectStore.setState({
-        currentProject: {
-          ...currentProject,
-          tracks: snapshot.tracks,
-        },
-      });
+  
+  try {
+    // Layout areas snapshot (array of areas)
+    if (Array.isArray(snapshot) && snapshot.length && 'x' in snapshot[0] && 'y' in snapshot[0]) {
+      useLayoutStore.getState().setAreas(snapshot as Area[]);
+      return;
     }
 
-    // Selection
-    if (snapshot.selectedTrackId !== undefined) {
-      useSelectedTrackStore.getState().setSelectedTrackId(snapshot.selectedTrackId);
+    // Track snapshot
+    if (snapshot && Array.isArray(snapshot.tracks)) {
+      const { currentProject } = useProjectStore.getState();
+      if (currentProject) {
+        useProjectStore.setState({
+          currentProject: {
+            ...currentProject,
+            tracks: snapshot.tracks,
+          },
+        });
+      }
+
+      // Selection
+      if (snapshot.selectedTrackId !== undefined) {
+        useSelectedTrackStore.getState().setSelectedTrackId(snapshot.selectedTrackId);
+      }
+      return;
     }
+  } finally {
     isApplyingSnapshot = false;
-    return;
   }
-  isApplyingSnapshot = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -177,4 +191,4 @@ useSelectedTrackStore.subscribe((state) => {
       );
     }
   }
-}); 
+});

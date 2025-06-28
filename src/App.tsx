@@ -6,6 +6,7 @@ import { panelRegistry } from './config/panelRegistry';
 import { Area } from './types/area';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useThemeStore } from './stores/themeStore';
+import { useHistoryStore } from './stores/historyStore';
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(
@@ -23,6 +24,17 @@ export default function App() {
   React.useEffect(() => {
     document.documentElement.setAttribute('data-theme', 'dark');
   }, []); // Remove isDarkMode dependency since it's always true
+
+  // 🔧 Initialize history store with current layout state
+  React.useEffect(() => {
+    const historyStore = useHistoryStore.getState();
+    // Only record initial state if history is empty
+    if (!historyStore.present && areas.length > 0) {
+      setTimeout(() => {
+        historyStore.record(areas, 'Initial layout state');
+      }, 100); // Small delay to ensure all stores are initialized
+    }
+  }, [areas]);
 
   // 🎯 동적 패널 렌더링 로직 - 모든 ID 패턴 지원
   const renderPanel = useMemo(() => {

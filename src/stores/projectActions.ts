@@ -31,15 +31,27 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
     };
     set({ currentProject: project, isModified: false });
     
-    // Record initial state for undo/redo
-    useHistoryStore.getState().record(
-      { tracks: project.tracks, selectedTrackId: project.tracks[0]?.id || null },
-      'Project created'
-    );
+    // 🔧 Record initial state immediately after project creation
+    // This ensures there's always a baseline state to undo to
+    setTimeout(() => {
+      useHistoryStore.getState().record(
+        { tracks: project.tracks, selectedTrackId: project.tracks[0]?.id || null },
+        'Project created with default track'
+      );
+    }, 0);
   },
 
   loadProject: (project: Project) => {
     set({ currentProject: project, isModified: false });
+    
+    // 🔧 Record loaded project state as initial undo point
+    setTimeout(() => {
+      const { selectedTrackId } = useSelectedTrackStore.getState();
+      useHistoryStore.getState().record(
+        { tracks: project.tracks, selectedTrackId: selectedTrackId || project.tracks[0]?.id || null },
+        'Project loaded'
+      );
+    }, 0);
   },
 
   saveProject: () => {
@@ -56,7 +68,17 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
     const { currentProject } = get();
     
     if (currentProject) {
-      set({ currentProject: { ...currentProject, videoMeta: meta }, isModified: true });
+      const updatedProject = { ...currentProject, videoMeta: meta };
+      set({ currentProject: updatedProject, isModified: true });
+      
+      // 🔧 Record state after video is added
+      setTimeout(() => {
+        const { selectedTrackId } = useSelectedTrackStore.getState();
+        useHistoryStore.getState().record(
+          { tracks: updatedProject.tracks, selectedTrackId: selectedTrackId || updatedProject.tracks[0]?.id || null },
+          'Video added to project'
+        );
+      }, 0);
     } else {
       const newProject: Project = {
         id: crypto.randomUUID(),
@@ -85,11 +107,13 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       };
       set({ currentProject: newProject, isModified: true });
       
-      // Record initial state for undo/redo
-      useHistoryStore.getState().record(
-        { tracks: newProject.tracks, selectedTrackId: newProject.tracks[0]?.id || null },
-        'Project created'
-      );
+      // 🔧 Record initial state for new project created via video upload
+      setTimeout(() => {
+        useHistoryStore.getState().record(
+          { tracks: newProject.tracks, selectedTrackId: newProject.tracks[0]?.id || null },
+          'Project created with video and default track'
+        );
+      }, 0);
     }
   },
 
@@ -174,7 +198,14 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
   addTrack: (name: string) => {
     const { currentProject } = get();
     if (currentProject) {
-      // Suppress selection history during this action
+      // 🔧 Record state BEFORE adding track (this is crucial for undo)
+      const { selectedTrackId } = useSelectedTrackStore.getState();
+      useHistoryStore.getState().record(
+        { tracks: currentProject.tracks, selectedTrackId },
+        'Before adding track'
+      );
+
+      // Suppress selection history during this action to avoid duplicate entries
       const historyStore = useHistoryStore.getState();
       const selectedTrackStore = useSelectedTrackStore.getState();
       (historyStore as any)._suppressSelectionHistory = true;
@@ -187,21 +218,22 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
         locked: false,
       };
 
-      // 실제 트랙 추가
+      // Add the track to the project
+      const updatedTracks = [...currentProject.tracks, newTrack];
       set({
         currentProject: {
           ...currentProject,
-          tracks: [...currentProject.tracks, newTrack],
+          tracks: updatedTracks,
         },
         isModified: true,
       });
 
-      // 선택 트랙도 새 트랙으로 변경
+      // Update selected track
       selectedTrackStore.setSelectedTrackId(newTrack.id);
 
-      // 히스토리에는 트랙+선택 상태를 한 번만 기록
+      // 🔧 Record state AFTER adding track
       historyStore.record(
-        { tracks: [...currentProject.tracks, newTrack], selectedTrackId: newTrack.id },
+        { tracks: updatedTracks, selectedTrackId: newTrack.id },
         `Added track "${name}"`
       );
 
@@ -214,6 +246,13 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
   updateTrack: (id: string, updates: Partial<any>) => {
     const { currentProject } = get();
     if (currentProject) {
+      // 🔧 Record state BEFORE updating track
+      const { selectedTrackId } = useSelectedTrackStore.getState();
+      useHistoryStore.getState().record(
+        { tracks: currentProject.tracks, selectedTrackId },
+        'Before updating track'
+      );
+
       const updatedTracks = currentProject.tracks.map((track: any) => 
         track.id === id ? { ...track, ...updates } : track);
 
@@ -225,18 +264,12 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
         isModified: true,
       });
 
-      const { selectedTrackId } = useSelectedTrackStore.getState();
-      // Record state BEFORE mutation for undo baseline
-      useHistoryStore.getState().record(
-        { tracks: currentProject.tracks, selectedTrackId },
-        'Before update track'
-      );
-
       let desc = 'Updated track';
       if (updates.name) desc = `Renamed track to "${updates.name}"`;
       if (updates.visible !== undefined) desc = `${updates.visible ? 'Showed' : 'Hid'} track`;
       if (updates.locked !== undefined) desc = `${updates.locked ? 'Locked' : 'Unlocked'} track`;
 
+      // 🔧 Record state AFTER updating track
       useHistoryStore.getState().record(
         { tracks: updatedTracks, selectedTrackId },
         desc
@@ -247,6 +280,13 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
   deleteTrack: (id: string) => {
     const { currentProject } = get();
     if (currentProject) {
+      // 🔧 Record state BEFORE deleting track
+      const { selectedTrackId } = useSelectedTrackStore.getState();
+      useHistoryStore.getState().record(
+        { tracks: currentProject.tracks, selectedTrackId },
+        'Before deleting track'
+      );
+
       // Delete the track
       let updatedTracks = currentProject.tracks.filter((track: any) => track.id !== id);
 
@@ -275,17 +315,11 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
         isModified: true,
       });
 
-      const { selectedTrackId } = useSelectedTrackStore.getState();
-      // Record state BEFORE mutation for undo baseline
-      useHistoryStore.getState().record(
-        { tracks: currentProject.tracks, selectedTrackId },
-        'Before delete track'
-      );
-
+      // 🔧 Record state AFTER deleting track
       useHistoryStore.getState().record(
         { tracks: updatedTracks, selectedTrackId },
         'Deleted track'
       );
     }
   },
-}); 
+});
