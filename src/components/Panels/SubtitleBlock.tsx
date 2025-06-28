@@ -216,7 +216,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       className="neu-subtitle-block absolute cursor-move"
       style={{
         left: left + (isDragging ? dragOffset.x : 0),
-        width: Math.max(32, width),
+        width: Math.max(0, width),
         top: `${7 + (isDragging ? dragOffset.y : 0)}px`,
         height: '36px',
         opacity: isLocked ? 0.7 : 1,
