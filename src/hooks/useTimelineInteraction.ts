@@ -41,17 +41,6 @@ export const useTimelineInteraction = (
     return ((time - viewStart) / viewDuration) * containerWidth;
   }, [containerRef, viewStart, viewEnd]);
 
-  // Calculate the maximum zoom based on the container width
-  // We want 1ms to be at most 10px wide
-  const calculateMaxZoom = useCallback(() => {
-    if (!containerRef.current) return 1000; // Fallback to a high value
-    
-    const containerWidth = containerRef.current.clientWidth;
-    // If 1ms should be 10px, then the view duration should be containerWidth/10 milliseconds
-    const minViewDuration = containerWidth / 10;
-    // Max zoom is duration / minViewDuration
-    return duration / minViewDuration;
-  }, [containerRef, duration]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button === 1) { // Middle mouse button
@@ -146,11 +135,7 @@ export const useTimelineInteraction = (
     // Always zoom with wheel
     const zoomFactor = 1.1;
     let newZoom = e.deltaY < 0 ? zoom * zoomFactor : zoom / zoomFactor;
-    
-    // Apply dynamic max zoom limit
-    const maxZoom = calculateMaxZoom();
-    newZoom = Math.max(1, Math.min(maxZoom, newZoom));
-    
+    newZoom = Math.max(1, Math.min(100, newZoom));
     setZoom(newZoom);
 
     const newViewDuration = duration / newZoom;
