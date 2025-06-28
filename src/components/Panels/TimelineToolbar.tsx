@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
 
 interface TimelineToolbarProps {
@@ -12,15 +12,34 @@ interface TimelineToolbarProps {
   duration: number;
 }
 
-export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle, onAddTrack, zoom, setZoom, viewStart, viewEnd, setViewRange, duration }) => {
-  const { currentTime } = useTimelineStore();
-
+export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ 
+  onAddSubtitle, 
+  onAddTrack, 
+  zoom, 
+  setZoom, 
+  viewStart, 
+  viewEnd, 
+  setViewRange, 
+  duration 
+}) => {
+  const { currentTime, getMaxZoom } = useTimelineStore();
   const [inputValue, setInputValue] = useState<string>(zoom.toFixed(1));
+  const [containerWidth, setContainerWidth] = useState(window.innerWidth - 200); // Estimate container width
+
+  // Update container width on resize
+  useEffect(() => {
+    const handleResize = () => {
+      setContainerWidth(window.innerWidth - 200); // Rough estimate, adjust as needed
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const MIN_ZOOM = 1; // cannot zoom below full view
-  const MAX_ZOOM = 100;
+  const maxZoom = getMaxZoom(containerWidth);
 
-  const clampZoom = (val: number) => Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, val));
+  const clampZoom = (val: number) => Math.max(MIN_ZOOM, Math.min(maxZoom, val));
 
   const recalcViewRange = (newZoom: number, pivotTime?: number) => {
     const center = pivotTime ?? (viewStart + viewEnd) / 2;
@@ -87,7 +106,7 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
     commitZoom(tentative);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setInputValue(zoom.toFixed(1));
   }, [zoom]);
 
@@ -126,14 +145,14 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
           onKeyDown={handleKeyDown}
           onWheel={handleWheel}
           className="timeline-toolbar-zoom-input"
-          title="Scroll to zoom or type value"
+          title={`Scroll to zoom or type value (Max: ${maxZoom.toFixed(1)}x)`}
         />
 
         <button
           onClick={() => adjustZoom(1)}
           className="timeline-toolbar-zoom-btn"
           title="Zoom in"
-          disabled={zoom >= MAX_ZOOM}
+          disabled={zoom >= maxZoom}
         >
           <span className="timeline-toolbar-zoom-btn-label">+</span>
         </button>
@@ -142,4 +161,4 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
   );
 };
 
-export default TimelineToolbar; 
+export default TimelineToolbar;

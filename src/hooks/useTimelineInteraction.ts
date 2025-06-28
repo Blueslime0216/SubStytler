@@ -13,7 +13,7 @@ export const useTimelineInteraction = (
   containerRef: React.RefObject<HTMLDivElement>,
   {zoom, setZoom, viewStart, viewEnd, setViewRange}: InteractionConfig
 ) => {
-  const { duration, setCurrentTime, snapToFrame } = useTimelineStore();
+  const { duration, setCurrentTime, snapToFrame, getMaxZoom } = useTimelineStore();
 
   const [isPanning, setIsPanning] = useState(false);
   const isPanningRef = useRef(false);
@@ -132,10 +132,13 @@ export const useTimelineInteraction = (
     const mouseX = e.clientX - rect.left;
     const timeAtCursor = pixelToTime(mouseX);
 
+    // Calculate max zoom based on current container width
+    const maxZoom = getMaxZoom(rect.width);
+
     // Always zoom with wheel
     const zoomFactor = 1.1;
     let newZoom = e.deltaY < 0 ? zoom * zoomFactor : zoom / zoomFactor;
-    newZoom = Math.max(1, Math.min(100, newZoom));
+    newZoom = Math.max(1, Math.min(maxZoom, newZoom));
     setZoom(newZoom);
 
     const newViewDuration = duration / newZoom;

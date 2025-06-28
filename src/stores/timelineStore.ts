@@ -28,6 +28,9 @@ interface TimelineState {
   
   // Dragging actions
   setDragging: (isDragging: boolean, subtitleId?: string) => void;
+  
+  // New function to calculate max zoom based on duration and container width
+  getMaxZoom: (containerWidth?: number) => number;
 }
 
 export const useTimelineStore = create<TimelineState>()(
@@ -66,7 +69,11 @@ export const useTimelineStore = create<TimelineState>()(
       frameDuration: 1000 / fps
     }),
 
-    setZoom: (zoom: number) => set({ zoom: Math.max(1, Math.min(100, zoom)) }),
+    setZoom: (zoom: number) => {
+      const { getMaxZoom } = get();
+      const maxZoom = getMaxZoom();
+      set({ zoom: Math.max(1, Math.min(maxZoom, zoom)) });
+    },
 
     setViewRange: (start: number, end: number) => set({ 
       viewStart: Math.max(0, start),
@@ -95,6 +102,25 @@ export const useTimelineStore = create<TimelineState>()(
         isDragging, 
         draggedSubtitleId: isDragging ? subtitleId || null : null 
       });
+    },
+    
+    // Calculate maximum zoom based on duration and container width
+    // Target: 1ms = 10px at maximum zoom
+    getMaxZoom: (containerWidth = window.innerWidth) => {
+      const { duration } = get();
+      if (duration <= 0) return 100; // Fallback to 100 if no duration
+      
+      // At zoom level 1, the entire duration is visible
+      // At max zoom, 1ms should be 10px wide
+      
+      // Calculate pixels per ms at zoom level 1
+      const pixelsPerMsAtZoom1 = containerWidth / duration;
+      
+      // Calculate zoom needed to make 1ms = 10px
+      const maxZoom = 10 / pixelsPerMsAtZoom1;
+      
+      // Ensure reasonable limits
+      return Math.max(100, Math.min(10000, Math.ceil(maxZoom)));
     }
   }))
 );

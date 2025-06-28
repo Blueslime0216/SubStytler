@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { useTimelineStore } from '../../stores/timelineStore';
 
 interface Props {
   duration: number;
@@ -10,11 +11,20 @@ interface Props {
   sidebarOffset?: number; // pixels to offset from left (track header width)
 }
 
-const TimelineOverviewBar: React.FC<Props> = ({ duration, viewStart, viewEnd, zoom, setZoom, setViewRange, sidebarOffset = 0 }) => {
+const TimelineOverviewBar: React.FC<Props> = ({ 
+  duration, 
+  viewStart, 
+  viewEnd, 
+  zoom, 
+  setZoom, 
+  setViewRange, 
+  sidebarOffset = 0 
+}) => {
   const barRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
   const dragStartXRef = useRef(0); // clientX at drag start
   const dragStartViewRef = useRef(0); // viewStart at drag start
+  const { getMaxZoom } = useTimelineStore();
 
   if (duration === 0) return null;
 
@@ -86,13 +96,17 @@ const TimelineOverviewBar: React.FC<Props> = ({ duration, viewStart, viewEnd, zo
   const handleWheel = (e: React.WheelEvent) => {
     if(e.cancelable) e.preventDefault();
     if(!barRef.current) return;
+    
     const rect = barRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const timeAtCursor = pixelToTime(x);
 
+    // Calculate max zoom based on current container width
+    const maxZoom = getMaxZoom(rect.width);
+    
     const zoomFactor = 1.1;
     let newZoom = e.deltaY < 0 ? zoom * zoomFactor : zoom / zoomFactor;
-    newZoom = Math.max(1, Math.min(100, newZoom));
+    newZoom = Math.max(1, Math.min(maxZoom, newZoom));
     setZoom(newZoom);
 
     const newViewDuration = duration / newZoom;
@@ -119,4 +133,4 @@ const TimelineOverviewBar: React.FC<Props> = ({ duration, viewStart, viewEnd, zo
   );
 };
 
-export default TimelineOverviewBar; 
+export default TimelineOverviewBar;
