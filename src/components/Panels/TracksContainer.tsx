@@ -277,6 +277,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
             }}
             onMouseEnter={() => handleTrackMouseEnter(track.id)}
             onMouseLeave={handleTrackMouseLeave}
+            onMouseDown={() => setSelectedTrackId(track.id)}
           >
             {/* Render subtitles for this track */}
             {subtitles
