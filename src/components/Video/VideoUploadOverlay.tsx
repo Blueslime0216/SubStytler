@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Video, FileVideo } from 'lucide-react';
+import { Upload, Video, FileVideo, MonitorUp } from 'lucide-react';
 
 interface VideoUploadOverlayProps {
   isDragActive: boolean;
@@ -151,7 +151,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
               </div>
 
               {/* Supported Formats */}
-              <div className="bg-base-color rounded-lg p-4 shadow-inset-subtle">
+              <div className="bg-bg rounded-lg p-4 shadow-inset-subtle">
                 <p className="text-xs font-medium text-text-secondary mb-2 uppercase tracking-wide">
                   Supported Formats
                 </p>

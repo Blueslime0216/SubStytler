@@ -158,7 +158,7 @@ export const TextEditorPanel: React.FC = () => {
         <textarea
           value={selectedText}
           onChange={(e) => handleTextChange(e.target.value)}
-          className="w-full bg-base-color shadow-inset rounded-lg p-3 text-sm text-text-primary resize-none"
+          className="w-full bg-bg shadow-inset rounded-lg p-3 text-sm text-text-primary resize-none"
           placeholder="Enter subtitle text..."
           rows={3}
         />
@@ -266,7 +266,7 @@ export const TextEditorPanel: React.FC = () => {
                 setTextColor(e.target.value);
                 handleStyleChange('fc', e.target.value);
               }}
-              className="flex-1 bg-base-color shadow-inset rounded p-1 text-xs text-text-primary"
+              className="flex-1 bg-bg shadow-inset rounded p-1 text-xs text-text-primary"
             />
           </div>
           <div className="mt-1">
@@ -310,7 +310,7 @@ export const TextEditorPanel: React.FC = () => {
                 setBackgroundColor(e.target.value);
                 handleStyleChange('bc', e.target.value);
               }}
-              className="flex-1 bg-base-color shadow-inset rounded p-1 text-xs text-text-primary"
+              className="flex-1 bg-bg shadow-inset rounded p-1 text-xs text-text-primary"
             />
           </div>
           <div className="mt-1">
@@ -357,7 +357,7 @@ export const TextEditorPanel: React.FC = () => {
                 setOutlineColor(e.target.value);
                 handleStyleChange('ec', e.target.value);
               }}
-              className="flex-1 bg-base-color shadow-inset rounded p-1 text-xs text-text-primary"
+              className="flex-1 bg-bg shadow-inset rounded p-1 text-xs text-text-primary"
             />
           </div>
         </div>
@@ -373,7 +373,7 @@ export const TextEditorPanel: React.FC = () => {
               setOutlineType(value);
               handleStyleChange('et', value);
             }}
-            className="w-full bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+            className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
             <option value={0}>None</option>
             <option value={1}>Hard Shadow</option>
@@ -396,7 +396,7 @@ export const TextEditorPanel: React.FC = () => {
               setFontFamily(e.target.value);
               handleStyleChange('fs', e.target.value);
             }}
-            className="w-full bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+            className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
             <option value="0">Roboto (Default)</option>
             <option value="1">Courier New</option>
@@ -421,7 +421,7 @@ export const TextEditorPanel: React.FC = () => {
                 setFontSize(e.target.value);
                 handleStyleChange('sz', e.target.value);
               }}
-              className="flex-1 bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+              className="flex-1 bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
             />
             <select
               value={fontSize}
@@ -429,7 +429,7 @@ export const TextEditorPanel: React.FC = () => {
                 setFontSize(e.target.value);
                 handleStyleChange('sz', e.target.value);
               }}
-              className="bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+              className="bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
             >
               <option value="75%">75%</option>
               <option value="100%">100%</option>
@@ -454,7 +454,7 @@ export const TextEditorPanel: React.FC = () => {
               setAnchorPoint(value);
               handleStyleChange('ap', value);
             }}
-            className="w-full bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+            className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
             <option value={0}>Top-Left</option>
             <option value={1}>Top-Center</option>
@@ -478,7 +478,7 @@ export const TextEditorPanel: React.FC = () => {
               setPrintDirection(e.target.value);
               handleStyleChange('pd', e.target.value);
             }}
-            className="w-full bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+            className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
             <option value="00">Horizontal LTR (Default)</option>
             <option value="20">Vertical RTL</option>

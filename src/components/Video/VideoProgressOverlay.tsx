@@ -88,7 +88,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
             </div>
             
             {/* Progress Bar Container */}
-            <div className="bg-base-color rounded-lg p-4 shadow-inset-subtle mb-6">
+            <div className="bg-bg rounded-lg p-4 shadow-inset-subtle mb-6">
               <div className="relative h-3 bg-surface rounded-full shadow-inset overflow-hidden">
                 {/* Progress Fill */}
                 <motion.div 

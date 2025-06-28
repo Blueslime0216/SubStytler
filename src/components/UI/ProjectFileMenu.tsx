@@ -107,7 +107,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
           }}
         >
           {/* Header */}
-          <div className="px-4 py-3 border-b border-border-color bg-base-color">
+          <div className="px-4 py-3 border-b border-border-color bg-bg">
             <h3 className="font-semibold text-text-primary text-sm">Project</h3>
             {currentProject && (
               <p className="text-xs text-text-secondary mt-1">
@@ -122,7 +122,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
             {/* New Project */}
             <motion.button
               onClick={handleNewProject}
-              className="w-full px-4 py-3 text-left hover:bg-base-color transition-colors flex items-center gap-3"
+              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3"
               whileHover={{ x: 2 }}
             >
               <FileText className="w-4 h-4 text-text-secondary" />
@@ -136,7 +136,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
             <motion.button
               onClick={handleLoad}
               disabled={isLoading}
-              className="w-full px-4 py-3 text-left hover:bg-base-color transition-colors flex items-center gap-3 disabled:opacity-50"
+              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 disabled:opacity-50"
               whileHover={{ x: 2 }}
             >
               <FolderOpen className="w-4 h-4 text-text-secondary" />
@@ -155,7 +155,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
             <motion.button
               onClick={handleSave}
               disabled={!canSave || isSaving}
-              className="w-full px-4 py-3 text-left hover:bg-base-color transition-colors flex items-center gap-3 disabled:opacity-50"
+              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 disabled:opacity-50"
               whileHover={{ x: 2 }}
             >
               <Save className="w-4 h-4 text-text-secondary" />
@@ -173,7 +173,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
             <motion.button
               onClick={() => {/* Export logic would go here */}}
               disabled={!currentProject}
-              className="w-full px-4 py-3 text-left hover:bg-base-color transition-colors flex items-center gap-3 disabled:opacity-50"
+              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 disabled:opacity-50"
               whileHover={{ x: 2 }}
             >
               <Download className="w-4 h-4 text-text-secondary" />

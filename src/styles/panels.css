@@ -36,15 +36,16 @@
   opacity: 0.6;
 }
 
-/* Panel Content */
-.panel-content {
+/* Panel Content Wrapper for Shadow */
+.panel-content-wrapper {
   flex: 1;
-  overflow: auto;
-  background-color: var(--bg-color);
   position: relative;
+  display: flex; /* Make scrollable child fill the space */
+  border-radius: 12px; /* Adjust as needed, slightly less than panel's radius */
+  overflow: hidden; /* Important for containing the pseudo-element's shadow */
 }
 
-.panel-content::after {
+.panel-content-wrapper::after {
   content: '';
   position: absolute;
   top: 0;
@@ -53,8 +54,17 @@
   bottom: 0;
   box-shadow: var(--shadow-inset-subtle);
   pointer-events: none;
-  z-index: 800;
-  border-radius: inherit;
+  z-index: 10; /* Ensure shadow is on top of content */
+  border-radius: inherit; /* Inherit from wrapper */
+}
+
+/* Panel Content */
+.panel-content {
+  flex: 1;
+  overflow: auto;
+  background-color: var(--bg-color);
+  position: relative;
+  padding: 8px; /* Add some padding to avoid content touching the shadow edge */
 }
 
 /* Panel Types */

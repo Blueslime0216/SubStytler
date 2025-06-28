@@ -49,3 +49,18 @@
   background: var(--base-color);
   color: var(--text-primary);
 }
+
+/* Custom Tailwind fallback utility for background using CSS variable */
+.bg-bg {
+  background-color: var(--bg-color);
+}
+
+/* Hover variant */
+.hover\:bg-bg:hover {
+  background-color: var(--bg-color);
+}
+
+/* 50% opacity variant */
+.bg-bg\/50 {
+  background-color: rgba(123, 154, 155, 0.5); /* Fallback with 50% opacity */
+}

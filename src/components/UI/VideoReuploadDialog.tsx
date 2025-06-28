@@ -100,7 +100,7 @@ export const VideoReuploadDialog: React.FC<VideoReuploadDialogProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-base-color transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-bg transition-colors"
           >
             <X className="w-4 h-4 text-text-secondary" />
           </button>
@@ -109,7 +109,7 @@ export const VideoReuploadDialog: React.FC<VideoReuploadDialogProps> = ({
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Original Video Info */}
-          <div className="bg-base-color rounded-lg p-4">
+          <div className="bg-bg rounded-lg p-4">
             <h3 className="font-medium text-text-primary mb-3 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-warning-color" />
               Original Video Information
@@ -252,7 +252,7 @@ export const VideoReuploadDialog: React.FC<VideoReuploadDialogProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-border-color bg-base-color/50">
+        <div className="flex items-center justify-between p-6 border-t border-border-color bg-bg/50">
           <button
             onClick={handleSkip}
             className="btn px-4 py-2 text-text-secondary hover:text-text-primary"

@@ -25,12 +25,14 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
       <div className="space-y-4">
         <div>
           <label className="block text-xs font-medium text-text-secondary mb-1">Name</label>
-          <input
-            type="text"
-            value={style.name}
-            onChange={e => onUpdate(style.id, { name: e.target.value })}
-            className="w-full bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
-          />
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={style.name}
+              onChange={(e) => onUpdate(style.id, { name: e.target.value })}
+              className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
+            />
+          </div>
         </div>
         
         {/* Text Color & Opacity */}
@@ -48,7 +50,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
                 type="text"
                 value={style.fc || '#FFFFFF'}
                 onChange={e => handleColorChange('fc', e.target.value)}
-                className="flex-1 bg-base-color shadow-inset rounded p-1 text-xs text-text-primary"
+                className="flex-1 bg-bg shadow-inset rounded p-1 text-xs text-text-primary"
               />
             </div>
             <div className="mt-1">
@@ -81,7 +83,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
                 type="text"
                 value={style.bc || '#000000'}
                 onChange={e => handleColorChange('bc', e.target.value)}
-                className="flex-1 bg-base-color shadow-inset rounded p-1 text-xs text-text-primary"
+                className="flex-1 bg-bg shadow-inset rounded p-1 text-xs text-text-primary"
               />
             </div>
             <div className="mt-1">
@@ -116,7 +118,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
                 type="text"
                 value={style.ec || '#000000'}
                 onChange={e => handleColorChange('ec', e.target.value)}
-                className="flex-1 bg-base-color shadow-inset rounded p-1 text-xs text-text-primary"
+                className="flex-1 bg-bg shadow-inset rounded p-1 text-xs text-text-primary"
               />
             </div>
           </div>
@@ -126,7 +128,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
             <select
               value={style.et || 0}
               onChange={e => handleSelectChange('et', parseInt(e.target.value))}
-              className="w-full bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+              className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
             >
               <option value={0}>None</option>
               <option value={1}>Hard Shadow</option>
@@ -144,7 +146,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
             <select
               value={style.fs || '0'}
               onChange={e => handleSelectChange('fs', e.target.value)}
-              className="w-full bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+              className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
             >
               <option value="0">Roboto (Default)</option>
               <option value="1">Courier New</option>
@@ -164,12 +166,12 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
                 type="text"
                 value={style.sz || '100%'}
                 onChange={e => handleSelectChange('sz', e.target.value)}
-                className="flex-1 bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+                className="flex-1 bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
               />
               <select
                 value={style.sz || '100%'}
                 onChange={e => handleSelectChange('sz', e.target.value)}
-                className="bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+                className="bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
               >
                 <option value="75%">75%</option>
                 <option value="100%">100%</option>
@@ -188,7 +190,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
             <select
               value={style.ju || 3}
               onChange={e => handleSelectChange('ju', parseInt(e.target.value))}
-              className="w-full bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+              className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
             >
               <option value={1}>Left</option>
               <option value={2}>Right</option>
@@ -201,7 +203,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
             <select
               value={style.pd || '00'}
               onChange={e => handleSelectChange('pd', e.target.value)}
-              className="w-full bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+              className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
             >
               <option value="00">Horizontal LTR (Default)</option>
               <option value="20">Vertical RTL</option>
@@ -218,7 +220,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
           <select
             value={style.ap || 4}
             onChange={e => handleSelectChange('ap', parseInt(e.target.value))}
-            className="w-full bg-base-color shadow-inset rounded p-2 text-xs text-text-primary"
+            className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
             <option value={0}>Top-Left</option>
             <option value={1}>Top-Center</option>
