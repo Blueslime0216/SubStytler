@@ -33,7 +33,10 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
         ...subtitle,
         spans: subtitle.spans.map(span => ({
           ...span,
-          styleId: span.styleId || 'default'
+          styleId: span.styleId || 'default',
+          isBold: span.isBold || false,
+          isItalic: span.isItalic || false,
+          isUnderline: span.isUnderline || false
         }))
       };
       
@@ -60,7 +63,7 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
     }
   },
 
-  updateSubtitle: (id: string, updates: Partial<SubtitleBlock>) => {
+  updateSubtitle: (id: string, updates: Partial<SubtitleBlock>, recordHistory = true) => {
     const { currentProject } = get();
     if (currentProject) {
       // Find the subtitle to update
@@ -68,17 +71,19 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
       if (!subtitleToUpdate) return;
 
       // 🆕 Record state BEFORE updating subtitle
-      const historyStore = useHistoryStore.getState();
-      historyStore.record(
-        { 
-          project: {
-            subtitles: [...currentProject.subtitles],
-            selectedSubtitleId: useSelectedSubtitleStore.getState().selectedSubtitleId
-          }
-        },
-        'Before updating subtitle',
-        true // Mark as internal
-      );
+      if (recordHistory) {
+        const historyStore = useHistoryStore.getState();
+        historyStore.record(
+          { 
+            project: {
+              subtitles: [...currentProject.subtitles],
+              selectedSubtitleId: useSelectedSubtitleStore.getState().selectedSubtitleId
+            }
+          },
+          'Before updating subtitle',
+          true // Mark as internal
+        );
+      }
 
       // Create updated subtitles array
       const updatedSubtitles = currentProject.subtitles.map(sub =>
@@ -95,27 +100,30 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
       });
 
       // Generate appropriate description based on what was updated
-      let description = 'Updated subtitle';
-      if (updates.spans && subtitleToUpdate.spans[0]?.text !== updates.spans[0]?.text) {
-        description = 'Edited subtitle text';
-      } else if (updates.startTime !== undefined || updates.endTime !== undefined) {
-        if (updates.trackId !== undefined && updates.trackId !== subtitleToUpdate.trackId) {
-          description = 'Moved subtitle to different track';
-        } else {
-          description = 'Adjusted subtitle timing';
-        }
-      }
-
-      // 🆕 Record state AFTER updating subtitle
-      historyStore.record(
-        { 
-          project: {
-            subtitles: updatedSubtitles,
-            selectedSubtitleId: useSelectedSubtitleStore.getState().selectedSubtitleId
+      if (recordHistory) {
+        let description = 'Updated subtitle';
+        if (updates.spans && subtitleToUpdate.spans[0]?.text !== updates.spans[0]?.text) {
+          description = 'Edited subtitle text';
+        } else if (updates.startTime !== undefined || updates.endTime !== undefined) {
+          if (updates.trackId !== undefined && updates.trackId !== subtitleToUpdate.trackId) {
+            description = 'Moved subtitle to different track';
+          } else {
+            description = 'Adjusted subtitle timing';
           }
-        },
-        description
-      );
+        }
+
+        // 🆕 Record state AFTER updating subtitle
+        const historyStore = useHistoryStore.getState();
+        historyStore.record(
+          { 
+            project: {
+              subtitles: updatedSubtitles,
+              selectedSubtitleId: useSelectedSubtitleStore.getState().selectedSubtitleId
+            }
+          },
+          description
+        );
+      }
     }
   },
 

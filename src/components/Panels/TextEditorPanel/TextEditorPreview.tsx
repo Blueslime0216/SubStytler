@@ -13,6 +13,9 @@ interface TextEditorPreviewProps {
   outlineType: number;
   anchorPoint: number;
   printDirection: string;
+  isBold: boolean;
+  isItalic: boolean;
+  isUnderline: boolean;
 }
 
 const TextEditorPreview: React.FC<TextEditorPreviewProps> = ({
@@ -27,7 +30,10 @@ const TextEditorPreview: React.FC<TextEditorPreviewProps> = ({
   outlineColor,
   outlineType,
   anchorPoint,
-  printDirection
+  printDirection,
+  isBold,
+  isItalic,
+  isUnderline
 }) => {
   const getFontFamilyName = (value: string) => {
     switch (value) {
@@ -100,6 +106,9 @@ const TextEditorPreview: React.FC<TextEditorPreviewProps> = ({
               color: `${textColor}${Math.round(textOpacity * 255).toString(16).padStart(2, '0')}`,
               fontFamily: getFontFamilyName(fontFamily),
               fontSize,
+              fontWeight: isBold ? 'bold' : 'normal',
+              fontStyle: isItalic ? 'italic' : 'normal',
+              textDecoration: isUnderline ? 'underline' : 'none',
               textShadow: getOutlineStyleName(outlineType) !== 'None' 
                 ? outlineType === 1 ? `2px 2px 0 ${outlineColor}` 
                 : outlineType === 2 ? `1px 1px 0 ${outlineColor}, -1px -1px 0 ${outlineColor.replace('#', '#66')}` 
@@ -114,8 +123,9 @@ const TextEditorPreview: React.FC<TextEditorPreviewProps> = ({
               direction: printDirection === '31' ? 'rtl' : 'ltr',
               textAlign: textAlignment === 1 ? 'left' : textAlignment === 2 ? 'right' : 'center',
             }}
-            dangerouslySetInnerHTML={{ __html: selectedText || 'Preview text will appear here' }}
-          />
+          >
+            {selectedText || 'Preview text will appear here'}
+          </div>
         </div>
       </div>
       
@@ -126,7 +136,12 @@ const TextEditorPreview: React.FC<TextEditorPreviewProps> = ({
           <p className="mb-1"><strong>Size:</strong> {fontSize}</p>
           <p className="mb-1"><strong>Outline:</strong> {getOutlineStyleName(outlineType)}</p>
           <p className="mb-1"><strong>Anchor:</strong> {getAnchorPointName(anchorPoint)}</p>
-          <p><strong>Direction:</strong> {getPrintDirectionName(printDirection)}</p>
+          <p className="mb-1"><strong>Direction:</strong> {getPrintDirectionName(printDirection)}</p>
+          <p><strong>Styling:</strong> {[
+            isBold ? 'Bold' : null,
+            isItalic ? 'Italic' : null,
+            isUnderline ? 'Underline' : null
+          ].filter(Boolean).join(', ') || 'None'}</p>
         </div>
       </div>
     </>

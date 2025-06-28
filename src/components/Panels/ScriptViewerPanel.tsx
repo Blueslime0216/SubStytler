@@ -51,7 +51,10 @@ export const ScriptViewerPanel: React.FC = () => {
     if (subtitle) {
       const updatedSpans = [...subtitle.spans];
       if (updatedSpans[0]) {
-        updatedSpans[0].text = newText;
+        updatedSpans[0] = {
+          ...updatedSpans[0],
+          text: newText
+        };
       }
       updateSubtitle(subtitleId, { spans: updatedSpans });
       
@@ -164,6 +167,26 @@ export const ScriptViewerPanel: React.FC = () => {
     }
   };
 
+  const getStyledText = (subtitle: any) => {
+    const span = subtitle.spans[0] || { text: '' };
+    const text = span.text || '';
+    const isBold = span.isBold || false;
+    const isItalic = span.isItalic || false;
+    const isUnderline = span.isUnderline || false;
+    
+    return (
+      <span 
+        style={{
+          fontWeight: isBold ? 'bold' : 'normal',
+          fontStyle: isItalic ? 'italic' : 'normal',
+          textDecoration: isUnderline ? 'underline' : 'none'
+        }}
+      >
+        {text}
+      </span>
+    );
+  };
+
   return (
     <div className="neu-script-viewer-panel h-full flex flex-col">
       {/* Search Bar */}
@@ -228,6 +251,11 @@ export const ScriptViewerPanel: React.FC = () => {
                       onChange={(e) => handleTextEdit(subtitle.id, e.target.value)}
                       className="w-full neu-input text-xs resize-none"
                       rows={2}
+                      style={{
+                        fontWeight: subtitle.spans[0]?.isBold ? 'bold' : 'normal',
+                        fontStyle: subtitle.spans[0]?.isItalic ? 'italic' : 'normal',
+                        textDecoration: subtitle.spans[0]?.isUnderline ? 'underline' : 'none'
+                      }}
                     />
                   </div>
                   

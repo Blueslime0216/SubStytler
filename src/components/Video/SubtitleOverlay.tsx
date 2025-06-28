@@ -19,8 +19,12 @@ export const SubtitleOverlay: React.FC = () => {
     s => s.id === (currentSubtitle.spans[0]?.styleId || 'default')
   );
 
-  // Get text
-  const text = currentSubtitle.spans[0]?.text || '';
+  // Get text and styling properties
+  const span = currentSubtitle.spans[0] || { text: '' };
+  const text = span.text || '';
+  const isBold = span.isBold || false;
+  const isItalic = span.isItalic || false;
+  const isUnderline = span.isUnderline || false;
 
   // Calculate position based on anchor point
   const getPositionStyle = () => {
@@ -166,11 +170,15 @@ export const SubtitleOverlay: React.FC = () => {
               color: style?.fc ? `${style.fc}${Math.round(fontOpacity * 255).toString(16).padStart(2, '0')}` : '#FFFFFF',
               fontFamily,
               fontSize,
+              fontWeight: isBold ? 'bold' : 'normal',
+              fontStyle: isItalic ? 'italic' : 'normal',
+              textDecoration: isUnderline ? 'underline' : 'none',
               ...textOutlineStyle,
               ...verticalTextStyle
             }}
-            dangerouslySetInnerHTML={{ __html: text }}
-          />
+          >
+            {text}
+          </div>
         </motion.div>
       </AnimatePresence>
     </div>

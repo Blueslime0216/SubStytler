@@ -39,30 +39,32 @@ export const TextEditorPanel: React.FC = () => {
 
   useEffect(() => {
     if (currentSubtitle) {
-      const text = currentSubtitle.spans[0]?.text || '';
-      setSelectedText(text);
-      
-      // Detect formatting in the text
-      setIsBold(text.includes('<b>') && text.includes('</b>'));
-      setIsItalic(text.includes('<i>') && text.includes('</i>'));
-      setIsUnderline(text.includes('<u>') && text.includes('</u>'));
-      
-      const styleId = currentSubtitle.spans[0]?.styleId || 'default';
-      setSelectedStyleId(styleId);
-      
-      const style = currentProject?.styles.find(s => s.id === styleId);
-      if (style) {
-        setTextColor(style.fc || '#FFFFFF');
-        setTextOpacity(style.fo !== undefined ? style.fo : 1);
-        setBackgroundColor(style.bc || '#000000');
-        setBackgroundOpacity(style.bo !== undefined ? style.bo : 0.5);
-        setFontSize(style.sz || '100%');
-        setFontFamily(style.fs || '0');
-        setTextAlignment(style.ju || 3);
-        setOutlineColor(style.ec || '#000000');
-        setOutlineType(style.et || 0);
-        setAnchorPoint(style.ap || 4);
-        setPrintDirection(style.pd || '00');
+      const span = currentSubtitle.spans[0];
+      if (span) {
+        setSelectedText(span.text || '');
+        
+        // Get styling flags from span
+        setIsBold(span.isBold || false);
+        setIsItalic(span.isItalic || false);
+        setIsUnderline(span.isUnderline || false);
+        
+        const styleId = span.styleId || 'default';
+        setSelectedStyleId(styleId);
+        
+        const style = currentProject?.styles.find(s => s.id === styleId);
+        if (style) {
+          setTextColor(style.fc || '#FFFFFF');
+          setTextOpacity(style.fo !== undefined ? style.fo : 1);
+          setBackgroundColor(style.bc || '#000000');
+          setBackgroundOpacity(style.bo !== undefined ? style.bo : 0.5);
+          setFontSize(style.sz || '100%');
+          setFontFamily(style.fs || '0');
+          setTextAlignment(style.ju || 3);
+          setOutlineColor(style.ec || '#000000');
+          setOutlineType(style.et || 0);
+          setAnchorPoint(style.ap || 4);
+          setPrintDirection(style.pd || '00');
+        }
       }
     }
   }, [currentSubtitle, currentProject]);
@@ -89,7 +91,10 @@ export const TextEditorPanel: React.FC = () => {
     if (currentSubtitle) {
       const updatedSpans = [...currentSubtitle.spans];
       if (updatedSpans[0]) {
-        updatedSpans[0].text = text;
+        updatedSpans[0] = {
+          ...updatedSpans[0],
+          text
+        };
       }
       updateSubtitle(currentSubtitle.id, { spans: updatedSpans });
       
@@ -139,52 +144,52 @@ export const TextEditorPanel: React.FC = () => {
       );
     }
     
-    let newText = selectedText;
-    let styleState = false;
+    let newState = false;
     
     switch (style) {
       case 'bold':
-        styleState = !isBold;
-        setIsBold(styleState);
-        newText = styleState 
-          ? `<b>${selectedText}</b>` 
-          : selectedText.replace(/<b>(.*?)<\/b>/g, '$1');
+        newState = !isBold;
+        setIsBold(newState);
         break;
       case 'italic':
-        styleState = !isItalic;
-        setIsItalic(styleState);
-        newText = styleState 
-          ? `<i>${selectedText}</i>` 
-          : selectedText.replace(/<i>(.*?)<\/i>/g, '$1');
+        newState = !isItalic;
+        setIsItalic(newState);
         break;
       case 'underline':
-        styleState = !isUnderline;
-        setIsUnderline(styleState);
-        newText = styleState 
-          ? `<u>${selectedText}</u>` 
-          : selectedText.replace(/<u>(.*?)<\/u>/g, '$1');
+        newState = !isUnderline;
+        setIsUnderline(newState);
         break;
     }
     
-    handleTextChange(newText);
-    
-    // Record state after applying text style
-    if (currentProject) {
-      // Small delay to ensure the update has been applied
-      setTimeout(() => {
-        const { currentProject } = useProjectStore.getState();
-        if (currentProject) {
-          useHistoryStore.getState().record(
-            { 
-              project: {
-                subtitles: currentProject.subtitles,
-                selectedSubtitleId
-              }
-            },
-            styleState ? `Applied ${style} style to text` : `Removed ${style} style from text`
-          );
-        }
-      }, 0);
+    // Update the subtitle span with the new style flags
+    if (currentSubtitle) {
+      const updatedSpans = [...currentSubtitle.spans];
+      if (updatedSpans[0]) {
+        updatedSpans[0] = {
+          ...updatedSpans[0],
+          [style === 'bold' ? 'isBold' : style === 'italic' ? 'isItalic' : 'isUnderline']: newState
+        };
+      }
+      updateSubtitle(currentSubtitle.id, { spans: updatedSpans });
+      
+      // Record state after applying text style
+      if (currentProject) {
+        // Small delay to ensure the update has been applied
+        setTimeout(() => {
+          const { currentProject } = useProjectStore.getState();
+          if (currentProject) {
+            useHistoryStore.getState().record(
+              { 
+                project: {
+                  subtitles: currentProject.subtitles,
+                  selectedSubtitleId
+                }
+              },
+              newState ? `Applied ${style} style to text` : `Removed ${style} style from text`
+            );
+          }
+        }, 0);
+      }
     }
   };
 
@@ -274,6 +279,9 @@ export const TextEditorPanel: React.FC = () => {
         outlineType={outlineType}
         anchorPoint={anchorPoint}
         printDirection={printDirection}
+        isBold={isBold}
+        isItalic={isItalic}
+        isUnderline={isUnderline}
       />
     </div>
   );

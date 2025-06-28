@@ -4,6 +4,9 @@ export interface SubtitleSpan {
   startTime: number;
   endTime: number;
   styleId?: string;
+  isBold?: boolean;
+  isItalic?: boolean;
+  isUnderline?: boolean;
   animations?: Animation[];
 }
 

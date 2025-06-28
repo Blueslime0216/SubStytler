@@ -73,6 +73,12 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 
   const dragThreshold = 4; // px
 
+  // Get the first span for display
+  const span = subtitle.spans[0] || { text: '' };
+  const isBold = span.isBold || false;
+  const isItalic = span.isItalic || false;
+  const isUnderline = span.isUnderline || false;
+
   // 🆕 Record initial state before drag or resize
   const recordInitialState = useCallback(() => {
     // Only record if we haven't already for this operation
@@ -499,8 +505,15 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
           />
         )}
       </AnimatePresence>
-      <div className="text-sm text-white font-semibold truncate">
-        {subtitle.spans[0]?.text || 'Empty subtitle'}
+      <div 
+        className="text-sm text-white font-semibold truncate"
+        style={{
+          fontWeight: isBold ? 'bold' : 'normal',
+          fontStyle: isItalic ? 'italic' : 'normal',
+          textDecoration: isUnderline ? 'underline' : 'none'
+        }}
+      >
+        {span.text || 'Empty subtitle'}
       </div>
       
       {/* Visual indicator when dragging */}
