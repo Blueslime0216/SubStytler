@@ -539,6 +539,23 @@
   border-color: var(--dark-color);
 }
 
+.neu-subtitle-handle:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.neu-subtitle-highlight-pulse {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 10px;
+  background: var(--highlight-color);
+  pointer-events: none;
+  z-index: -1;
+  box-shadow: 0 0 10px 2px var(--highlight-color);
+}
+
 .neu-subtitle-block[style*="outline"] {
   box-shadow: var(--shadow-outset-hover);
 }
@@ -1104,8 +1121,4 @@
 
 .neu-subtitle-block:hover .neu-subtitle-handle {
   background: rgba(255, 255, 255, 0.08);
-}
-
-.neu-subtitle-handle:hover {
-  background: rgba(255, 255, 255, 0.18);
 }

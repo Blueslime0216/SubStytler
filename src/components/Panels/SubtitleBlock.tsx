@@ -1,8 +1,9 @@
 import React, { useRef, useCallback, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
 import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
+import { useSubtitleHighlightStore } from '../../stores/subtitleHighlightStore';
 import { SubtitleBlock as SubtitleBlockType } from '../../types/project';
 
 interface SubtitleBlockProps {
@@ -30,6 +31,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [mouseDown, setMouseDown] = useState(false);
+  const [isDropInvalid, setIsDropInvalid] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
   const dragStartData = useRef<{
@@ -43,8 +45,10 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   const { updateSubtitle } = useProjectStore();
   const { snapToFrame, duration } = useTimelineStore();
   const { selectedSubtitleId, setSelectedSubtitleId } = useSelectedSubtitleStore();
+  const { highlightedIds, setHighlightedIds } = useSubtitleHighlightStore();
   const [resizeSide, setResizeSide] = useState<'left' | 'right' | null>(null);
   const resizeStartData = useRef<{ startX: number; startTime: number; endTime: number } | null>(null);
+  const prevOverlapRef = useRef<string[]>([]);
   
   const left = timeToPixel(subtitle.startTime);
   const width = timeToPixel(subtitle.endTime) - left;
@@ -59,11 +63,12 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 
   // Selected state
   const isSelected = selectedSubtitleId === subtitle.id;
+  const isHighlighted = highlightedIds.has(subtitle.id);
 
   const dragThreshold = 4; // px
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (isLocked) return;
+    if (isLocked || e.button !== 0) return;
     
     e.preventDefault();
     e.stopPropagation();
@@ -124,7 +129,40 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     const snappedY = offsetTrack * trackHeight;
 
     setDragOffset({ x: deltaX, y: snappedY });
-  }, [mouseDown, isDragging, dragStartPos, trackHeight, trackIndex, subtitle.id, subtitle.trackId, onDragStart]);
+
+    // --- Overlap Detection ---
+    const { viewStart, viewEnd, snapToFrame } = useTimelineStore.getState();
+    const containerWidth = containerRect.width;
+    const viewDuration = viewEnd - viewStart;
+    const timePerPixel = viewDuration / containerWidth;
+    const timeDelta = deltaX * timePerPixel;
+
+    let tempStartTime = snapToFrame(dragStartData.current.startTime + timeDelta);
+    tempStartTime = Math.max(0, Math.min(duration - subtitleDuration, tempStartTime));
+    const tempEndTime = tempStartTime + subtitleDuration;
+    
+    const targetTrack = currentProject?.tracks[targetTrackIndex];
+    let isInvalid = false;
+    const overlappingIds: string[] = [];
+
+    if (targetTrack && !targetTrack.locked) {
+      const otherSubtitles = currentProject.subtitles.filter(
+        s => s.trackId === targetTrack.id && s.id !== subtitle.id
+      );
+      for (const other of otherSubtitles) {
+        if (tempStartTime < other.endTime && tempEndTime > other.startTime) {
+          isInvalid = true;
+          overlappingIds.push(other.id);
+        }
+      }
+    } else if (targetTrack?.locked) {
+      isInvalid = true; // Cannot drop on locked track
+    }
+    setIsDropInvalid(isInvalid);
+
+    setHighlightedIds(overlappingIds);
+
+  }, [mouseDown, isDragging, dragStartPos, trackHeight, trackIndex, subtitle.id, subtitle.trackId, onDragStart, duration, subtitleDuration, setHighlightedIds]);
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
     if (!mouseDown) return;
@@ -169,25 +207,46 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     const targetTrackIndex = Math.floor(relativeY / trackHeight);
     const targetTrack = tracks[targetTrackIndex];
     
-    const updates: any = { 
-      startTime: newStartTime, 
-      endTime: newEndTime 
-    };
-    
-    // Update track if valid and different
-    if (targetTrack && targetTrack.id !== originalTrackId && !targetTrack.locked) {
-      updates.trackId = targetTrack.id;
+    // --- Final Overlap Check on Drop ---
+    let isInvalidOnDrop = false;
+    if (targetTrack && !targetTrack.locked) {
+      const otherSubtitles = currentProject.subtitles.filter(
+        s => s.trackId === targetTrack.id && s.id !== subtitle.id
+      );
+      for (const other of otherSubtitles) {
+        if (newStartTime < other.endTime && newEndTime > other.startTime) {
+          isInvalidOnDrop = true;
+          break;
+        }
+      }
+    } else {
+      isInvalidOnDrop = true; // Drop on locked track or outside any track is invalid
     }
-    
-    updateSubtitle(subtitle.id, updates);
-    
+
+    if (!isInvalidOnDrop) {
+      const updates: any = { 
+        startTime: newStartTime, 
+        endTime: newEndTime 
+      };
+
+      // Update track if valid and different
+      if (targetTrack && targetTrack.id !== originalTrackId && !targetTrack.locked) {
+        updates.trackId = targetTrack.id;
+      }
+
+      updateSubtitle(subtitle.id, updates);
+    }
+    // If drop is invalid, do nothing. The state reset below will cause a snap-back.
+
     // Reset drag state
     setIsDragging(false);
     setDragOffset({ x: 0, y: 0 });
     dragStartData.current = null;
     setMouseDown(false);
     onDragEnd();
-  }, [mouseDown, isDragging, dragStartPos, containerRef, updateSubtitle, onDragEnd, subtitleDuration, trackHeight, snapToFrame, duration, subtitle.id]);
+    setIsDropInvalid(false);
+    setHighlightedIds([]);
+  }, [mouseDown, isDragging, dragStartPos, containerRef, updateSubtitle, onDragEnd, subtitleDuration, trackHeight, snapToFrame, duration, subtitle.id, setHighlightedIds]);
 
   // Click to select (only when not dragging)
   const handleClick = useCallback(() => {
@@ -200,7 +259,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   ------------------------------------------------------------------ */
 
   const startResize = (e: React.MouseEvent, side: 'left' | 'right') => {
-    if (isLocked) return;
+    if (isLocked || e.button !== 0) return;
     e.preventDefault();
     e.stopPropagation();
     setResizeSide(side);
@@ -280,15 +339,14 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       className="neu-subtitle-block absolute cursor-move"
       style={{
         left: left + (isDragging ? dragOffset.x : 0),
-        width: Math.max(0, width),
+        width: Math.max(32, width),
         top: `${7 + (isDragging ? dragOffset.y : 0)}px`,
         height: '36px',
         opacity: isLocked ? 0.7 : 1,
         zIndex: isDragging ? 1000 : 10,
-        transform: isDragging ? 'scale(1.05)' : 'scale(1)',
-        transition: isDragging ? 'none' : 'all 0.2s ease',
         pointerEvents: isDragging ? 'none' : 'auto',
         outline: isSelected ? '2px solid var(--highlight-color)' : 'none',
+        backgroundColor: isDragging && isDropInvalid ? 'var(--error-color)' : 'var(--mid-color)',
       }}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
@@ -296,12 +354,26 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       tabIndex={0}
       animate={{
         scale: isDragging ? 1.05 : 1,
-        boxShadow: isDragging 
-          ? '0 8px 25px rgba(0,0,0,0.3), 0 0 20px rgba(99, 179, 237, 0.5)'
-          : 'var(--neu-shadow-2), 0 0 8px rgba(99, 179, 237, 0.3)'
+        boxShadow: isDragging ? "0 8px 25px rgba(0,0,0,0.3)" : "var(--shadow-outset-subtle)",
       }}
-      transition={{ duration: 0.1 }}
+      transition={{ duration: 0.2 }}
     >
+      <AnimatePresence>
+        {isHighlighted && (
+          <motion.div
+            className="neu-subtitle-highlight-pulse"
+            initial={{ scale: 1, opacity: 0 }}
+            animate={{ scale: 1.15, opacity: 0.6 }}
+            exit={{ scale: 1, opacity: 0, transition: { duration: 0.05 } }}
+            transition={{
+              duration: 0.4,
+              repeat: Infinity,
+              repeatType: 'reverse',
+              ease: 'easeInOut',
+            }}
+          />
+        )}
+      </AnimatePresence>
       <div className="text-sm text-white font-semibold truncate">
         {subtitle.spans[0]?.text || 'Empty subtitle'}
       </div>

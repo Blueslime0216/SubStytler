@@ -8,6 +8,7 @@ import TracksContainer from './TracksContainer';
 import { SubtitleTrack } from '../../types/project';
 import { useSelectedTrackStore } from '../../stores/selectedTrackStore';
 import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
+import { useSubtitleHighlightStore } from '../../stores/subtitleHighlightStore';
 
 export const SubtitleTimelinePanel: React.FC = () => {
   const interactionRef = useRef<HTMLDivElement>(null);
@@ -24,6 +25,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
   const { currentProject, addSubtitle, addTrack, deleteSubtitle } = useProjectStore();
   const { selectedTrackId, setSelectedTrackId } = useSelectedTrackStore();
   const { selectedSubtitleId, setSelectedSubtitleId } = useSelectedSubtitleStore();
+  const { flashIds } = useSubtitleHighlightStore();
 
   // Local state for this panel instance
   const [localZoom, setLocalZoom] = useState(globalZoom);
@@ -79,6 +81,23 @@ export const SubtitleTimelinePanel: React.FC = () => {
         // Add to project store directly (simpler than creating action) – fallback
         currentProject.tracks.push(defaultTrack);
         targetTrackId = newTrackId;
+      }
+
+      // 1) Check overlap on target track at currentTime
+      const newStartTime = currentTime;
+      const newEndTime = currentTime + 2000; // Default duration is 2s
+
+      const overlapping = currentProject.subtitles.find(
+        (sub) =>
+          sub.trackId === targetTrackId && // Same track
+          newStartTime < sub.endTime &&   // New sub starts before other ends
+          newEndTime > sub.startTime      // New sub ends after other starts
+      );
+
+      if (overlapping) {
+        // Flash highlight and select the subtitle
+        flashIds([overlapping.id], 600);
+        return; // do not add new subtitle
       }
 
       const newSubtitle = {
