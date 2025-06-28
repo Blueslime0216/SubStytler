@@ -146,16 +146,14 @@
 }
 
 .neu-track-header-redesigned.active .track-control-btn {
-  background: var(--mid-color);
   color: var(--text-primary);
-  border-color: var(--highlight-color);
-  box-shadow: var(--shadow-outset-subtle);
+  box-shadow: var(--shadow-outset);
+  scale: 1.05;
 }
 
 .neu-track-header-redesigned.active .track-control-btn:hover {
-  background: var(--dark-color);
+  background: var(--mid-color);
   color: var(--primary-color);
-  box-shadow: var(--shadow-outset-hover);
   filter: brightness(1.1);
 }
 
@@ -277,15 +275,11 @@
 }
 
 .track-control-btn:hover {
-  color: var(--primary-color);
-  box-shadow: var(--shadow-outset-hover);
-  border-color: var(--primary-color);
   filter: brightness(1.05);
-  transform: translateY(-1px);
 }
 
-.track-control-btn:hover::before {
-  opacity: 1;
+.track-control-btn:hover .track-icon {
+  transform: scale(1.1);
 }
 
 .track-control-btn:active {
@@ -296,7 +290,6 @@
 /* Specific Control Button States */
 .track-control-btn.visibility.active {
   color: var(--primary-color);
-  border-color: var(--primary-color);
   box-shadow: var(--shadow-inset);
   background: var(--base-color);
 }
@@ -310,13 +303,11 @@
 
 .track-control-btn.delete {
   color: var(--error-color);
-  border-color: rgba(239, 111, 108, 0.3);
 }
 
 .track-control-btn.delete:hover {
   color: var(--error-color);
   border-color: var(--error-color);
-  box-shadow: var(--shadow-outset-hover);
   filter: brightness(1.1);
 }
 
@@ -325,15 +316,14 @@
   cursor: not-allowed;
   color: var(--text-muted);
   border-color: var(--text-muted);
-  box-shadow: var(--shadow-outset-subtle);
+  box-shadow: var(--shadow-inset);
 }
 
 .track-control-btn.delete.disabled:hover {
   transform: none;
   filter: none;
-  box-shadow: var(--shadow-outset-subtle);
   border-color: var(--text-muted);
-  color: var(--text-muted);
+  box-shadow: var(--shadow-inset);
 }
 
 /* Enhanced Track Icons */
@@ -348,7 +338,6 @@
 
 .track-control-btn:hover .track-icon {
   transform: scale(1.1);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .track-control-btn:active .track-icon {
