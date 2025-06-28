@@ -294,6 +294,8 @@ export const VideoPreviewPanel: React.FC = () => {
             hasVideo={hasVideo}
             videoUrl={videoUrl}
           />
+          
+          {/* Subtitles and controller are now both inside the clipping container */}
           {hasVideo && (
             <VideoPreviewController
               isVideoLoaded={isVideoLoaded}
@@ -305,17 +307,19 @@ export const VideoPreviewPanel: React.FC = () => {
               parentRef={videoAreaRef}
             />
           )}
+          
+          {/* Video overlays including subtitles - now inside the clipping container */}
+          <VideoPreviewOverlays
+            isLoading={uploadState.isUploading}
+            uploadProgress={uploadState.uploadProgress}
+            hasVideo={hasVideo}
+            videoError={videoError}
+            onRetry={handleRetry}
+            onUpload={handleManualFileSelect}
+            isDragActive={isDragActive}
+            isVideoLoaded={isVideoLoaded}
+          />
         </div>
-        <VideoPreviewOverlays
-          isLoading={uploadState.isUploading}
-          uploadProgress={uploadState.uploadProgress}
-          hasVideo={hasVideo}
-          videoError={videoError}
-          onRetry={handleRetry}
-          onUpload={handleManualFileSelect}
-          isDragActive={isDragActive}
-          isVideoLoaded={isVideoLoaded}
-        />
       </div>
 
       {/* Large Video Warning Modal */}
