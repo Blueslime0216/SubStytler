@@ -232,6 +232,18 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
       {/* Resize handle */}
       <div className="neu-track-resize-handle" onMouseDown={handleResizeMouseDown} />
 
+      {/* 🎯 Playhead moved here to be on top of the resize handle */}
+      <div
+        className="neu-playhead pointer-events-none"
+        style={{
+          left: `calc(${sidebarWidth}px + ${timeToPixel(currentTime)}px)`, // Offset by sidebar width
+          zIndex: 90,
+        }}
+      >
+        <div className="neu-playhead-line" />
+        <div className="neu-playhead-head" />
+      </div>
+
       {/* Right side: Ruler + tracks content */}
       <div 
         className="neu-tracks-content flex-1 flex flex-col relative"
@@ -253,15 +265,6 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
           fps={fps}
           timeToPixel={timeToPixel}
           containerWidth={containerRef.current?.clientWidth || 0}
-        />
-
-        {/* 🎯 FIXED: Playhead positioned in content area with correct z-index */}
-        <div
-          className="neu-playhead"
-          style={{
-            left: timeToPixel(currentTime),
-            zIndex: 25, // 🔧 LOWER than track header (100) but higher than content (10)
-          }}
         />
 
         {tracks.map((track, trackIndex) => (
