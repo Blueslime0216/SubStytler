@@ -1,0 +1,165 @@
+/* src/styles/components/text-editor.css */
+
+.text-editor-panel {
+  background-color: var(--surface-color-translucent);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  border-left: 1px solid var(--border-color-light);
+}
+
+.text-editor-label {
+  display: block;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.text-editor-textarea {
+  width: 100%;
+  height: 96px; /* h-24 */
+  background-color: var(--base-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.875rem; /* text-sm, not text-xs */
+  padding: 8px;
+  resize: none;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-inset-subtle);
+}
+
+.text-editor-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color-light);
+  box-shadow: 0 0 0 2px var(--primary-color-translucent);
+  background-color: var(--surface-color);
+}
+
+.text-editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* space-x-2 */
+}
+
+.text-editor-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: var(--shadow-outset-subtle);
+}
+
+.text-editor-toolbar-btn:hover {
+  background-color: var(--base-color);
+  color: var(--text-primary);
+  border-color: var(--border-color-light);
+  transform: translateY(-1px);
+}
+
+.text-editor-toolbar-btn:active {
+  background-color: var(--base-color);
+  transform: translateY(0);
+  box-shadow: var(--shadow-inset);
+}
+
+.text-editor-toolbar-btn.active {
+  background-color: var(--primary-color-translucent);
+  color: var(--primary-color-light);
+  border-color: var(--primary-color);
+}
+
+/* Controls for color and font size */
+.text-editor-control-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.text-editor-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.text-editor-color-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.text-editor-color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background-color: transparent;
+    cursor: pointer;
+    box-shadow: var(--shadow-inset-subtle);
+}
+
+.text-editor-input {
+  flex: 1;
+  background-color: var(--base-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  padding: 6px 8px;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.text-editor-input:focus {
+  outline: none;
+  border-color: var(--primary-color-light);
+  box-shadow: 0 0 0 2px var(--primary-color-translucent);
+}
+
+.text-editor-select {
+  width: 100%;
+  background-color: var(--base-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  padding: 6px 8px;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 8 4 4 4-4"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+}
+
+.text-editor-select:focus {
+  outline: none;
+  border-color: var(--primary-color-light);
+  box-shadow: 0 0 0 2px var(--primary-color-translucent);
+}
+
+.text-editor-divider {
+  border-top: 1px solid var(--border-color);
+  margin-top: 8px;
+  padding-top: 12px;
+}
+
+.text-editor-preview {
+  background-color: var(--base-color);
+  border-radius: 6px;
+  padding: 12px;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-inset);
+} 

@@ -31,6 +31,7 @@
 @import './styles/toast.css';
 @import './styles/components/panel-selector.css';
 @import './styles/components/history.css';
+@import './styles/components/text-editor.css';
 
 /* Tailwind */
 @tailwind base;

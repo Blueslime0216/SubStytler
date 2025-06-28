@@ -59,7 +59,7 @@ export const TextEditorPanel: React.FC = () => {
 
   if (!currentSubtitle) {
     return (
-      <div className="neu-text-editor-panel h-full flex items-center justify-center neu-text-secondary">
+      <div className="text-editor-panel items-center justify-center text-secondary">
         <div className="text-center">
           <Type className="w-10 h-10 mx-auto mb-3 opacity-50" />
           <p className="text-sm">Select a subtitle to edit</p>
@@ -69,50 +69,50 @@ export const TextEditorPanel: React.FC = () => {
   }
 
   return (
-    <div className="neu-text-editor-panel h-full flex flex-col p-3 space-y-3">
+    <div className="text-editor-panel">
       {/* Text Editor */}
-      <div className="flex-1">
-        <label className="block text-xs font-medium neu-text-primary mb-2">
+      <div>
+        <label className="text-editor-label">
           Subtitle Text
         </label>
         <textarea
           value={selectedText}
           onChange={(e) => handleTextChange(e.target.value)}
-          className="w-full h-24 neu-input text-xs resize-none"
+          className="text-editor-textarea"
           placeholder="Enter subtitle text..."
         />
       </div>
       
       {/* Text Formatting */}
       <div className="space-y-3">
-        <div className="flex items-center space-x-2">
+        <div className="text-editor-toolbar">
           <motion.button
             onClick={() => applyTextStyle('bold')}
-            className="neu-btn-icon p-2"
+            className="text-editor-toolbar-btn"
           >
             <Bold className="w-3.5 h-3.5" />
           </motion.button>
           
           <motion.button
             onClick={() => applyTextStyle('italic')}
-            className="neu-btn-icon p-2"
+            className="text-editor-toolbar-btn"
           >
             <Italic className="w-3.5 h-3.5" />
           </motion.button>
           
           <motion.button
             onClick={() => applyTextStyle('underline')}
-            className="neu-btn-icon p-2"
+            className="text-editor-toolbar-btn"
           >
             <Underline className="w-3.5 h-3.5" />
           </motion.button>
         </div>
         
         {/* Color Controls */}
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs neu-text-secondary mb-1">Text Color</label>
-            <div className="flex items-center space-x-2">
+        <div className="text-editor-control-group">
+          <div className="text-editor-control">
+            <label className="text-editor-label">Text Color</label>
+            <div className="text-editor-color-input-wrapper">
               <input
                 type="color"
                 value={textColor}
@@ -120,7 +120,7 @@ export const TextEditorPanel: React.FC = () => {
                   setTextColor(e.target.value);
                   handleStyleChange('fc', e.target.value);
                 }}
-                className="w-6 h-6 rounded neu-shadow-inset border-none"
+                className="text-editor-color-swatch"
               />
               <input
                 type="text"
@@ -129,14 +129,14 @@ export const TextEditorPanel: React.FC = () => {
                   setTextColor(e.target.value);
                   handleStyleChange('fc', e.target.value);
                 }}
-                className="flex-1 neu-input text-xs"
+                className="text-editor-input"
               />
             </div>
           </div>
           
-          <div>
-            <label className="block text-xs neu-text-secondary mb-1">Background</label>
-            <div className="flex items-center space-x-2">
+          <div className="text-editor-control">
+            <label className="text-editor-label">Background</label>
+            <div className="text-editor-color-input-wrapper">
               <input
                 type="color"
                 value={backgroundColor}
@@ -144,7 +144,7 @@ export const TextEditorPanel: React.FC = () => {
                   setBackgroundColor(e.target.value);
                   handleStyleChange('bc', e.target.value);
                 }}
-                className="w-6 h-6 rounded neu-shadow-inset border-none"
+                className="text-editor-color-swatch"
               />
               <input
                 type="text"
@@ -153,22 +153,22 @@ export const TextEditorPanel: React.FC = () => {
                   setBackgroundColor(e.target.value);
                   handleStyleChange('bc', e.target.value);
                 }}
-                className="flex-1 neu-input text-xs"
+                className="text-editor-input"
               />
             </div>
           </div>
         </div>
         
         {/* Font Size */}
-        <div>
-          <label className="block text-xs neu-text-secondary mb-1">Font Size</label>
+        <div className="text-editor-control">
+          <label className="text-editor-label">Font Size</label>
           <select
             value={fontSize}
             onChange={(e) => {
               setFontSize(e.target.value);
               handleStyleChange('sz', e.target.value);
             }}
-            className="w-full neu-select text-xs"
+            className="text-editor-select"
           >
             <option value="50%">Small (50%)</option>
             <option value="75%">Medium (75%)</option>
@@ -181,10 +181,10 @@ export const TextEditorPanel: React.FC = () => {
       </div>
       
       {/* Preview */}
-      <div className="border-t border-neu-dark pt-3">
-        <label className="block text-xs neu-text-secondary mb-2">Preview</label>
+      <div className="text-editor-divider">
+        <label className="text-editor-label">Preview</label>
         <div 
-          className="neu-card p-3 min-h-[50px] flex items-center justify-center"
+          className="text-editor-preview"
           style={{ 
             backgroundColor: backgroundColor + '80',
             color: textColor,
