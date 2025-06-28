@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PanelType } from '../../types/project';
-import { PanelTypeSelector } from './PanelTypeSelector';
+import { PanelCarousel } from './PanelCarousel';
 import { panelConfig } from '../../config/panelConfig';
 import type { BorderDir } from './hooks/areaDragUtils';
 import { SplitSquareHorizontal, SplitSquareVertical, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ChevronDown } from 'lucide-react';
@@ -36,35 +36,70 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
 
   const [showSplitOptions, setShowSplitOptions] = useState(false);
   const [showCoverOptions, setShowCoverOptions] = useState(false);
+  const [showPanelCarousel, setShowPanelCarousel] = useState(false);
 
   const handleSplitButtonClick = () => {
     setShowSplitOptions(!showSplitOptions);
     setShowCoverOptions(false);
+    setShowPanelCarousel(false);
   };
 
   const handleCoverButtonClick = () => {
     setShowCoverOptions(!showCoverOptions);
     setShowSplitOptions(false);
+    setShowPanelCarousel(false);
+  };
+
+  const handlePanelTypeClick = () => {
+    setShowPanelCarousel(!showPanelCarousel);
+    setShowSplitOptions(false);
+    setShowCoverOptions(false);
+  };
+
+  const handlePanelTypeChange = (newType: PanelType) => {
+    onTypeChange(newType);
+    setShowPanelCarousel(false);
   };
 
   return (
     <div className="panel-header">
       <div className="flex items-center space-x-4 flex-1 min-w-0">
-        {/* 패널 타입 선택기 */}
-        <PanelTypeSelector
-          currentType={type}
-          onTypeChange={onTypeChange}
-          className="flex-shrink-0"
-        />
+        {/* 패널 타입 선택기 - 새로운 캐러셀 버튼 */}
+        <div className="relative">
+          <motion.button
+            ref={titleButtonRef}
+            onClick={handlePanelTypeClick}
+            className="flex items-center gap-3 px-4 py-2 bg-surface border border-border-color rounded-lg shadow-outset-subtle hover:shadow-outset transition-all duration-200"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <config.icon className="w-5 h-5 text-primary" />
+            <div className="text-left">
+              <div className="font-medium text-text-primary text-sm">{config.title}</div>
+              <div className="text-xs text-text-secondary">{config.description}</div>
+            </div>
+            <ChevronDown className={`w-4 h-4 text-text-secondary transition-transform ${showPanelCarousel ? 'rotate-180' : ''}`} />
+          </motion.button>
 
-        {/* 패널 정보 */}
-        <div className="text-left min-w-0 flex-1">
-          <div className="panel-title truncate">
-            {config.title}
-          </div>
-          <div className="panel-subtitle truncate">
-            {config.description}
-          </div>
+          {/* 패널 캐러셀 팝업 */}
+          <AnimatePresence>
+            {showPanelCarousel && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-full left-0 mt-2 z-50"
+                style={{ minWidth: '400px' }}
+                onMouseLeave={() => setShowPanelCarousel(false)}
+              >
+                <PanelCarousel
+                  currentType={type}
+                  onTypeChange={handlePanelTypeChange}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
