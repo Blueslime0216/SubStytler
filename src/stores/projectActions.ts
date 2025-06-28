@@ -18,7 +18,23 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
         },
       ],
       subtitles: [],
-      styles: [],
+      styles: [
+        {
+          id: 'default',
+          name: 'Default',
+          fc: '#FFFFFF',
+          fo: 1,
+          bc: '#000000',
+          bo: 0.5,
+          fs: '0',
+          sz: '100%',
+          ju: 3,
+          ap: 4,
+          pd: '00',
+          et: 0,
+          ec: '#000000'
+        }
+      ],
       timeline: {
         currentTime: 0,
         zoom: 1,
@@ -42,6 +58,25 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
   },
 
   loadProject: (project: Project) => {
+    // Ensure default style exists
+    if (!project.styles.find(s => s.id === 'default')) {
+      project.styles.push({
+        id: 'default',
+        name: 'Default',
+        fc: '#FFFFFF',
+        fo: 1,
+        bc: '#000000',
+        bo: 0.5,
+        fs: '0',
+        sz: '100%',
+        ju: 3,
+        ap: 4,
+        pd: '00',
+        et: 0,
+        ec: '#000000'
+      });
+    }
+    
     set({ currentProject: project, isModified: false });
     
     // 🔧 Record loaded project state as initial undo point
@@ -93,7 +128,23 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
           },
         ],
         subtitles: [],
-        styles: [],
+        styles: [
+          {
+            id: 'default',
+            name: 'Default',
+            fc: '#FFFFFF',
+            fo: 1,
+            bc: '#000000',
+            bo: 0.5,
+            fs: '0',
+            sz: '100%',
+            ju: 3,
+            ap: 4,
+            pd: '00',
+            et: 0,
+            ec: '#000000'
+          }
+        ],
         timeline: {
           currentTime: 0,
           zoom: 1,
@@ -120,8 +171,17 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
   addSubtitle: (subtitle: SubtitleBlock) => {
     const { currentProject } = get();
     if (currentProject) {
+      // Ensure the subtitle has a styleId (default if not specified)
+      const updatedSubtitle = {
+        ...subtitle,
+        spans: subtitle.spans.map(span => ({
+          ...span,
+          styleId: span.styleId || 'default'
+        }))
+      };
+      
       set({
-        currentProject: { ...currentProject, subtitles: [...currentProject.subtitles, subtitle] },
+        currentProject: { ...currentProject, subtitles: [...currentProject.subtitles, updatedSubtitle] },
         isModified: true,
       });
     }
@@ -184,10 +244,24 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
   deleteStyle: (id: string) => {
     const { currentProject } = get();
     if (currentProject) {
+      // Update any subtitles using this style to use the default style
+      const updatedSubtitles = currentProject.subtitles.map((sub: SubtitleBlock) => {
+        const needsUpdate = sub.spans.some(span => span.styleId === id);
+        if (!needsUpdate) return sub;
+        
+        return {
+          ...sub,
+          spans: sub.spans.map(span => 
+            span.styleId === id ? { ...span, styleId: 'default' } : span
+          )
+        };
+      });
+      
       set({
         currentProject: {
           ...currentProject,
           styles: currentProject.styles.filter((s: SubtitleStyle) => s.id !== id),
+          subtitles: updatedSubtitles
         },
         isModified: true,
       });

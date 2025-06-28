@@ -19,36 +19,176 @@ export const SubtitleOverlay: React.FC = () => {
     s => s.id === (currentSubtitle.spans[0]?.styleId || 'default')
   );
 
+  // Parse text for style tags
+  const text = currentSubtitle.spans[0]?.text || '';
+  
+  // Apply text styles (bold, italic, underline)
+  const renderStyledText = (text: string) => {
+    // Simple parsing for style tags - in a real app, you'd want a more robust parser
+    let styledText = text;
+    
+    // Apply bold
+    styledText = styledText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+    
+    // Apply italic
+    styledText = styledText.replace(/\*(.*?)\*/g, '<i>$1</i>');
+    
+    // Apply underline
+    styledText = styledText.replace(/__(.*?)__/g, '<u>$1</u>');
+    
+    return <span dangerouslySetInnerHTML={{ __html: styledText }} />;
+  };
+
+  // Calculate position based on anchor point
+  const getPositionStyle = () => {
+    const ap = style?.ap || 4; // Default to center (4)
+    
+    // Horizontal alignment
+    let alignX = 'center';
+    if (ap === 0 || ap === 3 || ap === 6) alignX = 'flex-start'; // Left
+    if (ap === 2 || ap === 5 || ap === 8) alignX = 'flex-end'; // Right
+    
+    // Vertical alignment
+    let alignY = 'center';
+    if (ap === 0 || ap === 1 || ap === 2) alignY = 'flex-start'; // Top
+    if (ap === 6 || ap === 7 || ap === 8) alignY = 'flex-end'; // Bottom
+    
+    // Text alignment
+    let textAlign = 'center';
+    const ju = style?.ju || 3; // Default to center (3)
+    if (ju === 1) textAlign = 'left';
+    if (ju === 2) textAlign = 'right';
+    
+    return {
+      justifyContent: alignX,
+      alignItems: alignY,
+      textAlign
+    };
+  };
+
+  // Get font family
+  const getFontFamily = () => {
+    const fs = style?.fs || '0';
+    
+    switch (fs) {
+      case '1': return 'Courier New, monospace';
+      case '2': return 'Times New Roman, serif';
+      case '3': return 'Lucida Console, monospace';
+      case '4': return 'Roboto, sans-serif';
+      case '5': return 'Comic Sans MS, cursive';
+      case '6': return 'Monotype Corsiva, cursive';
+      case '7': return 'Arial, sans-serif';
+      default: return 'Roboto, sans-serif';
+    }
+  };
+
+  // Get text outline style
+  const getTextOutlineStyle = () => {
+    const et = style?.et;
+    const ec = style?.ec || '#000000';
+    
+    if (!et) return {};
+    
+    switch (et) {
+      case 1: // Hard shadow
+        return { textShadow: `2px 2px 0 ${ec}` };
+      case 2: // Bevel
+        return { textShadow: `1px 1px 0 ${ec}, -1px -1px 0 ${ec.replace('#', '#66')}` };
+      case 3: // Glow/Outline
+        return { textShadow: `0 0 3px ${ec}, 0 0 3px ${ec}, 0 0 3px ${ec}, 0 0 3px ${ec}` };
+      case 4: // Soft shadow
+        return { textShadow: `2px 2px 4px ${ec}` };
+      default:
+        return {};
+    }
+  };
+
+  // Get vertical text orientation
+  const getVerticalTextStyle = () => {
+    const pd = style?.pd || '00'; // Default horizontal LTR
+    
+    switch (pd) {
+      case '20': // Vertical RTL
+        return { 
+          writingMode: 'vertical-rl',
+          textOrientation: 'upright'
+        };
+      case '21': // Vertical LTR
+        return { 
+          writingMode: 'vertical-lr',
+          textOrientation: 'upright'
+        };
+      case '30': // Rotated 90° CCW, LTR
+        return { 
+          transform: 'rotate(-90deg)',
+          writingMode: 'horizontal-tb'
+        };
+      case '31': // Rotated 90° CCW, RTL
+        return { 
+          transform: 'rotate(-90deg)',
+          writingMode: 'horizontal-tb',
+          direction: 'rtl'
+        };
+      default: // Horizontal LTR
+        return { 
+          writingMode: 'horizontal-tb'
+        };
+    }
+  };
+
+  // Calculate font size
+  const getFontSize = () => {
+    const sz = style?.sz || '100%';
+    return sz;
+  };
+
+  // Calculate opacity values
+  const getOpacities = () => {
+    const fontOpacity = style?.fo !== undefined ? style.fo : 1;
+    const bgOpacity = style?.bo !== undefined ? style.bo : 0.5;
+    
+    return { fontOpacity, bgOpacity };
+  };
+
+  const positionStyle = getPositionStyle();
+  const fontFamily = getFontFamily();
+  const textOutlineStyle = getTextOutlineStyle();
+  const verticalTextStyle = getVerticalTextStyle();
+  const fontSize = getFontSize();
+  const { fontOpacity, bgOpacity } = getOpacities();
+
   return (
-    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 max-w-4xl w-full px-4">
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
       <AnimatePresence>
         <motion.div 
-          className="neu-card text-center p-4"
+          className="max-w-4xl w-full px-4"
           style={{
-            background: style?.bc ? `${style.bc}CC` : 'var(--neu-base)CC',
-            color: style?.fc || 'var(--neu-text-primary)',
-            backdropFilter: 'blur(12px)'
+            position: 'absolute',
+            bottom: '10%',
+            left: 0,
+            right: 0,
+            display: 'flex',
+            ...positionStyle
           }}
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ duration: 0.2 }}
         >
-          <span 
-            className="font-medium leading-relaxed"
+          <div
             style={{
-              fontFamily: style?.fs === 'serif' ? 'serif' : 
-                         style?.fs === 'monospace' ? 'monospace' : 
-                         style?.fs === 'cursive' ? 'cursive' : 'sans-serif',
-              fontSize: style?.sz === '50%' ? '0.75rem' :
-                       style?.sz === '75%' ? '0.875rem' :
-                       style?.sz === '125%' ? '1.25rem' :
-                       style?.sz === '150%' ? '1.5rem' :
-                       style?.sz === '200%' ? '2rem' : '1rem'
+              display: 'inline-block',
+              padding: '0.5em 1em',
+              backgroundColor: style?.bc ? `${style.bc}${Math.round(bgOpacity * 255).toString(16).padStart(2, '0')}` : 'transparent',
+              color: style?.fc ? `${style.fc}${Math.round(fontOpacity * 255).toString(16).padStart(2, '0')}` : '#FFFFFF',
+              fontFamily,
+              fontSize,
+              ...textOutlineStyle,
+              ...verticalTextStyle
             }}
           >
-            {currentSubtitle.spans[0]?.text || ''}
-          </span>
+            {renderStyledText(text)}
+          </div>
         </motion.div>
       </AnimatePresence>
     </div>

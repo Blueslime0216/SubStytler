@@ -19,10 +19,13 @@ export const StyleManagerPanel: React.FC = () => {
       fo: 1,
       bc: '#000000',
       bo: 0.8,
-      fs: 'sans-serif',
+      fs: '0',
       sz: '100%',
-      ju: 2,
-      ap: 6
+      ju: 3,
+      ap: 4,
+      pd: '00',
+      et: 0,
+      ec: '#000000'
     };
     addStyle(newStyle);
     setSelectedStyleId(newStyle.id);
@@ -47,8 +50,30 @@ export const StyleManagerPanel: React.FC = () => {
 
   const selectedStyle = currentProject?.styles.find(s => s.id === selectedStyleId);
 
+  // Ensure default style exists
+  React.useEffect(() => {
+    if (currentProject && !currentProject.styles.find(s => s.id === 'default')) {
+      const defaultStyle: SubtitleStyle = {
+        id: 'default',
+        name: 'Default',
+        fc: '#FFFFFF',
+        fo: 1,
+        bc: '#000000',
+        bo: 0.5,
+        fs: '0',
+        sz: '100%',
+        ju: 3,
+        ap: 4,
+        pd: '00',
+        et: 0,
+        ec: '#000000'
+      };
+      addStyle(defaultStyle);
+    }
+  }, [currentProject, addStyle]);
+
   return (
-    <div className="neu-style-manager-panel h-full flex flex-col">
+    <div className="h-full flex flex-col">
       {/* Toolbar */}
       <StyleManagerToolbar onCreateNewStyle={createNewStyle} />
 
