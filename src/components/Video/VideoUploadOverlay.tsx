@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Video, FileVideo } from 'lucide-react';
+import { Upload, Video, FileVideo, AlertTriangle } from 'lucide-react';
 
 interface VideoUploadOverlayProps {
   isDragActive: boolean;
@@ -135,6 +135,17 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
                 }
               </p>
 
+              {/* File Size Warning */}
+              <div className="bg-warning-color/10 border border-warning-color/20 rounded-lg p-3 mb-4">
+                <div className="flex items-center gap-2 text-warning-color text-sm">
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                  <div className="text-left">
+                    <div className="font-medium">File Size Limit: 500MB</div>
+                    <div className="text-xs opacity-80">Large files may take longer to process</div>
+                  </div>
+                </div>
+              </div>
+
               {/* Supported Formats */}
               <div className="bg-base-color rounded-lg p-4 shadow-inset-subtle">
                 <p className="text-xs font-medium text-text-secondary mb-2 uppercase tracking-wide">
@@ -202,7 +213,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
           transition={{ delay: 0.2 }}
         >
           <p className="text-xs text-text-muted">
-            Maximum file size: 500MB
+            Recommended: Use compressed videos for better performance
           </p>
         </motion.div>
       </motion.div>
