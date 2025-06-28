@@ -284,6 +284,12 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
   deleteTrack: (id: string) => {
     const { currentProject } = get();
     if (currentProject) {
+      // 🛡️ Prevent deletion of the last track
+      if (currentProject.tracks.length <= 1) {
+        console.warn('Cannot delete the last remaining track');
+        return;
+      }
+
       // 🔧 Record state BEFORE deleting track (marked as internal)
       const { selectedTrackId, setSelectedTrackId } = useSelectedTrackStore.getState();
       const historyStore = useHistoryStore.getState();
@@ -291,7 +297,7 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       historyStore.record(
         { tracks: currentProject.tracks, selectedTrackId },
         'Before deleting track',
-        true // 🆕 Mark as internal
+        true // 🆕 Mark as internal - this will be hidden from history panel
       );
 
       // Suppress selection history during this action to avoid duplicate entries
@@ -303,17 +309,6 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
 
       // Delete the track
       let updatedTracks = currentProject.tracks.filter((track: any) => track.id !== id);
-
-      // Ensure at least one track remains
-      if (updatedTracks.length === 0) {
-        updatedTracks = [{
-          id: 'default',
-          name: 'Default Track',
-          language: 'en',
-          visible: true,
-          locked: false,
-        }];
-      }
       
       // Also delete all subtitles in this track
       const updatedSubtitles = currentProject.subtitles.filter(

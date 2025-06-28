@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Lock, Unlock, Trash2 } from 'lucide-react';
 import { SubtitleTrack } from '../../types/project';
+import { useProjectStore } from '../../stores/projectStore';
 
 interface TrackHeaderProps {
   track: SubtitleTrack;
@@ -25,6 +26,10 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
   const [isEditing, setIsEditing] = React.useState(false);
   const [nameValue, setNameValue] = React.useState(track.name);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  
+  // Get current project to check track count
+  const { currentProject } = useProjectStore();
+  const isLastTrack = currentProject?.tracks.length === 1;
 
   const handleDoubleClick = () => {
     if (!track.locked) {
@@ -55,6 +60,12 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
   };
 
   const handleDelete = () => {
+    if (isLastTrack) {
+      // Show a more user-friendly message
+      alert('Cannot delete the last remaining track. At least one track must exist.');
+      return;
+    }
+    
     if (window.confirm(`Delete track "${track.name}" and all its subtitles?`)) {
       onDelete(track.id);
     }
@@ -118,13 +129,18 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
           {track.locked ? <Lock className="track-icon" /> : <Unlock className="track-icon" />}
         </motion.button>
 
-        {/* Delete Button */}
+        {/* Delete Button - Disabled if last track */}
         <motion.button
-          className="track-control-btn delete"
+          className={`track-control-btn delete ${isLastTrack ? 'disabled' : ''}`}
           onClick={handleDelete}
-          title="Delete track"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          title={isLastTrack ? "Cannot delete the last track" : "Delete track"}
+          whileHover={!isLastTrack ? { scale: 1.05 } : {}}
+          whileTap={!isLastTrack ? { scale: 0.95 } : {}}
+          disabled={isLastTrack}
+          style={{ 
+            opacity: isLastTrack ? 0.5 : 1,
+            cursor: isLastTrack ? 'not-allowed' : 'pointer'
+          }}
         >
           <Trash2 className="track-icon" />
         </motion.button>
