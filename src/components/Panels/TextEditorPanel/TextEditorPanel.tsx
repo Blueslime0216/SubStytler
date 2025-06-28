@@ -23,6 +23,11 @@ export const TextEditorPanel: React.FC = () => {
   const [anchorPoint, setAnchorPoint] = useState(4);
   const [printDirection, setPrintDirection] = useState('00');
   
+  // Text formatting states
+  const [isBold, setIsBold] = useState(false);
+  const [isItalic, setIsItalic] = useState(false);
+  const [isUnderline, setIsUnderline] = useState(false);
+  
   const { currentProject, updateSubtitle, updateStyle } = useProjectStore();
   const { currentTime } = useTimelineStore();
   const { selectedSubtitleId } = useSelectedSubtitleStore();
@@ -34,7 +39,14 @@ export const TextEditorPanel: React.FC = () => {
 
   useEffect(() => {
     if (currentSubtitle) {
-      setSelectedText(currentSubtitle.spans[0]?.text || '');
+      const text = currentSubtitle.spans[0]?.text || '';
+      setSelectedText(text);
+      
+      // Detect formatting in the text
+      setIsBold(text.includes('<b>') && text.includes('</b>'));
+      setIsItalic(text.includes('<i>') && text.includes('</i>'));
+      setIsUnderline(text.includes('<u>') && text.includes('</u>'));
+      
       const styleId = currentSubtitle.spans[0]?.styleId || 'default';
       setSelectedStyleId(styleId);
       
@@ -58,7 +70,7 @@ export const TextEditorPanel: React.FC = () => {
   const handleTextChange = (text: string) => {
     if (!currentSubtitle) return;
     
-    // 🆕 Record state before changing text
+    // Record state before changing text
     const { currentProject } = useProjectStore.getState();
     if (currentProject) {
       useHistoryStore.getState().record(
@@ -81,7 +93,7 @@ export const TextEditorPanel: React.FC = () => {
       }
       updateSubtitle(currentSubtitle.id, { spans: updatedSpans });
       
-      // 🆕 Record state after changing text
+      // Record state after changing text
       if (currentProject) {
         // Small delay to ensure the update has been applied
         setTimeout(() => {
@@ -108,10 +120,11 @@ export const TextEditorPanel: React.FC = () => {
     }
   };
 
-  const applyTextStyle = (style: 'bold' | 'italic' | 'underline') => {
+  // New toggle-based text formatting
+  const toggleTextStyle = (style: 'bold' | 'italic' | 'underline') => {
     if (!currentSubtitle) return;
     
-    // 🆕 Record state before applying text style
+    // Record state before applying text style
     const { currentProject } = useProjectStore.getState();
     if (currentProject) {
       useHistoryStore.getState().record(
@@ -127,22 +140,35 @@ export const TextEditorPanel: React.FC = () => {
     }
     
     let newText = selectedText;
+    let styleState = false;
     
     switch (style) {
       case 'bold':
-        newText = `**${selectedText}**`;
+        styleState = !isBold;
+        setIsBold(styleState);
+        newText = styleState 
+          ? `<b>${selectedText}</b>` 
+          : selectedText.replace(/<b>(.*?)<\/b>/g, '$1');
         break;
       case 'italic':
-        newText = `*${selectedText}*`;
+        styleState = !isItalic;
+        setIsItalic(styleState);
+        newText = styleState 
+          ? `<i>${selectedText}</i>` 
+          : selectedText.replace(/<i>(.*?)<\/i>/g, '$1');
         break;
       case 'underline':
-        newText = `__${selectedText}__`;
+        styleState = !isUnderline;
+        setIsUnderline(styleState);
+        newText = styleState 
+          ? `<u>${selectedText}</u>` 
+          : selectedText.replace(/<u>(.*?)<\/u>/g, '$1');
         break;
     }
     
     handleTextChange(newText);
     
-    // 🆕 Record state after applying text style
+    // Record state after applying text style
     if (currentProject) {
       // Small delay to ensure the update has been applied
       setTimeout(() => {
@@ -155,7 +181,7 @@ export const TextEditorPanel: React.FC = () => {
                 selectedSubtitleId
               }
             },
-            `Applied ${style} style to text`
+            styleState ? `Applied ${style} style to text` : `Removed ${style} style from text`
           );
         }
       }, 0);
@@ -169,7 +195,10 @@ export const TextEditorPanel: React.FC = () => {
   return (
     <div className="h-full p-4 overflow-y-auto">
       <TextEditorHeader 
-        applyTextStyle={applyTextStyle}
+        toggleTextStyle={toggleTextStyle}
+        isBold={isBold}
+        isItalic={isItalic}
+        isUnderline={isUnderline}
         textAlignment={textAlignment}
         setTextAlignment={(value) => {
           setTextAlignment(value);

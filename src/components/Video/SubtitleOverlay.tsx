@@ -19,25 +19,8 @@ export const SubtitleOverlay: React.FC = () => {
     s => s.id === (currentSubtitle.spans[0]?.styleId || 'default')
   );
 
-  // Parse text for style tags
+  // Get text
   const text = currentSubtitle.spans[0]?.text || '';
-  
-  // Apply text styles (bold, italic, underline)
-  const renderStyledText = (text: string) => {
-    // Simple parsing for style tags - in a real app, you'd want a more robust parser
-    let styledText = text;
-    
-    // Apply bold
-    styledText = styledText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-    
-    // Apply italic
-    styledText = styledText.replace(/\*(.*?)\*/g, '<i>$1</i>');
-    
-    // Apply underline
-    styledText = styledText.replace(/__(.*?)__/g, '<u>$1</u>');
-    
-    return <span dangerouslySetInnerHTML={{ __html: styledText }} />;
-  };
 
   // Calculate position based on anchor point
   const getPositionStyle = () => {
@@ -186,9 +169,8 @@ export const SubtitleOverlay: React.FC = () => {
               ...textOutlineStyle,
               ...verticalTextStyle
             }}
-          >
-            {renderStyledText(text)}
-          </div>
+            dangerouslySetInnerHTML={{ __html: text }}
+          />
         </motion.div>
       </AnimatePresence>
     </div>

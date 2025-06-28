@@ -3,13 +3,19 @@ import { motion } from 'framer-motion';
 import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
 
 interface TextEditorHeaderProps {
-  applyTextStyle: (style: 'bold' | 'italic' | 'underline') => void;
+  toggleTextStyle: (style: 'bold' | 'italic' | 'underline') => void;
+  isBold: boolean;
+  isItalic: boolean;
+  isUnderline: boolean;
   textAlignment: number;
   setTextAlignment: (value: number) => void;
 }
 
 const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
-  applyTextStyle,
+  toggleTextStyle,
+  isBold,
+  isItalic,
+  isUnderline,
   textAlignment,
   setTextAlignment
 }) => {
@@ -22,30 +28,30 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
         </label>
         <div className="flex space-x-2">
           <motion.button
-            onClick={() => applyTextStyle('bold')}
-            className="p-2 bg-surface shadow-outset rounded-lg"
+            onClick={() => toggleTextStyle('bold')}
+            className={`p-2 rounded-lg ${isBold ? 'bg-primary text-white shadow-inset' : 'bg-surface shadow-outset'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Bold className="w-4 h-4 text-text-primary" />
+            <Bold className="w-4 h-4" />
           </motion.button>
           
           <motion.button
-            onClick={() => applyTextStyle('italic')}
-            className="p-2 bg-surface shadow-outset rounded-lg"
+            onClick={() => toggleTextStyle('italic')}
+            className={`p-2 rounded-lg ${isItalic ? 'bg-primary text-white shadow-inset' : 'bg-surface shadow-outset'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Italic className="w-4 h-4 text-text-primary" />
+            <Italic className="w-4 h-4" />
           </motion.button>
           
           <motion.button
-            onClick={() => applyTextStyle('underline')}
-            className="p-2 bg-surface shadow-outset rounded-lg"
+            onClick={() => toggleTextStyle('underline')}
+            className={`p-2 rounded-lg ${isUnderline ? 'bg-primary text-white shadow-inset' : 'bg-surface shadow-outset'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Underline className="w-4 h-4 text-text-primary" />
+            <Underline className="w-4 h-4" />
           </motion.button>
         </div>
       </div>
@@ -58,7 +64,7 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
         <div className="flex space-x-2">
           <motion.button
             onClick={() => setTextAlignment(1)}
-            className={`p-2 rounded-lg ${textAlignment === 1 ? 'bg-primary text-white' : 'bg-surface shadow-outset'}`}
+            className={`p-2 rounded-lg ${textAlignment === 1 ? 'bg-primary text-white shadow-inset' : 'bg-surface shadow-outset'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -67,7 +73,7 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
           
           <motion.button
             onClick={() => setTextAlignment(3)}
-            className={`p-2 rounded-lg ${textAlignment === 3 ? 'bg-primary text-white' : 'bg-surface shadow-outset'}`}
+            className={`p-2 rounded-lg ${textAlignment === 3 ? 'bg-primary text-white shadow-inset' : 'bg-surface shadow-outset'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -76,7 +82,7 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
           
           <motion.button
             onClick={() => setTextAlignment(2)}
-            className={`p-2 rounded-lg ${textAlignment === 2 ? 'bg-primary text-white' : 'bg-surface shadow-outset'}`}
+            className={`p-2 rounded-lg ${textAlignment === 2 ? 'bg-primary text-white shadow-inset' : 'bg-surface shadow-outset'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
