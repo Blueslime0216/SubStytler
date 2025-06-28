@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Video, CheckCircle, Loader, AlertTriangle } from 'lucide-react';
+import { Video, CheckCircle, Loader } from 'lucide-react';
 
 interface VideoProgressOverlayProps {
   progress: number;
@@ -130,16 +130,6 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
               </motion.div>
             ))}
           </div>
-
-          {/* File Size Tip */}
-          {!isComplete && (
-            <div className="mt-4 bg-info-color/10 border border-info-color/20 rounded-lg p-3">
-              <div className="flex items-center gap-2 text-info-color text-xs">
-                <AlertTriangle className="w-3 h-3 flex-shrink-0" />
-                <span>Large files may take longer to process. Consider compressing videos over 200MB for better performance.</span>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Decorative Elements */}

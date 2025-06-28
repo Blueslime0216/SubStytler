@@ -18,34 +18,9 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
 
   const { setVideoMeta, currentProject } = useProjectStore();
   const { setDuration, setFPS, setCurrentTime } = useTimelineStore();
-  const { success, error, info, warning } = useToast();
+  const { success, error, info } = useToast();
 
   const processVideoFile = useCallback(async (file: File) => {
-    // File size validation with detailed warning
-    const maxSize = 500 * 1024 * 1024; // 500MB
-    if (file.size > maxSize) {
-      const fileSizeMB = Math.round(file.size / (1024 * 1024));
-      const maxSizeMB = Math.round(maxSize / (1024 * 1024));
-      
-      error({
-        title: 'File Too Large',
-        message: `The selected video file is ${fileSizeMB}MB, which exceeds the maximum allowed size of ${maxSizeMB}MB. Please use a smaller video file or compress your video before uploading.`,
-        duration: 8000 // Longer duration for important message
-      });
-      return;
-    }
-
-    // Warning for files approaching the limit (over 400MB)
-    const warningThreshold = 400 * 1024 * 1024; // 400MB
-    if (file.size > warningThreshold) {
-      const fileSizeMB = Math.round(file.size / (1024 * 1024));
-      warning({
-        title: 'Large File Warning',
-        message: `This ${fileSizeMB}MB video file is quite large and may take longer to process. For better performance, consider using a smaller file.`,
-        duration: 6000
-      });
-    }
-
     setUploadState({
       isUploading: true,
       uploadProgress: 0,
@@ -56,6 +31,11 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
       // Stage 1: File validation
       if (!file.type.startsWith('video/')) {
         throw new Error('Please select a valid video file');
+      }
+
+      const maxSize = 500 * 1024 * 1024; // 500MB
+      if (file.size > maxSize) {
+        throw new Error('Video file is too large. Maximum size is 500MB');
       }
 
       setUploadState(prev => ({ 
@@ -182,11 +162,10 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         uploadStage: 'Complete!'
       }));
 
-      // Show success toast with file info
-      const fileSizeMB = Math.round(file.size / (1024 * 1024));
+      // Show success toast
       success({
         title: 'Video loaded successfully!',
-        message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height}, ${fileSizeMB}MB)`
+        message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height})`
       });
 
       // Reset upload state after a brief delay
@@ -220,7 +199,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         uploadStage: ''
       });
     }
-  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, warning, videoRef]);
+  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, videoRef]);
 
   return {
     uploadState,
