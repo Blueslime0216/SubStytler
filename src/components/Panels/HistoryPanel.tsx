@@ -57,7 +57,6 @@ export const HistoryPanel: React.FC = () => {
       onMouseLeave={handleMouseLeave}
       onClick={() => handleClick(entry, isCurrent)}
     >
-      <span className={`w-3 h-3 inline-block ${isCurrent ? 'text-primary' : 'opacity-40'}`}>•</span>
       <span className="truncate text-xs">{entry.description}</span>
     </div>
   );
