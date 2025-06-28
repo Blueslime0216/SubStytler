@@ -66,7 +66,10 @@ export const useTimelineStore = create<TimelineState>()(
       frameDuration: 1000 / fps
     }),
 
-    setZoom: (zoom: number) => set({ zoom: Math.max(1, Math.min(100, zoom)) }),
+    setZoom: (zoom: number) => {
+      // No upper limit - we'll handle this in the UI based on pixel-per-ms calculation
+      set({ zoom: Math.max(1, zoom) });
+    },
 
     setViewRange: (start: number, end: number) => set({ 
       viewStart: Math.max(0, start),

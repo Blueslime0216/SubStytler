@@ -132,10 +132,15 @@ export const useTimelineInteraction = (
     const mouseX = e.clientX - rect.left;
     const timeAtCursor = pixelToTime(mouseX);
 
+    // Calculate max zoom based on pixel-per-ms ratio
+    // We want to limit zoom so that 1ms = 10px maximum
+    const containerWidth = rect.width;
+    const maxZoom = (containerWidth / duration) * 10;
+
     // Always zoom with wheel
     const zoomFactor = 1.1;
     let newZoom = e.deltaY < 0 ? zoom * zoomFactor : zoom / zoomFactor;
-    newZoom = Math.max(1, Math.min(100, newZoom));
+    newZoom = Math.max(1, Math.min(maxZoom, newZoom));
     setZoom(newZoom);
 
     const newViewDuration = duration / newZoom;
