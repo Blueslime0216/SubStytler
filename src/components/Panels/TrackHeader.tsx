@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Lock, Unlock, Trash2 } from 'lucide-react';
 import { SubtitleTrack } from '../../types/project';
 import { useProjectStore } from '../../stores/projectStore';
+import { useHistoryStore } from '../../stores/historyStore';
 
 interface TrackHeaderProps {
   track: SubtitleTrack;
@@ -104,6 +105,16 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
     }
   }, [isEditingDetail]);
 
+  // Handle visibility toggle with history recording
+  const handleToggleVisibility = () => {
+    onToggleVisibility(track.id, !track.visible);
+  };
+
+  // Handle lock toggle with history recording
+  const handleToggleLock = () => {
+    onToggleLock(track.id, !track.locked);
+  };
+
   return (
     <motion.div 
       className={`neu-track-header-redesigned ${isActive ? 'active' : ''}`}
@@ -156,7 +167,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
         {/* Visibility Toggle */}
         <motion.button
           className={`track-control-btn visibility${track.visible ? ' active' : ''}`}
-          onClick={() => onToggleVisibility(track.id, !track.visible)}
+          onClick={handleToggleVisibility}
           title={track.visible ? "Hide track" : "Show track"}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -167,7 +178,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
         {/* Lock Toggle */}
         <motion.button
           className={`track-control-btn lock${track.locked ? ' active' : ''}`}
-          onClick={() => onToggleLock(track.id, !track.locked)}
+          onClick={handleToggleLock}
           title={track.locked ? "Unlock track" : "Lock track"}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

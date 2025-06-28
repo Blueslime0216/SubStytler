@@ -57,6 +57,10 @@ export const projectTrackActions: StateCreator<any> = (set, get, _store) => ({
   updateTrack: (id: string, updates: Partial<SubtitleTrack>) => {
     const { currentProject } = get();
     if (currentProject) {
+      // Find the track to update
+      const trackToUpdate = currentProject.tracks.find(track => track.id === id);
+      if (!trackToUpdate) return;
+
       // 🔧 Record state BEFORE updating track (marked as internal)
       const { selectedTrackId } = useSelectedTrackStore.getState();
       useHistoryStore.getState().record(
@@ -76,17 +80,23 @@ export const projectTrackActions: StateCreator<any> = (set, get, _store) => ({
         isModified: true,
       });
 
+      // Generate appropriate description based on what was updated
       let desc = 'Updated track';
-      if (updates.name) desc = `Renamed track to "${updates.name}"`;
-      if (updates.visible !== undefined) desc = `${updates.visible ? 'Showed' : 'Hid'} track`;
-      if (updates.locked !== undefined) desc = `${updates.locked ? 'Locked' : 'Unlocked'} track`;
-      if (updates.detail !== undefined) desc = `Updated track detail`;
+      if (updates.name !== undefined) {
+        desc = `Renamed track to "${updates.name}"`;
+      } else if (updates.visible !== undefined) {
+        desc = `${updates.visible ? 'Showed' : 'Hid'} track "${trackToUpdate.name}"`;
+      } else if (updates.locked !== undefined) {
+        desc = `${updates.locked ? 'Locked' : 'Unlocked'} track "${trackToUpdate.name}"`;
+      } else if (updates.detail !== undefined) {
+        desc = `Updated track "${trackToUpdate.name}" detail`;
+      }
 
       // 🔧 Record state AFTER updating track (visible in UI)
       useHistoryStore.getState().record(
         { tracks: updatedTracks, selectedTrackId },
         desc,
-        false // 🆕 Not internal
+        false // 🆕 Not internal - this will be visible in history panel
       );
     }
   },
