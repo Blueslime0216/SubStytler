@@ -13,6 +13,7 @@ import { ToastContainer } from './components/UI/ToastContainer';
 import { VideoReuploadDialog } from './components/UI/VideoReuploadDialog';
 import { useToast } from './hooks/useToast';
 import { VideoInfo } from './utils/videoUtils';
+import { LayoutTemplateButton } from './components/UI/LayoutTemplateButton';
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(
@@ -140,6 +141,7 @@ export default function App() {
           </div>
         </div>
         <div className="flex items-center space-x-3">
+          <LayoutTemplateButton />
           <button 
             ref={fileMenuTriggerRef}
             onClick={() => setIsFileMenuOpen(!isFileMenuOpen)}
