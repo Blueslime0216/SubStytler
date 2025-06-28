@@ -5,6 +5,7 @@ import SubtitleBlock from './SubtitleBlock';
 import TimelineRuler from './TimelineRuler';
 import { useTimelineInteraction } from '../../hooks/useTimelineInteraction';
 import { Plus } from 'lucide-react';
+import { useSelectedTrackStore } from '../../stores/selectedTrackStore';
 
 interface TracksContainerProps {
   currentTime: number;
@@ -17,8 +18,6 @@ interface TracksContainerProps {
   setViewRange: (s: number, e: number) => void;
   isHovered: boolean;
   setIsHovered: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedTrackId: string | null;
-  setSelectedTrackId: React.Dispatch<React.SetStateAction<string | null>>;
   onSidebarWidthChange?: (width: number) => void;
 }
 
@@ -33,8 +32,6 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   setViewRange,
   isHovered,
   setIsHovered,
-  selectedTrackId,
-  setSelectedTrackId,
   onSidebarWidthChange
 }) => {
   const {
@@ -51,6 +48,8 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
 
   const tracks = currentProject?.tracks || [];
   const subtitles = currentProject?.subtitles || [];
+
+  const { selectedTrackId, setSelectedTrackId } = useSelectedTrackStore();
 
   // Interaction handling (pan/zoom/playhead)
   const { handleMouseDown: tMouseDown, handleMouseMove: tMouseMove, handleMouseUp: tMouseUp, handleWheel: tWheel } = useTimelineInteraction(containerRef, {

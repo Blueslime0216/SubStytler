@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { Area } from '../types/area';
 import { useLayoutStore } from './layoutStore';
+import { useProjectStore } from './projectStore';
+import { useSelectedTrackStore } from './selectedTrackStore';
 
 /*
  * Lightweight undo/redo implementation inspired by zustand's
@@ -16,12 +18,11 @@ import { useLayoutStore } from './layoutStore';
 // preserved so existing calls do not break.
 // ---------------------------------------------------------------------------
 
+type Snapshot = any;
+
 interface HistoryEntry {
-  /** Snapshot of the layout areas at this point in time */
-  snapshot: Area[];
-  /** Human-readable description of the action */
+  snapshot: Snapshot;
   description: string;
-  /** Epoch milliseconds of when the action was recorded */
   timestamp: number;
 }
 
@@ -34,7 +35,7 @@ interface HistoryState {
    * History panel; if omitted, a generic one will be used so existing code
    * continues to work without modification.
    */
-  record: (areas: Area[], description?: string) => void;
+  record: (snapshot: Snapshot, description?: string) => void;
   undo: () => void;
   redo: () => void;
   /** Jump directly to a specific entry (identified by timestamp). */
@@ -46,28 +47,17 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
   present: null,
   futureStates: [],
 
-  record: (areas: Area[], description = 'Layout modified') => {
+  record: (snapshot: Snapshot, description = 'State modified') => {
     const { present } = get();
 
-    // Avoid recording identical snapshots (reference equality).
-    if (present && present.snapshot === areas) return;
+    if (present && present.snapshot === snapshot) return;
 
-    const newEntry: HistoryEntry = {
-      snapshot: areas,
-      description,
-      timestamp: Date.now(),
-    };
+    const newEntry: HistoryEntry = { snapshot, description, timestamp: Date.now() };
 
     set((state) => {
-      if (!state.present) {
-        // 첫 기록 – 과거 스택을 쌓지 않고 현재 상태만 설정
-        return {
-          present: newEntry,
-        };
-      }
-
+      // Always create pastStates entry for proper undo functionality
       return {
-        pastStates: [...state.pastStates, state.present],
+        pastStates: state.present ? [...state.pastStates, state.present] : [],
         present: newEntry,
         futureStates: [], // 새로운 변경이 일어나면 redo 스택은 초기화됩니다.
       };
@@ -83,7 +73,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       const newFuture = [state.present, ...state.futureStates];
 
       // Reflect the change in the live layout store.
-      useLayoutStore.getState().setAreas(previous.snapshot);
+      applySnapshot(previous.snapshot);
 
       return {
         pastStates: newPast,
@@ -102,7 +92,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       const newPast = [...state.pastStates, state.present];
 
       // Apply to layout store
-      useLayoutStore.getState().setAreas(next.snapshot);
+      applySnapshot(next.snapshot);
 
       return {
         pastStates: newPast,
@@ -125,9 +115,66 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
     const newPresent = allEntries[targetIndex];
     const newFuture = allEntries.slice(targetIndex + 1);
 
-    // Reflect snapshot to layout store (future extension: generic apply fn?)
-    useLayoutStore.getState().setAreas(newPresent.snapshot);
+    applySnapshot(newPresent.snapshot);
 
     set({ pastStates: newPast, present: newPresent, futureStates: newFuture });
   },
-})); 
+}));
+
+// Flag to suppress recording during internal snapshot application
+let isApplyingSnapshot = false;
+
+/**
+ * Apply a snapshot to the relevant store(s)
+ */
+function applySnapshot(snapshot: Snapshot) {
+  isApplyingSnapshot = true;
+  // Layout areas snapshot (array of areas)
+  if (Array.isArray(snapshot) && snapshot.length && 'x' in snapshot[0] && 'y' in snapshot[0]) {
+    useLayoutStore.getState().setAreas(snapshot as Area[]);
+    isApplyingSnapshot = false;
+    return;
+  }
+
+  // Track snapshot
+  if (snapshot && Array.isArray(snapshot.tracks)) {
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject) {
+      useProjectStore.setState({
+        currentProject: {
+          ...currentProject,
+          tracks: snapshot.tracks,
+        },
+      });
+    }
+
+    // Selection
+    if (snapshot.selectedTrackId !== undefined) {
+      useSelectedTrackStore.getState().setSelectedTrackId(snapshot.selectedTrackId);
+    }
+    isApplyingSnapshot = false;
+    return;
+  }
+  isApplyingSnapshot = false;
+}
+
+// ---------------------------------------------------------------------------
+// Subscribe to selected track changes to record history (only when changed)
+// ---------------------------------------------------------------------------
+let prevSelectedTrackId: string | null = null;
+
+useSelectedTrackStore.subscribe((state) => {
+  if (isApplyingSnapshot) return;
+  const historyStore = useHistoryStore.getState() as any;
+  if (historyStore._suppressSelectionHistory) return;
+  if (state.selectedTrackId !== prevSelectedTrackId) {
+    prevSelectedTrackId = state.selectedTrackId;
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject) {
+      useHistoryStore.getState().record(
+        { tracks: currentProject.tracks, selectedTrackId: state.selectedTrackId },
+        'Selected track changed'
+      );
+    }
+  }
+}); 

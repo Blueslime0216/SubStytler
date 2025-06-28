@@ -30,6 +30,7 @@
 @import './styles/timeline.css';
 @import './styles/toast.css';
 @import './styles/components/panel-selector.css';
+@import './styles/components/history.css';
 
 /* Tailwind */
 @tailwind base;

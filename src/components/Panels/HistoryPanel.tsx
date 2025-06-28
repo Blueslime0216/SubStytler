@@ -39,11 +39,16 @@ export const HistoryPanel: React.FC = () => {
     }
   };
 
-  const renderEntry = (entry: { description: string; timestamp: number; snapshot?: unknown }, isCurrent = false) => (
+  const renderEntry = (
+    entry: { description: string; timestamp: number; snapshot?: unknown },
+    uniqueKey: string,
+    isCurrent = false,
+    isFuture = false,
+  ) => (
     <div
-      key={entry.timestamp}
-      className={`flex items-center space-x-1 py-1 px-2 rounded-sm hover:bg-neutral-800/30 cursor-pointer ${
-        isCurrent ? 'bg-primary/20 font-semibold' : ''
+      key={uniqueKey}
+      className={`flex items-center space-x-1 py-1 px-2 rounded-sm hover:bg-neutral-800/20 cursor-pointer transition-shadow ${
+        isCurrent ? 'history-entry-present' : isFuture ? 'history-entry-future' : ''
       }`}
       onMouseEnter={(ev) => handleMouseEnter(ev, entry)}
       onMouseLeave={handleMouseLeave}
@@ -82,13 +87,13 @@ export const HistoryPanel: React.FC = () => {
       {/* History list */}
       <div className="flex-1 overflow-y-auto text-xs neu-text-secondary px-2 py-1 space-y-1">
         {/* Past (oldest at top) */}
-        {pastStates.map((e) => renderEntry(e))}
+        {pastStates.map((e, idx) => renderEntry(e, `${e.timestamp}-${idx}`))}
 
         {/* Present */}
-        {present && renderEntry(present, true)}
+        {present && renderEntry(present, `${present.timestamp}-present`, true)}
 
         {/* Future */}
-        {futureStates.map((e) => renderEntry(e))}
+        {futureStates.map((e, idx) => renderEntry(e, `${e.timestamp}-f${idx}`, false, true))}
 
         {/* Empty state */}
         {pastStates.length === 0 && !present && futureStates.length === 0 && (

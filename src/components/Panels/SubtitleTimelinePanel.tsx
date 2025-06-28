@@ -6,6 +6,7 @@ import TimelineOverviewBar from './TimelineOverviewBar';
 import { useHotkeys } from 'react-hotkeys-hook';
 import TracksContainer from './TracksContainer';
 import { SubtitleTrack } from '../../types/project';
+import { useSelectedTrackStore } from '../../stores/selectedTrackStore';
 
 export const SubtitleTimelinePanel: React.FC = () => {
   const interactionRef = useRef<HTMLDivElement>(null);
@@ -20,6 +21,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
     setViewRange: setGlobalViewRange,
   } = useTimelineStore();
   const { currentProject, addSubtitle, addTrack } = useProjectStore();
+  const { selectedTrackId, setSelectedTrackId } = useSelectedTrackStore();
 
   // Local state for this panel instance
   const [localZoom, setLocalZoom] = useState(globalZoom);
@@ -30,8 +32,6 @@ export const SubtitleTimelinePanel: React.FC = () => {
   // Track mouse hover to activate hotkey only when timeline is under cursor
   const [isHovered, setIsHovered] = useState(false);
 
-  // Currently selected track id (updated by TracksContainer)
-  const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
   const [sidebarWidth, setSidebarWidth] = useState<number>(180);
 
   // Sync local state with global state on mount and when global state changes
@@ -155,8 +155,6 @@ export const SubtitleTimelinePanel: React.FC = () => {
             setViewRange={setViewRange}
             isHovered={isHovered}
             setIsHovered={setIsHovered}
-            selectedTrackId={selectedTrackId}
-            setSelectedTrackId={setSelectedTrackId}
             onSidebarWidthChange={setSidebarWidth}
           />
         </div>
