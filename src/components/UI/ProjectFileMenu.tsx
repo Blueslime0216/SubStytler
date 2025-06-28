@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Save, FolderOpen, FileText, Download, AlertCircle } from 'lucide-react';
 import { useProjectSave } from '../../hooks/useProjectSave';
 import { useProjectStore } from '../../stores/projectStore';
+import { VideoReuploadDialog } from './VideoReuploadDialog';
+import { VideoInfo } from '../../utils/videoUtils';
 
 interface ProjectFileMenuProps {
   isOpen: boolean;
@@ -18,8 +20,11 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showVideoDialog, setShowVideoDialog] = useState(false);
+  const [pendingProject, setPendingProject] = useState<any>(null);
+  const [pendingVideoInfo, setPendingVideoInfo] = useState<VideoInfo | null>(null);
   
-  const { saveProjectToFileSystem, loadProjectFromFileSystem, canSave } = useProjectSave();
+  const { saveProjectToFileSystem, loadProjectFromFileSystem, loadProjectWithVideo, canSave } = useProjectSave();
   const { currentProject, isModified } = useProjectStore();
 
   React.useEffect(() => {
@@ -61,11 +66,47 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
     
     setIsLoading(true);
     try {
-      await loadProjectFromFileSystem();
-      onClose();
+      const result = await loadProjectFromFileSystem();
+      
+      if (result.success && result.project) {
+        if (result.videoInfo) {
+          // Show video reupload dialog
+          setPendingProject(result.project);
+          setPendingVideoInfo(result.videoInfo);
+          setShowVideoDialog(true);
+        } else {
+          // Load project directly (no video info)
+          loadProjectWithVideo(result.project);
+        }
+        onClose();
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleVideoSelected = (videoFile: File) => {
+    if (pendingProject) {
+      loadProjectWithVideo(pendingProject, videoFile);
+      setShowVideoDialog(false);
+      setPendingProject(null);
+      setPendingVideoInfo(null);
+    }
+  };
+
+  const handleSkipVideo = () => {
+    if (pendingProject) {
+      loadProjectWithVideo(pendingProject);
+      setShowVideoDialog(false);
+      setPendingProject(null);
+      setPendingVideoInfo(null);
+    }
+  };
+
+  const handleCloseVideoDialog = () => {
+    setShowVideoDialog(false);
+    setPendingProject(null);
+    setPendingVideoInfo(null);
   };
 
   const handleNewProject = () => {
@@ -193,6 +234,17 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
           )}
         </motion.div>
       </AnimatePresence>
+
+      {/* Video Reupload Dialog */}
+      {showVideoDialog && pendingVideoInfo && (
+        <VideoReuploadDialog
+          isOpen={showVideoDialog}
+          onClose={handleCloseVideoDialog}
+          videoInfo={pendingVideoInfo}
+          onVideoSelected={handleVideoSelected}
+          onSkip={handleSkipVideo}
+        />
+      )}
     </>
   );
 };

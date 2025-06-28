@@ -1,9 +1,17 @@
 import { Project } from '../types/project';
+import { VideoInfo, extractVideoInfo } from './videoUtils';
 
 export interface SaveResult {
   success: boolean;
   message: string;
   filePath?: string;
+}
+
+export interface LoadResult {
+  success: boolean;
+  project?: Project;
+  videoInfo?: VideoInfo;
+  message: string;
 }
 
 export interface SaveOptions {
@@ -42,24 +50,56 @@ export const validateSavePath = (filePath: string): { valid: boolean; error?: st
 };
 
 /**
- * Sanitizes project data for serialization
+ * Sanitizes project data for serialization with enhanced video info
  */
-export const sanitizeProjectForSave = (project: Project): any => {
+export const sanitizeProjectForSave = async (
+  project: Project, 
+  videoElement?: HTMLVideoElement
+): Promise<any> => {
   const sanitized = { ...project };
 
-  // Handle File objects in videoMeta - convert to metadata only
+  // Handle File objects in videoMeta - convert to comprehensive video info
   if (sanitized.videoMeta?.file) {
     const { file, ...videoMetaWithoutFile } = sanitized.videoMeta;
-    sanitized.videoMeta = {
-      ...videoMetaWithoutFile,
-      // Store file metadata for reference
-      fileInfo: {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        lastModified: file.lastModified
-      }
-    };
+    
+    try {
+      // Extract comprehensive video information including thumbnail
+      const videoInfo = await extractVideoInfo(file, videoElement);
+      
+      sanitized.videoMeta = {
+        ...videoMetaWithoutFile,
+        // Store comprehensive video information
+        videoInfo: {
+          title: videoInfo.title,
+          filename: videoInfo.filename,
+          duration: videoInfo.duration,
+          width: videoInfo.width,
+          height: videoInfo.height,
+          fps: videoInfo.fps,
+          size: videoInfo.size,
+          type: videoInfo.type,
+          lastModified: videoInfo.lastModified,
+          thumbnail: videoInfo.thumbnail
+        }
+      };
+    } catch (error) {
+      console.warn('Failed to extract video info:', error);
+      // Fallback to basic file metadata
+      sanitized.videoMeta = {
+        ...videoMetaWithoutFile,
+        videoInfo: {
+          title: file.name.replace(/\.[^/.]+$/, ''),
+          filename: file.name,
+          duration: sanitized.videoMeta.duration || 0,
+          width: sanitized.videoMeta.width || 0,
+          height: sanitized.videoMeta.height || 0,
+          fps: sanitized.videoMeta.fps || 30,
+          size: file.size,
+          type: file.type,
+          lastModified: file.lastModified
+        }
+      };
+    }
   }
 
   // Ensure all required fields are present
@@ -77,11 +117,14 @@ export const sanitizeProjectForSave = (project: Project): any => {
 };
 
 /**
- * Creates the project file content as a JSON string
+ * Creates the project file content as a JSON string with video info
  */
-export const createProjectFileContent = (project: Project): string => {
+export const createProjectFileContent = async (
+  project: Project, 
+  videoElement?: HTMLVideoElement
+): Promise<string> => {
   try {
-    const sanitizedProject = sanitizeProjectForSave(project);
+    const sanitizedProject = await sanitizeProjectForSave(project, videoElement);
     
     // Create the file structure with metadata
     const fileContent = {
@@ -105,7 +148,8 @@ export const createProjectFileContent = (project: Project): string => {
  */
 export const saveProjectToFile = async (
   project: Project, 
-  options: SaveOptions = {}
+  options: SaveOptions = {},
+  videoElement?: HTMLVideoElement
 ): Promise<SaveResult> => {
   try {
     // Validate project data
@@ -125,7 +169,7 @@ export const saveProjectToFile = async (
 
     // Check if File System Access API is supported
     if (!('showSaveFilePicker' in window)) {
-      return await saveProjectFallback(project, options);
+      return await saveProjectFallback(project, options, videoElement);
     }
 
     try {
@@ -152,8 +196,8 @@ export const saveProjectToFile = async (
         };
       }
 
-      // Create file content
-      const fileContent = createProjectFileContent(project);
+      // Create file content with video info
+      const fileContent = await createProjectFileContent(project, videoElement);
 
       // Create writable stream and write content
       const writable = await fileHandle.createWritable();
@@ -200,7 +244,8 @@ export const saveProjectToFile = async (
  */
 export const saveProjectFallback = async (
   project: Project, 
-  options: SaveOptions = {}
+  options: SaveOptions = {},
+  videoElement?: HTMLVideoElement
 ): Promise<SaveResult> => {
   try {
     // Generate filename
@@ -215,8 +260,8 @@ export const saveProjectFallback = async (
       };
     }
 
-    // Create file content
-    const fileContent = createProjectFileContent(project);
+    // Create file content with video info
+    const fileContent = await createProjectFileContent(project, videoElement);
 
     // Create blob and download
     const blob = new Blob([fileContent], { 
@@ -253,9 +298,9 @@ export const saveProjectFallback = async (
 };
 
 /**
- * Loads a project from a file
+ * Loads a project from a file with video info
  */
-export const loadProjectFromFile = async (): Promise<{ success: boolean; project?: Project; message: string }> => {
+export const loadProjectFromFile = async (): Promise<LoadResult> => {
   try {
     // Check if File System Access API is supported
     if ('showOpenFilePicker' in window) {
@@ -322,9 +367,9 @@ export const loadProjectFromFile = async (): Promise<{ success: boolean; project
 };
 
 /**
- * Parses project file content
+ * Parses project file content with video info extraction
  */
-export const parseProjectFile = (content: string): { success: boolean; project?: Project; message: string } => {
+export const parseProjectFile = (content: string): LoadResult => {
   try {
     const parsed = JSON.parse(content);
     
@@ -357,9 +402,16 @@ export const parseProjectFile = (content: string): { success: boolean; project?:
       project.styles = [];
     }
 
+    // Extract video info if available
+    let videoInfo: VideoInfo | undefined;
+    if (project.videoMeta?.videoInfo) {
+      videoInfo = project.videoMeta.videoInfo as VideoInfo;
+    }
+
     return {
       success: true,
       project,
+      videoInfo,
       message: 'Project loaded successfully'
     };
 
