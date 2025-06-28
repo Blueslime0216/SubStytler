@@ -96,10 +96,11 @@ export const useProjectSave = () => {
       const result = await loadProjectFromFile();
 
       if (result.success && result.project) {
-        // Don't load the project immediately if it has video info
-        // Let the caller handle the video reupload dialog
+        // 🆕 Always return the result without loading the project here
+        // Let the caller handle the video dialog logic
         if (!result.videoInfo) {
-          loadProject(result.project);
+          // Only show success message for projects without video info
+          // Projects with video info will show success after video is handled
           success({
             title: 'Project Loaded',
             message: `"${result.project.name}" loaded successfully`
@@ -126,7 +127,7 @@ export const useProjectSave = () => {
         message: errorMessage
       };
     }
-  }, [loadProject, success, error, info]);
+  }, [success, error, info]);
 
   const loadProjectWithVideo = useCallback((project: any, videoFile?: File) => {
     if (videoFile) {

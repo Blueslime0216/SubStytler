@@ -10,7 +10,9 @@ import { useHistoryStore } from './stores/historyStore';
 import { useProjectSave } from './hooks/useProjectSave';
 import { ProjectFileMenu } from './components/UI/ProjectFileMenu';
 import { ToastContainer } from './components/UI/ToastContainer';
+import { VideoReuploadDialog } from './components/UI/VideoReuploadDialog';
 import { useToast } from './hooks/useToast';
+import { VideoInfo } from './utils/videoUtils';
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(
@@ -25,9 +27,14 @@ export default function App() {
   useKeyboardShortcuts();
 
   // Project save functionality
-  const { saveProjectToFileSystem, canSave } = useProjectSave();
+  const { saveProjectToFileSystem, canSave, loadProjectFromFileSystem, loadProjectWithVideo } = useProjectSave();
   const [isFileMenuOpen, setIsFileMenuOpen] = React.useState(false);
   const fileMenuTriggerRef = React.useRef<HTMLButtonElement>(null);
+
+  // Video reupload dialog state - moved to App level for immediate access
+  const [showVideoDialog, setShowVideoDialog] = React.useState(false);
+  const [pendingProject, setPendingProject] = React.useState<any>(null);
+  const [pendingVideoInfo, setPendingVideoInfo] = React.useState<VideoInfo | null>(null);
 
   // Toast system
   const { toasts, removeToast } = useToast();
@@ -47,6 +54,51 @@ export default function App() {
       }, 100); // Small delay to ensure all stores are initialized
     }
   }, [areas]);
+
+  // 🆕 Auto-load project with video dialog when needed
+  const handleProjectLoad = React.useCallback(async () => {
+    const result = await loadProjectFromFileSystem();
+    
+    if (result.success && result.project) {
+      if (result.videoInfo) {
+        // Show video reupload dialog immediately
+        setPendingProject(result.project);
+        setPendingVideoInfo(result.videoInfo);
+        setShowVideoDialog(true);
+      } else {
+        // Load project directly (no video info)
+        loadProjectWithVideo(result.project);
+      }
+      setIsFileMenuOpen(false);
+    }
+  }, [loadProjectFromFileSystem, loadProjectWithVideo]);
+
+  // 🆕 Handle video selection from dialog
+  const handleVideoSelected = React.useCallback((videoFile: File) => {
+    if (pendingProject) {
+      loadProjectWithVideo(pendingProject, videoFile);
+      setShowVideoDialog(false);
+      setPendingProject(null);
+      setPendingVideoInfo(null);
+    }
+  }, [pendingProject, loadProjectWithVideo]);
+
+  // 🆕 Handle skipping video
+  const handleSkipVideo = React.useCallback(() => {
+    if (pendingProject) {
+      loadProjectWithVideo(pendingProject);
+      setShowVideoDialog(false);
+      setPendingProject(null);
+      setPendingVideoInfo(null);
+    }
+  }, [pendingProject, loadProjectWithVideo]);
+
+  // 🆕 Handle closing video dialog
+  const handleCloseVideoDialog = React.useCallback(() => {
+    setShowVideoDialog(false);
+    setPendingProject(null);
+    setPendingVideoInfo(null);
+  }, []);
 
   // 🎯 동적 패널 렌더링 로직 - 모든 ID 패턴 지원
   const renderPanel = useMemo(() => {
@@ -129,7 +181,19 @@ export default function App() {
         isOpen={isFileMenuOpen}
         onClose={() => setIsFileMenuOpen(false)}
         triggerRef={fileMenuTriggerRef}
+        onLoadProject={handleProjectLoad}
       />
+
+      {/* Video Reupload Dialog - Now at App level for immediate access */}
+      {showVideoDialog && pendingVideoInfo && (
+        <VideoReuploadDialog
+          isOpen={showVideoDialog}
+          onClose={handleCloseVideoDialog}
+          videoInfo={pendingVideoInfo}
+          onVideoSelected={handleVideoSelected}
+          onSkip={handleSkipVideo}
+        />
+      )}
 
       {/* Toast Container */}
       <ToastContainer toasts={toasts} onClose={removeToast} />
