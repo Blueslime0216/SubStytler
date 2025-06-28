@@ -22,9 +22,8 @@
 
 /* Button Hover */
 .btn:hover {
-  filter: brightness(1.05);
+  filter: brightness(1.1);
   box-shadow: var(--shadow-outset-hover);
-  border-color: var(--primary-color);
 }
 
 /* Button Active */

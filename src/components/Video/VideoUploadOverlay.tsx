@@ -40,16 +40,16 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
       >
         {/* Main Upload Card */}
         <div
-          className="bg-darker-color border rounded-lg p-8 relative overflow-hidden"
+          className="bg-surface border rounded-lg p-8 relative overflow-hidden"
           style={{
             borderWidth: '1px',
-            borderColor: 'var(--border-color, #e0f7fa30)',
+            borderColor: 'var(--border-color, #e0f7fa60)',
             boxShadow: isDragActive
-              ? 'var(--shadow-inset)'
-              : 'var(--shadow-inset-subtle)',
+              ? 'var(--shadow-outset)'
+              : 'var(--shadow-outset-subtle)',
             transition: 'box-shadow 0.2s, filter 0.2s, background 0.2s, border-color 0.2s',
             filter: isDragActive ? 'brightness(1.07)' : 'none',
-            background: 'linear-gradient(145deg, rgba(45,55,72,0.05) 0%, transparent 50%, rgba(13,17,23,0.05) 100%), var(--darker-color)',
+            background: 'linear-gradient(145deg, rgba(45,55,72,0.05) 0%, transparent 50%, rgba(13,17,23,0.05) 100%), var(--surface-color)',
             backgroundBlendMode: 'overlay'
           }}
         >
@@ -59,7 +59,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
           {/* Drag Active Overlay */}
           {isDragActive && (
             <motion.div
-              className="absolute inset-0 bg-primary/10 border border-primary rounded-lg"
+              className="absolute inset-0 bg-primary/10 border-2 border-primary rounded-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.2 }}
@@ -70,11 +70,11 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
           <div className="relative z-10">
             {/* Icon Container */}
             <motion.div 
-              className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-darker-color shadow-inset flex items-center justify-center relative overflow-hidden"
+              className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-surface shadow-outset flex items-center justify-center relative overflow-hidden"
               animate={{
                 boxShadow: isDragActive 
-                  ? 'var(--shadow-inset-strong)' 
-                  : 'var(--shadow-inset)',
+                  ? 'var(--shadow-inset)' 
+                  : 'var(--shadow-outset)',
                 scale: isDragActive ? 0.95 : 1
               }}
               transition={{ duration: 0.2 }}
@@ -105,7 +105,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
               {/* Pulse Effect */}
               {isDragActive && (
                 <motion.div
-                  className="absolute inset-0 rounded-2xl border border-primary"
+                  className="absolute inset-0 rounded-2xl border-2 border-primary"
                   initial={{ scale: 1, opacity: 0.8 }}
                   animate={{ scale: 1.2, opacity: 0 }}
                   transition={{
@@ -131,12 +131,12 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
               <p className="text-text-secondary mb-6 leading-relaxed">
                 {isDragActive 
                   ? 'Release to upload your video file'
-                  : 'Drag and drop a video file'
+                  : 'Drag and drop a video file or click to browse'
                 }
               </p>
 
               {/* File Size Recommendation */}
-              <div className="bg-darker-color rounded-lg p-4 shadow-inset-subtle mb-4">
+              <div className="bg-surface rounded-lg p-4 shadow-inset-subtle mb-4">
                 <p className="text-xs font-medium text-text-secondary mb-2 uppercase tracking-wide">
                   Recommended File Size
                 </p>
@@ -151,7 +151,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
               </div>
 
               {/* Supported Formats */}
-              <div className="bg-darker-color rounded-lg p-4 shadow-inset-subtle">
+              <div className="bg-base-color rounded-lg p-4 shadow-inset-subtle">
                 <p className="text-xs font-medium text-text-secondary mb-2 uppercase tracking-wide">
                   Supported Formats
                 </p>
@@ -159,7 +159,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
                   {['MP4', 'WebM', 'MOV', 'AVI', 'MKV'].map((format) => (
                     <span 
                       key={format}
-                      className="px-2 py-1 bg-darker-color text-text-muted text-xs font-mono rounded shadow-inset"
+                      className="px-2 py-1 bg-surface text-text-muted text-xs font-mono rounded shadow-outset-subtle"
                     >
                       {format}
                     </span>
@@ -167,6 +167,32 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
                 </div>
               </div>
             </motion.div>
+
+            {/* Action Button */}
+            {!isDragActive && (
+              <motion.button
+                className="mt-6 px-6 py-3 bg-surface text-primary font-semibold rounded-lg shadow-outset-subtle border border-primary transition-all duration-200 hover:filter hover:brightness-105"
+                style={{
+                  borderColor: 'var(--primary-color, #e0f7fa99)',
+                  borderWidth: '1px',
+                  boxShadow: 'var(--shadow-outset-subtle)'
+                }}
+                whileHover={{
+                  filter: 'brightness(1.05)',
+                  boxShadow: 'var(--shadow-outset)'
+                }}
+                whileTap={{
+                  boxShadow: 'var(--shadow-pressed)',
+                  transform: 'translateY(1px)'
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUpload();
+                }}
+              >
+                Browse Files
+              </motion.button>
+            )}
           </div>
 
           {/* Decorative Elements */}
@@ -175,7 +201,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
           
           {/* Border Highlight */}
           <motion.div
-            className="absolute inset-0 rounded-lg border border-transparent"
+            className="absolute inset-0 rounded-lg border-2 border-transparent"
             animate={{
               borderColor: isDragActive ? 'var(--primary-color)' : 'transparent'
             }}
@@ -191,7 +217,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
           transition={{ delay: 0.2 }}
         >
           <p className="text-xs text-text-muted">
-            Maximum file size: 5GB
+            Maximum file size: 500MB
           </p>
         </motion.div>
       </motion.div>

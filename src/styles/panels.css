@@ -53,7 +53,7 @@
   bottom: 0;
   box-shadow: var(--shadow-inset-subtle);
   pointer-events: none;
-  z-index: 1010;
+  z-index: 800;
   border-radius: inherit;
 }
 

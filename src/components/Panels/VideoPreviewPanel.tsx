@@ -277,7 +277,9 @@ export const VideoPreviewPanel: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',
-          background: 'var(--base-color)'
+          background: 'var(--base-color)',
+          // The panel's inner shadow has a z-index of 800.
+          // Ensure any overlapping modals have a higher z-index.
         }}
       >
         <div
@@ -314,32 +316,6 @@ export const VideoPreviewPanel: React.FC = () => {
           isDragActive={isDragActive}
           isVideoLoaded={isVideoLoaded}
         />
-        {!hasVideo && !uploadState.isUploading && (
-          <div 
-            className="neu-video-upload-overlay"
-            onClick={handleManualFileSelect}
-            style={{
-              cursor: 'pointer',
-              background: isDragActive ? 'rgba(99, 179, 237, 0.1)' : 'transparent',
-              borderRadius: '18px',
-              transition: 'background 0.2s ease',
-              position: 'absolute',
-              inset: 0,
-              zIndex: 30
-            }}
-          >
-            {isDragActive && (
-              <div className="neu-video-upload-message">
-                <div className="neu-shadow-1 neu-video-upload-icon">
-                  <svg className="neu-video-upload-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                  </svg>
-                </div>
-                <h3 className="neu-text-primary">Drop video here</h3>
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Large Video Warning Modal */}
