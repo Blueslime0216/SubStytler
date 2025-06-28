@@ -67,7 +67,7 @@ export const LargeVideoWarningModal: React.FC<LargeVideoWarningModalProps> = ({
                 <p className="text-sm font-medium text-text-primary">Selected File Size</p>
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-bold text-warning-color">{fileSizeMB} MB</span>
-                  <span className="text-xs text-text-secondary">(Recommended: <500 MB)</span>
+                  <span className="text-xs text-text-secondary">(Recommended: &lt;500 MB)</span>
                 </div>
               </div>
             </div>
