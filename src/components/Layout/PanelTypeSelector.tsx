@@ -66,6 +66,16 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
         setSelectedIndex(prev => Math.min(panelTypes.length - 1, prev + 1));
         setHoveredIndex(null);
         break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => Math.max(0, prev - 5)); // Move up a row (5 columns)
+        setHoveredIndex(null);
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev => Math.min(panelTypes.length - 1, prev + 5)); // Move down a row (5 columns)
+        setHoveredIndex(null);
+        break;
       case 'Enter':
         e.preventDefault();
         handlePanelSelect(selectedIndex);
