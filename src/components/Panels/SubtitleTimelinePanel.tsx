@@ -9,6 +9,7 @@ import { SubtitleTrack } from '../../types/project';
 import { useSelectedTrackStore } from '../../stores/selectedTrackStore';
 import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
 import { useSubtitleHighlightStore } from '../../stores/subtitleHighlightStore';
+import { useHistoryStore } from '../../stores/historyStore';
 
 export const SubtitleTimelinePanel: React.FC = () => {
   const interactionRef = useRef<HTMLDivElement>(null);
@@ -62,6 +63,18 @@ export const SubtitleTimelinePanel: React.FC = () => {
 
   const addNewSubtitle = () => {
     if (currentProject) {
+      // 🆕 Record state before adding subtitle
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            subtitles: [...currentProject.subtitles],
+            selectedSubtitleId
+          }
+        },
+        'Before adding new subtitle',
+        true // Mark as internal
+      );
+      
       // Determine target track: selected, else first, else default
       let targetTrackId: string;
       if (selectedTrackId) {
@@ -122,6 +135,22 @@ export const SubtitleTimelinePanel: React.FC = () => {
       };
       addSubtitle(newSubtitle);
       setSelectedSubtitleId(newSubtitle.id);
+      
+      // 🆕 Record state after adding subtitle
+      setTimeout(() => {
+        const { currentProject } = useProjectStore.getState();
+        if (currentProject) {
+          useHistoryStore.getState().record(
+            { 
+              project: {
+                subtitles: currentProject.subtitles,
+                selectedSubtitleId: newSubtitle.id
+              }
+            },
+            `Added new subtitle at ${formatTimeForHistory(currentTime)}`
+          );
+        }
+      }, 0);
     }
   };
 
@@ -136,8 +165,43 @@ export const SubtitleTimelinePanel: React.FC = () => {
   useHotkeys('delete,backspace', (e) => {
     if (!isHovered || !selectedSubtitleId) return;
     e.preventDefault();
-    deleteSubtitle(selectedSubtitleId);
-    setSelectedSubtitleId(null);
+    
+    // 🆕 Record state before deleting
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject) {
+      const subtitleToDelete = currentProject.subtitles.find(s => s.id === selectedSubtitleId);
+      if (!subtitleToDelete) return;
+      
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            subtitles: [...currentProject.subtitles],
+            selectedSubtitleId
+          }
+        },
+        'Before deleting subtitle with hotkey',
+        true // Mark as internal
+      );
+      
+      deleteSubtitle(selectedSubtitleId);
+      setSelectedSubtitleId(null);
+      
+      // 🆕 Record state after deleting
+      setTimeout(() => {
+        const { currentProject } = useProjectStore.getState();
+        if (currentProject) {
+          useHistoryStore.getState().record(
+            { 
+              project: {
+                subtitles: currentProject.subtitles,
+                selectedSubtitleId: null
+              }
+            },
+            `Deleted subtitle at ${formatTimeForHistory(subtitleToDelete.startTime)} with hotkey`
+          );
+        }
+      }, 0);
+    }
   }, { enabled: isHovered, enableOnFormTags: false }, [isHovered, selectedSubtitleId, deleteSubtitle]);
 
   // Keep the local view window in sync with the overall project duration.
@@ -210,3 +274,11 @@ export const SubtitleTimelinePanel: React.FC = () => {
     </div>
   );
 };
+
+// Helper function to format time for history descriptions
+function formatTimeForHistory(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}

@@ -3,6 +3,7 @@ import { Area } from '../types/area';
 import { useLayoutStore } from './layoutStore';
 import { useProjectStore } from './projectStore';
 import { useSelectedTrackStore } from './selectedTrackStore';
+import { useSelectedSubtitleStore } from './selectedSubtitleStore';
 
 /*
  * Lightweight undo/redo implementation inspired by zustand's
@@ -294,6 +295,25 @@ function applySnapshot(snapshot: Snapshot) {
       }
       return;
     }
+
+    // 🆕 Subtitle snapshot
+    if (snapshot && snapshot.project && snapshot.project.subtitles) {
+      const { currentProject } = useProjectStore.getState();
+      if (currentProject) {
+        useProjectStore.setState({
+          currentProject: {
+            ...currentProject,
+            subtitles: snapshot.project.subtitles,
+          },
+        });
+      }
+
+      // Selection
+      if (snapshot.project.selectedSubtitleId !== undefined) {
+        useSelectedSubtitleStore.getState().setSelectedSubtitleId(snapshot.project.selectedSubtitleId);
+      }
+      return;
+    }
   } finally {
     isApplyingSnapshot = false;
   }
@@ -317,6 +337,37 @@ useSelectedTrackStore.subscribe((state) => {
         { tracks: currentProject.tracks, selectedTrackId: state.selectedTrackId },
         `Selected track: "${trackName}"`
       );
+    }
+  }
+});
+
+// 🆕 Subscribe to selected subtitle changes to record history (only when changed)
+let prevSelectedSubtitleId: string | null = null;
+
+useSelectedSubtitleStore.subscribe((state) => {
+  if (isApplyingSnapshot) return;
+  if (isSelectionSuppressed()) return;
+  if (state.selectedSubtitleId !== prevSelectedSubtitleId) {
+    prevSelectedSubtitleId = state.selectedSubtitleId;
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject && state.selectedSubtitleId) {
+      const subtitle = currentProject.subtitles.find(s => s.id === state.selectedSubtitleId);
+      if (subtitle) {
+        const subtitleText = subtitle.spans[0]?.text || 'Empty subtitle';
+        const displayText = subtitleText.length > 20 
+          ? subtitleText.substring(0, 20) + '...' 
+          : subtitleText;
+          
+        useHistoryStore.getState().record(
+          { 
+            project: {
+              subtitles: currentProject.subtitles,
+              selectedSubtitleId: state.selectedSubtitleId
+            }
+          },
+          `Selected subtitle: "${displayText}"`
+        );
+      }
     }
   }
 });

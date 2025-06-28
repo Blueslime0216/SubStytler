@@ -4,6 +4,7 @@ import { Bold, Italic, Underline, Type, AlignLeft, AlignCenter, AlignRight } fro
 import { useProjectStore } from '../../stores/projectStore';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
+import { useHistoryStore } from '../../stores/historyStore';
 
 export const TextEditorPanel: React.FC = () => {
   const [selectedText, setSelectedText] = useState('');
@@ -53,6 +54,23 @@ export const TextEditorPanel: React.FC = () => {
   }, [currentSubtitle, currentProject]);
 
   const handleTextChange = (text: string) => {
+    if (!currentSubtitle) return;
+    
+    // 🆕 Record state before changing text
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject) {
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            subtitles: [...currentProject.subtitles],
+            selectedSubtitleId
+          }
+        },
+        'Before editing subtitle text',
+        true // Mark as internal
+      );
+    }
+    
     setSelectedText(text);
     if (currentSubtitle) {
       const updatedSpans = [...currentSubtitle.spans];
@@ -60,6 +78,25 @@ export const TextEditorPanel: React.FC = () => {
         updatedSpans[0].text = text;
       }
       updateSubtitle(currentSubtitle.id, { spans: updatedSpans });
+      
+      // 🆕 Record state after changing text
+      if (currentProject) {
+        // Small delay to ensure the update has been applied
+        setTimeout(() => {
+          const { currentProject } = useProjectStore.getState();
+          if (currentProject) {
+            useHistoryStore.getState().record(
+              { 
+                project: {
+                  subtitles: currentProject.subtitles,
+                  selectedSubtitleId
+                }
+              },
+              'Edited subtitle text'
+            );
+          }
+        }, 0);
+      }
     }
   };
 
@@ -71,6 +108,21 @@ export const TextEditorPanel: React.FC = () => {
 
   const applyTextStyle = (style: 'bold' | 'italic' | 'underline') => {
     if (!currentSubtitle) return;
+    
+    // 🆕 Record state before applying text style
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject) {
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            subtitles: [...currentProject.subtitles],
+            selectedSubtitleId
+          }
+        },
+        'Before applying text style',
+        true // Mark as internal
+      );
+    }
     
     let newText = selectedText;
     
@@ -87,6 +139,25 @@ export const TextEditorPanel: React.FC = () => {
     }
     
     handleTextChange(newText);
+    
+    // 🆕 Record state after applying text style
+    if (currentProject) {
+      // Small delay to ensure the update has been applied
+      setTimeout(() => {
+        const { currentProject } = useProjectStore.getState();
+        if (currentProject) {
+          useHistoryStore.getState().record(
+            { 
+              project: {
+                subtitles: currentProject.subtitles,
+                selectedSubtitleId
+              }
+            },
+            `Applied ${style} style to text`
+          );
+        }
+      }, 0);
+    }
   };
 
   const getFontFamilyName = (value: string) => {

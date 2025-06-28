@@ -5,6 +5,7 @@ import { useProjectStore } from '../../stores/projectStore';
 import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
 import { useSubtitleHighlightStore } from '../../stores/subtitleHighlightStore';
 import { SubtitleBlock as SubtitleBlockType } from '../../types/project';
+import { useHistoryStore } from '../../stores/historyStore';
 
 interface SubtitleBlockProps {
   subtitle: SubtitleBlockType;
@@ -69,6 +70,23 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 
   const dragThreshold = 4; // px
 
+  // 🆕 Record initial state before drag or resize
+  const recordInitialState = useCallback(() => {
+    const { currentProject } = useProjectStore.getState();
+    if (!currentProject) return;
+    
+    useHistoryStore.getState().record(
+      { 
+        project: {
+          subtitles: [...currentProject.subtitles],
+          selectedSubtitleId
+        }
+      },
+      'Before moving subtitle',
+      true // Mark as internal
+    );
+  }, [selectedSubtitleId]);
+
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (isLocked || e.button !== 0) return;
     
@@ -115,6 +133,9 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       // Start drag
       setIsDragging(true);
       onDragStart(subtitle.id, subtitle.trackId);
+      
+      // 🆕 Record initial state for undo
+      recordInitialState();
     }
 
     const deltaX = deltaXFromStart;
@@ -164,7 +185,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 
     setHighlightedIds(overlappingIds);
 
-  }, [mouseDown, isDragging, dragStartPos, trackHeight, trackIndex, subtitle.id, subtitle.trackId, onDragStart, duration, subtitleDuration, setHighlightedIds]);
+  }, [mouseDown, isDragging, dragStartPos, trackHeight, trackIndex, subtitle.id, subtitle.trackId, onDragStart, duration, subtitleDuration, setHighlightedIds, recordInitialState]);
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
     if (!mouseDown) return;
@@ -237,6 +258,27 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       }
 
       updateSubtitle(subtitle.id, updates);
+      
+      // 🆕 Record final state for redo
+      if (isDragging) {
+        const { currentProject } = useProjectStore.getState();
+        if (currentProject) {
+          let description = 'Moved subtitle';
+          if (targetTrack && targetTrack.id !== originalTrackId && !targetTrack.locked) {
+            description = `Moved subtitle to track "${targetTrack.name}"`;
+          }
+          
+          useHistoryStore.getState().record(
+            { 
+              project: {
+                subtitles: currentProject.subtitles,
+                selectedSubtitleId
+              }
+            },
+            description
+          );
+        }
+      }
     }
     // If drop is invalid, do nothing. The state reset below will cause a snap-back.
 
@@ -248,7 +290,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     onDragEnd();
     setIsDropInvalid(false);
     setHighlightedIds([]);
-  }, [mouseDown, isDragging, dragStartPos, containerRef, updateSubtitle, onDragEnd, subtitleDuration, trackHeight, snapToFrame, duration, subtitle.id, setHighlightedIds]);
+  }, [mouseDown, isDragging, dragStartPos, containerRef, updateSubtitle, onDragEnd, subtitleDuration, trackHeight, snapToFrame, duration, subtitle.id, setHighlightedIds, selectedSubtitleId]);
 
   // Click to select (only when not dragging)
   const handleClick = useCallback(() => {
@@ -271,6 +313,9 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       endTime: subtitle.endTime,
     };
     setSelectedSubtitleId(subtitle.id);
+    
+    // 🆕 Record initial state for undo
+    recordInitialState();
   };
 
   const handleResizeMove = useCallback(
@@ -349,7 +394,18 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       updateSubtitle(adj.id, adj.updates);
     }
     resizeAdjustmentsRef.current = [];
-  }, [resizeSide, isResizeInvalid, updateSubtitle]);
+    
+    // 🆕 Record final state for redo
+    useHistoryStore.getState().record(
+      { 
+        project: {
+          subtitles: currentProject.subtitles,
+          selectedSubtitleId
+        }
+      },
+      `Resized subtitle ${resizeSide === 'left' ? 'start' : 'end'} time`
+    );
+  }, [resizeSide, isResizeInvalid, updateSubtitle, selectedSubtitleId]);
 
   // Global mouse event listeners
   React.useEffect(() => {

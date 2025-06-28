@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Search, Edit, Trash2, Clock } from 'lucide-react';
 import { useProjectStore } from '../../stores/projectStore';
 import { useTimelineStore } from '../../stores/timelineStore';
+import { useHistoryStore } from '../../stores/historyStore';
 
 export const ScriptViewerPanel: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,6 +32,21 @@ export const ScriptViewerPanel: React.FC = () => {
   };
 
   const handleTextEdit = (subtitleId: string, newText: string) => {
+    // 🆕 Record state before editing
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject) {
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            subtitles: [...currentProject.subtitles],
+            selectedSubtitleId
+          }
+        },
+        'Before editing subtitle text in script viewer',
+        true // Mark as internal
+      );
+    }
+    
     const subtitle = currentProject?.subtitles.find(s => s.id === subtitleId);
     if (subtitle) {
       const updatedSpans = [...subtitle.spans];
@@ -38,10 +54,41 @@ export const ScriptViewerPanel: React.FC = () => {
         updatedSpans[0].text = newText;
       }
       updateSubtitle(subtitleId, { spans: updatedSpans });
+      
+      // 🆕 Record state after editing
+      setTimeout(() => {
+        const { currentProject } = useProjectStore.getState();
+        if (currentProject) {
+          useHistoryStore.getState().record(
+            { 
+              project: {
+                subtitles: currentProject.subtitles,
+                selectedSubtitleId
+              }
+            },
+            'Edited subtitle text in script viewer'
+          );
+        }
+      }, 0);
     }
   };
 
   const handleTimeEdit = (subtitleId: string, field: 'start' | 'end', value: string) => {
+    // 🆕 Record state before editing
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject) {
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            subtitles: [...currentProject.subtitles],
+            selectedSubtitleId
+          }
+        },
+        'Before editing subtitle timing in script viewer',
+        true // Mark as internal
+      );
+    }
+    
     const subtitle = currentProject?.subtitles.find(s => s.id === subtitleId);
     if (subtitle) {
       const [minutes, rest] = value.split(':');
@@ -60,6 +107,60 @@ export const ScriptViewerPanel: React.FC = () => {
           spans: subtitle.spans.map(span => ({ ...span, endTime: timeMs }))
         });
       }
+      
+      // 🆕 Record state after editing
+      setTimeout(() => {
+        const { currentProject } = useProjectStore.getState();
+        if (currentProject) {
+          useHistoryStore.getState().record(
+            { 
+              project: {
+                subtitles: currentProject.subtitles,
+                selectedSubtitleId
+              }
+            },
+            `Adjusted subtitle ${field === 'start' ? 'start' : 'end'} time in script viewer`
+          );
+        }
+      }, 0);
+    }
+  };
+
+  const handleDeleteSubtitle = (subtitleId: string) => {
+    // 🆕 Record state before deleting
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject) {
+      const subtitleToDelete = currentProject.subtitles.find(s => s.id === subtitleId);
+      if (!subtitleToDelete) return;
+      
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            subtitles: [...currentProject.subtitles],
+            selectedSubtitleId
+          }
+        },
+        'Before deleting subtitle from script viewer',
+        true // Mark as internal
+      );
+      
+      deleteSubtitle(subtitleId);
+      
+      // 🆕 Record state after deleting
+      setTimeout(() => {
+        const { currentProject } = useProjectStore.getState();
+        if (currentProject) {
+          useHistoryStore.getState().record(
+            { 
+              project: {
+                subtitles: currentProject.subtitles,
+                selectedSubtitleId: null
+              }
+            },
+            `Deleted subtitle at ${formatTime(subtitleToDelete.startTime)} from script viewer`
+          );
+        }
+      }, 0);
     }
   };
 
@@ -142,7 +243,7 @@ export const ScriptViewerPanel: React.FC = () => {
                     </motion.button>
                     
                     <motion.button
-                      onClick={() => deleteSubtitle(subtitle.id)}
+                      onClick={() => handleDeleteSubtitle(subtitle.id)}
                       className="neu-btn-icon p-1"
                       style={{ color: 'var(--neu-error)' }}
                     >
