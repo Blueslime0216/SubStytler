@@ -37,6 +37,8 @@ interface HistoryState {
   record: (areas: Area[], description?: string) => void;
   undo: () => void;
   redo: () => void;
+  /** Jump directly to a specific entry (identified by timestamp). */
+  jumpTo: (timestamp: number) => void;
 }
 
 export const useHistoryStore = create<HistoryState>((set, get) => ({
@@ -108,5 +110,24 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
         futureStates: newFuture,
       };
     });
+  },
+
+  jumpTo: (timestamp: number) => {
+    const { pastStates, present, futureStates } = get();
+    if (!present) return;
+
+    // Build full list for search
+    const allEntries = [...pastStates, present, ...futureStates];
+    const targetIndex = allEntries.findIndex((e) => e.timestamp === timestamp);
+    if (targetIndex === -1) return; // Not found
+
+    const newPast = allEntries.slice(0, targetIndex);
+    const newPresent = allEntries[targetIndex];
+    const newFuture = allEntries.slice(targetIndex + 1);
+
+    // Reflect snapshot to layout store (future extension: generic apply fn?)
+    useLayoutStore.getState().setAreas(newPresent.snapshot);
+
+    set({ pastStates: newPast, present: newPresent, futureStates: newFuture });
   },
 })); 

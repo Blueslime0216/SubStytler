@@ -1,20 +1,53 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Undo, Redo } from 'lucide-react';
 import { useHistoryStore } from '../../stores/historyStore';
+import { Portal } from '../UI/Portal';
 
 export const HistoryPanel: React.FC = () => {
-  const { pastStates, present, futureStates, undo, redo } = useHistoryStore();
+  const { pastStates, present, futureStates, undo, redo, jumpTo } = useHistoryStore();
+
+  const [tooltip, setTooltip] = useState<{ entry: any; x: number; y: number } | null>(null);
+  const hoverTimer = useRef<number | null>(null);
 
   const canUndo = pastStates.length > 0;
   const canRedo = futureStates.length > 0;
 
-  const renderEntry = (entry: { description: string; timestamp: number }, isCurrent = false) => (
+  const clearHoverTimer = () => {
+    if (hoverTimer.current) {
+      clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    }
+  };
+
+  const handleMouseEnter = (e: React.MouseEvent, entry: any) => {
+    clearHoverTimer();
+    const { clientX, clientY } = e;
+    hoverTimer.current = window.setTimeout(() => {
+      setTooltip({ entry, x: clientX, y: clientY });
+    }, 500);
+  };
+
+  const handleMouseLeave = () => {
+    clearHoverTimer();
+    setTooltip(null);
+  };
+
+  const handleClick = (entry: any, isCurrent: boolean) => {
+    if (!isCurrent) {
+      jumpTo(entry.timestamp);
+    }
+  };
+
+  const renderEntry = (entry: { description: string; timestamp: number; snapshot?: unknown }, isCurrent = false) => (
     <div
       key={entry.timestamp}
-      className={`flex items-center space-x-1 py-1 px-2 rounded-sm hover:bg-neutral-800/30 ${
+      className={`flex items-center space-x-1 py-1 px-2 rounded-sm hover:bg-neutral-800/30 cursor-pointer ${
         isCurrent ? 'bg-primary/20 font-semibold' : ''
       }`}
+      onMouseEnter={(ev) => handleMouseEnter(ev, entry)}
+      onMouseLeave={handleMouseLeave}
+      onClick={() => handleClick(entry, isCurrent)}
     >
       <span className={`w-3 h-3 inline-block ${isCurrent ? 'text-primary' : 'opacity-40'}`}>•</span>
       <span className="truncate text-xs">{entry.description}</span>
@@ -64,6 +97,25 @@ export const HistoryPanel: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Tooltip */}
+      <Portal>
+        <AnimatePresence>
+          {tooltip && (
+            <motion.div
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 5 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+              className="neu-tooltip"
+              style={{ left: tooltip.x + 12, top: tooltip.y + 12 }}
+            >
+              <div className="font-semibold">{tooltip.entry.description}</div>
+              <div className="text-xs opacity-70">{new Date(tooltip.entry.timestamp).toLocaleString()}</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Portal>
     </div>
   );
 };

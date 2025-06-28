@@ -92,7 +92,7 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
 
     set({ areas: newAreas });
     // 📜 히스토리 기록
-    useHistoryStore.getState().record(newAreas);
+    useHistoryStore.getState().record(newAreas, `Split area (${areaId}) ${direction === 'horizontal' ? 'horizontally' : 'vertically'}`);
   },
 
   changePanelType: (areaId: string, newPanelType: PanelType) => {
@@ -131,7 +131,7 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
 
     set({ areas: newAreas });
     // 📜 히스토리 기록
-    useHistoryStore.getState().record(newAreas);
+    useHistoryStore.getState().record(newAreas, `Changed panel type of (${areaId}) to ${newPanelType}`);
   },
 
   removeArea: (areaId: string) => {
@@ -157,7 +157,7 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
 
     set({ areas: newAreas });
     // 📜 히스토리 기록
-    useHistoryStore.getState().record(newAreas);
+    useHistoryStore.getState().record(newAreas, `Removed area (${areaId})`);
   },
 
   /**
@@ -242,7 +242,7 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
     console.log('✅ 영역 덮기 완료:', { base: areaId, removed: removeIds, dir });
     set({ areas: newAreas });
     // 📜 히스토리 기록
-    useHistoryStore.getState().record(newAreas);
+    useHistoryStore.getState().record(newAreas, `Covered areas ${removeIds.join(', ')} from ${dir} of (${areaId})`);
   },
 
   // 🔧 기타 액션들 (현재 사용하지 않음)

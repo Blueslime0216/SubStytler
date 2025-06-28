@@ -261,7 +261,7 @@ export function useAreaDrag(
       }
       
       // 드래그 종료 후 레이아웃 스냅샷 저장 (Redo 용)
-      useHistoryStore.getState().record(areasRef.current);
+      useHistoryStore.getState().record(areasRef.current, 'Finished resizing areas');
       
       // 드래그 종료 시 body에서 클래스 제거
       document.body.classList.remove('dragging-active');
@@ -310,7 +310,7 @@ export function useAreaDrag(
     const linked = getLinkedBorders(areaId, dir);
     
     // 드래그 시작 시 레이아웃 스냅샷 저장 (Undo 용)
-    useHistoryStore.getState().record(areas);
+    useHistoryStore.getState().record(areas, `Start resizing area ${areaId}`);
 
     setDragging({ areaId, dir, lastX: e.clientX, lastY: e.clientY, linked });
     lastUpdateTimeRef.current = performance.now();
