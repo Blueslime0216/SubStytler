@@ -18,22 +18,9 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
   const [inputValue, setInputValue] = useState<string>(zoom.toFixed(1));
 
   const MIN_ZOOM = 1; // cannot zoom below full view
-  
-  // Calculate max zoom based on pixel-per-ms ratio
-  const calculateMaxZoom = () => {
-    // We want to limit zoom so that 1ms = 10px maximum
-    // At zoom level 1, the entire duration is visible
-    // So max zoom = (containerWidth / duration) * 10
-    
-    // Estimate container width (can be adjusted based on your layout)
-    const estimatedContainerWidth = window.innerWidth * 0.7; // 70% of window width
-    return (estimatedContainerWidth / duration) * 10;
-  };
+  const MAX_ZOOM = 100;
 
-  const clampZoom = (val: number) => {
-    const maxZoom = calculateMaxZoom();
-    return Math.max(MIN_ZOOM, Math.min(maxZoom, val));
-  };
+  const clampZoom = (val: number) => Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, val));
 
   const recalcViewRange = (newZoom: number, pivotTime?: number) => {
     const center = pivotTime ?? (viewStart + viewEnd) / 2;
@@ -146,7 +133,7 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
           onClick={() => adjustZoom(1)}
           className="timeline-toolbar-zoom-btn"
           title="Zoom in"
-          disabled={zoom >= calculateMaxZoom()}
+          disabled={zoom >= MAX_ZOOM}
         >
           <span className="timeline-toolbar-zoom-btn-label">+</span>
         </button>
@@ -155,4 +142,4 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
   );
 };
 
-export default TimelineToolbar;
+export default TimelineToolbar; 
