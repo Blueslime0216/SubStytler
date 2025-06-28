@@ -27,11 +27,24 @@
 @import './styles/volume.css';
 @import './styles/tooltip.css';
 @import './styles/video.css';
-@import './styles/timeline.css';
 @import './styles/toast.css';
 @import './styles/components/panel-selector.css';
 @import './styles/components/history.css';
 @import './styles/components/text-editor.css';
+
+/* Timeline Components */
+@import './styles/components/timeline/timeline-base.css';
+@import './styles/components/timeline/track-header.css';
+@import './styles/components/timeline/track-inputs.css';
+@import './styles/components/timeline/track-controls.css';
+@import './styles/components/timeline/track-content.css';
+@import './styles/components/timeline/subtitle-block.css';
+@import './styles/components/timeline/playhead.css';
+@import './styles/components/timeline/resize-handle.css';
+@import './styles/components/timeline/toolbar.css';
+@import './styles/components/timeline/zoom-controls.css';
+@import './styles/components/timeline/responsive.css';
+@import './styles/components/timeline/scrollbars.css';
 
 /* Tailwind */
 @tailwind base;
