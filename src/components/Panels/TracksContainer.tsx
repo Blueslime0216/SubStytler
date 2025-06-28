@@ -6,6 +6,7 @@ import TimelineRuler from './TimelineRuler';
 import { useTimelineInteraction } from '../../hooks/useTimelineInteraction';
 import { Plus } from 'lucide-react';
 import { useSelectedTrackStore } from '../../stores/selectedTrackStore';
+import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
 
 interface TracksContainerProps {
   currentTime: number;
@@ -50,6 +51,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   const subtitles = currentProject?.subtitles || [];
 
   const { selectedTrackId, setSelectedTrackId } = useSelectedTrackStore();
+  const { setSelectedSubtitleId } = useSelectedSubtitleStore();
 
   // Interaction handling (pan/zoom/playhead)
   const { handleMouseDown: tMouseDown, handleMouseMove: tMouseMove, handleMouseUp: tMouseUp, handleWheel: tWheel } = useTimelineInteraction(containerRef, {
@@ -277,7 +279,10 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
             }}
             onMouseEnter={() => handleTrackMouseEnter(track.id)}
             onMouseLeave={handleTrackMouseLeave}
-            onMouseDown={() => setSelectedTrackId(track.id)}
+            onMouseDown={() => {
+              setSelectedTrackId(track.id);
+              setSelectedSubtitleId(null);
+            }}
           >
             {/* Render subtitles for this track */}
             {subtitles

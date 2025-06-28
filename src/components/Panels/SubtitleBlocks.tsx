@@ -45,7 +45,7 @@ export const SubtitleBlocks: React.FC<SubtitleBlocksProps> = ({
             className="neu-subtitle-block absolute cursor-move"
             style={{
               left: Math.max(0, left),
-              width: Math.max(32, width),
+              width: Math.max(0, width),
               top: 20,
               userSelect: 'none',
               transition: 'none',
