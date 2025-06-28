@@ -6,12 +6,27 @@ import { SubtitleStyle } from '../../types/project';
 import StyleManagerToolbar from './StyleManagerToolbar';
 import StyleList from './StyleList';
 import StyleEditor from './StyleEditor';
+import { useHistoryStore } from '../../stores/historyStore';
 
 export const StyleManagerPanel: React.FC = () => {
   const [selectedStyleId, setSelectedStyleId] = useState<string | null>(null);
   const { currentProject, addStyle, updateStyle, deleteStyle } = useProjectStore();
 
   const createNewStyle = () => {
+    // Record state before creating new style
+    if (currentProject) {
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            styles: [...currentProject.styles],
+            selectedStyleId: selectedStyleId
+          }
+        },
+        'Before creating new style',
+        true // Mark as internal
+      );
+    }
+    
     const newStyle: SubtitleStyle = {
       id: crypto.randomUUID(),
       name: `Style ${(currentProject?.styles.length || 0) + 1}`,
@@ -27,24 +42,112 @@ export const StyleManagerPanel: React.FC = () => {
       et: 0,
       ec: '#000000'
     };
+    
     addStyle(newStyle);
     setSelectedStyleId(newStyle.id);
+    
+    // Record state after creating new style
+    if (currentProject) {
+      setTimeout(() => {
+        const { currentProject } = useProjectStore.getState();
+        if (currentProject) {
+          useHistoryStore.getState().record(
+            { 
+              project: {
+                styles: currentProject.styles,
+                selectedStyleId: newStyle.id
+              }
+            },
+            `Created new style "${newStyle.name}"`
+          );
+        }
+      }, 0);
+    }
   };
 
   const duplicateStyle = (style: SubtitleStyle) => {
+    // Record state before duplicating style
+    if (currentProject) {
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            styles: [...currentProject.styles],
+            selectedStyleId: selectedStyleId
+          }
+        },
+        'Before duplicating style',
+        true // Mark as internal
+      );
+    }
+    
     const newStyle: SubtitleStyle = {
       ...style,
       id: crypto.randomUUID(),
       name: `${style.name} Copy`
     };
+    
     addStyle(newStyle);
+    
+    // Record state after duplicating style
+    if (currentProject) {
+      setTimeout(() => {
+        const { currentProject } = useProjectStore.getState();
+        if (currentProject) {
+          useHistoryStore.getState().record(
+            { 
+              project: {
+                styles: currentProject.styles,
+                selectedStyleId: selectedStyleId
+              }
+            },
+            `Duplicated style "${style.name}"`
+          );
+        }
+      }, 0);
+    }
   };
 
   const removeStyle = (styleId: string) => {
     if (styleId === 'default') return;
+    
+    // Record state before removing style
+    if (currentProject) {
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            styles: [...currentProject.styles],
+            subtitles: [...currentProject.subtitles],
+            selectedStyleId: selectedStyleId
+          }
+        },
+        'Before removing style',
+        true // Mark as internal
+      );
+    }
+    
     deleteStyle(styleId);
     if (selectedStyleId === styleId) {
       setSelectedStyleId(null);
+    }
+    
+    // Record state after removing style
+    if (currentProject) {
+      const styleName = currentProject.styles.find(s => s.id === styleId)?.name || 'Unknown';
+      setTimeout(() => {
+        const { currentProject } = useProjectStore.getState();
+        if (currentProject) {
+          useHistoryStore.getState().record(
+            { 
+              project: {
+                styles: currentProject.styles,
+                subtitles: currentProject.subtitles,
+                selectedStyleId: selectedStyleId === styleId ? null : selectedStyleId
+              }
+            },
+            `Removed style "${styleName}"`
+          );
+        }
+      }, 0);
     }
   };
 

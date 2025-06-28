@@ -1,5 +1,7 @@
 import React from 'react';
 import { SubtitleStyle } from '../../types/project';
+import { useHistoryStore } from '../../stores/historyStore';
+import { useProjectStore } from '../../stores/projectStore';
 
 interface StyleEditorProps {
   style: SubtitleStyle;
@@ -7,16 +9,90 @@ interface StyleEditorProps {
 }
 
 const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
+  // Record initial state before making changes
+  const recordBeforeUpdate = () => {
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject) {
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            styles: [...currentProject.styles],
+            selectedStyleId: style.id
+          }
+        },
+        'Before updating style properties',
+        true // Mark as internal
+      );
+    }
+  };
+
+  // Record final state after making changes
+  const recordAfterUpdate = (property: string) => {
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject) {
+      let description = 'Updated style properties';
+      
+      switch (property) {
+        case 'name':
+          description = `Renamed style to "${style.name}"`;
+          break;
+        case 'fc':
+        case 'bc':
+        case 'ec':
+          description = 'Changed style colors';
+          break;
+        case 'fo':
+        case 'bo':
+          description = 'Adjusted style opacity';
+          break;
+        case 'fs':
+          description = 'Changed font family';
+          break;
+        case 'sz':
+          description = 'Changed font size';
+          break;
+        case 'ju':
+          description = 'Changed text alignment';
+          break;
+        case 'et':
+          description = 'Changed outline style';
+          break;
+        case 'pd':
+          description = 'Changed text direction';
+          break;
+        case 'ap':
+          description = 'Changed anchor point';
+          break;
+      }
+      
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            styles: currentProject.styles,
+            selectedStyleId: style.id
+          }
+        },
+        description
+      );
+    }
+  };
+
   const handleColorChange = (property: 'fc' | 'bc' | 'ec', value: string) => {
+    recordBeforeUpdate();
     onUpdate(style.id, { [property]: value });
+    recordAfterUpdate(property);
   };
 
   const handleOpacityChange = (property: 'fo' | 'bo', value: number) => {
+    recordBeforeUpdate();
     onUpdate(style.id, { [property]: value });
+    recordAfterUpdate(property);
   };
 
   const handleSelectChange = (property: string, value: any) => {
+    recordBeforeUpdate();
     onUpdate(style.id, { [property]: value });
+    recordAfterUpdate(property);
   };
 
   return (
@@ -29,7 +105,11 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
             <input
               type="text"
               value={style.name}
-              onChange={(e) => onUpdate(style.id, { name: e.target.value })}
+              onChange={(e) => {
+                recordBeforeUpdate();
+                onUpdate(style.id, { name: e.target.value });
+                recordAfterUpdate('name');
+              }}
               className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
             />
           </div>

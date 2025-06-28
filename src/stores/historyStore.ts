@@ -314,6 +314,25 @@ function applySnapshot(snapshot: Snapshot) {
       }
       return;
     }
+    
+    // 🆕 Style snapshot
+    if (snapshot && snapshot.project && snapshot.project.styles) {
+      const { currentProject } = useProjectStore.getState();
+      if (currentProject) {
+        useProjectStore.setState({
+          currentProject: {
+            ...currentProject,
+            styles: snapshot.project.styles,
+          },
+        });
+      }
+
+      // Selection for style if needed
+      if (snapshot.project.selectedStyleId !== undefined) {
+        // If you have a style selection store, update it here
+      }
+      return;
+    }
   } finally {
     isApplyingSnapshot = false;
   }
