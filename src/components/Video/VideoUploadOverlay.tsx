@@ -135,6 +135,21 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
                 }
               </p>
 
+              {/* File Size Recommendation */}
+              <div className="bg-base-color rounded-lg p-4 shadow-inset-subtle mb-4">
+                <p className="text-xs font-medium text-text-secondary mb-2 uppercase tracking-wide">
+                  Recommended File Size
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="px-3 py-1 bg-success-color/20 text-success-color text-xs font-semibold rounded shadow-outset-subtle">
+                    Less than 500MB
+                  </span>
+                </div>
+                <p className="text-xs text-text-muted mt-2">
+                  Larger files may impact performance
+                </p>
+              </div>
+
               {/* Supported Formats */}
               <div className="bg-base-color rounded-lg p-4 shadow-inset-subtle">
                 <p className="text-xs font-medium text-text-secondary mb-2 uppercase tracking-wide">
@@ -202,7 +217,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
           transition={{ delay: 0.2 }}
         >
           <p className="text-xs text-text-muted">
-            Maximum file size: 500MB
+            Maximum file size: 5GB
           </p>
         </motion.div>
       </motion.div>

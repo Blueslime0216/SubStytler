@@ -18,7 +18,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
 
   const { setVideoMeta, currentProject } = useProjectStore();
   const { setDuration, setFPS, setCurrentTime } = useTimelineStore();
-  const { success, error, info } = useToast();
+  const { success, error, info, warning } = useToast();
 
   const processVideoFile = useCallback(async (file: File) => {
     setUploadState({
@@ -33,9 +33,43 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         throw new Error('Please select a valid video file');
       }
 
-      const maxSize = 500 * 1024 * 1024; // 500MB
+      const recommendedSize = 500 * 1024 * 1024; // 500MB
+      const maxSize = 5 * 1024 * 1024 * 1024; // 5GB absolute maximum
+
+      // Check absolute maximum
       if (file.size > maxSize) {
-        throw new Error('Video file is too large. Maximum size is 500MB');
+        throw new Error('Video file is too large. Maximum size is 5GB');
+      }
+
+      // Show warning for files larger than 500MB
+      if (file.size > recommendedSize) {
+        const fileSizeMB = Math.round(file.size / (1024 * 1024));
+        const shouldContinue = window.confirm(
+          `⚠️ Performance Warning\n\n` +
+          `The selected video file is ${fileSizeMB}MB, which exceeds the recommended size of 500MB.\n\n` +
+          `Large files may cause:\n` +
+          `• Slower processing and loading times\n` +
+          `• Increased memory usage\n` +
+          `• Potential browser performance issues\n` +
+          `• Risk of application crashes on lower-end devices\n\n` +
+          `Do you want to continue with this file?`
+        );
+
+        if (!shouldContinue) {
+          setUploadState({
+            isUploading: false,
+            uploadProgress: 0,
+            uploadStage: ''
+          });
+          return;
+        }
+
+        // Show additional warning toast
+        warning({
+          title: 'Large File Warning',
+          message: `Processing ${fileSizeMB}MB video file. This may take longer than usual and could impact performance.`,
+          duration: 8000
+        });
       }
 
       setUploadState(prev => ({ 
@@ -68,9 +102,9 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         height: number;
       }>((resolve, reject) => {
         const timeout = setTimeout(() => {
-          console.error('Video loading timed out after 30 seconds');
-          reject(new Error('Video loading timed out after 30 seconds'));
-        }, 30000);
+          console.error('Video loading timed out after 60 seconds');
+          reject(new Error('Video loading timed out. This may be due to the large file size or unsupported format.'));
+        }, 60000); // Increased timeout for large files
 
         const handleLoadedMetadata = () => {
           cleanup();
@@ -107,7 +141,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         const handleError = (e: Event) => {
           cleanup();
           console.error('Video loading error:', e);
-          reject(new Error('Failed to load video. The file may be corrupted or in an unsupported format.'));
+          reject(new Error('Failed to load video. The file may be corrupted, in an unsupported format, or too large for your device to handle.'));
         };
 
         const cleanup = () => {
@@ -163,9 +197,10 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
       }));
 
       // Show success toast
+      const fileSizeMB = Math.round(file.size / (1024 * 1024));
       success({
         title: 'Video loaded successfully!',
-        message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height})`
+        message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height}, ${fileSizeMB}MB)`
       });
 
       // Reset upload state after a brief delay
@@ -199,7 +234,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         uploadStage: ''
       });
     }
-  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, videoRef]);
+  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, warning, videoRef]);
 
   return {
     uploadState,

@@ -82,7 +82,7 @@ export const VideoPreviewPanel: React.FC = () => {
     }
   }, [volume, isMuted]);
 
-  // 🎯 Dropzone setup - 중복 방지 및 영역 제한
+  // 🎯 Dropzone setup - updated for larger files
   const onDrop = React.useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
     if (rejectedFiles.length > 0) {
       const rejection = rejectedFiles[0];
@@ -91,7 +91,7 @@ export const VideoPreviewPanel: React.FC = () => {
       if (rejection.errors) {
         const errorObj = rejection.errors[0];
         if (errorObj.code === 'file-too-large') {
-          errorMessage = 'File is too large. Maximum size is 500MB';
+          errorMessage = 'File is too large. Maximum size is 5GB';
         } else if (errorObj.code === 'file-invalid-type') {
           errorMessage = 'Invalid file type. Please select a video file';
         } else {
@@ -118,7 +118,7 @@ export const VideoPreviewPanel: React.FC = () => {
       'video/*': ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv', '.m4v']
     },
     multiple: false,
-    maxSize: 500 * 1024 * 1024,
+    maxSize: 5 * 1024 * 1024 * 1024, // 5GB maximum
     disabled: uploadState.isUploading,
     noClick: true, // 🎯 기본 클릭 비활성화
     noKeyboard: true // 키보드 이벤트도 비활성화
