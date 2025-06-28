@@ -7,6 +7,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import TracksContainer from './TracksContainer';
 import { SubtitleTrack } from '../../types/project';
 import { useSelectedTrackStore } from '../../stores/selectedTrackStore';
+import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
 
 export const SubtitleTimelinePanel: React.FC = () => {
   const interactionRef = useRef<HTMLDivElement>(null);
@@ -20,8 +21,9 @@ export const SubtitleTimelinePanel: React.FC = () => {
     setZoom: setGlobalZoom,
     setViewRange: setGlobalViewRange,
   } = useTimelineStore();
-  const { currentProject, addSubtitle, addTrack } = useProjectStore();
+  const { currentProject, addSubtitle, addTrack, deleteSubtitle } = useProjectStore();
   const { selectedTrackId, setSelectedTrackId } = useSelectedTrackStore();
+  const { selectedSubtitleId, setSelectedSubtitleId } = useSelectedSubtitleStore();
 
   // Local state for this panel instance
   const [localZoom, setLocalZoom] = useState(globalZoom);
@@ -92,6 +94,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
         trackId: targetTrackId
       };
       addSubtitle(newSubtitle);
+      setSelectedSubtitleId(newSubtitle.id);
     }
   };
 
@@ -101,6 +104,14 @@ export const SubtitleTimelinePanel: React.FC = () => {
     e.preventDefault();
     addNewSubtitle();
   }, { enabled: isHovered, enableOnFormTags: true }, [isHovered, addNewSubtitle]);
+
+  // Hotkey: Delete or Backspace to remove selected subtitle when timeline is hovered
+  useHotkeys('delete,backspace', (e) => {
+    if (!isHovered || !selectedSubtitleId) return;
+    e.preventDefault();
+    deleteSubtitle(selectedSubtitleId);
+    setSelectedSubtitleId(null);
+  }, { enabled: isHovered, enableOnFormTags: false }, [isHovered, selectedSubtitleId, deleteSubtitle]);
 
   // Keep the local view window in sync with the overall project duration.
   useLayoutEffect(() => {

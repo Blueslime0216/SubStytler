@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Bold, Italic, Underline, Type } from 'lucide-react';
 import { useProjectStore } from '../../stores/projectStore';
 import { useTimelineStore } from '../../stores/timelineStore';
+import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
 
 export const TextEditorPanel: React.FC = () => {
   const [selectedText, setSelectedText] = useState('');
@@ -13,10 +14,12 @@ export const TextEditorPanel: React.FC = () => {
   
   const { currentProject, updateSubtitle, updateStyle } = useProjectStore();
   const { currentTime } = useTimelineStore();
+  const { selectedSubtitleId } = useSelectedSubtitleStore();
 
-  const currentSubtitle = currentProject?.subtitles.find(
-    sub => currentTime >= sub.startTime && currentTime <= sub.endTime
-  );
+  // Determine subtitle: prefer explicitly selected, fall back to one at playhead.
+  const currentSubtitle = selectedSubtitleId
+    ? currentProject?.subtitles.find(sub => sub.id === selectedSubtitleId)
+    : currentProject?.subtitles.find(sub => currentTime >= sub.startTime && currentTime <= sub.endTime);
 
   useEffect(() => {
     if (currentSubtitle) {

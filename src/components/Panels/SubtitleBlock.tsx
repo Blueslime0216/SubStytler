@@ -2,6 +2,7 @@ import React, { useRef, useCallback, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
+import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
 import { SubtitleBlock as SubtitleBlockType } from '../../types/project';
 
 interface SubtitleBlockProps {
@@ -28,6 +29,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   trackHeight = 50
 }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [mouseDown, setMouseDown] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
   const dragStartData = useRef<{
@@ -40,6 +42,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   
   const { updateSubtitle } = useProjectStore();
   const { snapToFrame, duration } = useTimelineStore();
+  const { selectedSubtitleId, setSelectedSubtitleId } = useSelectedSubtitleStore();
   
   const left = timeToPixel(subtitle.startTime);
   const width = timeToPixel(subtitle.endTime) - left;
@@ -51,6 +54,11 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     !isDragging && (!containerRef.current || left + width < -BUFFER || left > containerWidth + BUFFER);
 
   const subtitleDuration = subtitle.endTime - subtitle.startTime;
+
+  // Selected state
+  const isSelected = selectedSubtitleId === subtitle.id;
+
+  const dragThreshold = 4; // px
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (isLocked) return;
@@ -78,15 +86,29 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     
     setDragStartPos({ x: e.clientX, y: e.clientY });
     setDragOffset({ x: 0, y: 0 });
-    setIsDragging(true);
-    
-    onDragStart(subtitle.id, subtitle.trackId);
-  }, [isLocked, subtitle, containerRef, onDragStart]);
+    setMouseDown(true);
+    // Immediate selection
+    setSelectedSubtitleId(subtitle.id);
+  }, [isLocked, subtitle, containerRef, setSelectedSubtitleId]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging || !dragStartData.current) return;
+    if (!mouseDown || !dragStartData.current) return;
 
-    const deltaX = e.clientX - dragStartPos.x;
+    const deltaXFromStart = e.clientX - dragStartPos.x;
+    const deltaYFromStart = e.clientY - dragStartPos.y;
+
+    // If drag not started yet, check threshold
+    if (!isDragging) {
+      if (Math.abs(deltaXFromStart) < dragThreshold && Math.abs(deltaYFromStart) < dragThreshold) {
+        return; // still a click
+      }
+
+      // Start drag
+      setIsDragging(true);
+      onDragStart(subtitle.id, subtitle.trackId);
+    }
+
+    const deltaX = deltaXFromStart;
 
     // Determine which track we're currently hovering over and snap vertically
     const { containerRect } = dragStartData.current;
@@ -100,13 +122,18 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     const snappedY = offsetTrack * trackHeight;
 
     setDragOffset({ x: deltaX, y: snappedY });
-  }, [isDragging, dragStartPos, trackHeight, trackIndex]);
+  }, [mouseDown, isDragging, dragStartPos, trackHeight, trackIndex, subtitle.id, subtitle.trackId, onDragStart]);
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
-    if (!isDragging || !dragStartData.current) return;
+    if (!mouseDown) return;
     
     const container = containerRef.current;
-    if (!container) return;
+    if (!container || !dragStartData.current) {
+      setMouseDown(false);
+      setIsDragging(false);
+      dragStartData.current = null;
+      return;
+    }
     
     const { startTime, containerRect, originalTrackId } = dragStartData.current;
     
@@ -156,12 +183,19 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     setIsDragging(false);
     setDragOffset({ x: 0, y: 0 });
     dragStartData.current = null;
+    setMouseDown(false);
     onDragEnd();
-  }, [isDragging, dragStartPos, containerRef, updateSubtitle, onDragEnd, subtitleDuration, trackHeight, snapToFrame, duration, subtitle.id]);
+  }, [mouseDown, isDragging, dragStartPos, containerRef, updateSubtitle, onDragEnd, subtitleDuration, trackHeight, snapToFrame, duration, subtitle.id]);
+
+  // Click to select (only when not dragging)
+  const handleClick = useCallback(() => {
+    if (isDragging) return;
+    setSelectedSubtitleId(subtitle.id);
+  }, [isDragging, setSelectedSubtitleId, subtitle.id]);
 
   // Global mouse event listeners
   React.useEffect(() => {
-    if (isDragging) {
+    if (mouseDown) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       
@@ -170,7 +204,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [mouseDown, handleMouseMove, handleMouseUp]);
 
   // If the block is outside of the current viewport, render nothing **after** all hooks have been invoked.
   if (isOutsideView) {
@@ -189,9 +223,11 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
         zIndex: isDragging ? 1000 : 10,
         transform: isDragging ? 'scale(1.05)' : 'scale(1)',
         transition: isDragging ? 'none' : 'all 0.2s ease',
-        pointerEvents: isDragging ? 'none' : 'auto'
+        pointerEvents: isDragging ? 'none' : 'auto',
+        outline: isSelected ? '2px solid var(--highlight-color)' : 'none',
       }}
       onMouseDown={handleMouseDown}
+      onClick={handleClick}
       title={`${subtitle.spans[0]?.text || 'Empty subtitle'} - Drag to move`}
       tabIndex={0}
       animate={{
