@@ -289,7 +289,8 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       let newStart = startTime;
       let newEnd = endTime;
 
-      const MIN_DURATION = (1000 / 30) * 2; // at least 2 frames (~67ms for 30fps)
+      // 사용자 요구사항: 최소 너비를 0으로 설정하기 위함. 복구하지 마세요.
+      const MIN_DURATION = 0;
 
       if (resizeSide === 'left') {
         newStart = snapToFrame(startTime + deltaTime);
@@ -380,7 +381,8 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       className={`neu-subtitle-block absolute ${!isLocked ? 'cursor-move' : 'cursor-not-allowed'}`}
       style={{
         left: left + (isDragging ? dragOffset.x : 0),
-        width: Math.max(32, width),
+        // 사용자 요구사항: 최소 너비를 0으로 설정하기 위함. 복구하지 마세요.
+        width: Math.max(0, width),
         top: `${7 + (isDragging ? dragOffset.y : 0)}px`,
         height: '36px',
         opacity: isLocked ? 0.7 : 1,
