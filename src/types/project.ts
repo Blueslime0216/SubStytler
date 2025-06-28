@@ -61,7 +61,7 @@ export interface VideoMeta {
 export interface SubtitleTrack {
   id: string;
   name: string;
-  language: string;
+  detail: string;
   visible: boolean;
   locked: boolean;
 }

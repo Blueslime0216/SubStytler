@@ -70,7 +70,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
         const defaultTrack: SubtitleTrack = {
           id: newTrackId,
           name: 'Default',
-          language: 'und',
+          detail: '',
           locked: false,
           visible: true
         };

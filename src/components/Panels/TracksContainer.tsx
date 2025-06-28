@@ -222,6 +222,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
             onSelect={() => setSelectedTrackId(track.id)}
             onDelete={deleteTrack}
             onRename={(id, name) => updateTrack(id, { name })}
+            onUpdateDetail={(id, detail) => updateTrack(id, { detail })}
             onToggleVisibility={(id, visible) => updateTrack(id, { visible })}
             onToggleLock={(id, locked) => updateTrack(id, { locked })}
           />

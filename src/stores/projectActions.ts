@@ -12,7 +12,7 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
         {
           id: 'default',
           name: 'Default Track',
-          language: 'en',
+          detail: '',
           visible: true,
           locked: false,
         },
@@ -87,7 +87,7 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
           {
             id: 'default',
             name: 'Default Track',
-            language: 'en',
+            detail: '',
             visible: true,
             locked: false,
           },
@@ -214,7 +214,7 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       const newTrack = {
         id: crypto.randomUUID(),
         name,
-        language: 'en',
+        detail: '',
         visible: true,
         locked: false,
       };
@@ -271,6 +271,7 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       if (updates.name) desc = `Renamed track to "${updates.name}"`;
       if (updates.visible !== undefined) desc = `${updates.visible ? 'Showed' : 'Hid'} track`;
       if (updates.locked !== undefined) desc = `${updates.locked ? 'Locked' : 'Unlocked'} track`;
+      if (updates.detail !== undefined) desc = `Updated track detail`;
 
       // 🔧 Record state AFTER updating track (visible in UI)
       useHistoryStore.getState().record(
