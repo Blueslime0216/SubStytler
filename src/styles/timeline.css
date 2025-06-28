@@ -77,7 +77,6 @@
   flex-direction: column;
   position: relative;
   z-index: 100;
-  border-right: 1px solid var(--shadow-color);
 }
 
 .neu-tracks-header::before {
