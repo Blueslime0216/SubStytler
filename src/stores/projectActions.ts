@@ -285,12 +285,21 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
     const { currentProject } = get();
     if (currentProject) {
       // 🔧 Record state BEFORE deleting track (marked as internal)
-      const { selectedTrackId } = useSelectedTrackStore.getState();
-      useHistoryStore.getState().record(
+      const { selectedTrackId, setSelectedTrackId } = useSelectedTrackStore.getState();
+      const historyStore = useHistoryStore.getState();
+      
+      historyStore.record(
         { tracks: currentProject.tracks, selectedTrackId },
         'Before deleting track',
         true // 🆕 Mark as internal
       );
+
+      // Suppress selection history during this action to avoid duplicate entries
+      (historyStore as any)._suppressSelectionHistory = true;
+
+      // Find the track being deleted
+      const trackToDelete = currentProject.tracks.find((track: any) => track.id === id);
+      const trackName = trackToDelete?.name || 'Unknown Track';
 
       // Delete the track
       let updatedTracks = currentProject.tracks.filter((track: any) => track.id !== id);
@@ -310,6 +319,27 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       const updatedSubtitles = currentProject.subtitles.filter(
         (subtitle: SubtitleBlock) => subtitle.trackId !== id
       );
+
+      // 🆕 Auto-select another track if the deleted track was selected
+      let newSelectedTrackId = selectedTrackId;
+      let selectionChangeDescription = '';
+      
+      if (selectedTrackId === id) {
+        // Find the best replacement track
+        const availableTracks = updatedTracks;
+        
+        if (availableTracks.length > 0) {
+          // Prefer the first available track
+          newSelectedTrackId = availableTracks[0].id;
+          const newTrackName = availableTracks[0].name;
+          selectionChangeDescription = ` and selected "${newTrackName}"`;
+        } else {
+          newSelectedTrackId = null;
+        }
+        
+        // Update the selected track
+        setSelectedTrackId(newSelectedTrackId);
+      }
       
       set({
         currentProject: {
@@ -321,11 +351,15 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       });
 
       // 🔧 Record state AFTER deleting track (visible in UI)
-      useHistoryStore.getState().record(
-        { tracks: updatedTracks, selectedTrackId },
-        'Deleted track',
-        false // 🆕 Not internal
+      const actionDescription = `Deleted track "${trackName}"${selectionChangeDescription}`;
+      
+      historyStore.record(
+        { tracks: updatedTracks, selectedTrackId: newSelectedTrackId },
+        actionDescription,
+        false // 🆕 Not internal - this will be visible in history panel
       );
+
+      (historyStore as any)._suppressSelectionHistory = false;
     }
   },
 });
