@@ -53,6 +53,9 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   const [isResizeInvalid, setIsResizeInvalid] = useState(false);
   const resizeAdjustmentsRef = useRef<{ id: string; updates: { startTime?: number; endTime?: number } }[]>([]);
   
+  // Flag to track if we've already recorded the initial state for this resize operation
+  const hasRecordedInitialState = useRef<boolean>(false);
+  
   const left = timeToPixel(subtitle.startTime);
   const width = timeToPixel(subtitle.endTime) - left;
   
@@ -72,6 +75,9 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 
   // 🆕 Record initial state before drag or resize
   const recordInitialState = useCallback(() => {
+    // Only record if we haven't already for this operation
+    if (hasRecordedInitialState.current) return;
+    
     const { currentProject } = useProjectStore.getState();
     if (!currentProject) return;
     
@@ -85,6 +91,9 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       'Before moving subtitle',
       true // Mark as internal
     );
+    
+    // Set flag to prevent duplicate recordings
+    hasRecordedInitialState.current = true;
   }, [selectedSubtitleId]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -290,6 +299,9 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     onDragEnd();
     setIsDropInvalid(false);
     setHighlightedIds([]);
+    
+    // Reset the initial state recording flag
+    hasRecordedInitialState.current = false;
   }, [mouseDown, isDragging, dragStartPos, containerRef, updateSubtitle, onDragEnd, subtitleDuration, trackHeight, snapToFrame, duration, subtitle.id, setHighlightedIds, selectedSubtitleId]);
 
   // Click to select (only when not dragging)
@@ -314,7 +326,10 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     };
     setSelectedSubtitleId(subtitle.id);
     
-    // 🆕 Record initial state for undo
+    // Reset the initial state recording flag
+    hasRecordedInitialState.current = false;
+    
+    // 🆕 Record initial state for undo - only at the start of resize
     recordInitialState();
   };
 
@@ -395,16 +410,22 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     }
     resizeAdjustmentsRef.current = [];
     
-    // 🆕 Record final state for redo
-    useHistoryStore.getState().record(
-      { 
-        project: {
-          subtitles: currentProject.subtitles,
-          selectedSubtitleId
-        }
-      },
-      `Resized subtitle ${resizeSide === 'left' ? 'start' : 'end'} time`
-    );
+    // 🆕 Record final state for redo - only at the end of resize
+    const { currentProject: updatedProject } = useProjectStore.getState();
+    if (updatedProject) {
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            subtitles: updatedProject.subtitles,
+            selectedSubtitleId
+          }
+        },
+        `Resized subtitle ${resizeSide === 'left' ? 'start' : 'end'} time`
+      );
+    }
+    
+    // Reset the initial state recording flag
+    hasRecordedInitialState.current = false;
   }, [resizeSide, isResizeInvalid, updateSubtitle, selectedSubtitleId]);
 
   // Global mouse event listeners
