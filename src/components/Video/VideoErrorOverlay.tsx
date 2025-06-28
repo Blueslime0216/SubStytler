@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, RotateCcw, X } from 'lucide-react';
+import { AlertTriangle, RotateCcw } from 'lucide-react';
 
 interface VideoErrorOverlayProps {
   error: string | null;
@@ -72,7 +72,7 @@ export const VideoErrorOverlay: React.FC<VideoErrorOverlayProps> = ({
           {/* Action Button */}
           <motion.button
             onClick={onRetry}
-            className="px-6 py-3 bg-error-color/60 text-white font-semibold rounded-lg shadow-inset border border-error-color/30 transition-all duration-200 flex items-center gap-2 mx-auto"
+            className="px-6 py-3 bg-error-color/40 text-white font-semibold rounded-lg shadow-inset border border-error-color/30 transition-all duration-200 flex items-center gap-2 mx-auto"
             whileHover={{ 
               filter: 'brightness(1.1)',
               boxShadow: 'var(--shadow-outset-hover)'

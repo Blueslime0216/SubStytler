@@ -167,32 +167,6 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
                 </div>
               </div>
             </motion.div>
-
-            {/* Action Button */}
-            {!isDragActive && (
-              <motion.button
-                className="mt-6 px-6 py-3 bg-surface text-primary font-semibold rounded-lg shadow-outset-subtle border border-primary transition-all duration-200 hover:filter hover:brightness-105"
-                style={{
-                  borderColor: 'var(--primary-color, #e0f7fa99)',
-                  borderWidth: '1px',
-                  boxShadow: 'var(--shadow-outset-subtle)'
-                }}
-                whileHover={{
-                  filter: 'brightness(1.05)',
-                  boxShadow: 'var(--shadow-outset)'
-                }}
-                whileTap={{
-                  boxShadow: 'var(--shadow-pressed)',
-                  transform: 'translateY(1px)'
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onUpload();
-                }}
-              >
-                Browse Files
-              </motion.button>
-            )}
           </div>
 
           {/* Decorative Elements */}
