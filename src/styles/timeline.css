@@ -227,6 +227,13 @@
   padding: 1px 0;
 }
 
+.track-detail:empty::before {
+  content: 'empty';
+  color: var(--text-muted);
+  opacity: 0.6;
+  font-style: italic;
+}
+
 .track-name-input,
 .track-detail-input {
   background-color: transparent;

@@ -124,6 +124,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
               onBlur={handleBlur}
               onKeyDown={handleKeyDown}
               className="track-name-input"
+              placeholder="Name"
             />
           ) : (
             <span className="track-name" onDoubleClick={handleDoubleClick}>
@@ -140,11 +141,11 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
               onBlur={handleDetailBlur}
               onKeyDown={handleDetailKeyDown}
               className="track-detail-input"
-              placeholder="Detail..."
+              placeholder="Detail"
             />
           ) : (
             <span className="track-detail" onDoubleClick={handleDetailDoubleClick}>
-              {track.detail || '\u00A0' /* Non-breaking space to maintain height */}
+              {track.detail}
             </span>
           )}
         </div>

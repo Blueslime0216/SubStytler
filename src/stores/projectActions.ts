@@ -1,6 +1,6 @@
 import { Project, SubtitleBlock, SubtitleStyle, VideoMeta } from '../types/project';
 import { StateCreator } from 'zustand';
-import { useHistoryStore } from './historyStore';
+import { useHistoryStore, setSelectionSuppressed, isSelectionSuppressed } from './historyStore';
 import { useSelectedTrackStore } from './selectedTrackStore';
 
 export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
@@ -207,9 +207,7 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       );
 
       // Suppress selection history during this action to avoid duplicate entries
-      const historyStore = useHistoryStore.getState();
-      const selectedTrackStore = useSelectedTrackStore.getState();
-      (historyStore as any)._suppressSelectionHistory = true;
+      setSelectionSuppressed(true);
 
       const newTrack = {
         id: crypto.randomUUID(),
@@ -230,16 +228,16 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       });
 
       // Update selected track
-      selectedTrackStore.setSelectedTrackId(newTrack.id);
+      useSelectedTrackStore.getState().setSelectedTrackId(newTrack.id);
 
       // 🔧 Record state AFTER adding track (visible in UI)
-      historyStore.record(
+      useHistoryStore.getState().record(
         { tracks: updatedTracks, selectedTrackId: newTrack.id },
         `Added track "${name}"`,
         false // 🆕 Not internal - this will be visible in history panel
       );
 
-      (historyStore as any)._suppressSelectionHistory = false;
+      setSelectionSuppressed(false);
       return newTrack.id;
     }
     return null;
@@ -302,7 +300,7 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
       );
 
       // Suppress selection history during this action to avoid duplicate entries
-      (historyStore as any)._suppressSelectionHistory = true;
+      setSelectionSuppressed(true);
 
       // Find the track being deleted
       const trackToDelete = currentProject.tracks.find((track: any) => track.id === id);
@@ -355,7 +353,7 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
         false // 🆕 Not internal - this will be visible in history panel
       );
 
-      (historyStore as any)._suppressSelectionHistory = false;
+      setSelectionSuppressed(false);
     }
   },
 });

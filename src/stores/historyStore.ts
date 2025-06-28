@@ -24,7 +24,7 @@ interface HistoryEntry {
   snapshot: Snapshot;
   description: string;
   timestamp: number;
-  isInternal?: boolean; // 🆕 Flag to mark internal "Before" entries
+  internal?: boolean; // if true, hidden from UI
 }
 
 interface HistoryState {
@@ -36,7 +36,7 @@ interface HistoryState {
    * History panel; if omitted, a generic one will be used so existing code
    * continues to work without modification.
    */
-  record: (snapshot: Snapshot, description?: string, isInternal?: boolean) => void;
+  record: (snapshot: Snapshot, description?: string, internal?: boolean) => void;
   undo: () => void;
   redo: () => void;
   /** Jump directly to a specific entry (identified by timestamp). */
@@ -56,7 +56,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
   present: null,
   futureStates: [],
 
-  record: (snapshot: Snapshot, description = 'State modified', isInternal = false) => {
+  record: (snapshot: Snapshot, description = 'State modified', internal = false) => {
     const { present } = get();
 
     // 🔧 Skip recording if snapshot is identical to current present
@@ -68,7 +68,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       snapshot, 
       description, 
       timestamp: Date.now(),
-      isInternal 
+      internal 
     };
 
     set((state) => {
@@ -113,7 +113,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       const currentState = get();
       
       // If current state is visible or we've reached the beginning, stop
-      if (!currentState.present?.isInternal || currentState.pastStates.length === 0) {
+      if (!currentState.present?.internal || currentState.pastStates.length === 0) {
         break;
       }
       
@@ -156,7 +156,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       const currentState = get();
       
       // If current state is visible or we've reached the end, stop
-      if (!currentState.present?.isInternal || currentState.futureStates.length === 0) {
+      if (!currentState.present?.internal || currentState.futureStates.length === 0) {
         break;
       }
       
@@ -184,9 +184,9 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
     set({ pastStates: newPast, present: newPresent, futureStates: newFuture });
 
     // 🆕 If we jumped to an internal state, auto-navigate to nearest visible state
-    if (newPresent.isInternal) {
+    if (newPresent.internal) {
       // Try to find the next visible state in the future first
-      const nextVisibleIndex = newFuture.findIndex(entry => !entry.isInternal);
+      const nextVisibleIndex = newFuture.findIndex(entry => !entry.internal);
       if (nextVisibleIndex !== -1) {
         // Jump forward to the next visible state
         const nextVisible = newFuture[nextVisibleIndex];
@@ -197,7 +197,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
         set({ pastStates: finalPast, present: nextVisible, futureStates: finalFuture });
       } else {
         // No visible future state, try to find previous visible state
-        const prevVisibleIndex = [...newPast].reverse().findIndex(entry => !entry.isInternal);
+        const prevVisibleIndex = [...newPast].reverse().findIndex(entry => !entry.internal);
         if (prevVisibleIndex !== -1) {
           const actualIndex = newPast.length - 1 - prevVisibleIndex;
           const prevVisible = newPast[actualIndex];
@@ -223,10 +223,11 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
   getVisibleHistory: () => {
     const { pastStates, present, futureStates } = get();
     
+    const filter = (arr: HistoryEntry[]) => arr.filter((e) => !e.internal);
     return {
-      pastStates: pastStates.filter(entry => !entry.isInternal),
-      present: present && !present.isInternal ? present : null,
-      futureStates: futureStates.filter(entry => !entry.isInternal)
+      pastStates: filter(pastStates),
+      present: present && !present.internal ? present : null,
+      futureStates: filter(futureStates)
     };
   },
 }));
@@ -277,16 +278,22 @@ let prevSelectedTrackId: string | null = null;
 
 useSelectedTrackStore.subscribe((state) => {
   if (isApplyingSnapshot) return;
-  const historyStore = useHistoryStore.getState() as any;
-  if (historyStore._suppressSelectionHistory) return;
+  if (isSelectionSuppressed()) return;
   if (state.selectedTrackId !== prevSelectedTrackId) {
     prevSelectedTrackId = state.selectedTrackId;
     const { currentProject } = useProjectStore.getState();
     if (currentProject) {
+      const track = currentProject.tracks.find(t => t.id === state.selectedTrackId);
+      const trackName = track?.name || 'Unknown';
       useHistoryStore.getState().record(
         { tracks: currentProject.tracks, selectedTrackId: state.selectedTrackId },
-        'Selected track changed'
+        `Selected track: "${trackName}"`
       );
     }
   }
 });
+
+// Variable to suppress selection history during composite actions
+let selectionSuppressedFlag = false;
+export const setSelectionSuppressed = (v: boolean) => { selectionSuppressedFlag = v; };
+export const isSelectionSuppressed = () => selectionSuppressedFlag;
