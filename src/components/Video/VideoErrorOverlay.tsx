@@ -16,7 +16,7 @@ export const VideoErrorOverlay: React.FC<VideoErrorOverlayProps> = ({
   return (
     <div className="absolute inset-0 flex items-center justify-center p-8">
       <motion.div 
-        className="bg-surface border-2 border-error-color rounded-lg shadow-outset-strong max-w-md w-full p-8 relative overflow-hidden"
+        className="bg-darker-color border border-darker-color rounded-lg shadow-inset max-w-md w-full p-8 relative overflow-hidden"
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -28,12 +28,12 @@ export const VideoErrorOverlay: React.FC<VideoErrorOverlayProps> = ({
         <div className="relative z-10 text-center">
           {/* Error Icon */}
           <motion.div 
-            className="w-16 h-16 mx-auto mb-6 bg-surface rounded-2xl shadow-outset flex items-center justify-center relative overflow-hidden"
+            className="w-16 h-16 mx-auto mb-6 bg-darker-color rounded-2xl shadow-inset flex items-center justify-center relative overflow-hidden"
             animate={{ 
               boxShadow: [
-                'var(--shadow-outset)',
-                'var(--shadow-outset-strong)',
-                'var(--shadow-outset)'
+                'var(--shadow-inset)',
+                'var(--shadow-inset-strong)',
+                'var(--shadow-inset)'
               ]
             }}
             transition={{
@@ -57,12 +57,12 @@ export const VideoErrorOverlay: React.FC<VideoErrorOverlayProps> = ({
                 ease: "easeInOut"
               }}
             >
-              <AlertTriangle className="w-8 h-8 text-error-color" />
+              <AlertTriangle className="w-8 h-8 text-error-color/80" />
             </motion.div>
           </motion.div>
           
           {/* Error Message */}
-          <h3 className="text-lg font-semibold text-error-color mb-3">
+          <h3 className="text-lg font-semibold text-error-color/90 mb-3">
             Video Error
           </h3>
           <p className="text-text-secondary text-sm mb-6 leading-relaxed">
@@ -72,7 +72,7 @@ export const VideoErrorOverlay: React.FC<VideoErrorOverlayProps> = ({
           {/* Action Button */}
           <motion.button
             onClick={onRetry}
-            className="px-6 py-3 bg-error-color text-white font-semibold rounded-lg shadow-outset border-2 border-error-color transition-all duration-200 flex items-center gap-2 mx-auto"
+            className="px-6 py-3 bg-error-color/60 text-white font-semibold rounded-lg shadow-inset border border-error-color/30 transition-all duration-200 flex items-center gap-2 mx-auto"
             whileHover={{ 
               filter: 'brightness(1.1)',
               boxShadow: 'var(--shadow-outset-hover)'
@@ -87,12 +87,12 @@ export const VideoErrorOverlay: React.FC<VideoErrorOverlayProps> = ({
           </motion.button>
 
           {/* Additional Help */}
-          <div className="mt-6 p-4 bg-base-color rounded-lg shadow-inset-subtle">
+          <div className="mt-6 p-4 bg-darker-color rounded-lg shadow-inset-subtle">
             <p className="text-xs text-text-muted">
               <strong>Common solutions:</strong><br />
               • Check if the video file is corrupted<br />
               • Try a different video format (MP4 recommended)<br />
-              • Ensure the file size is under 500MB
+              • Ensure the file size is under 5GB
             </p>
           </div>
         </div>
