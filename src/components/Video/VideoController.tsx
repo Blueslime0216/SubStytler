@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
-import { formatTime } from '../../utils/timeUtils';
+import { motion, AnimatePresence } from 'framer-motion';
 import VideoControllerPlayButton from './VideoController/VideoControllerPlayButton';
 import VideoControllerProgressBar from './VideoController/VideoControllerProgressBar';
 import VideoControllerVolumeButton from './VideoController/VideoControllerVolumeButton';
 import VideoControllerTimeDisplay from './VideoController/VideoControllerTimeDisplay';
 import VideoControllerAdditionalButtons from './VideoController/VideoControllerAdditionalButtons';
 import VideoControllerSkipForwardButton from './VideoController/VideoControllerSkipForwardButton';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface VideoControllerProps {
   isVideoLoaded: boolean;
