@@ -72,9 +72,6 @@ export const useTimelineInteraction = (
         }
 
         setViewRange(newStart, newEnd);
-
-        // 디버깅: 실시간 값 콘솔 출력
-        console.log('[PAN] dx:', dx, 'newStart:', newStart, 'newEnd:', newEnd);
       };
 
       const onUp = (ev: MouseEvent) => {

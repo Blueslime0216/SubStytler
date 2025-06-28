@@ -17,6 +17,7 @@ interface VideoControllerProps {
   onMuteToggle: () => void;
   onSettings: () => void;
   parentRef?: React.RefObject<HTMLElement>;
+  bottomOffset?: number;
 }
 
 export const VideoController: React.FC<VideoControllerProps> = ({
@@ -26,7 +27,8 @@ export const VideoController: React.FC<VideoControllerProps> = ({
   onVolumeChange,
   onMuteToggle,
   onSettings,
-  parentRef
+  parentRef,
+  bottomOffset = 0,
 }) => {
   const { 
     currentTime, 
@@ -158,6 +160,7 @@ export const VideoController: React.FC<VideoControllerProps> = ({
         <motion.div
           ref={controllerRef}
           className="video-controller-container"
+          style={{ bottom: `${bottomOffset}px` }}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           initial={{ y: '100%', opacity: 0 }}

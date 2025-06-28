@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { formatTime } from '../../../utils/timeUtils';
+import { Portal } from '../../UI/Portal';
 
 interface VideoControllerProgressBarProps {
   currentTime: number;
@@ -23,6 +24,8 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [hoverPosition, setHoverPosition] = useState<number | null>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const [tooltipCoords, setTooltipCoords] = useState<{left: number, top: number} | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
   
   // 진행률 계산
   const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
@@ -53,6 +56,13 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
   const handleLocalMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const newTime = getTimeFromPosition(e.clientX);
     setHoverPosition(e.clientX);
+    if (progressBarRef.current) {
+      const rect = progressBarRef.current.getBoundingClientRect();
+      setTooltipCoords({
+        left: e.clientX,
+        top: rect.top,
+      });
+    }
     if (isDragging && isVideoLoaded) {
       setCurrentTime(Math.max(0, Math.min(duration, newTime)));
     }
@@ -64,6 +74,13 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
     const newTime = getTimeFromPosition(e.clientX);
     setCurrentTime(Math.max(0, Math.min(duration, newTime)));
     setHoverPosition(e.clientX);
+    if (progressBarRef.current) {
+      const rect = progressBarRef.current.getBoundingClientRect();
+      setTooltipCoords({
+        left: e.clientX,
+        top: rect.top,
+      });
+    }
   };
   
   // 드래그 종료
@@ -77,6 +94,7 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
   // 마우스가 진행 바에서 벗어났을 때
   const handleMouseLeave = () => {
     setHoverPosition(null);
+    setTooltipCoords(null);
   };
   
   // 이벤트 리스너 등록/해제
@@ -90,6 +108,13 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
       };
     }
   }, [isDragging, isVideoLoaded, duration]);
+  
+  useLayoutEffect(() => {
+    if (tooltipRef.current && tooltipCoords) {
+      tooltipRef.current.style.left = `${tooltipCoords.left}px`;
+      tooltipRef.current.style.top = `${tooltipCoords.top - 36}px`; // 36px 오프셋
+    }
+  }, [tooltipCoords]);
   
   // 툴팁 시간 계산 및 위치 계산
   const getTooltipTime = () => {
@@ -131,16 +156,21 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
       ></div>
       
       {/* 시간 툴팁 */}
-      {hoverPosition !== null && (
-        <div 
-          className="video-controller-progress-tooltip"
-          style={{ 
-            left: getTooltipPosition(),
-            transform: 'translateX(-50%)'
-          }}
-        >
-          {formatTime(getTooltipTime(), fps)}
-        </div>
+      {tooltipCoords && (
+        <Portal>
+          <div
+            ref={tooltipRef}
+            className="video-controller-progress-tooltip"
+            style={{
+              position: 'fixed',
+              transform: 'translateX(-50%)',
+              zIndex: 9999,
+              visibility: tooltipCoords ? 'visible' : 'hidden',
+            }}
+          >
+            {formatTime(getTooltipTime(), fps, false)}
+          </div>
+        </Portal>
       )}
     </div>
   );

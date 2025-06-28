@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useLayoutEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
@@ -24,6 +24,7 @@ export const VideoPreviewPanel: React.FC = () => {
   useVideoSync(videoRef, isVideoLoaded);
 
   const videoAreaRef = useRef<HTMLDivElement>(null);
+  const [controllerBottomOffset, setControllerBottomOffset] = useState(0);
 
   // Video event handlers
   useEffect(() => {
@@ -198,6 +199,37 @@ export const VideoPreviewPanel: React.FC = () => {
     };
   }, []);
 
+  // 컨트롤러 위치 동적 계산
+  useLayoutEffect(() => {
+    const areaEl = videoAreaRef.current;
+    if (!areaEl) return;
+
+    const observer = new ResizeObserver(() => {
+      const videoMeta = currentProject?.videoMeta;
+      if (!videoMeta || !areaEl) return;
+
+      const panelWidth = areaEl.clientWidth;
+      const panelHeight = areaEl.clientHeight;
+      if (panelWidth === 0 || panelHeight === 0) return;
+
+      const panelAspectRatio = panelWidth / panelHeight;
+      const videoAspectRatio = videoMeta.width / videoMeta.height;
+
+      let offset = 0;
+      if (panelAspectRatio < videoAspectRatio) {
+        // 패널이 비디오보다 세로로 길다 (좌우에 여백)
+        const videoRenderedHeight = panelWidth / videoAspectRatio;
+        offset = (panelHeight - videoRenderedHeight) / 2;
+      }
+      // 패널이 비디오보다 가로로 길면 (상하에 여백), 오프셋은 0
+
+      setControllerBottomOffset(offset);
+    });
+
+    observer.observe(areaEl);
+    return () => observer.disconnect();
+  }, [currentProject?.videoMeta]);
+
   return (
     <div 
       ref={panelRef}
@@ -283,6 +315,7 @@ export const VideoPreviewPanel: React.FC = () => {
             onMuteToggle={handleMuteToggle}
             onSettings={handleSettings}
             parentRef={videoAreaRef}
+            bottomOffset={controllerBottomOffset}
           />
         )}
       </div>

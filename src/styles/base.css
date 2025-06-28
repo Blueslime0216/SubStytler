@@ -18,6 +18,10 @@ body {
   overflow-y: auto;
   margin: 0;
   padding: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 /* Critical: Global overflow fix for all containers */

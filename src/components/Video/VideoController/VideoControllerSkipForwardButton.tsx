@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { Portal } from '../../UI/Portal';
 
 interface VideoControllerSkipForwardButtonProps {
   isVideoLoaded: boolean;
@@ -10,13 +11,25 @@ const VideoControllerSkipForwardButton: React.FC<VideoControllerSkipForwardButto
   onSkip
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [tooltipPos, setTooltipPos] = useState<{left: number, top: number} | null>(null);
 
-  const handleMouseEnter = () => setShowTooltip(true);
+  const handleMouseEnter = () => {
+    setShowTooltip(true);
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setTooltipPos({
+        left: rect.left + rect.width / 2,
+        top: rect.top
+      });
+    }
+  };
   const handleMouseLeave = () => setShowTooltip(false);
 
   return (
     <div className="video-controller-button-wrapper">
       <button
+        ref={buttonRef}
         className={`video-controller-button ${!isVideoLoaded ? 'disabled' : ''}`}
         onClick={onSkip}
         disabled={!isVideoLoaded}
@@ -37,8 +50,21 @@ const VideoControllerSkipForwardButton: React.FC<VideoControllerSkipForwardButto
         </svg>
       </button>
 
-      {showTooltip && (
-        <div className="video-controller-tooltip">5초 앞으로</div>
+      {showTooltip && tooltipPos && (
+        <Portal>
+          <div
+            className="video-controller-tooltip"
+            style={{
+              position: 'fixed',
+              left: tooltipPos.left,
+              top: tooltipPos.top - 40,
+              transform: 'translateX(-50%)',
+              zIndex: 9999
+            }}
+          >
+            5초 앞으로
+          </div>
+        </Portal>
       )}
     </div>
   );

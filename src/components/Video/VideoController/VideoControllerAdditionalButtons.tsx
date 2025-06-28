@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Pin, PinOff } from 'lucide-react';
+import { Portal } from '../../UI/Portal';
 
 interface VideoControllerAdditionalButtonsProps {
   onSettings: () => void;
@@ -14,6 +15,10 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
 }) => {
   const [isSubtitleOn, setIsSubtitleOn] = useState(false);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{left: number, top: number} | null>(null);
+  const subtitleBtnRef = useRef<HTMLButtonElement>(null);
+  const settingsBtnRef = useRef<HTMLButtonElement>(null);
+  const pinBtnRef = useRef<HTMLButtonElement>(null);
   
   // 자막 토글
   const handleSubtitleToggle = () => {
@@ -24,6 +29,17 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
   // 툴팁 표시 관리
   const handleMouseEnter = (tooltipType: string) => {
     setShowTooltip(tooltipType);
+    let ref: React.RefObject<HTMLButtonElement> | null = null;
+    if (tooltipType === 'subtitle') ref = subtitleBtnRef;
+    if (tooltipType === 'settings') ref = settingsBtnRef;
+    if (tooltipType === 'pin') ref = pinBtnRef;
+    if (ref && ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setTooltipPos({
+        left: rect.left + rect.width / 2,
+        top: rect.top
+      });
+    }
   };
   
   const handleMouseLeave = () => {
@@ -35,6 +51,7 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
       {/* 자막 토글 버튼 */}
       <div className="video-controller-button-wrapper">
         <button 
+          ref={subtitleBtnRef}
           className={`video-controller-button ${isSubtitleOn ? 'active' : ''}`}
           onClick={handleSubtitleToggle}
           onMouseEnter={() => handleMouseEnter('subtitle')}
@@ -48,16 +65,28 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
           </svg>
         </button>
         
-        {showTooltip === 'subtitle' && (
-          <div className="video-controller-tooltip">
-            {isSubtitleOn ? '자막 끄기' : '자막 켜기'}
-          </div>
+        {showTooltip === 'subtitle' && tooltipPos && (
+          <Portal>
+            <div
+              className="video-controller-tooltip"
+              style={{
+                position: 'fixed',
+                left: tooltipPos.left,
+                top: tooltipPos.top - 40,
+                transform: 'translateX(-50%)',
+                zIndex: 9999
+              }}
+            >
+              {isSubtitleOn ? '자막 끄기' : '자막 켜기'}
+            </div>
+          </Portal>
         )}
       </div>
       
       {/* 설정 버튼 */}
       <div className="video-controller-button-wrapper">
         <button 
+          ref={settingsBtnRef}
           className="video-controller-button"
           onClick={onSettings}
           onMouseEnter={() => handleMouseEnter('settings')}
@@ -70,16 +99,28 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
           </svg>
         </button>
         
-        {showTooltip === 'settings' && (
-          <div className="video-controller-tooltip">
-            설정
-          </div>
+        {showTooltip === 'settings' && tooltipPos && (
+          <Portal>
+            <div
+              className="video-controller-tooltip"
+              style={{
+                position: 'fixed',
+                left: tooltipPos.left,
+                top: tooltipPos.top - 40,
+                transform: 'translateX(-50%)',
+                zIndex: 9999
+              }}
+            >
+              설정
+            </div>
+          </Portal>
         )}
       </div>
       
       {/* 컨트롤러 고정 토글 버튼 */}
       <div className="video-controller-button-wrapper">
         <button 
+          ref={pinBtnRef}
           className={`video-controller-button ${isPinned ? 'active' : ''}`}
           onClick={onPinToggle}
           onMouseEnter={() => handleMouseEnter('pin')}
@@ -92,10 +133,21 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
             <Pin className="video-controller-icon" width={20} height={20} />
           )}
         </button>
-        {showTooltip === 'pin' && (
-          <div className="video-controller-tooltip">
-            {isPinned ? '고정 해제' : '컨트롤러 고정'}
-          </div>
+        {showTooltip === 'pin' && tooltipPos && (
+          <Portal>
+            <div
+              className="video-controller-tooltip"
+              style={{
+                position: 'fixed',
+                left: tooltipPos.left,
+                top: tooltipPos.top - 40,
+                transform: 'translateX(-50%)',
+                zIndex: 9999
+              }}
+            >
+              {isPinned ? '고정 해제' : '컨트롤러 고정'}
+            </div>
+          </Portal>
         )}
       </div>
     </div>

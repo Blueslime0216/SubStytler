@@ -69,9 +69,6 @@ const TimelineOverviewBar: React.FC<Props> = ({ duration, viewStart, viewEnd, zo
       let newEnd = newStart + viewDuration;
       [newStart, newEnd] = clampRange(newStart, newEnd);
       setViewRange(newStart, newEnd);
-
-      // 디버깅
-      console.log('[OV PAN] dx', dx, 'newStart', newStart, 'newEnd', newEnd);
     };
 
     const onUp = (ev: MouseEvent) => {

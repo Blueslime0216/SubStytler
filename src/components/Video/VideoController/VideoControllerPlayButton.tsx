@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { Portal } from '../../UI/Portal';
 
 interface VideoControllerPlayButtonProps {
   isPlaying: boolean;
@@ -12,13 +13,25 @@ const VideoControllerPlayButton: React.FC<VideoControllerPlayButtonProps> = ({
   onToggle
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [tooltipPos, setTooltipPos] = useState<{left: number, top: number} | null>(null);
 
-  const handleMouseEnter = () => setShowTooltip(true);
+  const handleMouseEnter = () => {
+    setShowTooltip(true);
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setTooltipPos({
+        left: rect.left + rect.width / 2,
+        top: rect.top
+      });
+    }
+  };
   const handleMouseLeave = () => setShowTooltip(false);
 
   return (
     <div className="video-controller-button-wrapper">
       <button
+        ref={buttonRef}
         className={`video-controller-button ${!isVideoLoaded ? 'disabled' : ''}`}
         onClick={onToggle}
         disabled={!isVideoLoaded}
@@ -55,10 +68,21 @@ const VideoControllerPlayButton: React.FC<VideoControllerPlayButtonProps> = ({
         )}
       </button>
 
-      {showTooltip && (
-        <div className="video-controller-tooltip">
-          {isPlaying ? '일시정지' : '재생'}
-        </div>
+      {showTooltip && tooltipPos && (
+        <Portal>
+          <div
+            className="video-controller-tooltip"
+            style={{
+              position: 'fixed',
+              left: tooltipPos.left,
+              top: tooltipPos.top - 40,
+              transform: 'translateX(-50%)',
+              zIndex: 9999
+            }}
+          >
+            {isPlaying ? '일시정지' : '재생'}
+          </div>
+        </Portal>
       )}
     </div>
   );

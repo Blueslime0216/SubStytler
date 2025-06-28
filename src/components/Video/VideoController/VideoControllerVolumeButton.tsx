@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Portal } from '../../UI/Portal';
 
 interface VideoControllerVolumeButtonProps {
   volume: number;
@@ -22,6 +23,8 @@ const VideoControllerVolumeButton: React.FC<VideoControllerVolumeButtonProps> = 
   const [isDragging, setIsDragging] = useState(false);
   const [showVolumeTooltip, setShowVolumeTooltip] = useState(false);
   const volumeBarRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [tooltipPos, setTooltipPos] = useState<{left: number, top: number} | null>(null);
   
   // 볼륨에 따른 아이콘 결정
   const getVolumeIcon = () => {
@@ -115,11 +118,16 @@ const VideoControllerVolumeButton: React.FC<VideoControllerVolumeButtonProps> = 
   // 볼륨 버튼 호버 툴팁
   const handleButtonMouseEnter = () => {
     setShowVolumeTooltip(true);
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setTooltipPos({
+        left: rect.left + rect.width / 2,
+        top: rect.top
+      });
+    }
   };
   
-  const handleButtonMouseLeave = () => {
-    setShowVolumeTooltip(false);
-  };
+  const handleButtonMouseLeave = () => setShowVolumeTooltip(false);
   
   // 이벤트 리스너 등록/해제
   useEffect(() => {
@@ -143,6 +151,7 @@ const VideoControllerVolumeButton: React.FC<VideoControllerVolumeButtonProps> = 
       {/* 볼륨 버튼 */}
       <div className="video-controller-button-wrapper">
         <button 
+          ref={buttonRef}
           className="video-controller-button"
           onClick={onMuteToggle}
           onMouseEnter={handleButtonMouseEnter}
@@ -153,10 +162,21 @@ const VideoControllerVolumeButton: React.FC<VideoControllerVolumeButtonProps> = 
         </button>
         
         {/* 버튼 호버 시 나타나는 툴팁 */}
-        {showVolumeTooltip && (
-          <div className="video-controller-tooltip">
-            {getVolumeTooltipText()}
-          </div>
+        {showVolumeTooltip && tooltipPos && (
+          <Portal>
+            <div
+              className="video-controller-tooltip"
+              style={{
+                position: 'fixed',
+                left: tooltipPos.left,
+                top: tooltipPos.top - 40,
+                transform: 'translateX(-50%)',
+                zIndex: 9999
+              }}
+            >
+              {getVolumeTooltipText()}
+            </div>
+          </Portal>
         )}
       </div>
       
