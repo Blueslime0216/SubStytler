@@ -236,7 +236,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
       <div
         className="neu-playhead pointer-events-none"
         style={{
-          left: `calc(${sidebarWidth}px + ${timeToPixel(currentTime)}px)`, // Offset by sidebar width
+          left: `calc(${sidebarWidth}px + 4px + ${timeToPixel(currentTime)}px)`, // Offset by sidebar width + handle width
           zIndex: 90,
         }}
       >
