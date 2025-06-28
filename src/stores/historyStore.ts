@@ -41,6 +41,10 @@ interface HistoryState {
   redo: () => void;
   /** Jump directly to a specific entry (identified by timestamp). */
   jumpTo: (timestamp: number) => void;
+  /** Sequential jump (undo/redo steps) */
+  jumpToSequential: (timestamp: number) => Promise<void>;
+  /** busy flag to lock interactions */
+  isBusy: boolean;
   /** Clear all history - useful for new projects */
   clear: () => void;
   /** Get user-visible history entries (excludes internal "Before" entries) */
@@ -55,6 +59,7 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
   pastStates: [],
   present: null,
   futureStates: [],
+  isBusy: false,
 
   record: (snapshot: Snapshot, description = 'State modified', internal = false) => {
     const { present } = get();
@@ -209,6 +214,29 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
         }
       }
     }
+  },
+
+  jumpToSequential: async (timestamp: number) => {
+    const { pastStates, present, futureStates, undo, redo } = useHistoryStore.getState();
+    if (!present) return;
+    const allEntries = [...pastStates, present, ...futureStates];
+    const currentIndex = pastStates.length; // index of present in allEntries
+    const targetIndex = allEntries.findIndex((e) => e.timestamp === timestamp);
+    if (targetIndex === -1 || targetIndex === currentIndex) return;
+
+    // lock
+    useHistoryStore.setState({ isBusy: true });
+
+    const step = targetIndex < currentIndex ? -1 : 1;
+    const steps = Math.abs(targetIndex - currentIndex);
+
+    for (let i = 0; i < steps; i++) {
+      if (step === -1) undo(); else redo();
+      // allow UI to update
+      await new Promise((res) => requestAnimationFrame(() => res(null)));
+    }
+
+    useHistoryStore.setState({ isBusy: false });
   },
 
   clear: () => {

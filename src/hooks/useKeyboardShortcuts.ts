@@ -21,7 +21,7 @@ export const useKeyboardShortcuts = () => {
   const { saveProject } = useProjectStore();
 
   // History actions
-  const { undo, redo } = useHistoryStore();
+  const { undo, redo, isBusy } = useHistoryStore();
 
   // Layout actions
   const { focusedAreaId, coverArea } = useLayoutStore();
@@ -36,12 +36,14 @@ export const useKeyboardShortcuts = () => {
   // Undo / Redo
   // Ctrl+Z / Cmd+Z
   useHotkeys('ctrl+z, meta+z', (e) => {
+    if (isBusy) return;
     e.preventDefault();
     undo();
   }, [undo]);
 
   // Ctrl+Y, Ctrl+Shift+Z, Alt+Z, or Cmd+Shift+Z (mac)
   useHotkeys('ctrl+y, ctrl+shift+z, alt+z, meta+shift+z', (e) => {
+    if (isBusy) return;
     e.preventDefault();
     redo();
   }, [redo]);

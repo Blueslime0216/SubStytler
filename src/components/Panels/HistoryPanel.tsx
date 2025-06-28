@@ -37,8 +37,9 @@ export const HistoryPanel: React.FC = () => {
   };
 
   const handleClick = (entry: any, isCurrent: boolean) => {
-    if (!isCurrent) {
-      jumpTo(entry.timestamp);
+    const { isBusy } = useHistoryStore.getState();
+    if (!isCurrent && !isBusy) {
+      useHistoryStore.getState().jumpToSequential(entry.timestamp);
     }
   };
 
