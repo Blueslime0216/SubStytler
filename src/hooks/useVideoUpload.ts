@@ -16,6 +16,9 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
     uploadStage: ''
   });
 
+  const [pendingLargeFile, setPendingLargeFile] = useState<File | null>(null);
+  const [showSizeWarning, setShowSizeWarning] = useState(false);
+
   const { setVideoMeta, currentProject } = useProjectStore();
   const { setDuration, setFPS, setCurrentTime } = useTimelineStore();
   const { success, error, info, warning } = useToast();
@@ -41,30 +44,62 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         throw new Error('Video file is too large. Maximum size is 5GB');
       }
 
-      // Show warning for files larger than 500MB
+      // Check if file exceeds recommended size
       if (file.size > recommendedSize) {
         const fileSizeMB = Math.round(file.size / (1024 * 1024));
-        const shouldContinue = window.confirm(
-          `⚠️ Performance Warning\n\n` +
-          `The selected video file is ${fileSizeMB}MB, which exceeds the recommended size of 500MB.\n\n` +
-          `Large files may cause:\n` +
-          `• Slower processing and loading times\n` +
-          `• Increased memory usage\n` +
-          `• Potential browser performance issues\n` +
-          `• Risk of application crashes on lower-end devices\n\n` +
-          `Do you want to continue with this file?`
-        );
+        
+        // Store the file and show warning modal
+        setPendingLargeFile(file);
+        setShowSizeWarning(true);
+        
+        // Reset upload state while waiting for user decision
+        setUploadState({
+          isUploading: false,
+          uploadProgress: 0,
+          uploadStage: ''
+        });
+        
+        return;
+      }
 
-        if (!shouldContinue) {
-          setUploadState({
-            isUploading: false,
-            uploadProgress: 0,
-            uploadStage: ''
-          });
-          return;
-        }
+      // Continue with normal upload process
+      await continueVideoProcessing(file);
 
-        // Show additional warning toast
+    } catch (uploadError) {
+      console.error('Video upload error:', uploadError);
+      
+      const errorMessage = uploadError instanceof Error ? uploadError.message : 'Failed to process video file';
+      
+      // Clean up on error
+      if (videoRef.current) {
+        videoRef.current.src = '';
+      }
+      
+      // Show error toast
+      error({
+        title: 'Video upload failed',
+        message: errorMessage
+      });
+
+      setUploadState({
+        isUploading: false,
+        uploadProgress: 0,
+        uploadStage: ''
+      });
+    }
+  }, [videoRef]);
+
+  const continueVideoProcessing = useCallback(async (file: File) => {
+    try {
+      setUploadState({
+        isUploading: true,
+        uploadProgress: 0,
+        uploadStage: 'Validating file...'
+      });
+
+      // Show warning toast for large files
+      if (file.size > 500 * 1024 * 1024) {
+        const fileSizeMB = Math.round(file.size / (1024 * 1024));
         warning({
           title: 'Large File Warning',
           message: `Processing ${fileSizeMB}MB video file. This may take longer than usual and could impact performance.`,
@@ -212,10 +247,10 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         });
       }, 1500);
 
-    } catch (uploadError) {
-      console.error('Video upload error:', uploadError);
+    } catch (error) {
+      console.error('Video processing error:', error);
       
-      const errorMessage = uploadError instanceof Error ? uploadError.message : 'Failed to process video file';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to process video file';
       
       // Clean up on error
       if (videoRef.current) {
@@ -224,7 +259,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
       
       // Show error toast
       error({
-        title: 'Video upload failed',
+        title: 'Video processing failed',
         message: errorMessage
       });
 
@@ -236,8 +271,25 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
     }
   }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, warning, videoRef]);
 
+  const confirmLargeFileUpload = useCallback(() => {
+    if (pendingLargeFile) {
+      continueVideoProcessing(pendingLargeFile);
+      setPendingLargeFile(null);
+      setShowSizeWarning(false);
+    }
+  }, [pendingLargeFile, continueVideoProcessing]);
+
+  const cancelLargeFileUpload = useCallback(() => {
+    setPendingLargeFile(null);
+    setShowSizeWarning(false);
+  }, []);
+
   return {
     uploadState,
-    processVideoFile
+    processVideoFile,
+    showSizeWarning,
+    pendingLargeFile,
+    confirmLargeFileUpload,
+    cancelLargeFileUpload
   };
 };

@@ -8,6 +8,7 @@ import VideoPreviewPlayer from './VideoPreviewPlayer';
 import VideoPreviewOverlays from './VideoPreviewOverlays';
 import VideoPreviewController from './VideoPreviewController';
 import { useToast } from '../../hooks/useToast';
+import { LargeVideoWarningModal } from '../UI/LargeVideoWarningModal';
 
 export const VideoPreviewPanel: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -20,7 +21,15 @@ export const VideoPreviewPanel: React.FC = () => {
   const { currentProject } = useProjectStore();
   const { error } = useToast();
   
-  const { uploadState, processVideoFile } = useVideoUpload(videoRef);
+  const { 
+    uploadState, 
+    processVideoFile, 
+    showSizeWarning, 
+    pendingLargeFile,
+    confirmLargeFileUpload,
+    cancelLargeFileUpload
+  } = useVideoUpload(videoRef);
+  
   useVideoSync(videoRef, isVideoLoaded);
 
   const videoAreaRef = useRef<HTMLDivElement>(null);
@@ -332,6 +341,16 @@ export const VideoPreviewPanel: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Large Video Warning Modal */}
+      {pendingLargeFile && (
+        <LargeVideoWarningModal
+          isOpen={showSizeWarning}
+          onClose={cancelLargeFileUpload}
+          onConfirm={confirmLargeFileUpload}
+          fileSize={pendingLargeFile.size}
+        />
+      )}
     </div>
   );
 };
