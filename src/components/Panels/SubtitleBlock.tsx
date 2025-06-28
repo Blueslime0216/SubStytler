@@ -377,7 +377,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 
   return (
     <motion.div
-      className="neu-subtitle-block absolute cursor-move"
+      className={`neu-subtitle-block absolute ${!isLocked ? 'cursor-move' : 'cursor-not-allowed'}`}
       style={{
         left: left + (isDragging ? dragOffset.x : 0),
         width: Math.max(32, width),

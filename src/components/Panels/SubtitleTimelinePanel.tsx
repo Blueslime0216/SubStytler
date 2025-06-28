@@ -83,6 +83,14 @@ export const SubtitleTimelinePanel: React.FC = () => {
         targetTrackId = newTrackId;
       }
 
+      // Check if the target track is locked before proceeding
+      const targetTrack = currentProject.tracks.find(track => track.id === targetTrackId);
+      if (targetTrack?.locked) {
+        console.warn(`Cannot add subtitle to a locked track: "${targetTrack.name}"`);
+        // A user-facing notification like a toast could be added here for better UX.
+        return;
+      }
+
       // 1) Check overlap on target track at currentTime
       const newStartTime = currentTime;
       const newEndTime = currentTime + 2000; // Default duration is 2s

@@ -111,6 +111,19 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   const handleTrackMouseEnter = useCallback((trackId: string) => {
     if (!draggedSubtitle) return;
 
+    // 추가: 잠긴 트랙은 하이라이트하지 않음
+    const track = tracks.find(t => t.id === trackId);
+    if (track?.locked) {
+      setDragOverTrackId(null); // 잠긴 트랙 위에서는 하이라이트 제거
+      return;
+    }
+    
+    // 추가: 원래 트랙으로 돌아오면 하이라이트하지 않음
+    if (trackId === draggedSubtitle.sourceTrackId) {
+      setDragOverTrackId(null);
+      return;
+    }
+
     if (!hasLeftOriginalTrack) {
       // First time leaving original track
       if (trackId !== draggedSubtitle.sourceTrackId) {
@@ -121,7 +134,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
       // Already left once, highlight any track we enter (including origin)
       setDragOverTrackId(trackId);
     }
-  }, [draggedSubtitle, hasLeftOriginalTrack]);
+  }, [draggedSubtitle, hasLeftOriginalTrack, tracks]);
 
   const handleTrackMouseLeave = useCallback(() => {
     setDragOverTrackId(null);
