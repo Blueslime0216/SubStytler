@@ -43,6 +43,8 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   const { updateSubtitle } = useProjectStore();
   const { snapToFrame, duration } = useTimelineStore();
   const { selectedSubtitleId, setSelectedSubtitleId } = useSelectedSubtitleStore();
+  const [resizeSide, setResizeSide] = useState<'left' | 'right' | null>(null);
+  const resizeStartData = useRef<{ startX: number; startTime: number; endTime: number } | null>(null);
   
   const left = timeToPixel(subtitle.startTime);
   const width = timeToPixel(subtitle.endTime) - left;
@@ -193,18 +195,80 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     setSelectedSubtitleId(subtitle.id);
   }, [isDragging, setSelectedSubtitleId, subtitle.id]);
 
+  /* ------------------------------------------------------------------
+     Resize (left / right handle)
+  ------------------------------------------------------------------ */
+
+  const startResize = (e: React.MouseEvent, side: 'left' | 'right') => {
+    if (isLocked) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setResizeSide(side);
+    resizeStartData.current = {
+      startX: e.clientX,
+      startTime: subtitle.startTime,
+      endTime: subtitle.endTime,
+    };
+    setSelectedSubtitleId(subtitle.id);
+  };
+
+  const handleResizeMove = useCallback(
+    (e: MouseEvent) => {
+      if (!resizeSide || !resizeStartData.current || !containerRef.current) return;
+
+      const { startX, startTime, endTime } = resizeStartData.current;
+      const deltaX = e.clientX - startX;
+
+      const containerWidth = containerRef.current.clientWidth;
+      const { viewStart, viewEnd, snapToFrame } = useTimelineStore.getState();
+      const viewDuration = viewEnd - viewStart;
+      const timePerPixel = viewDuration / containerWidth;
+      const deltaTime = deltaX * timePerPixel;
+
+      let newStart = startTime;
+      let newEnd = endTime;
+
+      const MIN_DURATION = (1000 / 30) * 2; // at least 2 frames (~67ms for 30fps)
+
+      if (resizeSide === 'left') {
+        newStart = snapToFrame(startTime + deltaTime);
+        // clamp
+        newStart = Math.max(0, Math.min(newStart, newEnd - MIN_DURATION));
+      } else {
+        newEnd = snapToFrame(endTime + deltaTime);
+        newEnd = Math.max(newStart + MIN_DURATION, Math.min(newEnd, duration));
+      }
+
+      updateSubtitle(subtitle.id, { startTime: newStart, endTime: newEnd });
+    },
+    [resizeSide, containerRef, duration, subtitle.id, updateSubtitle]
+  );
+
+  const handleResizeUp = useCallback(() => {
+    if (!resizeSide) return;
+    setResizeSide(null);
+    resizeStartData.current = null;
+  }, [resizeSide]);
+
   // Global mouse event listeners
   React.useEffect(() => {
-    if (mouseDown) {
+    if (mouseDown || resizeSide) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+
+      // resize listeners
+      document.addEventListener('mousemove', handleResizeMove);
+      document.addEventListener('mouseup', handleResizeUp);
       
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+
+        document.removeEventListener('mousemove', handleResizeMove);
+        document.removeEventListener('mouseup', handleResizeUp);
       };
     }
-  }, [mouseDown, handleMouseMove, handleMouseUp]);
+  }, [mouseDown, resizeSide, handleMouseMove, handleMouseUp, handleResizeMove, handleResizeUp]);
 
   // If the block is outside of the current viewport, render nothing **after** all hooks have been invoked.
   if (isOutsideView) {
@@ -245,6 +309,20 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       {/* Visual indicator when dragging */}
       {isDragging && (
         <div className="absolute -top-1 -left-1 -right-1 -bottom-1 border-2 border-blue-400 rounded-lg pointer-events-none" />
+      )}
+
+      {/* Resize Handles */}
+      {!isLocked && (
+        <>
+          <div
+            className="neu-subtitle-handle left-0"
+            onMouseDown={(e) => startResize(e, 'left')}
+          />
+          <div
+            className="neu-subtitle-handle right-0"
+            onMouseDown={(e) => startResize(e, 'right')}
+          />
+        </>
       )}
     </motion.div>
   );

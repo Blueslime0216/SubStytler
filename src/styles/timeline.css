@@ -1089,3 +1089,24 @@
   /* 선택된 트랙에서 잠겨 있는 상태: 튀어나온 효과 */
   box-shadow: var(--shadow-outset);
 }
+
+.neu-subtitle-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: ew-resize;
+  background: transparent;
+  z-index: 30;
+}
+
+.neu-subtitle-handle.left-0 { left: 0; }
+.neu-subtitle-handle.right-0 { right: 0; }
+
+.neu-subtitle-block:hover .neu-subtitle-handle {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.neu-subtitle-handle:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
