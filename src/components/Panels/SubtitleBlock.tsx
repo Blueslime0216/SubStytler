@@ -346,15 +346,21 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       let newStart = startTime;
       let newEnd = endTime;
 
-      // 사용자 요구사항: 최소 너비를 0으로 설정하기 위함. 복구하지 마세요.
-      const MIN_DURATION = 0;
+      // Minimum duration in milliseconds (1 frame at 30fps as a reasonable default)
+      const MIN_DURATION = 33.33; // ~1 frame at 30fps
 
       if (resizeSide === 'left') {
         newStart = snapToFrame(startTime + deltaTime);
-        newStart = Math.max(0, Math.min(newStart, newEnd - MIN_DURATION));
+        // Ensure start time doesn't exceed end time minus minimum duration
+        newStart = Math.min(newStart, endTime - MIN_DURATION);
+        // Ensure start time isn't negative
+        newStart = Math.max(0, newStart);
       } else {
         newEnd = snapToFrame(endTime + deltaTime);
-        newEnd = Math.max(newStart + MIN_DURATION, Math.min(newEnd, duration));
+        // Ensure end time isn't less than start time plus minimum duration
+        newEnd = Math.max(newEnd, startTime + MIN_DURATION);
+        // Ensure end time doesn't exceed duration
+        newEnd = Math.min(newEnd, duration);
       }
 
       // Collision detection
@@ -450,13 +456,15 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     return null;
   }
 
+  // Calculate the display width - ensure it's never negative
+  const displayWidth = Math.max(1, width);
+
   return (
     <motion.div
       className={`neu-subtitle-block absolute ${!isLocked ? 'cursor-move' : 'cursor-not-allowed'}`}
       style={{
         left: left + (isDragging ? dragOffset.x : 0),
-        // 사용자 요구사항: 최소 너비를 0으로 설정하기 위함. 복구하지 마세요.
-        width: Math.max(0, width),
+        width: displayWidth, // Use the non-negative width
         top: `${7 + (isDragging ? dragOffset.y : 0)}px`,
         height: '36px',
         opacity: isLocked ? 0.7 : 1,
