@@ -82,7 +82,7 @@ export const TimelineRuler: React.FC<TimelineRulerProps> = React.memo(({ viewSta
   }
 
   return (
-    <div className="h-10 neu-timeline-ruler relative overflow-hidden cursor-ew-resize">
+    <div className="h-10 neu-timeline-ruler relative flex-shrink-0 overflow-hidden cursor-ew-resize">
       {majorTicks}
       {minorTicks}
     </div>

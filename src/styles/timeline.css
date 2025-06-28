@@ -114,7 +114,6 @@
   background: linear-gradient(145deg, rgba(45, 55, 72, 0.05) 0%, transparent 50%, rgba(13, 17, 23, 0.05) 100%), var(--surface-color);
   background-blend-mode: overlay;
   padding: 8px 12px;
-  margin: 2px 0;
   transition: background 0.2s, box-shadow 0.2s, filter 0.2s;
   cursor: pointer;
   overflow: hidden;

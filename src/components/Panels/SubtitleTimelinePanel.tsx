@@ -19,7 +19,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
     setZoom: setGlobalZoom,
     setViewRange: setGlobalViewRange,
   } = useTimelineStore();
-  const { currentProject, addSubtitle } = useProjectStore();
+  const { currentProject, addSubtitle, addTrack } = useProjectStore();
 
   // Local state for this panel instance
   const [localZoom, setLocalZoom] = useState(globalZoom);
@@ -121,10 +121,20 @@ export const SubtitleTimelinePanel: React.FC = () => {
     }
   }, [duration, localZoom, localViewEnd, localViewStart, isInitialized]);
 
+  const handleAddTrack = () => {
+    const tracks = currentProject?.tracks || [];
+    const trackNumber = tracks.length + 1;
+    const trackId = addTrack(`Track ${trackNumber}`);
+    if (trackId) {
+      setSelectedTrackId(trackId);
+    }
+  };
+
   return (
     <div className="h-full flex flex-col neu-timeline" style={{ overflow: 'hidden' }}>
       <TimelineToolbar 
         onAddSubtitle={addNewSubtitle} 
+        onAddTrack={handleAddTrack}
         zoom={localZoom} 
         setZoom={setZoom as any} 
         viewStart={localViewStart} 

@@ -3,6 +3,7 @@ import { useTimelineStore } from '../../stores/timelineStore';
 
 interface TimelineToolbarProps {
   onAddSubtitle: () => void;
+  onAddTrack: () => void;
   zoom: number;
   setZoom: (v:number)=>void;
   viewStart: number;
@@ -11,7 +12,7 @@ interface TimelineToolbarProps {
   duration: number;
 }
 
-export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle, zoom, setZoom, viewStart, viewEnd, setViewRange, duration }) => {
+export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle, onAddTrack, zoom, setZoom, viewStart, viewEnd, setViewRange, duration }) => {
   const { currentTime } = useTimelineStore();
 
   const [inputValue, setInputValue] = useState<string>(zoom.toFixed(1));
@@ -97,6 +98,13 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({ onAddSubtitle,
         className="timeline-toolbar-btn"
       >
         <span className="timeline-toolbar-btn-label">Add Subtitle</span>
+      </button>
+
+      <button
+        onClick={onAddTrack}
+        className="timeline-toolbar-btn"
+      >
+        <span className="timeline-toolbar-btn-label">Add Track</span>
       </button>
 
       <div className="timeline-toolbar-zoom">

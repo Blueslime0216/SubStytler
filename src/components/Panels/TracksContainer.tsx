@@ -95,14 +95,6 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
     return viewStart + (pixel / width) * viewDuration;
   }, [viewStart, viewEnd, containerRef]);
 
-  const handleAddTrack = () => {
-    const trackNumber = tracks.length + 1;
-    const trackId = addTrack(`Track ${trackNumber}`);
-    if (trackId) {
-      setSelectedTrackId(trackId);
-    }
-  };
-
   const handleSubtitleDragStart = useCallback((subtitleId: string, trackId: string) => {
     setDraggedSubtitle({ id: subtitleId, sourceTrackId: trackId });
     setHasLeftOriginalTrack(false);
@@ -134,7 +126,6 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
     setDragOverTrackId(null);
   }, []);
 
-  const RULER_HEIGHT = 40;
   const TRACK_HEIGHT = 50;
 
   // Sidebar width state for resizable track header
@@ -222,7 +213,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
         onScroll={handleHeaderScroll}
       >
         {/* Spacer to align with Ruler */}
-        <div style={{ height: RULER_HEIGHT, flexShrink: 0 }} />
+        <div className="h-10 flex-shrink-0" />
 
         {tracks.map((track) => (
           <TrackHeader
@@ -236,16 +227,6 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
             onToggleLock={(id, locked) => updateTrack(id, { locked })}
           />
         ))}
-
-        {/* Redesigned Add Track Button */}
-        <div className="neu-track-add" onClick={handleAddTrack} title="Add new track">
-          <div className="track-add-content">
-            <div className="track-add-icon">
-              <Plus className="track-icon" />
-            </div>
-            <span className="track-add-text">Add Track</span>
-          </div>
-        </div>
       </div>
 
       {/* Resize handle */}
