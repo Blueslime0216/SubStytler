@@ -49,6 +49,8 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   const [resizeSide, setResizeSide] = useState<'left' | 'right' | null>(null);
   const resizeStartData = useRef<{ startX: number; startTime: number; endTime: number } | null>(null);
   const prevOverlapRef = useRef<string[]>([]);
+  const [isResizeInvalid, setIsResizeInvalid] = useState(false);
+  const resizeAdjustmentsRef = useRef<{ id: string; updates: { startTime?: number; endTime?: number } }[]>([]);
   
   const left = timeToPixel(subtitle.startTime);
   const width = timeToPixel(subtitle.endTime) - left;
@@ -291,23 +293,62 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 
       if (resizeSide === 'left') {
         newStart = snapToFrame(startTime + deltaTime);
-        // clamp
         newStart = Math.max(0, Math.min(newStart, newEnd - MIN_DURATION));
       } else {
         newEnd = snapToFrame(endTime + deltaTime);
         newEnd = Math.max(newStart + MIN_DURATION, Math.min(newEnd, duration));
       }
 
-      updateSubtitle(subtitle.id, { startTime: newStart, endTime: newEnd });
+      // Collision detection
+      const { currentProject } = useProjectStore.getState();
+      if (!currentProject) return;
+      const otherSubs = currentProject.subtitles.filter(s => s.trackId === subtitle.trackId && s.id !== subtitle.id);
+      let fullCover = false;
+      const adjustments: { id: string; updates: { startTime?: number; endTime?: number } }[] = [];
+      for (const other of otherSubs) {
+        // 완전히 덮는 경우
+        if (newStart <= other.startTime && newEnd >= other.endTime) {
+          fullCover = true;
+          break;
+        }
+        // 왼쪽 리사이즈: 본인 start가 다른 자막 내부로 들어가면 그 자막 end를 본인 start로
+        if (resizeSide === 'left' && newStart > other.startTime && newStart < other.endTime && newEnd > other.endTime) {
+          adjustments.push({ id: other.id, updates: { endTime: newStart } });
+        }
+        // 오른쪽 리사이즈: 본인 end가 다른 자막 내부로 들어가면 그 자막 start를 본인 end로
+        if (resizeSide === 'right' && newEnd < other.endTime && newEnd > other.startTime && newStart < other.startTime) {
+          adjustments.push({ id: other.id, updates: { startTime: newEnd } });
+        }
+      }
+      setIsResizeInvalid(fullCover);
+      resizeAdjustmentsRef.current = fullCover ? [] : adjustments;
+      // 본인 자막은 실시간 반영하지 않고, 유효할 때만 MouseUp에서 반영
+      // 빨간색 표시만 실시간으로
+      updateSubtitle(subtitle.id, fullCover ? { startTime, endTime } : { startTime: newStart, endTime: newEnd });
     },
-    [resizeSide, containerRef, duration, subtitle.id, updateSubtitle]
+    [resizeSide, containerRef, duration, subtitle.id, updateSubtitle, subtitle.trackId]
   );
 
   const handleResizeUp = useCallback(() => {
-    if (!resizeSide) return;
+    if (!resizeSide || !resizeStartData.current) return;
     setResizeSide(null);
+    // Defensive: copy and clear before any early return
+    const resizeData = resizeStartData.current;
     resizeStartData.current = null;
-  }, [resizeSide]);
+    if (isResizeInvalid) {
+      setIsResizeInvalid(false);
+      return;
+    }
+    // 유효한 경우: 본인 자막과 겹친 자막들 업데이트
+    if (!resizeData) return;
+    const { currentProject } = useProjectStore.getState();
+    if (!currentProject) return;
+    // 실제 적용된 값은 이미 updateSubtitle로 반영되어 있으므로, 겹친 자막만 반영
+    for (const adj of resizeAdjustmentsRef.current) {
+      updateSubtitle(adj.id, adj.updates);
+    }
+    resizeAdjustmentsRef.current = [];
+  }, [resizeSide, isResizeInvalid, updateSubtitle]);
 
   // Global mouse event listeners
   React.useEffect(() => {
@@ -346,7 +387,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
         zIndex: isDragging ? 1000 : 10,
         pointerEvents: isDragging ? 'none' : 'auto',
         outline: isSelected ? '2px solid var(--highlight-color)' : 'none',
-        backgroundColor: isDragging && isDropInvalid ? 'var(--error-color)' : 'var(--mid-color)',
+        backgroundColor: (isDragging && isDropInvalid) || isResizeInvalid ? 'var(--error-color)' : 'var(--mid-color)',
       }}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
