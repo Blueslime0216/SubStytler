@@ -4,6 +4,7 @@ import { useLayoutStore } from './layoutStore';
 import { useProjectStore } from './projectStore';
 import { useSelectedTrackStore } from './selectedTrackStore';
 import { useSelectedSubtitleStore } from './selectedSubtitleStore';
+import { useTimelineStore } from './timelineStore';
 
 /*
  * Lightweight undo/redo implementation inspired by zustand's
@@ -395,3 +396,45 @@ useSelectedSubtitleStore.subscribe((state) => {
 let selectionSuppressedFlag = false;
 export const setSelectionSuppressed = (v: boolean) => { selectionSuppressedFlag = v; };
 export const isSelectionSuppressed = () => selectionSuppressedFlag;
+
+// ---------------------------------------------------------------------------
+// Subscribe to dragging state for subtitle timing adjustments
+// ---------------------------------------------------------------------------
+let prevDragging = false;
+let beforeSubtitleSnapshot: any = null;
+
+useTimelineStore.subscribe((state) => {
+  const { isDragging, draggedSubtitleId } = state;
+  if (isApplyingSnapshot) return;
+
+  const { currentProject } = useProjectStore.getState();
+  if (!currentProject) return;
+
+  if (isDragging && !prevDragging) {
+    // Drag started – capture snapshot BEFORE adjustment
+    beforeSubtitleSnapshot = {
+      project: {
+        subtitles: currentProject.subtitles,
+        selectedSubtitleId: draggedSubtitleId,
+      },
+    };
+  }
+
+  if (!isDragging && prevDragging && beforeSubtitleSnapshot) {
+    // Drag ended – record BEFORE and AFTER
+    useHistoryStore.getState().record(beforeSubtitleSnapshot, 'Before adjust subtitle timing', true);
+    useHistoryStore.getState().record(
+      {
+        project: {
+          subtitles: currentProject.subtitles,
+          selectedSubtitleId: draggedSubtitleId,
+        },
+      },
+      'Adjusted subtitle timing',
+      false,
+    );
+    beforeSubtitleSnapshot = null;
+  }
+
+  prevDragging = isDragging;
+});

@@ -2,7 +2,7 @@
   background: var(--surface-color);
   box-shadow: var(--shadow-outset);
 }
-
+ 
 .history-entry-future {
   background: var(--surface-color);
   box-shadow: var(--shadow-inset);

@@ -5,11 +5,9 @@ import { useHistoryStore } from '../../stores/historyStore';
 import { Portal } from '../UI/Portal';
 
 export const HistoryPanel: React.FC = () => {
-  const { getVisibleHistory, undo, redo, jumpTo } = useHistoryStore();
+  const { getVisibleHistory } = useHistoryStore();
+  const { pastStates, present, futureStates } = useHistoryStore(state => state.getVisibleHistory());
   
-  // 🆕 Use getVisibleHistory to get filtered history without "Before" entries
-  const { pastStates, present, futureStates } = getVisibleHistory();
-
   const [tooltip, setTooltip] = useState<{ entry: any; x: number; y: number } | null>(null);
   const hoverTimer = useRef<number | null>(null);
 
@@ -69,7 +67,7 @@ export const HistoryPanel: React.FC = () => {
         <div className="flex items-center space-x-2">
           <motion.button
             disabled={!canUndo}
-            onClick={() => canUndo && undo()}
+            onClick={() => canUndo && useHistoryStore.getState().undo()}
             className={`neu-btn flex items-center space-x-1 ${!canUndo ? 'opacity-50 pointer-events-none' : ''}`}
           >
             <Undo className="w-3.5 h-3.5" />
@@ -78,7 +76,7 @@ export const HistoryPanel: React.FC = () => {
           
           <motion.button
             disabled={!canRedo}
-            onClick={() => canRedo && redo()}
+            onClick={() => canRedo && useHistoryStore.getState().redo()}
             className={`neu-btn flex items-center space-x-1 ${!canRedo ? 'opacity-50 pointer-events-none' : ''}`}
           >
             <Redo className="w-3.5 h-3.5" />

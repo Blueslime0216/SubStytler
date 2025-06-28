@@ -266,7 +266,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
         updates.trackId = targetTrack.id;
       }
 
-      updateSubtitle(subtitle.id, updates);
+      updateSubtitle(subtitle.id, updates, false);
       
       // 🆕 Record final state for redo
       if (isDragging) {
@@ -326,10 +326,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     };
     setSelectedSubtitleId(subtitle.id);
     
-    // Reset the initial state recording flag
-    hasRecordedInitialState.current = false;
-    
-    // 🆕 Record initial state for undo - only at the start of resize
+    // Record initial state for undo
     recordInitialState();
   };
 
@@ -385,7 +382,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       resizeAdjustmentsRef.current = fullCover ? [] : adjustments;
       // 본인 자막은 실시간 반영하지 않고, 유효할 때만 MouseUp에서 반영
       // 빨간색 표시만 실시간으로
-      updateSubtitle(subtitle.id, fullCover ? { startTime, endTime } : { startTime: newStart, endTime: newEnd });
+      updateSubtitle(subtitle.id, fullCover ? { startTime, endTime } : { startTime: newStart, endTime: newEnd }, false);
     },
     [resizeSide, containerRef, duration, subtitle.id, updateSubtitle, subtitle.trackId]
   );

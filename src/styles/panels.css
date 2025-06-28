@@ -64,7 +64,6 @@
   overflow: auto;
   background-color: var(--bg-color);
   position: relative;
-  padding: 8px; /* Add some padding to avoid content touching the shadow edge */
 }
 
 /* Panel Types */

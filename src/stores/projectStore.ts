@@ -12,7 +12,7 @@ interface ProjectState {
   saveProject: () => void;
   setVideoMeta: (meta: VideoMeta) => void;
   addSubtitle: (subtitle: SubtitleBlock) => void;
-  updateSubtitle: (id: string, updates: Partial<SubtitleBlock>) => void;
+  updateSubtitle: (id: string, updates: Partial<SubtitleBlock>, recordHistory?: boolean) => void;
   deleteSubtitle: (id: string) => void;
   addStyle: (style: SubtitleStyle) => void;
   updateStyle: (id: string, updates: Partial<SubtitleStyle>) => void;
