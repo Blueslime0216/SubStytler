@@ -17,7 +17,7 @@ const VideoControllerTimeDisplay: React.FC<VideoControllerTimeDisplayProps> = ({
   return (
     <div className="video-controller-time-display">
       <span className="video-controller-time">
-        {formatTime(currentTime, fps)} / {formatTime(duration, fps)}
+        {formatTime(currentTime, fps, 'ms')} / {formatTime(duration, fps, 'ms')}
       </span>
       <span className="video-controller-frame">
         {String(frameNumber).padStart(5, '0')}

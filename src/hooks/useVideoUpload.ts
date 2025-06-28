@@ -44,11 +44,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         uploadStage: 'Creating video URL...'
       }));
 
-      // Stage 2: Create object URL and clean up previous one
-      if (currentProject?.videoMeta?.url) {
-        URL.revokeObjectURL(currentProject.videoMeta.url);
-      }
-      
+      // Stage 2: Create object URL
       const url = URL.createObjectURL(file);
       
       setUploadState(prev => ({ 
@@ -153,7 +149,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         fps: detectedFPS,
         width: metadata.width,
         height: metadata.height,
-        url
+        file
       });
 
       setDuration(metadata.duration);
@@ -203,7 +199,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         uploadStage: ''
       });
     }
-  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, currentProject]);
+  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, videoRef]);
 
   return {
     uploadState,

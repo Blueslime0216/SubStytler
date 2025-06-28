@@ -55,7 +55,7 @@ export interface VideoMeta {
   fps: number;
   width: number;
   height: number;
-  url: string;
+  file: File;
 }
 
 export interface SubtitleTrack {

@@ -24,7 +24,8 @@ export const VideoPreviewPanel: React.FC = () => {
   useVideoSync(videoRef, isVideoLoaded);
 
   const videoAreaRef = useRef<HTMLDivElement>(null);
-  const [controllerBottomOffset, setControllerBottomOffset] = useState(0);
+  const [clippingContainerStyle, setClippingContainerStyle] = useState({});
+  const [videoUrl, setVideoUrl] = useState<string | undefined>();
 
   // Video event handlers
   useEffect(() => {
@@ -141,8 +142,8 @@ export const VideoPreviewPanel: React.FC = () => {
   const handleRetry = () => {
     setVideoError(null);
     setIsVideoLoaded(false);
-    if (videoRef.current && currentProject?.videoMeta?.url) {
-      videoRef.current.src = currentProject.videoMeta.url;
+    if (videoRef.current && currentProject?.videoMeta?.file) {
+      videoRef.current.src = URL.createObjectURL(currentProject.videoMeta.file);
       videoRef.current.load();
     }
   };
@@ -163,7 +164,7 @@ export const VideoPreviewPanel: React.FC = () => {
     input.click();
   }, [uploadState.isUploading, processVideoFile]);
 
-  const hasVideo = !!(currentProject?.videoMeta && currentProject.videoMeta.url);
+  const hasVideo = !!(currentProject?.videoMeta && currentProject.videoMeta.file);
   const [forceRender, setForceRender] = useState(0);
 
   // 비디오 메타가 바뀔 때마다 강제로 리렌더링하고 isVideoLoaded를 초기화
@@ -172,15 +173,15 @@ export const VideoPreviewPanel: React.FC = () => {
     setIsVideoLoaded(false);
     
     console.log('Video metadata changed:', {
-      hasUrl: !!currentProject?.videoMeta?.url,
-      url: currentProject?.videoMeta?.url?.substring(0, 30) + '...',
+      hasFile: !!currentProject?.videoMeta?.file,
+      file: currentProject?.videoMeta?.file?.name?.substring(0, 30) + '...',
       duration: currentProject?.videoMeta?.duration,
       dimensions: currentProject?.videoMeta ? 
         `${currentProject.videoMeta.width}x${currentProject.videoMeta.height}` : 'none'
     });
     
-    if (videoRef.current && currentProject?.videoMeta?.url) {
-      videoRef.current.src = currentProject.videoMeta.url;
+    if (videoRef.current && currentProject?.videoMeta?.file) {
+      videoRef.current.src = URL.createObjectURL(currentProject.videoMeta.file);
       videoRef.current.load();
     }
   }, [currentProject?.videoMeta]);
@@ -189,24 +190,17 @@ export const VideoPreviewPanel: React.FC = () => {
     console.log('Video loaded state:', { isVideoLoaded, videoError, hasVideo });
   }, [isVideoLoaded, videoError, hasVideo]);
 
-  // Object URL 해제는 언마운트 시점에만
-  useEffect(() => {
-    const urlToRevoke = currentProject?.videoMeta?.url;
-    return () => {
-      if (urlToRevoke) {
-        URL.revokeObjectURL(urlToRevoke);
-      }
-    };
-  }, []);
-
-  // 컨트롤러 위치 동적 계산
+  // 컨트롤러 위치 동적 계산 -> 클리핑 컨테이너 크기 계산으로 변경
   useLayoutEffect(() => {
     const areaEl = videoAreaRef.current;
     if (!areaEl) return;
 
     const observer = new ResizeObserver(() => {
       const videoMeta = currentProject?.videoMeta;
-      if (!videoMeta || !areaEl) return;
+      if (!videoMeta || !areaEl) {
+        setClippingContainerStyle({ width: '100%', height: '100%' });
+        return;
+      }
 
       const panelWidth = areaEl.clientWidth;
       const panelHeight = areaEl.clientHeight;
@@ -215,20 +209,38 @@ export const VideoPreviewPanel: React.FC = () => {
       const panelAspectRatio = panelWidth / panelHeight;
       const videoAspectRatio = videoMeta.width / videoMeta.height;
 
-      let offset = 0;
-      if (panelAspectRatio < videoAspectRatio) {
-        // 패널이 비디오보다 세로로 길다 (좌우에 여백)
+      let style = {};
+      if (panelAspectRatio > videoAspectRatio) {
+        // 패널이 비디오보다 가로로 길다 (좌우에 여백 - 필러박스)
+        const videoRenderedWidth = panelHeight * videoAspectRatio;
+        style = {
+          width: `${videoRenderedWidth}px`,
+          height: '100%',
+        };
+      } else {
+        // 패널이 비디오보다 세로로 길다 (상하에 여백 - 레터박스)
         const videoRenderedHeight = panelWidth / videoAspectRatio;
-        offset = (panelHeight - videoRenderedHeight) / 2;
+        style = {
+          width: '100%',
+          height: `${videoRenderedHeight}px`,
+        };
       }
-      // 패널이 비디오보다 가로로 길면 (상하에 여백), 오프셋은 0
-
-      setControllerBottomOffset(offset);
+      setClippingContainerStyle(style);
     });
 
     observer.observe(areaEl);
     return () => observer.disconnect();
   }, [currentProject?.videoMeta]);
+
+  useEffect(() => {
+    const file = currentProject?.videoMeta?.file;
+    if (!file) {
+      setVideoUrl(undefined);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setVideoUrl(url);
+  }, [currentProject?.videoMeta?.file]);
 
   return (
     <div 
@@ -259,11 +271,30 @@ export const VideoPreviewPanel: React.FC = () => {
           background: 'var(--base-color)'
         }}
       >
-        <VideoPreviewPlayer
-          videoRef={videoRef}
-          hasVideo={hasVideo}
-          videoUrl={currentProject?.videoMeta?.url}
-        />
+        <div
+          style={{
+            position: 'relative',
+            overflow: 'hidden',
+            ...clippingContainerStyle,
+          }}
+        >
+          <VideoPreviewPlayer
+            videoRef={videoRef}
+            hasVideo={hasVideo}
+            videoUrl={videoUrl}
+          />
+          {hasVideo && (
+            <VideoPreviewController
+              isVideoLoaded={isVideoLoaded}
+              volume={volume}
+              isMuted={isMuted}
+              onVolumeChange={handleVolumeChange}
+              onMuteToggle={handleMuteToggle}
+              onSettings={handleSettings}
+              parentRef={videoAreaRef}
+            />
+          )}
+        </div>
         <VideoPreviewOverlays
           isLoading={uploadState.isUploading}
           uploadProgress={uploadState.uploadProgress}
@@ -289,34 +320,16 @@ export const VideoPreviewPanel: React.FC = () => {
             }}
           >
             {isDragActive && (
-              // 수정 전
-              // <div className="text-center">
-              //   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl neu-shadow-1 flex items-center justify-center"
-              //        style={{ background: 'var(--neu-primary)' }}>
-              //     <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <div className="neu-video-upload-message">
                 <div className="neu-shadow-1 neu-video-upload-icon">
                   <svg className="neu-video-upload-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
                 </div>
-                {/* 수정 전 <h3 className="text-lg font-medium neu-text-primary">Drop video here</h3> */}
                 <h3 className="neu-text-primary">Drop video here</h3>
               </div>
             )}
           </div>
-        )}
-        {hasVideo && (
-          <VideoPreviewController
-            isVideoLoaded={isVideoLoaded}
-            volume={volume}
-            isMuted={isMuted}
-            onVolumeChange={handleVolumeChange}
-            onMuteToggle={handleMuteToggle}
-            onSettings={handleSettings}
-            parentRef={videoAreaRef}
-            bottomOffset={controllerBottomOffset}
-          />
         )}
       </div>
     </div>

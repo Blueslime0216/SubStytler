@@ -46,6 +46,7 @@ export const createProjectActions: StateCreator<any> = (set, get, _store) => ({
 
   setVideoMeta: (meta: VideoMeta) => {
     const { currentProject } = get();
+    
     if (currentProject) {
       set({ currentProject: { ...currentProject, videoMeta: meta }, isModified: true });
     } else {

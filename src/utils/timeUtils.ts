@@ -1,4 +1,8 @@
-export const formatTime = (ms: number, fps: number = 30, showFrames: boolean = true): string => {
+export const formatTime = (
+  ms: number,
+  fps: number = 30,
+  format: 'frames' | 'ms' | 'seconds' = 'frames'
+): string => {
   const totalSeconds = Math.floor(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const hours = Math.floor(minutes / 60);
@@ -8,21 +12,23 @@ export const formatTime = (ms: number, fps: number = 30, showFrames: boolean = t
   const m = (minutes % 60).toString().padStart(2, '0');
   const s = seconds.toString().padStart(2, '0');
 
-  if (!showFrames) {
-    if (hours > 0) {
-      return `${h}:${m}:${s}`;
-    }
-    return `${m}:${s}`;
-  }
+  const timeBase = hours > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
 
-  const frames = Math.floor((ms % 1000) / (1000 / fps));
-  const f = frames.toString().padStart(Math.ceil(fps / 10).toString().length, '0');
-  
-  if (hours > 0) {
-    return `${h}:${m}:${s}.${f}`;
+  switch (format) {
+    case 'frames': {
+      const frames = Math.floor((ms % 1000) / (1000 / fps));
+      const f = frames.toString().padStart(Math.ceil(fps / 10).toString().length, '0');
+      return `${timeBase}.${f}`;
+    }
+    case 'ms': {
+      const centiseconds = Math.floor((ms % 1000) / 10);
+      const cs = centiseconds.toString().padStart(2, '0');
+      return `${timeBase}.${cs}`;
+    }
+    case 'seconds':
+    default:
+      return timeBase;
   }
-  
-  return `${m}:${s}.${f}`;
 };
 
 export const parseTimeString = (timeString: string, fps: number = 30): number => {

@@ -33,7 +33,7 @@ export const TimelineRuler: React.FC<TimelineRulerProps> = React.memo(({ viewSta
     majorTicks.push(
       <div key={`major-${time}`} className="absolute top-0 flex flex-col items-center" style={{ left: x }}>
         <div className="timeline-major-tick" />
-        <span className="timeline-major-label">{formatTime(time, fps, false)}</span>
+        <span className="timeline-major-label">{formatTime(time, fps, 'seconds')}</span>
       </div>
     );
   }

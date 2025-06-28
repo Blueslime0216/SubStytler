@@ -168,7 +168,7 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
               visibility: tooltipCoords ? 'visible' : 'hidden',
             }}
           >
-            {formatTime(getTooltipTime(), fps, false)}
+            {formatTime(getTooltipTime(), fps, 'seconds')}
           </div>
         </Portal>
       )}

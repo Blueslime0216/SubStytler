@@ -15,8 +15,8 @@ const VideoPreviewPlayer: React.FC<VideoPreviewPlayerProps> = ({ videoRef, hasVi
     preload="metadata"
     src={hasVideo ? videoUrl : undefined}
     style={{
-      maxWidth: '100%',
-      maxHeight: '100%',
+      width: '100%',
+      height: '100%',
       display: hasVideo ? 'block' : 'none',
       transition: 'box-shadow 0.2s, background 0.2s'
     }}

@@ -9,7 +9,6 @@ interface VideoPreviewControllerProps {
   onMuteToggle: () => void;
   onSettings: () => void;
   parentRef?: React.RefObject<HTMLElement>;
-  bottomOffset?: number;
 }
 
 const VideoPreviewController: React.FC<VideoPreviewControllerProps> = (props) => (
@@ -21,7 +20,6 @@ const VideoPreviewController: React.FC<VideoPreviewControllerProps> = (props) =>
     onMuteToggle={props.onMuteToggle}
     onSettings={props.onSettings}
     parentRef={props.parentRef}
-    bottomOffset={props.bottomOffset}
   />
 );
 
