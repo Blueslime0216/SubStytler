@@ -132,35 +132,52 @@ export const useTimelineInteraction = (
     const mouseX = e.clientX - rect.left;
     const timeAtCursor = pixelToTime(mouseX);
 
-    // Always zoom with wheel
-    const zoomFactor = 1.1;
-    let newZoom = e.deltaY < 0 ? zoom * zoomFactor : zoom / zoomFactor;
+    // Dynamic zoom factor based on current zoom level
+    // Slower zooming at higher zoom levels for more precision
+    const baseZoomFactor = 1.1;
+    const zoomFactor = e.deltaY > 0 
+      ? 1 / (baseZoomFactor - Math.min(0.05, zoom / 200)) // Zoom out
+      : baseZoomFactor - Math.min(0.05, zoom / 200);      // Zoom in
+    
+    let newZoom = e.deltaY > 0 ? zoom / zoomFactor : zoom * zoomFactor;
+    
+    // Enforce min/max zoom limits
     newZoom = Math.max(1, Math.min(100, newZoom));
-    setZoom(newZoom);
-
-    const newViewDuration = duration / newZoom;
     
-    let newStart = timeAtCursor - (mouseX / rect.width) * newViewDuration;
-    let newEnd = newStart + newViewDuration;
-
-    if (newStart < 0) {
-      newStart = 0;
-      newEnd = newViewDuration;
+    // Only update if zoom actually changed
+    if (newZoom !== zoom) {
+      setZoom(newZoom);
+      
+      // Calculate new view range centered on mouse position
+      const newViewDuration = duration / newZoom;
+      
+      // Calculate ratio of mouse position in view
+      const ratio = (timeAtCursor - viewStart) / (viewEnd - viewStart);
+      
+      // Apply the ratio to the new view duration
+      let newStart = timeAtCursor - ratio * newViewDuration;
+      let newEnd = newStart + newViewDuration;
+      
+      // Clamp to valid range
+      if (newStart < 0) {
+        newStart = 0;
+        newEnd = newViewDuration;
+      }
+      if (newEnd > duration) {
+        newEnd = duration;
+        newStart = duration - newViewDuration;
+      }
+      
+      setViewRange(newStart, newEnd);
     }
-    if (newEnd > duration) {
-      newEnd = duration;
-      newStart = duration - newViewDuration;
-    }
-    
-    setViewRange(Math.max(0, newStart), Math.min(duration, newEnd));
   };
 
-  // We are not handling subtitle block dragging here, so isDragging state is local
-  // The panel component will need to handle its own dragging state if it wants to drag blocks
   return {
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
-    handleWheel
+    handleWheel,
+    timeToPixel,
+    pixelToTime
   };
 };
