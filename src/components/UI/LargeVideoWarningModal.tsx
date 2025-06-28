@@ -38,13 +38,13 @@ export const LargeVideoWarningModal: React.FC<LargeVideoWarningModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="relative bg-surface border border-darker-color rounded-lg shadow-outset max-w-md w-full mx-4 overflow-hidden"
+          className="relative bg-base border border-mid-color rounded-lg shadow-elevated max-w-md w-full mx-4 overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-5 border-b border-darker-color bg-surface overflow-hidden rounded-t-lg">
+          <div className="flex items-center justify-between p-5 border-b border-mid-color bg-surface overflow-hidden rounded-t-lg">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-warning-color/80 rounded-lg flex items-center justify-center shadow-inset">
-                <AlertTriangle className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-warning-color/20 text-warning-color rounded-lg flex items-center justify-center shadow-inset">
+                <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-text-primary">Performance Warning</h2>
@@ -54,9 +54,9 @@ export const LargeVideoWarningModal: React.FC<LargeVideoWarningModalProps> = ({
           </div>
 
           {/* Content */}
-          <div className="p-5 space-y-4">
+          <div className="p-5 space-y-4 bg-surface">
             {/* File Size Info */}
-            <div className="bg-surface rounded-lg p-4 shadow-outset">
+            <div className="bg-base rounded-lg p-4 shadow-outset">
               <div className="flex items-center gap-3">
                 <FileVideo className="w-5 h-5 text-warning-color" />
                 <div className="flex-1">
@@ -105,10 +105,10 @@ export const LargeVideoWarningModal: React.FC<LargeVideoWarningModalProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-5 border-t border-darker-color bg-surface overflow-hidden rounded-b-lg">
+          <div className="flex items-center justify-between p-5 border-t border-mid-color bg-surface overflow-hidden rounded-b-lg">
             <button
               onClick={onClose}
-              className="btn px-4 py-2 text-text-secondary bg-surface border border-darker-color shadow-outset transition-all"
+              className="btn px-4 py-2 text-text-secondary bg-surface border border-mid-color shadow-outset transition-all hover:bg-mid-color/30"
             >
               Cancel
             </button>
@@ -116,7 +116,7 @@ export const LargeVideoWarningModal: React.FC<LargeVideoWarningModalProps> = ({
             <div className="flex items-center gap-3">
               <button
                 onClick={onConfirm}
-                className="btn px-6 py-2 bg-warning-color/80 text-white border border-warning-color/60 shadow-outset transition-all"
+                className="btn px-6 py-2 bg-warning-color text-text-primary border border-warning-color/80 shadow-outset transition-all hover:bg-warning-color/80"
               >
                 Continue Anyway
               </button>

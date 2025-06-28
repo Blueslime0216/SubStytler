@@ -64,13 +64,13 @@
 
 /* Button Variants */
 .btn-primary {
-  background-color: var(--primary-color);
+  background-color: var(--light-surface-color);
   color: white;
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-color);
+  background-color: var(--light-surface-color);
   filter: brightness(1.1);
 }
 
@@ -125,7 +125,7 @@
 .panel-action-btn:hover {
   filter: brightness(1.05);
   box-shadow: var(--shadow-outset);
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
 }
 
 .panel-action-btn:active {

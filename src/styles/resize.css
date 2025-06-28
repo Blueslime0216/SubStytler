@@ -11,16 +11,16 @@
 
 .neu-resize-handle:hover {
   opacity: 1;
-  background: linear-gradient(145deg, var(--primary-color), var(--surface-color));
+  background: linear-gradient(145deg, var(--light-surface-color), var(--surface-color));
   box-shadow: var(--shadow-outset-subtle);
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--light-surface-color);
 }
 
 .neu-resize-handle.dragging {
   opacity: 1;
   background: var(--mid-color);
   box-shadow: var(--shadow-outset-strong), 0 0 8px rgba(99, 179, 237, 0.4);
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--light-surface-color);
 }
 
 .neu-theme-toggle {
@@ -93,12 +93,12 @@
 }
 
 .neu-clickable:hover::before {
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
 }
 
 .neu-clickable:focus::before {
   border-color: var(--mid-color);
-  box-shadow: 0 0 0 2px var(--primary-color);
+  box-shadow: 0 0 0 2px var(--light-surface-color);
 }
 
 /* Resize Handle Cursor Types */

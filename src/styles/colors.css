@@ -1,30 +1,32 @@
-/* Color System Variables - Dark Mode Only */
+/* Color System Variables - VS Code Inspired Dark Theme with Orange Accent */
 
 :root {
+  --light-surface-color: #b0b6be; /* 회색 */
+
   /* Base Colors - Dark Theme */
-  --base-color: #7b9a9b;
-  --surface-color: #7b9a9b;
-  --primary-color: #e0f7fa;
-  --mid-color: #90b2b3;
-  --dark-color: #5e7e7f;
-  --darker-color: #466869;
+  --base-color: #1e1e1e;       /* VS Code-like dark background */
+  --surface-color: #252526;    /* Slightly lighter surface for panels */
+  --primary-color: #E67E22;    /* Orange accent color */
+  --mid-color: #3c3c3c;        /* Medium gray for borders */
+  --dark-color: #1a1a1a;
+  --darker-color: #000000;
   
   /* UI Element Colors */
   --bg-color: var(--base-color);
-  --highlight-color: #e0f7fa;
-  --shadow-color: #466869;
+  --highlight-color: var(--light-surface-color);
+  --shadow-color: #000000;
   
   /* Text Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #e0f7fa;
-  --text-muted: #b7e0e3;
-  --text-accent: #e0f7fa;
+  --text-primary: #d4d4d4;     /* Light gray for primary text */
+  --text-secondary: #a0a0a0;   /* Muted gray for secondary text */
+  --text-muted: #707070;       /* Darker gray for less important text */
+  --text-accent: var(--primary-color);
   
   /* Semantic Colors */
-  --success-color: #8dd9a0;
-  --warning-color: #ffd166;
-  --error-color: #ef6f6c;
-  --info-color: #a5d8ff;
+  --success-color: #2ECC71;    /* Green for success states */
+  --warning-color: #F1C40F;    /* Yellow for warnings */
+  --error-color: #E74C3C;     /* Red for errors */
+  --info-color: #3B82F6;        /* Blue for info states, similar to VS Code focus */
 }
 
 /* Remove redundant theme selectors - keep only root */

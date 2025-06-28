@@ -21,12 +21,12 @@
   box-shadow: 
     0 0 0 2px var(--primary-color),
     var(--shadow-inset);
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
 }
 
 /* Input Hover */
 .input:hover {
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
   box-shadow: var(--shadow-inset-strong);
 }
 
@@ -60,7 +60,7 @@
 }
 
 .select:hover {
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
   box-shadow: var(--shadow-inset-strong);
 }
 
@@ -69,7 +69,7 @@
   box-shadow: 
     0 0 0 2px var(--primary-color),
     var(--shadow-inset);
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
 }
 
 /* Checkbox & Radio */
@@ -115,14 +115,14 @@
 
 .checkbox:hover .checkbox-mark,
 .radio:hover .radio-mark {
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
   box-shadow: var(--shadow-inset-strong);
 }
 
 .checkbox input:checked ~ .checkbox-mark,
 .radio input:checked ~ .radio-mark {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
+  background-color: var(--light-surface-color);
+  border-color: var(--light-surface-color);
   box-shadow: var(--shadow-outset-subtle);
 }
 
@@ -197,12 +197,12 @@
 }
 
 .input-group:hover {
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
   box-shadow: var(--shadow-inset-strong);
 }
 
 .input-group:focus-within {
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
   box-shadow: 
     0 0 0 2px var(--primary-color),
     var(--shadow-inset);

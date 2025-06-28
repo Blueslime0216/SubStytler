@@ -17,7 +17,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--mid-color), var(--primary-color));
+  background: linear-gradient(90deg, var(--mid-color), var(--light-surface-color));
   opacity: 0.8;
 }
 
@@ -175,7 +175,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--primary-color);
+  background: var(--light-surface-color);
   box-shadow: var(--shadow-outset-subtle);
   transition: box-shadow 0.2s;
 }
@@ -264,7 +264,7 @@
 .track-name-input:focus,
 .track-detail-input:focus {
   background-color: var(--dark-color);
-  outline: 1px solid var(--primary-color);
+  outline: 1px solid var(--light-surface-color);
   border-radius: 4px;
   padding-left: 4px;
   padding-right: 4px;
@@ -401,7 +401,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--primary-color);
+  background: var(--light-surface-color);
   transform-origin: left;
 }
 
@@ -414,7 +414,7 @@
   justify-content: center;
   background: linear-gradient(145deg, rgba(45, 55, 72, 0.08) 0%, transparent 50%, rgba(13, 17, 23, 0.08) 100%), var(--surface-color);
   background-blend-mode: overlay;
-  border: 1px dashed var(--primary-color);
+  border: 1px dashed var(--light-surface-color);
   border-radius: 10px;
   margin: 12px 8px;
   cursor: pointer;
@@ -428,7 +428,7 @@
   filter: brightness(1.07);
   box-shadow: var(--shadow-outset-hover);
   transform: translateY(-1px);
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
   border-style: solid;
 }
 
@@ -586,8 +586,8 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  background: var(--primary-color);
-  box-shadow: 0 0 2px var(--primary-color), 0 0 1px var(--primary-color);
+  background: var(--light-surface-color);
+  box-shadow: 0 0 2px var(--light-surface-color), 0 0 1px var(--light-surface-color);
 }
 
 .neu-playhead-head {
@@ -596,10 +596,10 @@
   left: 50%;
   width: 14px;
   height: 14px;
-  background: var(--primary-color);
+  background: var(--light-surface-color);
   border-radius: 50%;
   transform: translateX(-50%);
-  box-shadow: 0 0 2px var(--primary-color), 0 0 1px var(--primary-color);
+  box-shadow: 0 0 2px var(--light-surface-color), 0 0 1px var(--light-surface-color);
 }
 
 .neu-playhead::before {
@@ -766,17 +766,18 @@
 }
 
 .track-drag-over {
-  background: linear-gradient(90deg, var(--primary-color), var(--mid-color) 80%);
-  box-shadow: 0 2px 12px 0 rgba(99,179,237,0.10), 0 0 0 2px var(--primary-color);
-  border-color: var(--primary-color);
+  background: linear-gradient(90deg, var(--light-surface-color), var(--mid-color) 80%);
+  box-shadow: 0 2px 12px 0 rgba(99,179,237,0.10), 0 0 0 2px var(--light-surface-color);
+  border-color: var(--light-surface-color);
 }
 
 .timeline-major-tick {
   position: absolute;
-  width: 1px;
+  background: var(--text-primary);
+  width: 2px;
   height: 16px;
-  background: var(--neu-border, #b7e0e3);
   margin-bottom: 2px;
+  opacity: 0.85;
 }
 
 .timeline-major-label {
@@ -824,7 +825,7 @@
   position: absolute;
   top: 0;
   height: 100%;
-  background: var(--primary-color);
+  background: var(--light-surface-color);
   border-radius: 6px;
   box-shadow: var(--shadow-outset-subtle);
 }
@@ -855,62 +856,39 @@
 
 /* Enhanced Toolbar Buttons */
 .timeline-toolbar-btn {
-  background: var(--surface-color);
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent; /* Maintain layout */
   border-radius: 12px;
-  box-shadow: var(--shadow-outset);
   padding: 10px 20px;
-  font-weight: 600;
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
   gap: 8px;
+  box-shadow: var(--shadow-button-normal);
+  transition: all 0.2s ease;
 }
 
-.timeline-toolbar-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(145deg, 
-    rgba(255, 255, 255, 0.05) 0%, 
-    transparent 50%, 
-    rgba(0, 0, 0, 0.05) 100%);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  border-radius: inherit;
-}
-
-.timeline-toolbar-btn:hover {
-  background: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-  box-shadow: var(--shadow-outset-hover);
-  filter: brightness(1.05);
+.timeline-toolbar-btn:hover:not(:disabled) {
+  background: var(--surface-color);
+  color: var(--text-primary);
+  border-color: var(--mid-color);
+  box-shadow: var(--shadow-button-hover);
   transform: translateY(-1px);
 }
 
-.timeline-toolbar-btn:hover::before {
-  opacity: 1;
-}
-
-.timeline-toolbar-btn:active {
-  box-shadow: var(--shadow-pressed);
+.timeline-toolbar-btn:active:not(:disabled) {
+  box-shadow: var(--shadow-button-pressed);
   transform: translateY(0);
 }
 
 .timeline-toolbar-btn:focus {
   outline: none;
-  box-shadow: 
-    0 0 0 2px rgba(99, 179, 237, 0.3),
-    var(--shadow-outset);
+  box-shadow: var(--shadow-button-focus);
 }
 
 .timeline-toolbar-btn-label {
@@ -939,13 +917,12 @@
 }
 
 .timeline-toolbar-zoom-btn {
-  background: var(--surface-color);
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
-  border-radius: 8px;
-  box-shadow: var(--shadow-outset-subtle);
-  width: 36px;
-  height: 36px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  width: 38px;
+  height: 38px;
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
@@ -953,37 +930,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.timeline-toolbar-zoom-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--primary-color);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  border-radius: inherit;
+  box-shadow: var(--shadow-button-normal);
 }
 
 .timeline-toolbar-zoom-btn:hover:not(:disabled) {
-  background: var(--primary-color);
-  color: white;
-  box-shadow: var(--shadow-outset-hover);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  border-color: var(--mid-color);
+  box-shadow: var(--shadow-button-hover);
   transform: translateY(-1px);
-  filter: brightness(1.05);
-}
-
-.timeline-toolbar-zoom-btn:hover:not(:disabled)::before {
-  opacity: 1;
 }
 
 .timeline-toolbar-zoom-btn:active:not(:disabled) {
-  box-shadow: var(--shadow-pressed);
+  box-shadow: var(--shadow-button-pressed);
   transform: translateY(0);
 }
 
@@ -991,8 +950,10 @@
   opacity: 0.4;
   cursor: not-allowed;
   color: var(--text-muted);
-  border-color: var(--text-muted);
+  background: transparent;
+  border-color: transparent;
   box-shadow: var(--shadow-outset-subtle);
+  transform: none;
 }
 
 .timeline-toolbar-zoom-btn:disabled:hover {
@@ -1025,12 +986,12 @@
 }
 
 .timeline-toolbar-zoom-input:hover {
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
   box-shadow: var(--shadow-inset);
 }
 
 .timeline-toolbar-zoom-input:focus {
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
   box-shadow: 
     0 0 0 2px rgba(99, 179, 237, 0.3),
     var(--shadow-inset);
@@ -1075,7 +1036,7 @@
 @media (prefers-contrast: high) {
   .timeline-toolbar-btn,
   .timeline-toolbar-zoom-btn {
-    border: 3px solid var(--primary-color);
+    border: 3px solid var(--light-surface-color);
   }
   
   .timeline-toolbar-zoom-input {
@@ -1122,4 +1083,37 @@
 
 .neu-subtitle-block:hover .neu-subtitle-handle {
   background: rgba(255, 255, 255, 0.08);
+}
+
+/* 눈금자 위쪽 컨테이너 (유틸리티 클래스 조합용) */
+.absolute.top-0.flex.flex-col.items-center {
+  background: transparent;
+}
+
+/* 주요 시간 레이블 */
+.timeline-major-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  user-select: none;
+  margin-top: 2px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+
+/* 주요 보조 눈금 */
+.timeline-minor-tick-major {
+  background: var(--mid-color);
+  width: 1px;
+  height: 12px;
+  opacity: 0.7;
+}
+
+/* 일반 보조 눈금 */
+.timeline-minor-tick {
+  background: var(--mid-color);
+  width: 1px;
+  height: 8px;
+  opacity: 0.4;
 }

@@ -68,14 +68,14 @@
 
 /* Panel Types */
 .panel-primary {
-  border: 2px solid var(--primary-color);
+  border: 2px solid var(--light-surface-color);
   box-shadow: 
     var(--shadow-elevated),
     0 0 12px rgba(99, 179, 237, 0.3);
 }
 
 .panel-primary .panel-header {
-  background-color: var(--primary-color);
+  background-color: var(--light-surface-color);
   color: white;
 }
 
@@ -111,7 +111,7 @@
 }
 
 .resize-handle:hover {
-  background-color: var(--primary-color);
+  background-color: var(--light-surface-color);
   box-shadow: var(--shadow-outset);
 }
 
@@ -182,4 +182,9 @@
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0.6;
+}
+
+/* panel-header와 동일한 배경색 적용 */
+.panel.bg-bg.shadow-outset.rounded {
+  background-color: var(--surface-color);
 }

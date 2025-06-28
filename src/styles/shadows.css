@@ -66,7 +66,7 @@
   --shadow-button-hover: var(--shadow-outset-hover);
   --shadow-button-pressed: var(--shadow-inset);
   --shadow-button-focus: 
-    0 0 0 2px var(--primary-color),
+    0 0 0 2px var(--info-color),
     var(--shadow-outset);
 }
 

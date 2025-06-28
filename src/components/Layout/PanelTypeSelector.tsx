@@ -147,7 +147,7 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
         }}
         whileHover={{ 
           filter: 'brightness(1.05)',
-          borderColor: 'var(--primary-color)'
+          borderColor: 'var(--light-surface-color)'
         }}
         whileTap={{ scale: 0.98 }}
       >

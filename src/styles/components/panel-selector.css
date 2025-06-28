@@ -192,7 +192,7 @@
   }
   
   .panel-selector-icon-wrapper.selected {
-    border: 3px solid var(--primary-color);
+    border: 3px solid var(--light-surface-color);
   }
 }
 

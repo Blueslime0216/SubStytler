@@ -425,7 +425,7 @@ video {
   height: 64px;
   margin: 0 auto 16px auto;
   border-radius: 16px;
-  background: var(--primary-color);
+  background: var(--light-surface-color);
   display: flex;
   align-items: center;
   justify-content: center;

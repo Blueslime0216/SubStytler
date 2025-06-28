@@ -75,7 +75,7 @@
 .text-editor-toolbar-btn.active {
   background-color: var(--primary-color-translucent);
   color: var(--primary-color-light);
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
 }
 
 /* Controls for color and font size */

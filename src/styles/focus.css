@@ -3,13 +3,13 @@
 /* Focus Management */
 .neu-focus:focus {
   outline: none;
-  box-shadow: var(--shadow-outset), 0 0 0 3px var(--primary-color);
-  border-color: var(--primary-color);
+  box-shadow: var(--shadow-outset), 0 0 0 3px var(--light-surface-color);
+  border-color: var(--light-surface-color);
 }
 
 .neu-focus-ring:focus-visible {
   outline: none;
-  box-shadow: var(--shadow-outset), 0 0 0 3px var(--primary-color);
+  box-shadow: var(--shadow-outset), 0 0 0 3px var(--light-surface-color);
 }
 
 /* Interactive State Classes */

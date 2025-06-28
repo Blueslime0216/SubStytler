@@ -177,7 +177,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
           <motion.div
             className="absolute inset-0 rounded-lg border-2 border-transparent"
             animate={{
-              borderColor: isDragActive ? 'var(--primary-color)' : 'transparent'
+              borderColor: isDragActive ? 'var(--light-surface-color)' : 'transparent'
             }}
             transition={{ duration: 0.2 }}
           />

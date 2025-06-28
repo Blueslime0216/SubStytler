@@ -177,7 +177,7 @@
 }
 
 .neu-progress-thumb:hover {
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
   box-shadow: 
     5px 5px 10px rgba(13, 17, 23, 0.9),
     -3px -3px 7px rgba(45, 55, 72, 0.7),

@@ -102,7 +102,7 @@
 }
 
 .neu-volume-thumb:hover {
-  border-color: var(--primary-color);
+  border-color: var(--light-surface-color);
   box-shadow: 
     4px 4px 8px rgba(13, 17, 23, 0.8),
     -2px -2px 6px rgba(45, 55, 72, 0.6),

@@ -30,13 +30,13 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
         />
         
         <motion.div 
-          className="bg-surface border-2 border-border-color rounded-lg shadow-outset-strong max-w-md w-full p-8 relative overflow-hidden"
+          className="bg-bg border border-mid-color rounded-lg shadow-elevated max-w-md w-full p-8 relative overflow-hidden"
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
-          {/* Background Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-surface/10 opacity-50" />
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-gradient-to-br from-info-color/5 via-transparent to-surface/10 opacity-50" />
           
           {/* Content */}
           <div className="relative z-10">
@@ -66,7 +66,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
                   {isComplete ? (
                     <CheckCircle className="w-6 h-6 text-success-color" />
                   ) : (
-                    <Video className="w-6 h-6 text-primary" />
+                    <Loader className="w-6 h-6 text-info-color" />
                   )}
                 </motion.div>
               </motion.div>
@@ -77,7 +77,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
                   <span className="font-semibold text-text-primary">
                     {isComplete ? 'Upload Complete!' : 'Processing Video'}
                   </span>
-                  <span className="text-primary font-mono text-sm font-bold">
+                  <span className="text-info-color font-mono text-sm font-bold">
                     {progress}%
                   </span>
                 </div>
@@ -92,7 +92,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
               <div className="relative h-3 bg-surface rounded-full shadow-inset overflow-hidden">
                 {/* Progress Fill */}
                 <motion.div 
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-primary/80 rounded-full shadow-outset-subtle"
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-info-color to-info-color/80 rounded-full shadow-outset-subtle"
                   initial={{ width: '0%' }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -126,7 +126,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
                   key={stage.label}
                   className={`text-center p-2 rounded-lg transition-all duration-300 ${
                     progress >= stage.threshold 
-                      ? 'bg-primary/10 shadow-inset-subtle text-primary' 
+                      ? 'bg-info-color/10 shadow-inset-subtle text-info-color' 
                       : 'bg-surface shadow-outset-subtle text-text-secondary'
                   }`}
                   animate={{
@@ -143,8 +143,8 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
           </div>
 
           {/* Decorative Elements */}
-          <div className="absolute top-4 right-4 w-2 h-2 bg-primary/30 rounded-full" />
-          <div className="absolute bottom-4 left-4 w-1 h-1 bg-primary/20 rounded-full" />
+          <div className="absolute top-4 right-4 w-2 h-2 bg-info-color/30 rounded-full" />
+          <div className="absolute bottom-4 left-4 w-1 h-1 bg-info-color/20 rounded-full" />
         </motion.div>
       </div>
     </Portal>
