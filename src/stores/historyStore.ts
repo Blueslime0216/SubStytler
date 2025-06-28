@@ -81,8 +81,9 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
   },
 
   undo: () => {
-    set((state) => {
-      if (state.pastStates.length === 0 || !state.present) return state;
+    const performUndo = () => {
+      const state = get();
+      if (state.pastStates.length === 0 || !state.present) return false;
 
       const previous = state.pastStates[state.pastStates.length - 1];
       const newPast = state.pastStates.slice(0, -1);
@@ -91,17 +92,41 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       // Reflect the change in the live layout store.
       applySnapshot(previous.snapshot);
 
-      return {
+      set({
         pastStates: newPast,
         present: previous,
         futureStates: newFuture,
-      };
-    });
+      });
+
+      return true;
+    };
+
+    // 🆕 Perform initial undo
+    if (!performUndo()) return;
+
+    // 🆕 Continue undoing while current state is internal (hidden)
+    // This ensures we always land on a user-visible state
+    let attempts = 0;
+    const maxAttempts = 10; // Safety limit to prevent infinite loops
+    
+    while (attempts < maxAttempts) {
+      const currentState = get();
+      
+      // If current state is visible or we've reached the beginning, stop
+      if (!currentState.present?.isInternal || currentState.pastStates.length === 0) {
+        break;
+      }
+      
+      // Continue undoing if current state is internal
+      if (!performUndo()) break;
+      attempts++;
+    }
   },
 
   redo: () => {
-    set((state) => {
-      if (state.futureStates.length === 0 || !state.present) return state;
+    const performRedo = () => {
+      const state = get();
+      if (state.futureStates.length === 0 || !state.present) return false;
 
       const next = state.futureStates[0];
       const newFuture = state.futureStates.slice(1);
@@ -110,12 +135,35 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       // Apply to layout store
       applySnapshot(next.snapshot);
 
-      return {
+      set({
         pastStates: newPast,
         present: next,
         futureStates: newFuture,
-      };
-    });
+      });
+
+      return true;
+    };
+
+    // 🆕 Perform initial redo
+    if (!performRedo()) return;
+
+    // 🆕 Continue redoing while current state is internal (hidden)
+    // This ensures we always land on a user-visible state
+    let attempts = 0;
+    const maxAttempts = 10; // Safety limit to prevent infinite loops
+    
+    while (attempts < maxAttempts) {
+      const currentState = get();
+      
+      // If current state is visible or we've reached the end, stop
+      if (!currentState.present?.isInternal || currentState.futureStates.length === 0) {
+        break;
+      }
+      
+      // Continue redoing if current state is internal
+      if (!performRedo()) break;
+      attempts++;
+    }
   },
 
   jumpTo: (timestamp: number) => {
@@ -134,6 +182,33 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
     applySnapshot(newPresent.snapshot);
 
     set({ pastStates: newPast, present: newPresent, futureStates: newFuture });
+
+    // 🆕 If we jumped to an internal state, auto-navigate to nearest visible state
+    if (newPresent.isInternal) {
+      // Try to find the next visible state in the future first
+      const nextVisibleIndex = newFuture.findIndex(entry => !entry.isInternal);
+      if (nextVisibleIndex !== -1) {
+        // Jump forward to the next visible state
+        const nextVisible = newFuture[nextVisibleIndex];
+        const finalPast = [...newPast, newPresent, ...newFuture.slice(0, nextVisibleIndex)];
+        const finalFuture = newFuture.slice(nextVisibleIndex + 1);
+        
+        applySnapshot(nextVisible.snapshot);
+        set({ pastStates: finalPast, present: nextVisible, futureStates: finalFuture });
+      } else {
+        // No visible future state, try to find previous visible state
+        const prevVisibleIndex = [...newPast].reverse().findIndex(entry => !entry.isInternal);
+        if (prevVisibleIndex !== -1) {
+          const actualIndex = newPast.length - 1 - prevVisibleIndex;
+          const prevVisible = newPast[actualIndex];
+          const finalPast = newPast.slice(0, actualIndex);
+          const finalFuture = [...newPast.slice(actualIndex + 1), newPresent, ...newFuture];
+          
+          applySnapshot(prevVisible.snapshot);
+          set({ pastStates: finalPast, present: prevVisible, futureStates: finalFuture });
+        }
+      }
+    }
   },
 
   clear: () => {
