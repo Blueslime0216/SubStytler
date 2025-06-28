@@ -17,94 +17,93 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
   const selectorRef = useRef<HTMLDivElement>(null);
 
-  // Panel types list
+  // 패널 타입 목록 생성 (현재 타입을 중앙에 배치)
   const panelTypes = Object.keys(panelConfig) as PanelType[];
   const currentIndex = panelTypes.indexOf(currentType);
   
-  // Current panel configuration
+  // 현재 선택된 패널 타입의 설정
   const currentConfig = panelConfig[currentType];
   const CurrentIcon = currentConfig.icon;
 
-  // Initialize selected index when opening
+  // 선택기가 열릴 때 현재 타입을 중앙에 배치
   useEffect(() => {
     if (isOpen) {
       setSelectedIndex(currentIndex);
-      setHoveredIndex(null);
     }
   }, [isOpen, currentIndex]);
 
-  // Toggle selector
+  // 선택기 열기/닫기
   const toggleSelector = useCallback(() => {
+    if (isAnimating) return;
     setIsOpen(prev => !prev);
-  }, []);
+  }, [isAnimating]);
 
-  // Handle panel selection
-  const handlePanelSelect = useCallback((index: number) => {
-    const selectedType = panelTypes[index];
-    if (selectedType !== currentType) {
-      onTypeChange(selectedType);
+  // 아이콘 선택 (클릭)
+  const handleIconClick = useCallback((index: number) => {
+    // 확정 처리: 이미 중앙에 있는(선택된) 아이콘을 클릭
+    if (index === selectedIndex) {
+      const selectedType = panelTypes[index];
+      if (selectedType !== currentType) {
+        onTypeChange(selectedType);
+      }
+      setIsOpen(false);
+      return;
     }
-    setIsOpen(false);
-    setHoveredIndex(null);
-  }, [currentType, onTypeChange, panelTypes]);
 
-  // Handle keyboard navigation
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (!isOpen) return;
+    // 이동 처리: 다른 아이콘 클릭 -> 해당 아이콘을 중앙으로 이동
+    if (isAnimating) return; // 이동 중 반복 입력 방지
 
-    switch (e.key) {
-      case 'ArrowLeft':
-        e.preventDefault();
-        setSelectedIndex(prev => Math.max(0, prev - 1));
-        setHoveredIndex(null);
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        setSelectedIndex(prev => Math.min(panelTypes.length - 1, prev + 1));
-        setHoveredIndex(null);
-        break;
-      case 'Enter':
-        e.preventDefault();
-        handlePanelSelect(selectedIndex);
-        break;
-      case 'Escape':
-        e.preventDefault();
-        setIsOpen(false);
-        break;
-    }
-  }, [isOpen, selectedIndex, panelTypes.length, handlePanelSelect]);
+    setIsAnimating(true);
+    setSelectedIndex(index);
 
-  // Handle mouse wheel navigation
+    // ⏱️ 애니메이션이 끝난 뒤 자동 확정 (한 번의 클릭으로 이동 + 확정)
+    setTimeout(() => {
+      setIsAnimating(false);
+      const movedType = panelTypes[index];
+      if (movedType !== currentType) {
+        onTypeChange(movedType);
+      }
+      setIsOpen(false);
+    }, 200); // 아이콘 애니메이션과 동일한 0.2초 후 실행
+  }, [selectedIndex, currentType, onTypeChange, panelTypes, isAnimating]);
+
+  // 휠 스크롤 처리
   const handleWheel = useCallback((e: React.WheelEvent) => {
-    if (!isOpen) return;
+    if (!isOpen || isAnimating) return;
+
     e.preventDefault();
 
     const direction = e.deltaY > 0 ? 1 : -1;
-    setSelectedIndex(prev => {
-      const newIndex = prev + direction;
-      return Math.max(0, Math.min(panelTypes.length - 1, newIndex));
-    });
-    setHoveredIndex(null);
-  }, [isOpen, panelTypes.length]);
+    const proposedIndex = selectedIndex + direction;
 
-  // Outside click handler
+    // 범위를 벗어나면 무시 → "끝"에서 더 이상 스크롤되지 않음
+    if (proposedIndex < 0 || proposedIndex > panelTypes.length - 1) {
+      return;
+    }
+
+    setIsAnimating(true);
+    setSelectedIndex(proposedIndex);
+    setTimeout(() => setIsAnimating(false), 200);
+  }, [isOpen, panelTypes.length, isAnimating, selectedIndex]);
+
+  // 외부 클릭 감지
   const handleOutsideClick = useCallback((e: MouseEvent) => {
     if (selectorRef.current && !selectorRef.current.contains(e.target as Node)) {
       setIsOpen(false);
     }
   }, []);
 
-  // ESC key handler
+  // ESC 키 처리
   useHotkeys('escape', () => {
     if (isOpen) {
       setIsOpen(false);
     }
   }, [isOpen]);
 
-  // Event listeners
+  // 외부 클릭 이벤트 리스너 등록/해제
   useEffect(() => {
     if (isOpen) {
       document.addEventListener('mousedown', handleOutsideClick);
@@ -112,23 +111,40 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
     }
   }, [isOpen, handleOutsideClick]);
 
-  // Get display index (for keyboard navigation)
-  const displayIndex = hoveredIndex !== null ? hoveredIndex : selectedIndex;
+  // 애니메이션 설정
+  const animationConfig = {
+    duration: 0.2,
+    ease: "easeOut" as const,
+    type: "tween" as const
+  };
+
+  // 아이콘 및 간격 설정
+  const iconSize = 40;
+  const iconSpacing = 12;
+  const totalIconWidth = iconSize + iconSpacing;
+  const openWidth = 200;
+  const centerOffset = 80;
 
   return (
     <div ref={selectorRef} className={`relative ${className}`}>
-      {/* Main selector button */}
+      {/* 메인 선택기 버튼 */}
       <motion.button
         onClick={toggleSelector}
-        onKeyDown={handleKeyDown}
-        className="panel-selector-button-enhanced"
-        title={`${currentConfig.title} - Click to change panel type`}
+        className={`relative cursor-pointer flex items-center justify-center panel-selector-button${isOpen ? ' open' : ''}`}
+        title={`${currentConfig.title} - 클릭하여 패널 변경`}
         initial={false}
         animate={{
-          width: isOpen ? 280 : 56,
-          height: 56,
+          width: isOpen ? 200 : 48,
+          height: 48,
+          borderRadius: isOpen ? 12 : 8,
         }}
-        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        transition={animationConfig}
+        style={{
+          background: 'var(--surface-color)',
+          border: '2px solid var(--border-color)',
+          transition: 'all 0.2s ease',
+          overflow: 'hidden',
+        }}
         whileHover={{ 
           filter: 'brightness(1.05)',
           borderColor: 'var(--primary-color)'
@@ -137,87 +153,150 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
       >
         <AnimatePresence mode="wait">
           {!isOpen ? (
-            // Closed state: show current panel icon
+            // 닫힌 상태: 현재 패널 아이콘만 표시
             <motion.div
               key="closed"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2 }}
+              transition={animationConfig}
               className="flex items-center justify-center w-full h-full"
             >
-              <CurrentIcon className="w-6 h-6 text-text-primary" />
+              <CurrentIcon className="w-5 h-5 text-text-primary transition-colors duration-200" />
             </motion.div>
           ) : (
-            // Open state: show panel grid
+            // 열린 상태: 아이콘 캐러셀
             <motion.div
               key="open"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="panel-selector-grid-container"
+              transition={animationConfig}
+              className={"relative w-full h-full flex items-center justify-center panel-selector-carousel open"}
+              style={{ overflow: 'hidden' }}
               onWheel={handleWheel}
             >
-              {/* Panel grid */}
-              <div className="panel-selector-grid">
+              {/* 그림자 레이어 */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={animationConfig}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  borderRadius: 8,
+                  pointerEvents: 'none',
+                  zIndex: 10,
+                  boxShadow: 'var(--shadow-inset)',
+                }}
+              />
+              {/* 아이콘 캐러셀 컨테이너 */}
+              <motion.div
+                className="flex items-center absolute panel-selector-icons"
+                animate={{
+                  x: -selectedIndex * totalIconWidth + centerOffset
+                }}
+                transition={animationConfig}
+                style={{
+                  width: panelTypes.length * totalIconWidth,
+                  left: '0',
+                }}
+              >
                 {panelTypes.map((panelType, index) => {
                   const config = panelConfig[panelType];
                   const Icon = config.icon;
-                  const isSelected = index === displayIndex;
-                  const isCurrent = panelType === currentType;
+                  const isSelected = index === selectedIndex;
+                  const isVisible = Math.abs(index - selectedIndex) <= 1;
 
                   return (
                     <motion.div
                       key={panelType}
-                      className={`panel-selector-grid-item ${isSelected ? 'selected' : ''} ${isCurrent ? 'current' : ''}`}
-                      onClick={() => handlePanelSelect(index)}
-                      onMouseEnter={() => setHoveredIndex(index)}
-                      onMouseLeave={() => setHoveredIndex(null)}
-                      animate={{
-                        scale: isSelected ? 1.1 : 1,
-                        zIndex: isSelected ? 10 : 1,
+                      className="flex items-center justify-center cursor-pointer panel-selector-icon-item"
+                      style={{
+                        width: iconSize,
+                        height: iconSize,
+                        marginRight: index < panelTypes.length - 1 ? iconSpacing : 0,
                       }}
-                      transition={{ duration: 0.2 }}
-                      whileHover={{ scale: isSelected ? 1.15 : 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleIconClick(index)}
+                      animate={{
+                        scale: isSelected ? 1.3 : 1,
+                        opacity: isVisible ? 1 : 0.3
+                      }}
+                      transition={animationConfig}
+                      whileHover={{
+                        scale: isSelected ? 1.35 : 1.05,
+                        transition: { duration: 0.1 }
+                      }}
+                      whileTap={{
+                        scale: isSelected ? 1.25 : 0.95,
+                        transition: { duration: 0.1 }
+                      }}
                     >
-                      <div className={`panel-selector-icon-wrapper ${isSelected ? 'selected' : ''} ${isCurrent ? 'current' : ''}`}>
-                        <Icon className="panel-selector-icon" />
-                      </div>
+                      <motion.div
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center panel-selector-icon-wrapper ${isSelected ? 'selected' : ''}`}
+                        animate={{
+                          backgroundColor: 'transparent',
+                        }}
+                        transition={animationConfig}
+                      >
+                        <Icon 
+                          className={`w-4 h-4 transition-colors duration-200 panel-selector-icon ${
+                            isSelected ? 'text-white' : 'text-text-secondary'
+                          }`} 
+                        />
+                      </motion.div>
                     </motion.div>
                   );
                 })}
-              </div>
-
-              {/* Selected panel info */}
-              <motion.div
-                className="panel-selector-info"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-              >
-                <div className="panel-selector-info-title">
-                  {panelConfig[panelTypes[displayIndex]]?.title || 'Unknown'}
-                </div>
-                <div className="panel-selector-info-description">
-                  {panelConfig[panelTypes[displayIndex]]?.description || ''}
-                </div>
               </motion.div>
 
-              {/* Navigation hint */}
-              <motion.div
-                className="panel-selector-hint"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                Use arrow keys or scroll to navigate • Enter to select • Esc to close
-              </motion.div>
+              {/* 좌우 그라데이션 마스크 */}
+              <div 
+                className="absolute left-0 top-0 bottom-0 w-8 pointer-events-none panel-selector-gradient-left"
+                style={{
+                  background: 'linear-gradient(90deg, var(--surface-color) 0%, transparent 100%)'
+                }}
+              />
+              <div 
+                className="absolute right-0 top-0 bottom-0 w-8 pointer-events-none panel-selector-gradient-right"
+                style={{
+                  background: 'linear-gradient(270deg, var(--surface-color) 0%, transparent 100%)'
+                }}
+              />
             </motion.div>
           )}
         </AnimatePresence>
       </motion.button>
+
+      {/* 선택기가 열렸을 때 상태 표시 - 커스텀 툴팁 */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={animationConfig}
+            className="absolute top-full mt-2 px-3 py-2 rounded-lg text-xs font-medium panel-selector-tooltip"
+            style={{
+              background: 'var(--surface-color)',
+              border: '2px solid var(--border-color)',
+              color: 'var(--text-primary)',
+              whiteSpace: 'nowrap',
+              zIndex: 1000,
+              width: '140px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              textAlign: 'center' as const,
+            }}
+          >
+            {panelConfig[panelTypes[selectedIndex]]?.title || 'Unknown'}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
