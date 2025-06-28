@@ -285,7 +285,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
         {tracks.map((track, trackIndex) => (
           <div
             key={track.id}
-            className={`neu-track-content${track.locked ? ' track-locked' : ''}${dragOverTrackId === track.id ? ' track-drag-over' : ''}`}
+            className={`neu-track-content${track.locked ? ' track-locked' : ''}${dragOverTrackId === track.id ? ' track-drag-over' : ''}${selectedTrackId === track.id ? ' bg-blue-500' : ''}`}
             style={{ 
               height: TRACK_HEIGHT,
               flexShrink: 0 // ✅ Prevent track height from shrinking

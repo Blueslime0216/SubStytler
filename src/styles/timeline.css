@@ -483,12 +483,16 @@
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   overflow: visible;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
 }
 
+/* Add inset effect to selected track content */
 .neu-track-content.bg-blue-500 {
   background: rgba(59, 130, 246, 0.2) !important;
+  box-shadow: var(--shadow-inset-subtle) !important;
+  border-top: 1px solid rgba(59, 130, 246, 0.1);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .neu-subtitle-block {
