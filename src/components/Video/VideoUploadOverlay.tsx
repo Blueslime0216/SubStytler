@@ -39,7 +39,20 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
         }}
       >
         {/* Main Upload Card */}
-        <div className="bg-surface border-2 border-border-color rounded-lg p-8 shadow-outset-strong relative overflow-hidden">
+        <div
+          className="bg-surface border rounded-lg p-8 relative overflow-hidden"
+          style={{
+            borderWidth: '1px',
+            borderColor: 'var(--border-color, #e0f7fa60)',
+            boxShadow: isDragActive
+              ? 'var(--shadow-outset)'
+              : 'var(--shadow-outset-subtle)',
+            transition: 'box-shadow 0.2s, filter 0.2s, background 0.2s, border-color 0.2s',
+            filter: isDragActive ? 'brightness(1.07)' : 'none',
+            background: 'linear-gradient(145deg, rgba(45,55,72,0.05) 0%, transparent 50%, rgba(13,17,23,0.05) 100%), var(--surface-color)',
+            backgroundBlendMode: 'overlay'
+          }}
+        >
           {/* Background Gradient Effect */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-surface/10 opacity-50" />
           
@@ -143,12 +156,17 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
             {/* Action Button */}
             {!isDragActive && (
               <motion.button
-                className="mt-6 px-6 py-3 bg-primary text-white font-semibold rounded-lg shadow-outset border-2 border-primary transition-all duration-200"
-                whileHover={{ 
-                  filter: 'brightness(1.1)',
-                  boxShadow: 'var(--shadow-outset-hover)'
+                className="mt-6 px-6 py-3 bg-surface text-primary font-semibold rounded-lg shadow-outset-subtle border border-primary transition-all duration-200 hover:filter hover:brightness-105"
+                style={{
+                  borderColor: 'var(--primary-color, #e0f7fa99)',
+                  borderWidth: '1px',
+                  boxShadow: 'var(--shadow-outset-subtle)'
                 }}
-                whileTap={{ 
+                whileHover={{
+                  filter: 'brightness(1.05)',
+                  boxShadow: 'var(--shadow-outset)'
+                }}
+                whileTap={{
                   boxShadow: 'var(--shadow-pressed)',
                   transform: 'translateY(1px)'
                 }}
