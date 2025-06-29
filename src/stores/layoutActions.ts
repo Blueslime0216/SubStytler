@@ -98,12 +98,12 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
   changePanelType: (areaId: string, newPanelType: PanelType) => {
     const { areas } = get();
 
-    console.log('🔄 패널 타입 변경 시도:', {
-      areaId,
-      newPanelType,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      currentAreas: areas.map((a: any) => ({ id: a.id, type: 'area' }))
-    });
+    // console.log('🔄 패널 타입 변경 시도:', {
+    //   areaId,
+    //   newPanelType,
+    //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //   currentAreas: areas.map((a: any) => ({ id: a.id, type: 'area' }))
+    // });
 
     // 🔧 성능 최적화: 변경이 필요한 경우에만 새 배열 생성
     const targetIndex = areas.findIndex((area: any) => area.id === areaId);
@@ -123,11 +123,11 @@ export const createLayoutActions: StateCreator<any> = (set, get, _store) => ({
       id: newId // 🎯 새로운 고유 ID로 변경
     };
 
-    console.log('✅ 패널 타입 변경 완료:', {
-      oldId: areaId,
-      newId: newId,
-      newPanelType
-    });
+    // console.log('✅ 패널 타입 변경 완료:', {
+    //   oldId: areaId,
+    //   newId: newId,
+    //   newPanelType
+    // });
 
     set({ areas: newAreas });
     // 📜 히스토리 기록

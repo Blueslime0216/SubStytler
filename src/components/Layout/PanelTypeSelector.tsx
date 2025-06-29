@@ -97,8 +97,6 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
   const handleWheel = useCallback((e: React.WheelEvent) => {
     if (!isOpen || isAnimating) return;
 
-    e.preventDefault();
-
     const direction = e.deltaY > 0 ? 1 : -1;
     const proposedIndex = selectedIndex + direction;
 
@@ -303,7 +301,7 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
                       <motion.div
                         className={`w-6 h-6 rounded-lg flex items-center justify-center panel-selector-icon-wrapper ${isSelected ? 'selected' : ''}`}
                         animate={{
-                          backgroundColor: isSelected ? 'var(--primary-color)' : 'transparent',
+                          backgroundColor: isSelected ? 'var(--primary-color)' : 'rgba(0,0,0,0)',
                           boxShadow: isSelected ? 'var(--shadow-inset-subtle)' : 'var(--shadow-outset-subtle)'
                         }}
                         transition={animationConfig}

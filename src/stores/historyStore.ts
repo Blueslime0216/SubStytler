@@ -1,4 +1,5 @@
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
+import { shallow } from 'zustand/shallow';
 import { Area } from '../types/area';
 import { useLayoutStore } from './layoutStore';
 import { useProjectStore } from './projectStore';
@@ -57,7 +58,7 @@ interface HistoryState {
   };
 }
 
-export const useHistoryStore = create<HistoryState>((set, get) => ({
+export const useHistoryStore = createWithEqualityFn<HistoryState>((set, get) => ({
   pastStates: [],
   present: null,
   futureStates: [],
@@ -198,22 +199,18 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
         // Jump forward to the next visible state
         const nextVisible = newFuture[nextVisibleIndex];
         const finalPast = [...newPast, newPresent, ...newFuture.slice(0, nextVisibleIndex)];
-        const finalFuture = newFuture.slice(nextVisibleIndex + 1);
-        
+        set({ pastStates: finalPast, present: nextVisible, futureStates: newFuture.slice(nextVisibleIndex + 1) });
         applySnapshot(nextVisible.snapshot);
-        set({ pastStates: finalPast, present: nextVisible, futureStates: finalFuture });
-      } else {
-        // No visible future state, try to find previous visible state
-        const prevVisibleIndex = [...newPast].reverse().findIndex(entry => !entry.internal);
-        if (prevVisibleIndex !== -1) {
-          const actualIndex = newPast.length - 1 - prevVisibleIndex;
-          const prevVisible = newPast[actualIndex];
-          const finalPast = newPast.slice(0, actualIndex);
-          const finalFuture = [...newPast.slice(actualIndex + 1), newPresent, ...newFuture];
-          
-          applySnapshot(prevVisible.snapshot);
-          set({ pastStates: finalPast, present: prevVisible, futureStates: finalFuture });
-        }
+        return;
+      }
+      // Otherwise, try to find the previous visible state in the past
+      const prevVisibleIndex = [...newPast].reverse().findIndex(entry => !entry.internal);
+      if (prevVisibleIndex !== -1) {
+        const idx = newPast.length - 1 - prevVisibleIndex;
+        const prevVisible = newPast[idx];
+        set({ pastStates: newPast.slice(0, idx), present: prevVisible, futureStates: [newPresent, ...newFuture] });
+        applySnapshot(prevVisible.snapshot);
+        return;
       }
     }
   },
@@ -242,25 +239,20 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
   },
 
   clear: () => {
-    set({
-      pastStates: [],
-      present: null,
-      futureStates: [],
-    });
+    set({ pastStates: [], present: null, futureStates: [] });
   },
 
   // 🆕 Get filtered history for UI display (excludes internal "Before" entries)
   getVisibleHistory: () => {
-    const { pastStates, present, futureStates } = get();
-    
+    const state = get();
     const filter = (arr: HistoryEntry[]) => arr.filter((e) => !e.internal);
     return {
-      pastStates: filter(pastStates),
-      present: present && !present.internal ? present : null,
-      futureStates: filter(futureStates)
+      pastStates: filter(state.pastStates),
+      present: state.present && !state.present.internal ? state.present : null,
+      futureStates: filter(state.futureStates),
     };
   },
-}));
+}), shallow);
 
 // Flag to suppress recording during internal snapshot application
 let isApplyingSnapshot = false;

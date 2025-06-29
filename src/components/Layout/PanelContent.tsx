@@ -10,6 +10,7 @@ import { EffectsLibraryPanel } from '../Panels/EffectsLibraryPanel';
 import { HistoryPanel } from '../Panels/HistoryPanel';
 import { NotesPanel } from '../Panels/NotesPanel';
 import { EmptyPanel } from '../Panels/EmptyPanel'; // 🆕 빈 패널 추가
+import { SubtitlePreviewPanel } from '../Panels/SubtitlePreviewPanel/SubtitlePreviewPanel';
 
 interface PanelContentProps {
   type: PanelType;
@@ -26,6 +27,7 @@ const panelComponents: Record<PanelType, React.ComponentType> = {
   'history': HistoryPanel,
   'notes': NotesPanel,
   'empty': EmptyPanel, // 🆕 빈 패널 컴포넌트 등록
+  'subtitle-preview': SubtitlePreviewPanel,
 };
 
 export const PanelContent: React.FC<PanelContentProps> = ({ type }) => {

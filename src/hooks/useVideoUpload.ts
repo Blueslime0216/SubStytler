@@ -128,7 +128,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         throw new Error('Video element not available');
       }
 
-      console.log('Setting video URL:', url);
+      // console.log('Setting video URL:', url);
       
       // Set up video loading promise
       const videoLoadPromise = new Promise<{
@@ -144,11 +144,11 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         const handleLoadedMetadata = () => {
           cleanup();
           
-          console.log('Video metadata loaded successfully:', {
-            duration: video.duration,
-            width: video.videoWidth,
-            height: video.videoHeight
-          });
+          // console.log('Video metadata loaded successfully:', {
+          //   duration: video.duration,
+          //   width: video.videoWidth,
+          //   height: video.videoHeight
+          // });
           
           const duration = video.duration;
           const width = video.videoWidth;
@@ -247,10 +247,10 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         });
       }, 1500);
 
-    } catch (error) {
-      console.error('Video processing error:', error);
+    } catch (err) {
+      console.error('Video processing error:', err);
       
-      const errorMessage = error instanceof Error ? error.message : 'Failed to process video file';
+      const errorMessage = err instanceof Error ? err.message : 'Failed to process video file';
       
       // Clean up on error
       if (videoRef.current) {

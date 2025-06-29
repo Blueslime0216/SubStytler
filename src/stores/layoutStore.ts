@@ -1,4 +1,5 @@
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
+import { shallow } from 'zustand/shallow';
 import { AreaConfig, PanelType } from '../types/project';
 import { createLayoutActions } from './layoutActions';
 import { Area } from '../types/area';
@@ -23,7 +24,7 @@ interface LayoutState {
   setFocusedArea: (areaId: string | null) => void;
 }
 
-export const useLayoutStore = create<LayoutState>((set, get, store) => ({
+export const useLayoutStore = createWithEqualityFn<LayoutState>((set, get, store) => ({
   // State - Area 시스템 기본 레이아웃
   areas: [
     { id: 'video', x: 0, y: 0, width: 60, height: 100, minWidth: 15, minHeight: 20 },
@@ -41,4 +42,4 @@ export const useLayoutStore = create<LayoutState>((set, get, store) => ({
   setDraggedPanel: (panelType: PanelType | null) => set({ draggedPanel: panelType }),
   setDropTarget: (target) => set({ dropTarget: target }),
   setFocusedArea: (areaId: string | null) => set({ focusedAreaId: areaId }),
-}));
+}), shallow);
