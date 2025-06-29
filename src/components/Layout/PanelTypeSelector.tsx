@@ -71,8 +71,10 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
       clearTimeout(tooltipTimeoutRef.current);
     }
     
+    // Capture the bounding rect immediately to avoid null reference errors
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    
     tooltipTimeoutRef.current = window.setTimeout(() => {
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       setHoveredPanelType(panelType);
       setTooltipPosition({
         x: rect.left + rect.width / 2,
