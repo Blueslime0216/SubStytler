@@ -18,7 +18,7 @@ interface AreaBlockProps {
   renderPanel?: (area: Area) => React.ReactNode;
 }
 
-const BORDER_THICKNESS = 8; // 경계 요소 두께 (8px로 유지)
+const BORDER_THICKNESS = 20;
 
 const AreaBlockComponent: React.FC<AreaBlockProps> = ({
   areas,
@@ -131,35 +131,35 @@ const AreaBlockComponent: React.FC<AreaBlockProps> = ({
       );
     };
 
-    // 좌측 경계 - 패널 패딩과 일치하도록 위치 조정
+    // 좌측 경계
     maybeAdd('left', {
-      left: basePadding, // 패딩 값만큼 안쪽으로 이동
-      top: basePadding, // 패딩 값만큼 안쪽으로 이동
+      left: 0,
+      top: 0,
       width: BORDER_THICKNESS,
-      height: `calc(100% - ${basePadding * 2}px)`, // 패딩 값 2배만큼 높이 감소
+      height: '100%',
     }, 'ew-resize');
 
-    // 우측 경계 - 패널 패딩과 일치하도록 위치 조정
+    // 우측 경계
     maybeAdd('right', {
-      right: basePadding, // 패딩 값만큼 안쪽으로 이동
-      top: basePadding, // 패딩 값만큼 안쪽으로 이동
+      right: 0,
+      top: 0,
       width: BORDER_THICKNESS,
-      height: `calc(100% - ${basePadding * 2}px)`, // 패딩 값 2배만큼 높이 감소
+      height: '100%',
     }, 'ew-resize');
 
-    // 상단 경계 - 패널 패딩과 일치하도록 위치 조정
+    // 상단 경계
     maybeAdd('top', {
-      left: basePadding, // 패딩 값만큼 안쪽으로 이동
-      top: basePadding, // 패딩 값만큼 안쪽으로 이동
-      width: `calc(100% - ${basePadding * 2}px)`, // 패딩 값 2배만큼 너비 감소
+      left: 0,
+      top: 0,
+      width: '100%',
       height: BORDER_THICKNESS,
     }, 'ns-resize');
 
-    // 하단 경계 - 패널 패딩과 일치하도록 위치 조정
+    // 하단 경계
     maybeAdd('bottom', {
-      left: basePadding, // 패딩 값만큼 안쪽으로 이동
-      bottom: basePadding, // 패딩 값만큼 안쪽으로 이동
-      width: `calc(100% - ${basePadding * 2}px)`, // 패딩 값 2배만큼 너비 감소
+      left: 0,
+      bottom: 0,
+      width: '100%',
       height: BORDER_THICKNESS,
     }, 'ns-resize');
 
