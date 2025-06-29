@@ -183,17 +183,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
           />
         </div>
 
-        {/* Additional Info */}
-        <motion.div 
-          className="mt-4 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <p className="text-xs text-text-muted">
-            Maximum file size: 500MB
-          </p>
-        </motion.div>
+        {/* Removed the "Maximum file size: 500MB" text */}
       </motion.div>
     </div>
   );
