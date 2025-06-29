@@ -14,6 +14,9 @@ const VideoControllerTimeDisplay: React.FC<VideoControllerTimeDisplayProps> = ({
   frameNumber,
   fps
 }) => {
+  // FPS 값을 소수점 없이 정수로 표시하거나, 소수점이 있는 경우 한 자리까지만 표시
+  const displayFps = Number.isInteger(fps) ? fps.toString() : fps.toFixed(1);
+  
   return (
     <div className="video-controller-time-display">
       <span className="video-controller-time">
@@ -23,7 +26,7 @@ const VideoControllerTimeDisplay: React.FC<VideoControllerTimeDisplayProps> = ({
         {String(frameNumber).padStart(5, '0')}
       </span>
       <span className="video-controller-fps">
-        {fps.toFixed(2)}FPS
+        {displayFps}FPS
       </span>
     </div>
   );

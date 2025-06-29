@@ -156,12 +156,12 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
 
         // Function to detect FPS from video
         const detectFPS = async (videoElement: HTMLVideoElement): Promise<number> => {
-          console.log('🎬 FPS 감지 시작...');
-          
           // Default fallback FPS
-          let detectedFPS = 30;
+          let detectedFPS = 0;
           
           try {
+            console.log('🎬 FPS 감지 시작...');
+            
             // Try to get FPS from video properties if available
             // @ts-ignore - Some browsers expose this non-standard property
             if (videoElement.mozDecodedFrames !== undefined && 
@@ -180,15 +180,16 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
               detectedFPS = Math.round(webkitFrames / videoElement.duration);
               console.log('🎬 Webkit 속성으로 FPS 감지:', { webkitFrames, duration: videoElement.duration, detectedFPS });
             }
-            // If we couldn't detect from properties, use a more reliable method
-            else {
-              console.log('🎬 브라우저 속성으로 FPS를 감지할 수 없음, 프레임 분석 시도...');
+            
+            // 중요: 속성 기반 감지가 실패하거나 0을 반환하면 항상 프레임 분석 방식 사용
+            if (detectedFPS <= 0) {
+              console.log('🎬 속성 기반 FPS 감지 실패 또는 0 반환, 프레임 분석 방식으로 전환');
               
               // Try to detect by seeking and counting frames
               const seekTest = async (): Promise<number> => {
-                const testDuration = 2; // seconds to test
+                const testDuration = Math.min(5, videoElement.duration); // 최대 5초 또는 비디오 길이
                 const startTime = 0;
-                const endTime = Math.min(testDuration, videoElement.duration);
+                const endTime = testDuration;
                 const seekStep = 1/60; // 60fps max detection
                 
                 let frameCount = 0;
@@ -200,12 +201,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
                 canvas.height = 32;
                 const ctx = canvas.getContext('2d');
                 
-                if (!ctx) {
-                  console.log('🎬 캔버스 컨텍스트를 가져올 수 없음, 기본값 30fps 사용');
-                  return 30; // Fallback if canvas not supported
-                }
-                
-                console.log('🎬 프레임 분석 시작:', { testDuration, startTime, endTime, seekStep });
+                if (!ctx) return 30; // Fallback if canvas not supported
                 
                 // Function to check if frame changed
                 const isNewFrame = (): boolean => {
@@ -248,15 +244,17 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
                 // Reset video position
                 videoElement.currentTime = 0;
                 
-                console.log('🎬 프레임 분석 결과:', { frameCount, testDuration, calculatedFPS: Math.round(frameCount / testDuration) });
-                return Math.round(frameCount / testDuration);
+                const calculatedFPS = Math.round(frameCount / testDuration);
+                console.log('🎬 프레임 분석 결과:', { frameCount, testDuration, calculatedFPS });
+                
+                return calculatedFPS;
               };
               
               try {
                 detectedFPS = await seekTest();
                 // Validate result is reasonable
                 if (detectedFPS < 10 || detectedFPS > 120) {
-                  console.log('🎬 감지된 FPS가 비정상적임:', detectedFPS, '기본값 30fps 사용');
+                  console.log('🎬 감지된 FPS가 비정상적임:', detectedFPS, '기본값 30으로 설정');
                   detectedFPS = 30; // Fallback to common value
                 }
               } catch (e) {
@@ -266,6 +264,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
             }
           } catch (e) {
             console.warn('🎬 FPS 감지 중 오류 발생:', e);
+            detectedFPS = 30; // 오류 발생 시 기본값
           }
           
           // Common FPS values for normalization
@@ -283,9 +282,9 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
             }
           }
           
-          console.log('🎬 FPS 감지 최종 결과:', { 
-            rawDetectedFPS: detectedFPS, 
-            normalizedFPS: closestFPS, 
+          console.log('🎬 FPS 감지 최종 결과:', {
+            rawDetectedFPS: detectedFPS,
+            normalizedFPS: closestFPS,
             difference: minDiff,
             commonFPSValues: commonFPS
           });
@@ -383,7 +382,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
       const fileSizeMB = Math.round(file.size / (1024 * 1024));
       success({
         title: 'Video loaded successfully!',
-        message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height}, ${fileSizeMB}MB)`
+        message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height}, ${fileSizeMB}MB, ${metadata.fps}fps)`
       });
 
     } catch (err) {
