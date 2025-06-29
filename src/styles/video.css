@@ -224,3 +224,60 @@
   pointer-events: none;
   z-index: 9999;
 }
+
+/* Additional Buttons Container - FIXED: Now displays horizontally */
+.video-controller-additional-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-direction: row;
+}
+
+/* Button wrapper for consistent spacing */
+.video-controller-button-wrapper {
+  position: relative;
+}
+
+/* Progress tooltip */
+.video-controller-progress-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: monospace;
+  pointer-events: none;
+  z-index: 5;
+  transition: none !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .video-controller-controls {
+    padding: 0 10px;
+  }
+  
+  .video-controller-left, 
+  .video-controller-right {
+    gap: 8px;
+  }
+  
+  .video-controller-button {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .video-controller-time-display {
+    font-size: 11px;
+    gap: 5px;
+  }
+  
+  .video-controller-fps {
+    display: none;
+  }
+  
+  .video-controller-additional-buttons {
+    gap: 8px;
+  }
+}

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
-import { formatTime } from '../../utils/timeUtils';
 import VideoControllerPlayButton from './VideoController/VideoControllerPlayButton';
 import VideoControllerProgressBar from './VideoController/VideoControllerProgressBar';
 import VideoControllerVolumeButton from './VideoController/VideoControllerVolumeButton';
