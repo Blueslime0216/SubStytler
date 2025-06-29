@@ -148,10 +148,11 @@ export const SubtitleOverlay: React.FC = () => {
             display: 'flex',
             ...positionStyle
           }}
-          initial={{ opacity: 0 }}
+          // No animations - just appear/disappear instantly
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0 }}
         >
           <div
             style={{
