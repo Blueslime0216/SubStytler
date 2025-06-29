@@ -15,6 +15,8 @@
   background: transparent;
   z-index: 10;
   opacity: 0;
+  /* 경계 요소가 패널 내부를 침범하지 않도록 조정 */
+  box-sizing: border-box;
 }
 
 .area-border-vertical {
