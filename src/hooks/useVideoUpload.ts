@@ -156,7 +156,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         duration: number;
         width: number;
         height: number;
-        fps: number; // Added FPS detection
+        fps: number;
       }>((resolve, reject) => {
         const timeout = setTimeout(() => {
           console.error('Video loading timed out after 60 seconds');
@@ -173,132 +173,24 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
             
             // Try to get FPS from video properties if available
             // @ts-ignore - Some browsers expose this non-standard property
-            if (videoElement.mozDecodedFrames !== undefined && 
-                // @ts-ignore
-                videoElement.mozParsedFrames !== undefined && 
-                videoElement.duration) {
-              // @ts-ignore
-              const mozFrames = videoElement.mozDecodedFrames || videoElement.mozParsedFrames;
-              detectedFPS = Math.round(mozFrames / videoElement.duration);
-              console.log('🎬 Mozilla 속성으로 FPS 감지:', { mozFrames, duration: videoElement.duration, detectedFPS });
-            } 
-            // @ts-ignore - Some browsers expose this non-standard property
-            else if (videoElement.webkitDecodedFrameCount !== undefined && videoElement.duration) {
+            if (videoElement.webkitDecodedFrameCount !== undefined && videoElement.duration) {
               // @ts-ignore
               const webkitFrames = videoElement.webkitDecodedFrameCount;
               detectedFPS = Math.round(webkitFrames / videoElement.duration);
               console.log('🎬 Webkit 속성으로 FPS 감지:', { webkitFrames, duration: videoElement.duration, detectedFPS });
             }
             
-            // 중요: 속성 기반 감지가 실패하거나 0을 반환하면 항상 프레임 분석 방식 사용
+            // If detection failed or returned 0, use default
             if (detectedFPS <= 0) {
-              console.log('🎬 속성 기반 FPS 감지 실패 또는 0 반환, 프레임 분석 방식으로 전환');
-              
-              // Try to detect by seeking and counting frames
-              const seekTest = async (): Promise<number> => {
-                const testDuration = Math.min(5, videoElement.duration); // 최대 5초 또는 비디오 길이
-                const startTime = 0;
-                const endTime = testDuration;
-                const seekStep = 1/60; // 60fps max detection
-                
-                let frameCount = 0;
-                let lastImageData: ImageData | null = null;
-                
-                // Create a canvas to compare frames
-                const canvas = document.createElement('canvas');
-                canvas.width = 32; // Small size for performance
-                canvas.height = 32;
-                const ctx = canvas.getContext('2d');
-                
-                if (!ctx) return 30; // Fallback if canvas not supported
-                
-                // Function to check if frame changed
-                const isNewFrame = (): boolean => {
-                  ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-                  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                  
-                  if (!lastImageData) {
-                    lastImageData = imageData;
-                    return true;
-                  }
-                  
-                  // Compare with previous frame
-                  const data1 = lastImageData.data;
-                  const data2 = imageData.data;
-                  
-                  // Check a sample of pixels
-                  for (let i = 0; i < data1.length; i += 40) {
-                    if (Math.abs(data1[i] - data2[i]) > 5) {
-                      lastImageData = imageData;
-                      return true;
-                    }
-                  }
-                  
-                  return false;
-                };
-                
-                // Seek through video and count frames
-                videoElement.currentTime = startTime;
-                await new Promise(r => videoElement.addEventListener('seeked', r, { once: true }));
-                
-                for (let time = startTime; time <= endTime; time += seekStep) {
-                  videoElement.currentTime = time;
-                  await new Promise(r => videoElement.addEventListener('seeked', r, { once: true }));
-                  
-                  if (isNewFrame()) {
-                    frameCount++;
-                  }
-                }
-                
-                // Reset video position
-                videoElement.currentTime = 0;
-                
-                const calculatedFPS = Math.round(frameCount / testDuration);
-                console.log('🎬 프레임 분석 결과:', { frameCount, testDuration, calculatedFPS });
-                
-                return calculatedFPS;
-              };
-              
-              try {
-                detectedFPS = await seekTest();
-                // Validate result is reasonable
-                if (detectedFPS < 10 || detectedFPS > 120) {
-                  console.log('🎬 감지된 FPS가 비정상적임:', detectedFPS, '기본값 30으로 설정');
-                  detectedFPS = 30; // Fallback to common value
-                }
-              } catch (e) {
-                console.warn('🎬 FPS 감지 실패:', e);
-                detectedFPS = 30;
-              }
+              console.log('🎬 FPS 감지 실패, 기본값 30 사용');
+              detectedFPS = 30;
             }
           } catch (e) {
             console.warn('🎬 FPS 감지 중 오류 발생:', e);
             detectedFPS = 30; // 오류 발생 시 기본값
           }
           
-          // Common FPS values for normalization
-          const commonFPS = [23.976, 24, 25, 29.97, 30, 50, 59.94, 60];
-          
-          // Find closest common FPS
-          let closestFPS = 30;
-          let minDiff = Number.MAX_VALUE;
-          
-          for (const fps of commonFPS) {
-            const diff = Math.abs(detectedFPS - fps);
-            if (diff < minDiff) {
-              minDiff = diff;
-              closestFPS = fps;
-            }
-          }
-          
-          console.log('🎬 FPS 감지 최종 결과:', {
-            rawDetectedFPS: detectedFPS,
-            normalizedFPS: closestFPS,
-            difference: minDiff,
-            commonFPSValues: commonFPS
-          });
-          
-          return closestFPS;
+          return detectedFPS;
         };
 
         const handleLoadedMetadata = async () => {
