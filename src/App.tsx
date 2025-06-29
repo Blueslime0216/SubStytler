@@ -15,6 +15,9 @@ import { useToast } from './hooks/useToast';
 import { VideoInfo } from './utils/videoUtils';
 import { LayoutTemplateButton } from './components/UI/LayoutTemplateButton';
 import { Moon, Sun, Save, File as FileExport, Undo, Redo, Menu } from 'lucide-react';
+import logoDark from './assets/logo.svg';
+import logoLight from './assets/logo_light.svg';
+import { motion } from 'framer-motion';
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(
@@ -136,48 +139,65 @@ export default function App() {
     await saveProjectToFileSystem();
   };
 
+  const logoSrc = isDarkMode ? logoDark : logoLight;
+
   return (
     <div className="min-h-screen flex flex-col bg-bg text-text-primary">
       {/* Header - Adobe-style App Bar */}
-      <header className="h-12 flex items-center px-2 bg-surface border-b border-border-color shadow-sm">
+      <header className="h-16 flex items-center px-4 bg-surface border-b border-border-color shadow-sm">
         {/* Left Section - Logo and Main Menu */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-4">
           {/* App Logo */}
-          <div className="flex items-center space-x-2 px-2">
-            <div className="flex items-center justify-center w-7 h-7 bg-primary-color rounded-md text-white">
-              <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5-9-5-9 5 9 5z"/></svg>
-            </div>
+          <div className="flex items-center space-x-3 px-3">
+            <motion.div
+              whileHover={{ scale: [1, 0.92, 1.15], rotate: [0, 0, 6], boxShadow: ['0 0px 0px 0 rgba(94,129,172,0)', '0 0px 0px 0 rgba(94,129,172,0)', '0 4px 24px 0 rgba(94,129,172,0.25)'] }}
+              transition={{ type: 'spring', stiffness: 300, damping: 18, duration: 0.45 }}
+              className="flex items-center justify-center w-11 h-11 bg-primary-color rounded-xl text-white overflow-hidden group"
+            >
+              <img src={logoSrc} alt="SubStytler Logo" className="w-9 h-9 object-contain transition-transform duration-200 group-hover:scale-110" />
+            </motion.div>
             <div>
-              <div className="heading-primary text-sm font-semibold">Sub-Stytler</div>
+              <div className="heading-primary text-lg font-semibold">Sub-Stytler</div>
             </div>
           </div>
 
           {/* Divider */}
-          <div className="h-6 w-px bg-border-color mx-1"></div>
+          <div className="h-10 w-px bg-border-color mx-2"></div>
 
           {/* Main Menu Items */}
-          <div className="flex items-center space-x-1">
-            <button 
+          <div className="flex items-center space-x-2">
+            <motion.button
               ref={fileMenuTriggerRef}
               onClick={() => setIsFileMenuOpen(!isFileMenuOpen)}
-              className="btn-sm px-3 py-1 text-xs hover:bg-mid-color"
+              className="btn-sm px-4 py-2 text-sm hover:bg-mid-color transition-all"
+              whileHover={{ scale: 1.07, boxShadow: '0 2px 12px 0 rgba(94,129,172,0.10)' }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
               Project
-            </button>
+            </motion.button>
             
-            <button 
+            <motion.button
               onClick={handleSaveProject}
               disabled={!canSave}
-              className="btn-sm px-3 py-1 text-xs flex items-center space-x-1 hover:bg-mid-color disabled:opacity-50"
+              className="btn-sm px-4 py-2 text-sm flex items-center space-x-2 hover:bg-mid-color disabled:opacity-50 transition-all"
+              whileHover={{ scale: 1.07, boxShadow: '0 2px 12px 0 rgba(94,129,172,0.10)' }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
-              <Save size={12} />
+              <Save size={16} />
               <span>Save</span>
-            </button>
+            </motion.button>
             
-            <button className="btn-sm px-3 py-1 text-xs flex items-center space-x-1 hover:bg-mid-color">
-              <FileExport size={12} />
+            <motion.button
+              className="btn-sm px-4 py-2 text-sm flex items-center space-x-2 hover:bg-mid-color transition-all"
+              whileHover={{ scale: 1.07, boxShadow: '0 2px 12px 0 rgba(94,129,172,0.10)' }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            >
+              <FileExport size={16} />
               <span>Export</span>
-            </button>
+            </motion.button>
             
             <LayoutTemplateButton />
           </div>
@@ -185,11 +205,11 @@ export default function App() {
 
         {/* Center Section - Project Title */}
         <div className="flex-1 flex justify-center">
-          <div className="text-sm opacity-80 font-medium">Untitled Project</div>
+          <div className="text-base opacity-80 font-medium">Untitled Project</div>
         </div>
 
         {/* Right Section - Tools and Theme Toggle */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           {/* History Controls */}
           <div className="flex items-center space-x-1 mr-2">
             <button 
