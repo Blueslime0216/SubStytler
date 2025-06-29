@@ -38,10 +38,10 @@ export const LargeVideoWarningModal: React.FC<LargeVideoWarningModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="relative bg-base border border-mid-color rounded-lg shadow-elevated max-w-md w-full mx-4 overflow-hidden"
+          className="relative bg-base border border-border-color rounded-lg shadow-elevated max-w-md w-full mx-4 overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-5 border-b border-mid-color bg-surface overflow-hidden rounded-t-lg">
+          <div className="flex items-center justify-between p-5 border-b border-border-color bg-surface overflow-hidden rounded-t-lg">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-warning-color/20 text-warning-color rounded-lg flex items-center justify-center shadow-inset">
                 <AlertTriangle className="w-5 h-5" />
@@ -63,7 +63,7 @@ export const LargeVideoWarningModal: React.FC<LargeVideoWarningModalProps> = ({
                   <p className="text-sm font-medium text-text-primary">Selected File Size</p>
                   <div className="flex items-center gap-2">
                     <span className="text-lg font-bold text-warning-color">{fileSizeMB} MB</span>
-                    <span className="text-xs text-text-secondary">(Recommended: &lt;500 MB)</span>
+                    <span className="text-xs text-text-secondary">(Recommended: <500 MB)</span>
                   </div>
                 </div>
               </div>
@@ -105,10 +105,10 @@ export const LargeVideoWarningModal: React.FC<LargeVideoWarningModalProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-5 border-t border-mid-color bg-surface overflow-hidden rounded-b-lg">
+          <div className="flex items-center justify-between p-5 border-t border-border-color bg-surface overflow-hidden rounded-b-lg">
             <button
               onClick={onClose}
-              className="btn px-4 py-2 text-text-secondary bg-surface border border-mid-color shadow-outset transition-all hover:bg-mid-color/30"
+              className="btn px-4 py-2 text-text-secondary bg-surface border border-border-color shadow-outset transition-all hover:bg-mid-color/30"
             >
               Cancel
             </button>

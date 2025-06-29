@@ -43,7 +43,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
           className="bg-surface border rounded-lg p-8 relative overflow-hidden"
           style={{
             borderWidth: '1px',
-            borderColor: 'var(--border-color, #e0f7fa60)',
+            borderColor: 'var(--border-color)',
             boxShadow: isDragActive
               ? 'var(--shadow-outset)'
               : 'var(--shadow-outset-subtle)',
@@ -177,7 +177,7 @@ export const VideoUploadOverlay: React.FC<VideoUploadOverlayProps> = ({
           <motion.div
             className="absolute inset-0 rounded-lg border-2 border-transparent"
             animate={{
-              borderColor: isDragActive ? 'var(--light-surface-color)' : 'rgba(0,0,0,0)'
+              borderColor: isDragActive ? 'var(--primary-color)' : 'rgba(0,0,0,0)'
             }}
             transition={{ duration: 0.2 }}
           />
