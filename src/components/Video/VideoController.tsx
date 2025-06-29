@@ -97,17 +97,20 @@ export const VideoController: React.FC<VideoControllerProps> = ({
     setCurrentTime(Math.min(duration, currentTime + 5000));
   };
 
-  // 부모 영역(비디오 영역) 호버 감지
+  // 비디오 요소 호버 감지 - 수정된 부분
   useEffect(() => {
-    if (!parentRef?.current) return;
-    const el = parentRef.current;
+    // 비디오 요소 직접 찾기
+    const videoElement = document.querySelector('video');
+    if (!videoElement) return;
+    
     const handleEnter = () => {
       if (hideTimeoutRef.current) {
         clearTimeout(hideTimeoutRef.current);
         hideTimeoutRef.current = null;
       }
       setIsVisible(true);
-  };
+    };
+    
     const handleLeave = () => {
       if (isInteracting || isPinned) return;
       if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
@@ -116,21 +119,27 @@ export const VideoController: React.FC<VideoControllerProps> = ({
         hideTimeoutRef.current = null;
       }, 100);
     };
-    el.addEventListener('mouseenter', handleEnter);
-    el.addEventListener('mouseleave', handleLeave);
+    
+    videoElement.addEventListener('mouseenter', handleEnter);
+    videoElement.addEventListener('mouseleave', handleLeave);
+    
     return () => {
-      el.removeEventListener('mouseenter', handleEnter);
-      el.removeEventListener('mouseleave', handleLeave);
+      videoElement.removeEventListener('mouseenter', handleEnter);
+      videoElement.removeEventListener('mouseleave', handleLeave);
     };
-  }, [parentRef, isInteracting, isPinned]);
+  }, [isInteracting, isPinned]);
 
-  // 글로벌 마우스 위치 기반 가드 – 커서가 비디오 영역이나 컨트롤러 위에 있으면 항상 보이도록
+  // 글로벌 마우스 위치 기반 가드 – 커서가 비디오 요소나 컨트롤러 위에 있으면 항상 보이도록
   useEffect(() => {
     const handleGlobalMove = (e: MouseEvent) => {
-      if (!parentRef?.current || !controllerRef.current) return;
-      const insideParent = parentRef.current.contains(e.target as Node);
+      // 비디오 요소 직접 찾기
+      const videoElement = document.querySelector('video');
+      if (!videoElement || !controllerRef.current) return;
+      
+      const insideVideo = videoElement.contains(e.target as Node);
       const insideController = controllerRef.current.contains(e.target as Node);
-      if (insideParent || insideController) {
+      
+      if (insideVideo || insideController) {
         if (hideTimeoutRef.current) {
           clearTimeout(hideTimeoutRef.current);
           hideTimeoutRef.current = null;
@@ -138,9 +147,10 @@ export const VideoController: React.FC<VideoControllerProps> = ({
         setIsVisible(true);
       }
     };
+    
     document.addEventListener('mousemove', handleGlobalMove);
     return () => document.removeEventListener('mousemove', handleGlobalMove);
-  }, [parentRef]);
+  }, []);
       
   // 클린업 함수
   useEffect(() => {
