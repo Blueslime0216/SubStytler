@@ -32,15 +32,6 @@ const TimelineFirstIcon = (
   </div>
 );
 
-const QuadPanelIcon = (
-  <div className="w-full h-full p-1 grid grid-cols-2 grid-rows-2 gap-1">
-    <div className="bg-primary/30 rounded-sm"></div>
-    <div className="bg-primary/30 rounded-sm"></div>
-    <div className="bg-primary/30 rounded-sm"></div>
-    <div className="bg-primary/30 rounded-sm"></div>
-  </div>
-);
-
 const AdvancedEditingIcon = (
   <div className="w-full h-full p-1 grid grid-cols-3 grid-rows-3 gap-1">
     <div className="col-span-2 row-span-2 bg-primary/30 rounded-sm"></div>
@@ -58,6 +49,19 @@ const AudioFocusedIcon = (
     <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
     <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
     <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
+  </div>
+);
+
+const VerticalEditingIcon = (
+  <div className="w-full h-full p-1 flex flex-col">
+    <div className="h-7/10 flex">
+      <div className="w-3/5 bg-primary/30 rounded-sm mr-1"></div>
+      <div className="w-2/5 flex flex-col">
+        <div className="h-1/2 bg-primary/30 rounded-sm mb-1"></div>
+        <div className="h-1/2 bg-primary/30 rounded-sm"></div>
+      </div>
+    </div>
+    <div className="h-3/10 bg-primary/30 rounded-sm mt-1"></div>
   </div>
 );
 
@@ -103,18 +107,6 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     ]
   },
   
-  quadPanel: {
-    name: "Quad Panel",
-    description: "Four equal panels for all tools",
-    icon: QuadPanelIcon,
-    areas: [
-      { id: 'video-preview', x: 0, y: 0, width: 50, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'style-manager', x: 50, y: 0, width: 50, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-timeline', x: 0, y: 50, width: 50, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'text-editor', x: 50, y: 50, width: 50, height: 50, minWidth: 15, minHeight: 20 },
-    ]
-  },
-  
   advancedEditing: {
     name: "Advanced Editing",
     description: "Five specialized panels layout",
@@ -141,25 +133,10 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     ]
   },
   
-  expert7: {
-    name: "Expert 7-Panel",
-    description: "Full professional layout with 7 panels",
-    icon: QuadPanelIcon,
-    areas: [
-      { id: 'video-preview', x: 0, y: 0, width: 33.34, height: 35, minWidth: 10, minHeight: 15 },
-      { id: 'audio-waveform', x: 33.34, y: 0, width: 33.33, height: 35, minWidth: 10, minHeight: 15 },
-      { id: 'style-manager', x: 66.67, y: 0, width: 33.33, height: 35, minWidth: 10, minHeight: 15 },
-      { id: 'script-viewer', x: 0, y: 35, width: 33.34, height: 35, minWidth: 10, minHeight: 15 },
-      { id: 'effects-library', x: 33.34, y: 35, width: 33.33, height: 35, minWidth: 10, minHeight: 15 },
-      { id: 'notes', x: 66.67, y: 35, width: 33.33, height: 35, minWidth: 10, minHeight: 15 },
-      { id: 'subtitle-timeline', x: 0, y: 70, width: 100, height: 30, minWidth: 15, minHeight: 20 },
-    ]
-  },
-  
   previewFocused: {
     name: "Vertical Editing",
     description: "Tall video layout with tools stacked on the right",
-    icon: StandardIcon,
+    icon: VerticalEditingIcon,
     areas: [
       { id: 'video-preview', x: 0, y: 0, width: 60, height: 70, minWidth: 15, minHeight: 20 },
       { id: 'text-editor', x: 60, y: 0, width: 40, height: 35, minWidth: 15, minHeight: 20 },
