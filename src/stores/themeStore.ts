@@ -10,22 +10,34 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      // Always dark mode - no light mode option
       isDarkMode: true,
       
-      // Keep toggleTheme for compatibility but it does nothing
       toggleTheme: () => {
-        // No-op: always stay in dark mode
-        console.log('Light mode has been removed - staying in dark mode');
+        set((state) => {
+          const newIsDarkMode = !state.isDarkMode;
+          
+          // Update DOM
+          if (typeof document !== 'undefined') {
+            document.documentElement.setAttribute(
+              'data-theme', 
+              newIsDarkMode ? 'dark' : 'light'
+            );
+          }
+          
+          return { isDarkMode: newIsDarkMode };
+        });
       },
       
-      // Keep setTheme for compatibility but force dark mode
       setTheme: (isDark: boolean) => {
-        // Always force dark mode regardless of input
+        // Update DOM
         if (typeof document !== 'undefined') {
-          document.documentElement.setAttribute('data-theme', 'dark');
+          document.documentElement.setAttribute(
+            'data-theme', 
+            isDark ? 'dark' : 'light'
+          );
         }
-        return { isDarkMode: true };
+        
+        return set({ isDarkMode: isDark });
       },
     }),
     {

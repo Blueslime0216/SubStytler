@@ -1,83 +1,49 @@
-/* Track Header Styles */
+/* Track Header Styles - Modern Clean Design */
 
 .neu-track-header-redesigned {
   position: relative;
   height: 46px;
   display: flex;
   align-items: center;
-  background: linear-gradient(145deg, rgba(45, 55, 72, 0.05) 0%, transparent 50%, rgba(13, 17, 23, 0.05) 100%), var(--surface-color);
-  background-blend-mode: overlay;
+  background: var(--surface-color);
   padding: 8px 12px;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  margin-left: 2px;
-  margin-right: 5px;
+  margin: 2px;
   transition: background 0.2s, box-shadow 0.2s, filter 0.2s;
   cursor: pointer;
   overflow: hidden;
   flex-shrink: 0;
-  box-shadow: var(--shadow-inset);
+  border-radius: 8px;
 }
 
 .neu-track-header-redesigned:hover {
-  filter: brightness(1.07);
+  background: var(--mid-color);
 }
 
 .neu-track-header-redesigned.active {
-  background: var(--base-color);
-  color: var(--text-primary);
-  border-left: none;
-  border-bottom: none;
-  margin-left: 10px;
-  margin-right: 5px;
-  box-shadow: var(--shadow-outset);
-  transform: translateY(-2px);
+  background: var(--light-surface-color);
+  color: white;
+  box-shadow: var(--shadow-outset-subtle);
+  transform: translateY(-1px);
   z-index: 2;
-  transition: all 0.2s ease;
 }
 
 .neu-track-header-redesigned.active .track-name {
-  color: var(--text-primary);
-  font-weight: 700;
+  color: white;
+  font-weight: 600;
 }
 
 .neu-track-header-redesigned.active .track-detail {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .neu-track-header-redesigned.active .track-control-btn {
-  color: var(--text-primary);
-  box-shadow: var(--shadow-outset);
-  scale: 1.05;
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .neu-track-header-redesigned.active .track-control-btn:hover {
-  background: var(--mid-color);
-  color: var(--primary-color);
-  filter: brightness(1.1);
-}
-
-/* Track Color Indicator */
-.track-color-indicator {
-  display: flex;
-  align-items: center;
-  margin-right: 12px;
-  position: relative;
-}
-
-.track-color-indicator .color-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--light-surface-color);
-  box-shadow: var(--shadow-outset-subtle);
-  transition: box-shadow 0.2s;
-}
-
-.color-dot-inactive {
-  background: var(--text-muted);
-  opacity: 0.5;
-  filter: grayscale(0.5) brightness(1.2);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Track Name Section */
@@ -95,7 +61,7 @@
 
 .track-name {
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -108,9 +74,8 @@
 
 .track-detail {
   font-size: 0.6875rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  color: var(--text-secondary);
   letter-spacing: 0.5px;
   display: block;
   min-height: calc(0.6875rem * 1.2);

@@ -44,7 +44,7 @@ body {
 /* Scrollbar Styling */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--surface-color) var(--bg-color);
+  scrollbar-color: var(--mid-color) var(--surface-color);
 }
 
 ::-webkit-scrollbar {
@@ -53,22 +53,20 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-color);
-  border-radius: 0;
-  box-shadow: var(--shadow-inset-subtle);
+  background: var(--surface-color);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--surface-color);
-  border-radius: 0;
-  border: none;
-  box-shadow: var(--shadow-outset-subtle);
+  background: var(--mid-color);
+  border-radius: 4px;
+  border: 2px solid var(--surface-color);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--light-surface-color);
+  background: var(--text-secondary);
 }
 
 ::-webkit-scrollbar-corner {
-  background: var(--bg-color);
+  background: var(--surface-color);
 }

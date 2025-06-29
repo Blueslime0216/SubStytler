@@ -90,7 +90,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.9 }}
                 transition={{ duration: 0.15 }}
-                className="absolute top-full right-0 mt-2 p-2 bg-surface shadow-outset rounded"
+                className="absolute top-full right-0 mt-2 p-2 bg-surface shadow-outset rounded border border-border-color"
                 style={{ zIndex: 1000 }}
                 onMouseLeave={() => setShowSplitOptions(false)}
               >
@@ -134,7 +134,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.9 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute top-full right-0 mt-2 p-2 bg-surface shadow-outset rounded"
+                  className="absolute top-full right-0 mt-2 p-2 bg-surface shadow-outset rounded border border-border-color"
                   style={{ zIndex: 100 }}
                   onMouseLeave={() => setShowCoverOptions(false)}
                 >

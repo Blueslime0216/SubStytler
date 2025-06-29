@@ -1,32 +1,65 @@
-/* Color System Variables - VS Code Inspired Dark Theme with Orange Accent */
+/* Color System Variables - Modern Dark Theme with Light Mode Support */
 
 :root {
-  --light-surface-color: #b0b6be; /* 회색 */
+  --light-surface-color: #f5f5f7; /* 은은하게 밝은 하얀색 */
 
   /* Base Colors - Dark Theme */
-  --base-color: #1e1e1e;       /* VS Code-like dark background */
-  --surface-color: #252526;    /* Slightly lighter surface for panels */
-  --primary-color: #E67E22;    /* Orange accent color */
-  --mid-color: #3c3c3c;        /* Medium gray for borders */
-  --dark-color: #1a1a1a;
-  --darker-color: #000000;
+  --base-color: #1a1a1a;       /* 어두운 배경 */
+  --surface-color: #252526;    /* 패널 배경 */
+  --primary-color: #5e81ac;    /* 북유럽 블루 */
+  --mid-color: #3b4252;        /* 중간 톤 */
+  --dark-color: #121212;       /* 더 어두운 배경 */
+  --darker-color: #0a0a0a;     /* 가장 어두운 배경 */
+  
+  /* Border Colors */
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-color-light: rgba(255, 255, 255, 0.12);
   
   /* UI Element Colors */
   --bg-color: var(--base-color);
-  --highlight-color: var(--light-surface-color);
-  --shadow-color: #000000;
+  --highlight-color: #81a1c1;  /* 하이라이트 색상 */
+  --shadow-color: rgba(0, 0, 0, 0.5);
   
   /* Text Colors */
-  --text-primary: #d4d4d4;     /* Light gray for primary text */
-  --text-secondary: #a0a0a0;   /* Muted gray for secondary text */
-  --text-muted: #707070;       /* Darker gray for less important text */
-  --text-accent: var(--primary-color);
+  --text-primary: #e5e9f0;     /* 밝은 텍스트 */
+  --text-secondary: #9aa3b2;   /* 중간 텍스트 */
+  --text-muted: #6c7a94;       /* 흐린 텍스트 */
+  --text-accent: #88c0d0;      /* 강조 텍스트 */
   
   /* Semantic Colors */
-  --success-color: #2ECC71;    /* Green for success states */
-  --warning-color: #F1C40F;    /* Yellow for warnings */
-  --error-color: #E74C3C;     /* Red for errors */
-  --info-color: #3B82F6;        /* Blue for info states, similar to VS Code focus */
+  --success-color: #a3be8c;    /* 성공 */
+  --warning-color: #ebcb8b;    /* 경고 */
+  --error-color: #bf616a;      /* 오류 */
+  --info-color: #81a1c1;       /* 정보 */
 }
 
-/* Remove redundant theme selectors - keep only root */
+/* Light Theme Variables */
+[data-theme="light"] {
+  --base-color: #f5f5f7;       /* 밝은 배경 */
+  --surface-color: #ffffff;    /* 패널 배경 */
+  --primary-color: #5e81ac;    /* 북유럽 블루 (동일) */
+  --mid-color: #d8dee9;        /* 중간 톤 */
+  --dark-color: #e5e9f0;       /* 더 밝은 배경 */
+  --darker-color: #eceff4;     /* 가장 밝은 배경 */
+  
+  /* Border Colors */
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-color-light: rgba(0, 0, 0, 0.12);
+  
+  /* UI Element Colors */
+  --bg-color: var(--base-color);
+  --highlight-color: #5e81ac;  /* 하이라이트 색상 */
+  --shadow-color: rgba(0, 0, 0, 0.15);
+  
+  /* Text Colors */
+  --text-primary: #2e3440;     /* 어두운 텍스트 */
+  --text-secondary: #4c566a;   /* 중간 텍스트 */
+  --text-muted: #7b88a1;       /* 흐린 텍스트 */
+  --text-accent: #5e81ac;      /* 강조 텍스트 */
+  
+  /* Semantic Colors - 라이트 테마에 맞게 조정 */
+  --success-color: #8fbcbb;    /* 성공 */
+  --warning-color: #d08770;    /* 경고 */
+  --error-color: #bf616a;      /* 오류 */
+  --info-color: #5e81ac;       /* 정보 */
+}

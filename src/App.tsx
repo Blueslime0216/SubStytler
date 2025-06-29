@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { AreaRenderer } from './components/Layout/AreaRenderer';
 import { useLayoutStore } from './stores/layoutStore';
 import { shallow } from 'zustand/shallow';
@@ -14,6 +14,7 @@ import { VideoReuploadDialog } from './components/UI/VideoReuploadDialog';
 import { useToast } from './hooks/useToast';
 import { VideoInfo } from './utils/videoUtils';
 import { LayoutTemplateButton } from './components/UI/LayoutTemplateButton';
+import { Moon, Sun } from 'lucide-react';
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(
@@ -21,8 +22,8 @@ export default function App() {
     shallow,
   );
 
-  // Theme is always dark mode now - but keep for compatibility
-  const isDarkMode = useThemeStore(state => state.isDarkMode);
+  // Theme state
+  const { isDarkMode, toggleTheme } = useThemeStore();
 
   // Register global keyboard shortcuts
   useKeyboardShortcuts();
@@ -40,10 +41,10 @@ export default function App() {
   // Toast system
   const { toasts, removeToast } = useToast();
 
-  // Force dark theme on mount and always
-  React.useEffect(() => {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  }, []); // Remove isDarkMode dependency since it's always true
+  // Set theme on mount
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
 
   // 🔧 Initialize history store with current layout state
   React.useEffect(() => {
@@ -130,9 +131,9 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-bg text-text-primary">
       {/* Header */}
-      <header className="h-14 flex items-center justify-between px-4 shadow-outset bg-surface">
+      <header className="h-14 flex items-center justify-between px-4 shadow-outset bg-surface border-b border-border-color">
         <div className="flex items-center space-x-3">
-          <div className="flex items-center justify-center w-8 h-8 shadow-outset bg-surface">
+          <div className="flex items-center justify-center w-8 h-8 bg-primary-color rounded-md text-white">
             <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5-9-5-9 5 9 5z"/></svg>
           </div>
           <div>
@@ -145,22 +146,28 @@ export default function App() {
           <button 
             ref={fileMenuTriggerRef}
             onClick={() => setIsFileMenuOpen(!isFileMenuOpen)}
-            className="btn px-4 py-1.5 text-sm shadow-outset bg-surface"
+            className="btn px-4 py-1.5 text-sm"
           >
             Project
           </button>
           <button 
             onClick={handleSaveProject}
             disabled={!canSave}
-            className="btn px-4 py-1.5 text-sm shadow-outset bg-surface disabled:opacity-50"
+            className="btn px-4 py-1.5 text-sm disabled:opacity-50"
           >
             Save Project
           </button>
-          <button className="btn px-4 py-1.5 text-sm shadow-outset bg-surface">Export YTT</button>
+          <button className="btn px-4 py-1.5 text-sm">Export YTT</button>
         </div>
         <div className="flex items-center space-x-2">
           <div className="text-sm opacity-80">Untitled Project</div>
-          {/* Remove theme toggle button since we only have dark mode */}
+          <button 
+            onClick={toggleTheme}
+            className="btn-icon w-8 h-8 flex items-center justify-center"
+            title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
         </div>
       </header>
 
@@ -176,7 +183,9 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="h-6 bg-surface shadow-inset-subtle" />
+      <footer className="h-6 bg-surface border-t border-border-color text-xs text-text-secondary flex items-center justify-end px-4">
+        <span>Sub-Stytler Professional v1.0.0</span>
+      </footer>
 
       {/* Project File Menu */}
       <ProjectFileMenu

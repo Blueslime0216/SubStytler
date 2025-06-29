@@ -1,124 +1,52 @@
-/* Video Component Styles */
+/* Video Component Styles - Modern Clean Design */
 
-.neu-video-controller {
-  background: var(--neu-base);
-  backdrop-filter: blur(20px);
-  border-top: 2px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1), var(--neu-shadow-2);
+.neu-video-area {
   position: relative;
-  z-index: 10;
-  border-radius: 0 0 18px 18px;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-}
-
-.neu-video-controller::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  opacity: 0.6;
-}
-
-.neu-video-controller > div:last-child {
-  border-radius: 0 0 18px 18px;
-  overflow: hidden;
-}
-
-/* Video Panel Specific Fixes */
-.neu-video-panel {
-  /* 필요한 지 모르겠음 border-radius: 18px; */
-  overflow: hidden;
-  position: relative;
-  background: transparent;
-}
-
-.neu-video-panel .neu-video-controller {
-  border-radius: 0 0 18px 18px;
-  margin: 0;
-  position: relative;
-}
-
-/* Ensure proper border radius inheritance */
-.neu-panel .neu-video-controller {
-  border-radius: 0 0 16px 16px;
-}
-
-/* Video Upload Area */
-.neu-video-upload {
-  cursor: pointer;
-}
-
-.neu-video-upload:hover {
-  cursor: pointer;
-}
-
-/* 비디오 엘리먼트 스타일 강화 */
-video {
-  display: block;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  background-color: var(--surface-color); /* 기본 배경색 사용 */
-  z-index: 5;
-}
-
-/* 비디오 컨테이너 스타일 */
-/* This class is no longer used and can be removed */
-.video-container {
-  display: none;
+  background: var(--dark-color);
 }
 
 .video-player-element {
   display: block;
   width: 100%;
   height: 100%;
-  /* The parent clipping container now handles aspect ratio, 
-     so the video should just fill its parent. */
   background: transparent;
-  border-radius: 10px;
-  box-shadow: var(--shadow-inset-subtle);
-  transition: box-shadow 0.2s;
+  transition: all 0.2s;
   z-index: 10;
 }
 
-
-/* 오버레이 z-index 관리 */
+/* Video overlay z-index management */
 .video-overlay {
   z-index: 20;
   overflow: hidden;
 }
 
-/* 비디오 로드 시 스타일 */
+/* Video loaded state */
 .video-loaded {
   z-index: 10;
 }
 
-/* ===== 새로운 비디오 컨트롤러 스타일 ===== */
-
-/* 컨트롤러 컨테이너 */
+/* Video Controller Container */
 .video-controller-container {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  /* background: transparent; */
-  background: rgba(0, 0, 0, 0.3);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
   backdrop-filter: blur(4px);
   padding: 10px 0 12px 0;
-  border-radius: 10px;
   z-index: 30;
-  margin-bottom: -1px;
   overflow: hidden;
 }
 
-.video-controller-container.visible {
-  /* legacy selector, no-op now */
-}
-
-/* 컨트롤러 레이아웃 */
+/* Controller Layout */
 .video-controller-controls {
   display: flex;
   justify-content: space-between;
@@ -134,7 +62,7 @@ video {
   gap: 16px;
 }
 
-/* 버튼 스타일 */
+/* Button Styles */
 .video-controller-button {
   display: flex;
   align-items: center;
@@ -147,11 +75,11 @@ video {
   color: #fff;
   cursor: pointer;
   position: relative;
-  transition: transform 0.1s ease, background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .video-controller-button:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.2);
   transform: scale(1.05);
 }
 
@@ -160,7 +88,7 @@ video {
 }
 
 .video-controller-button.active {
-  color: var(--neu-primary, #3b82f6);
+  color: var(--primary-color);
 }
 
 .video-controller-button.disabled {
@@ -168,71 +96,7 @@ video {
   cursor: not-allowed;
 }
 
-.video-controller-icon {
-  transition: transform 0.1s ease;
-}
-
-/* 버튼 래퍼와 툴팁 */
-.video-controller-button-wrapper {
-  position: relative;
-}
-
-.video-controller-tooltip {
-  background: rgba(70, 70, 70, 0.5);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  color: white;
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-family: inherit;
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 9999;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-  text-align: center;
-  /* position, left, top, transform 등은 JS에서 직접 지정 */
-}
-
-.video-controller-tooltip::after {
-  content: '';
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  transform: translateX(-50%);
-  border-width: 6px 6px 0 6px;
-  border-style: solid;
-  border-color: rgba(70, 70, 70, 0.9) transparent transparent transparent;
-}
-
-/* 시간 표시 */
-.video-controller-time-display {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: white;
-  font-size: 13px;
-  font-family: monospace;
-}
-
-.video-controller-time {
-  white-space: nowrap;
-}
-
-.video-controller-frame {
-  font-weight: bold;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 2px 5px;
-  border-radius: 3px;
-}
-
-.video-controller-fps {
-  opacity: 0.8;
-  font-size: 12px;
-}
-
-/* 프로그레스 바 */
+/* Progress Bar */
 .video-controller-progress-container {
   position: relative;
   height: 6px;
@@ -259,7 +123,7 @@ video {
   top: 50%;
   left: 0;
   height: 100%;
-  background: var(--neu-primary, #3b82f6);
+  background: var(--light-surface-color);
   border-radius: 3px;
   transition: width 0.1s linear;
   transform: translateY(-50%);
@@ -282,21 +146,28 @@ video {
   transform: translate(-50%, -50%) scale(1.2);
 }
 
-.video-controller-progress-tooltip {
-  position: absolute;
-  top: -30px;
-  background: rgba(0, 0, 0, 0.7);
+/* Time Display */
+.video-controller-time-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  font-size: 13px;
   font-family: monospace;
-  pointer-events: none;
-  z-index: 5;
-  transition: none !important;
 }
 
-/* 볼륨 컨트롤러 */
+.video-controller-time {
+  white-space: nowrap;
+}
+
+.video-controller-frame {
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+/* Volume Control */
 .video-controller-volume-container {
   display: flex;
   align-items: center;
@@ -318,16 +189,6 @@ video {
   border-radius: 2px;
   cursor: pointer;
   margin: 0 4px;
-}
-
-.video-controller-volume-track {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
 }
 
 .video-controller-volume-fill {
@@ -352,94 +213,14 @@ video {
   transition: transform 0.1s ease, left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.video-controller-volume-track-container:hover .video-controller-volume-thumb {
-  transform: translate(-50%, -50%) scale(1.2);
-}
-
-/* 미디어 쿼리 */
-@media (max-width: 768px) {
-  .video-controller-controls {
-    padding: 0 10px;
-  }
-  
-  .video-controller-left, 
-  .video-controller-right {
-    gap: 8px;
-  }
-  
-  .video-controller-button {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .video-controller-time-display {
-    font-size: 11px;
-    gap: 5px;
-  }
-  
-  .video-controller-fps {
-    display: none;
-  }
-}
-
-/* 오른쪽 추가 버튼 컨테이너 */
-.video-controller-additional-buttons {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-/* Video Panel & Player Styles - Minimal, High Contrast, Outset/Inset Shadows */
-
-.neu-video-area {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: var(--base-color);
-}
-
-.neu-video-upload-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 30;
-  background: transparent;
-  border-radius: 18px;
-  transition: background 0.2s;
-}
-
-.neu-video-upload-message {
-  text-align: center;
-}
-
-.neu-video-upload-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 16px auto;
-  border-radius: 16px;
-  background: var(--light-surface-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-outset);
-}
-
-.neu-video-upload-svg {
-  width: 32px;
-  height: 32px;
-  color: #fff;
-}
-
-.neu-text-primary {
-  color: var(--text-primary);
-  font-size: 1.1rem;
-  font-weight: 600;
+/* Tooltip */
+.video-controller-tooltip {
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9999;
 }

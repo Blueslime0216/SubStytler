@@ -1,65 +1,56 @@
-/* Border & Shadow System for Inset/Outset Theme */
+/* Border & Shadow System - Modern Subtle Shadows */
 
 :root {
   /* Basic Borders */
-  --border-outset: 
-    2px solid;
-  --border-inset: 
-    2px solid;
+  --border-outset: 2px solid;
+  --border-inset: 2px solid;
   
-  /* Outset Borders (Raised Effect) */
+  /* Border Colors */
   --border-color-outset-top-left: var(--highlight-color);
   --border-color-outset-bottom-right: var(--shadow-color);
-  
-  /* Inset Borders (Sunken Effect) */
   --border-color-inset-top-left: var(--shadow-color);
   --border-color-inset-bottom-right: var(--highlight-color);
   
-  /* 🎯 자연스러운 그림자 시스템 - 패널 선택기 스타일 기반 */
+  /* Dark Theme Shadows */
   
-  /* Outset (튀어나온) 그림자 - 기본 요소들 */
+  /* Outset (튀어나온) 그림자 */
   --shadow-outset:
-    -1px -1px 2px var(--highlight-color),
-    2px 2px 4px var(--shadow-color);
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 4px 8px rgba(0, 0, 0, 0.1);
     
   --shadow-outset-subtle:
-    -0.5px -0.5px 1px var(--highlight-color),
-    1px 1px 2px var(--shadow-color);
+    0 1px 3px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.1);
     
   --shadow-outset-strong:
-    -2px -2px 4px var(--highlight-color),
-    4px 4px 8px var(--shadow-color);
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 8px 16px rgba(0, 0, 0, 0.15);
   
   /* Outset 호버 효과 */
   --shadow-outset-hover:
-    -2px -2px 3px var(--highlight-color),
-    3px 3px 6px var(--shadow-color);
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 8px 16px rgba(0, 0, 0, 0.1);
     
   --shadow-outset-active:
-    -1px -1px 1px var(--highlight-color),
-    1px 1px 3px var(--shadow-color);
+    0 1px 2px rgba(0, 0, 0, 0.2);
   
-  /* Inset (들어간) 그림자 - 선택된/활성화된 요소들 */
+  /* Inset (들어간) 그림자 */
   --shadow-inset:
-    inset 2px 2px 4px var(--shadow-color),
-    inset -1px -1px 2px var(--highlight-color);
+    inset 0 2px 4px rgba(0, 0, 0, 0.2);
     
   --shadow-inset-subtle:
-    inset 1px 1px 2px var(--shadow-color),
-    inset -0.5px -0.5px 1px var(--highlight-color);
+    inset 0 1px 2px rgba(0, 0, 0, 0.15);
     
   --shadow-inset-strong:
-    inset 3px 3px 6px var(--shadow-color),
-    inset -2px -2px 3px var(--highlight-color);
+    inset 0 2px 6px rgba(0, 0, 0, 0.25);
   
   /* 특별한 효과들 */
   --shadow-elevated:
-    -3px -3px 6px var(--highlight-color),
-    6px 6px 12px var(--shadow-color);
+    0 8px 16px rgba(0, 0, 0, 0.25),
+    0 12px 24px rgba(0, 0, 0, 0.15);
     
   --shadow-pressed:
-    inset 1px 1px 3px var(--shadow-color),
-    inset -1px -1px 2px var(--highlight-color);
+    inset 0 1px 3px rgba(0, 0, 0, 0.2);
   
   /* Button States */
   --shadow-button-normal: var(--shadow-outset);
@@ -70,8 +61,44 @@
     var(--shadow-outset);
 }
 
-/* Neumorphic Inset Shadow for Clickable Items - More Subtle */
-.neu-inset-interactive-sm {
-  box-shadow: inset 1px 1px 2px var(--shadow-color),
-    inset -1px -1px 2px var(--highlight-color);
+/* Light Theme Shadows */
+[data-theme="light"] {
+  /* Outset (튀어나온) 그림자 */
+  --shadow-outset:
+    0 2px 4px rgba(0, 0, 0, 0.08),
+    0 4px 8px rgba(0, 0, 0, 0.06);
+    
+  --shadow-outset-subtle:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 2px 4px rgba(0, 0, 0, 0.04);
+    
+  --shadow-outset-strong:
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 8px 16px rgba(0, 0, 0, 0.08);
+  
+  /* Outset 호버 효과 */
+  --shadow-outset-hover:
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 8px 16px rgba(0, 0, 0, 0.06);
+    
+  --shadow-outset-active:
+    0 1px 2px rgba(0, 0, 0, 0.1);
+  
+  /* Inset (들어간) 그림자 */
+  --shadow-inset:
+    inset 0 2px 4px rgba(0, 0, 0, 0.08);
+    
+  --shadow-inset-subtle:
+    inset 0 1px 2px rgba(0, 0, 0, 0.06);
+    
+  --shadow-inset-strong:
+    inset 0 2px 6px rgba(0, 0, 0, 0.1);
+  
+  /* 특별한 효과들 */
+  --shadow-elevated:
+    0 8px 16px rgba(0, 0, 0, 0.1),
+    0 12px 24px rgba(0, 0, 0, 0.08);
+    
+  --shadow-pressed:
+    inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }

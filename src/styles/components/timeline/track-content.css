@@ -1,32 +1,41 @@
-/* Track Content Styles */
+/* Track Content Styles - Modern Clean Design */
 
 .neu-track-content {
   position: relative;
   height: 50px;
-  background: rgba(255, 255, 255, 0.02);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--surface-color);
+  border-bottom: 1px solid var(--border-color);
   overflow: visible;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s ease;
   cursor: pointer;
 }
 
-/* Add inset effect to selected track content */
+.neu-track-content:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Selected track content */
 .neu-track-content.bg-blue-500 {
-  background: rgba(59, 130, 246, 0.2) !important;
-  box-shadow: var(--shadow-inset-subtle) !important;
-  border-top: 1px solid rgba(59, 130, 246, 0.1);
-  border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(94, 129, 172, 0.2) !important;
+  border-top: 1px solid rgba(94, 129, 172, 0.1);
+  border-bottom: 1px solid rgba(94, 129, 172, 0.3);
 }
 
 .track-locked {
   pointer-events: none;
   opacity: 0.7;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(0, 0, 0, 0.05) 10px,
+    rgba(0, 0, 0, 0.05) 20px
+  );
 }
 
 .track-drag-over {
-  background: linear-gradient(90deg, var(--light-surface-color), var(--mid-color) 80%);
-  box-shadow: 0 2px 12px 0 rgba(99,179,237,0.10), 0 0 0 2px var(--light-surface-color);
-  border-color: var(--light-surface-color);
+  background: rgba(94, 129, 172, 0.2);
+  box-shadow: inset 0 0 0 2px var(--light-surface-color);
 }
 
 /* Track Add Button */
@@ -36,30 +45,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, rgba(45, 55, 72, 0.08) 0%, transparent 50%, rgba(13, 17, 23, 0.08) 100%), var(--surface-color);
-  background-blend-mode: overlay;
-  border: 1px dashed var(--light-surface-color);
-  border-radius: 10px;
+  background: var(--surface-color);
+  border: 1px dashed var(--border-color-light);
+  border-radius: 8px;
   margin: 12px 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   overflow: hidden;
-  box-shadow: var(--shadow-inset-subtle);
   flex-shrink: 0;
 }
 
 .neu-track-add:hover {
-  filter: brightness(1.07);
-  box-shadow: var(--shadow-outset-hover);
-  transform: translateY(-1px);
+  background: var(--mid-color);
   border-color: var(--light-surface-color);
   border-style: solid;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-outset-subtle);
 }
 
 .neu-track-add:active {
   transform: translateY(0);
-  box-shadow: var(--shadow-inset);
-  filter: brightness(0.98);
+  box-shadow: var(--shadow-pressed);
 }
 
 .track-add-content {
@@ -68,7 +74,7 @@
   gap: 12px;
   color: var(--primary-color);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 500;
   transition: all 0.2s ease;
 }
 
@@ -80,23 +86,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-outset-subtle);
   transition: all 0.2s ease;
   color: var(--primary-color);
 }
 
 .neu-track-add:hover .track-add-icon {
   transform: scale(1.1);
-  box-shadow: var(--shadow-outset);
-  background: var(--dark-color);
+  background: var(--surface-color);
 }
 
 .neu-track-add:active .track-add-icon {
   transform: scale(0.95);
-  box-shadow: var(--shadow-inset-subtle);
-}
-
-.track-add-text {
-  font-family: 'Inter', sans-serif;
-  letter-spacing: 0.01em;
 }

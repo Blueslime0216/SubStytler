@@ -41,12 +41,6 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
 
   // 패널 타입 변경 핸들러
   const handleTypeChange = React.useCallback((newPanelType: PanelType) => {
-    console.log('패널 타입 변경 요청:', { 
-      areaId, 
-      currentType: actualType, 
-      newType: newPanelType 
-    });
-    
     if (!areaId) {
       console.warn('areaId가 없어서 패널 변경할 수 없습니다');
       return;
@@ -55,16 +49,9 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
     if (newPanelType !== actualType) {
       try {
         changePanelType(areaId, newPanelType);
-        console.log('패널 변경 완료:', { 
-          areaId, 
-          from: actualType, 
-          to: newPanelType 
-        });
       } catch (error) {
         console.error('패널 변경 실패:', error);
       }
-    } else {
-      console.log('동일한 패널 타입이므로 변경하지 않음');
     }
   }, [areaId, actualType, changePanelType]);
 
@@ -82,14 +69,13 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
   }, [areaId, setFocusedArea]);
 
   const onSplitPanel = React.useCallback((direction: 'horizontal' | 'vertical', newPanelType: PanelType) => {
-    console.log('패널 분할 요청:', { areaId, direction, newPanelType });
     handleSplitPanel(direction, newPanelType);
     setIsActionsOpen(false);
-  }, [handleSplitPanel, areaId]);
+  }, [handleSplitPanel]);
 
   return (
     <motion.div
-      className={`panel ${className} bg-bg shadow-outset rounded`}
+      className={`panel ${className} bg-surface shadow-outset rounded-lg border border-border-color`}
       initial={{ opacity: 1, scale: 1 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.15, ease: 'easeOut' }}
@@ -109,7 +95,9 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
       />
       
       {/* Panel Content */}
-      <PanelBody type={actualType} />
+      <PanelBody type={actualType}>
+        {children}
+      </PanelBody>
     </motion.div>
   );
 };

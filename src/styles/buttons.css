@@ -1,4 +1,4 @@
-/* Button Styles for Inset/Outset Theme - Enhanced with Natural Shadows */
+/* Button Styles - Modern Clean Design */
 
 /* Base Button */
 .btn {
@@ -10,11 +10,11 @@
   font-weight: 500;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: var(--shadow-outset);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-outset-subtle);
   background-color: var(--surface-color);
   color: var(--text-primary);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--border-color);
   outline: none;
   position: relative;
   overflow: hidden;
@@ -22,21 +22,24 @@
 
 /* Button Hover */
 .btn:hover {
-  filter: brightness(1.1);
-  box-shadow: var(--shadow-outset-hover);
+  background-color: var(--mid-color);
+  border-color: var(--border-color-light);
+  box-shadow: var(--shadow-outset);
+  transform: translateY(-1px);
 }
 
 /* Button Active */
 .btn:active {
   box-shadow: var(--shadow-pressed);
-  transform: translateY(0.5px);
+  transform: translateY(0);
 }
 
 /* Button Focus */
-.btn:focus {
+.btn:focus-visible {
   box-shadow: 
     0 0 0 2px var(--primary-color),
     var(--shadow-outset);
+  outline: none;
 }
 
 /* Button Sizes */
@@ -44,52 +47,42 @@
   padding: 6px 12px;
   font-size: 12px;
   border-radius: 6px;
-  box-shadow: var(--shadow-outset-subtle);
-}
-
-.btn-sm:hover {
-  box-shadow: var(--shadow-outset);
 }
 
 .btn-lg {
   padding: 12px 24px;
   font-size: 16px;
   border-radius: 10px;
-  box-shadow: var(--shadow-outset-strong);
-}
-
-.btn-lg:hover {
-  box-shadow: var(--shadow-elevated);
 }
 
 /* Button Variants */
 .btn-primary {
   background-color: var(--light-surface-color);
   color: white;
-  border-color: var(--light-surface-color);
+  border-color: transparent;
 }
 
 .btn-primary:hover {
-  background-color: var(--light-surface-color);
+  background-color: var(--highlight-color);
   filter: brightness(1.1);
 }
 
 .btn-success {
   background-color: var(--success-color);
   color: white;
-  border-color: var(--success-color);
+  border-color: transparent;
 }
 
 .btn-warning {
   background-color: var(--warning-color);
   color: white;
-  border-color: var(--warning-color);
+  border-color: transparent;
 }
 
 .btn-error {
   background-color: var(--error-color);
   color: white;
-  border-color: var(--error-color);
+  border-color: transparent;
 }
 
 /* Icon Button */
@@ -98,11 +91,9 @@
   height: 36px;
   padding: 0;
   border-radius: 8px;
-  box-shadow: var(--shadow-outset-subtle);
-}
-
-.btn-icon:hover {
-  box-shadow: var(--shadow-outset);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Panel Action Buttons */
@@ -113,23 +104,24 @@
   align-items: center;
   justify-content: center;
   background-color: var(--surface-color);
-  color: var(--text-primary);
+  color: var(--text-secondary);
   border-radius: 6px;
   box-shadow: var(--shadow-outset-subtle);
   cursor: pointer;
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  transition: all 0.15s ease;
-  z-index: 1000;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
 }
 
 .panel-action-btn:hover {
-  filter: brightness(1.05);
+  background-color: var(--mid-color);
+  color: var(--text-primary);
   box-shadow: var(--shadow-outset);
-  border-color: var(--light-surface-color);
+  transform: translateY(-1px);
 }
 
 .panel-action-btn:active {
   box-shadow: var(--shadow-pressed);
+  transform: translateY(0);
 }
 
 /* Disabled State */
@@ -139,13 +131,14 @@
   opacity: 0.6;
   cursor: not-allowed;
   box-shadow: var(--shadow-outset-subtle);
-  filter: none;
+  background-color: var(--surface-color);
+  border-color: var(--border-color);
+  transform: none;
 }
 
 .btn:disabled:hover,
 .btn-icon:disabled:hover,
 .panel-action-btn:disabled:hover {
-  box-shadow: var(--shadow-outset-subtle);
-  filter: none;
-  border-color: var(--border-color, rgba(255, 255, 255, 0.1));
+  background-color: var(--surface-color);
+  transform: none;
 }

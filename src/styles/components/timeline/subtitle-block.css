@@ -1,10 +1,10 @@
-/* Subtitle Block Styles */
+/* Subtitle Block Styles - Modern Clean Design */
 
 .neu-subtitle-block {
-  background: var(--mid-color);
-  border-radius: 8px;
+  background: var(--light-surface-color);
+  border-radius: 6px;
   box-shadow: var(--shadow-outset-subtle);
-  color: var(--text-primary);
+  color: white;
   position: relative;
   overflow: hidden;
   cursor: move;
@@ -16,37 +16,23 @@
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-}
-
-.neu-subtitle-block::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-  opacity: 0.8;
+  padding: 0 10px;
 }
 
 .neu-subtitle-block:hover {
-  box-shadow: var(--shadow-outset-hover);
-  border-color: var(--mid-color);
-  filter: brightness(1.15);
-  transform: scale(1.02);
+  box-shadow: var(--shadow-outset);
+  transform: translateY(-1px);
 }
 
 .neu-subtitle-block:active {
   cursor: grabbing;
-  box-shadow: var(--shadow-inset-strong);
-  filter: brightness(1);
-  transform: scale(1);
+  box-shadow: var(--shadow-pressed);
+  transform: translateY(0);
 }
 
 .neu-subtitle-block:focus {
   outline: none;
-  box-shadow: var(--shadow-inset-strong);
-  border-color: var(--dark-color);
+  box-shadow: 0 0 0 2px var(--highlight-color), var(--shadow-outset);
 }
 
 .neu-subtitle-handle {
@@ -59,11 +45,18 @@
   z-index: 30;
 }
 
-.neu-subtitle-handle.left-0 { left: 0; }
-.neu-subtitle-handle.right-0 { right: 0; }
+.neu-subtitle-handle.left-0 { 
+  left: 0; 
+  border-radius: 6px 0 0 6px;
+}
+
+.neu-subtitle-handle.right-0 { 
+  right: 0; 
+  border-radius: 0 6px 6px 0;
+}
 
 .neu-subtitle-block:hover .neu-subtitle-handle {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .neu-subtitle-highlight-pulse {
@@ -72,7 +65,7 @@
   left: -2px;
   right: -2px;
   bottom: -2px;
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--highlight-color);
   pointer-events: none;
   z-index: -1;
@@ -80,15 +73,5 @@
 }
 
 .neu-subtitle-block[style*="outline"] {
-  box-shadow: var(--shadow-outset-hover);
-}
-
-.subtitle-block-text {
-  font-size: 0.95rem;
-  color: var(--neu-text-primary);
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: 0.01em;
+  box-shadow: var(--shadow-outset);
 }
