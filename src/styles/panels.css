@@ -90,9 +90,9 @@
 .panel-type-selector {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 8px;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
   background-color: var(--surface-color);
   cursor: pointer;
   transition: all 0.15s ease;

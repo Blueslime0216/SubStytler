@@ -20,16 +20,21 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
   const actualType = type || (areaId ? extractPanelType(areaId) : 'empty');
   
   const [isActionsOpen, setIsActionsOpen] = useState(false);
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
   
   const titleButtonRef = useRef<HTMLButtonElement>(null);
   const actionsButtonRef = useRef<HTMLButtonElement>(null);
+  const coverButtonRef = useRef<HTMLDivElement>(null);
   
   const { areas, changePanelType, setFocusedArea } = useLayoutStore();
   const {
     canRemove,
     availablePanels,
+    handlePanelChange,
     handleSplitPanel,
-  } = usePanelActions(areaId, actualType, areas, () => {}, setIsActionsOpen, () => {});
+    handleRemovePanel,
+    handleRemoveClick
+  } = usePanelActions(areaId, actualType, areas, () => {}, setIsActionsOpen, setShowRemoveConfirm);
 
   // 덮기(제거) 기능
   const coverArea = useLayoutStore(state => state.coverArea);
@@ -90,7 +95,7 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
         onTypeChange={handleTypeChange}
         titleButtonRef={titleButtonRef}
         actionsButtonRef={actionsButtonRef}
-        coverButtonRef={undefined}
+        coverButtonRef={coverButtonRef}
         onSplitPanel={onSplitPanel}
       />
       

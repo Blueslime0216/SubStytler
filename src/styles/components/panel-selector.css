@@ -9,7 +9,7 @@
   background: var(--surface-color);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-outset-subtle);
-  border-radius: 6px; /* Reduced from 8px */
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease, box-shadow 0.2s ease;
   overflow: hidden;
@@ -42,7 +42,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 6px; /* Reduced from 8px */
+  border-radius: 4px;
   z-index: 1;
 }
 
@@ -54,7 +54,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  border-radius: 6px; /* Reduced from 8px */
+  border-radius: 4px;
   pointer-events: none;
   box-shadow: var(--shadow-inset-subtle);
   z-index: 10;
@@ -81,9 +81,9 @@
 }
 
 .panel-selector-icon-wrapper {
-  width: 24px; /* Reduced from 32px */
-  height: 24px; /* Reduced from 32px */
-  border-radius: 6px; /* Reduced from 8px */
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,12 +94,12 @@
 
 .panel-selector-icon-wrapper.selected {
   background: var(--primary-color);
-  box-shadow: var(--shadow-inset-subtle);
+  box-shadow: var(--shadow-inset-subtle), 0 0 0 1px var(--primary-color);
 }
 
 .panel-selector-icon {
-  width: 14px; /* Reduced from 16px */
-  height: 14px; /* Reduced from 16px */
+  width: 12px;
+  height: 12px;
   color: var(--text-secondary);
   transition: color 0.2s ease;
 }
@@ -113,7 +113,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 24px; /* Reduced from 32px */
+  width: 20px;
   pointer-events: none;
   z-index: 5;
 }
@@ -130,45 +130,69 @@
 
 .panel-selector-tooltip {
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 6px; /* Reduced from 8px */
-  padding: 4px 8px; /* Reduced from 6px 12px */
   background: var(--surface-color);
-  border-radius: 6px; /* Reduced from 8px */
-  box-shadow: var(--shadow-outset-subtle);
+  border: 1px solid var(--border-color);
   color: var(--text-primary);
-  font-size: 10px; /* Reduced from 12px */
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
   font-weight: 500;
   white-space: nowrap;
   z-index: 1000;
   text-align: center;
+  box-shadow: var(--shadow-outset-subtle);
+  pointer-events: none;
+}
+
+/* 키보드 내비게이션 힌트 */
+.panel-selector-keyboard-hint {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  font-size: 8px;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.panel-selector-key {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  padding: 0 2px;
+  min-width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-outset-subtle);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .panel-selector-button {
-    border-radius: 4px; /* Reduced from 6px */
+    border-radius: 3px;
   }
   
   .panel-selector-button.open {
-    border-radius: 8px; /* Reduced from 10px */
+    border-radius: 6px;
   }
   
   .panel-selector-icon-wrapper {
-    width: 20px; /* Reduced from 28px */
-    height: 20px; /* Reduced from 28px */
-    border-radius: 4px; /* Reduced from 6px */
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
   }
   
   .panel-selector-icon {
-    width: 12px; /* Reduced from 14px */
-    height: 12px; /* Reduced from 14px */
+    width: 10px;
+    height: 10px;
   }
   
   .panel-selector-tooltip {
-    font-size: 9px; /* Reduced from 11px */
-    padding: 3px 6px; /* Reduced from 4px 8px */
+    font-size: 9px;
+    padding: 2px 4px;
   }
 }
