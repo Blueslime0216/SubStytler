@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Save, FolderOpen, FileText, Download, AlertCircle, LayoutTemplate } from 'lucide-react';
+import { Save, FolderOpen, FileText, Download, AlertCircle, LayoutTemplate, Upload, RefreshCw } from 'lucide-react';
 import { useProjectSave } from '../../hooks/useProjectSave';
 import { useProjectStore } from '../../stores/projectStore';
+import { useToast } from '../../hooks/useToast';
 
 interface ProjectFileMenuProps {
   isOpen: boolean;
   onClose: () => void;
   triggerRef: React.RefObject<HTMLElement>;
-  onLoadProject: () => Promise<void>; // 🆕 Callback for loading projects
+  onLoadProject: () => Promise<void>;
+  onNewProject: () => void;
+  hasVideo: boolean;
 }
 
 export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
   isOpen,
   onClose,
   triggerRef,
-  onLoadProject
+  onLoadProject,
+  onNewProject,
+  hasVideo
 }) => {
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [isSaving, setIsSaving] = useState(false);
@@ -23,17 +28,16 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
   
   const { 
     saveProjectToFileSystem, 
-    saveLayoutToFileSystem,
-    loadLayoutFromFileSystem,
     canSave 
   } = useProjectSave();
   const { currentProject, isModified } = useProjectStore();
+  const { error } = useToast();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
-      const menuHeight = 300; // Increased for new menu items
-      const menuWidth = 250;
+      const menuHeight = 400; // Increased for new menu items
+      const menuWidth = 280;
       
       let top = rect.bottom + 8;
       let left = rect.left;
@@ -63,18 +67,6 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
     }
   };
 
-  const handleSaveLayout = async () => {
-    if (isSaving) return;
-    
-    setIsSaving(true);
-    try {
-      await saveLayoutToFileSystem();
-      onClose();
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   const handleLoad = async () => {
     if (isLoading) return;
     
@@ -87,28 +79,34 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
     }
   };
 
-  const handleLoadLayout = async () => {
-    if (isLoading) return;
-    
-    setIsLoading(true);
-    try {
-      await loadLayoutFromFileSystem();
-      onClose();
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleNewProject = () => {
-    // This would typically show a confirmation dialog if there are unsaved changes
-    if (isModified) {
-      const confirmed = window.confirm(
-        'You have unsaved changes. Are you sure you want to create a new project?'
-      );
-      if (!confirmed) return;
-    }
-    
-    // Create new project logic would go here
+  const handleUploadVideo = () => {
+    // Create a file input element
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'video/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // Find the video element and trigger the upload
+        const videoElement = document.querySelector('video');
+        if (videoElement) {
+          // Simulate a drop event on the video panel
+          const dropEvent = new Event('drop', { bubbles: true });
+          Object.defineProperty(dropEvent, 'dataTransfer', {
+            value: {
+              files: [file]
+            }
+          });
+          videoElement.dispatchEvent(dropEvent);
+        } else {
+          error({
+            title: 'Video upload failed',
+            message: 'Could not find video element'
+          });
+        }
+      }
+    };
+    input.click();
     onClose();
   };
 
@@ -132,7 +130,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
           style={{
             top: position.top,
             left: position.left,
-            minWidth: '250px'
+            minWidth: '280px'
           }}
         >
           {/* Header */}
@@ -150,7 +148,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
           <div className="py-2">
             {/* New Project */}
             <motion.button
-              onClick={handleNewProject}
+              onClick={onNewProject}
               className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3"
               whileHover={{ x: 2 }}
             >
@@ -177,22 +175,6 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
               </div>
             </motion.button>
 
-            {/* Load Layout */}
-            <motion.button
-              onClick={handleLoadLayout}
-              disabled={isLoading}
-              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 disabled:opacity-50"
-              whileHover={{ x: 2 }}
-            >
-              <LayoutTemplate className="w-4 h-4 text-text-secondary" />
-              <div>
-                <div className="text-sm font-medium text-text-primary">
-                  {isLoading ? 'Loading...' : 'Import Layout'}
-                </div>
-                <div className="text-xs text-text-secondary">Load a .ssl layout file</div>
-              </div>
-            </motion.button>
-
             {/* Divider */}
             <div className="my-2 border-t border-border-color" />
 
@@ -214,35 +196,38 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
               </div>
             </motion.button>
 
-            {/* Save Layout */}
+            {/* Divider */}
+            <div className="my-2 border-t border-border-color" />
+
+            {/* Upload Video */}
             <motion.button
-              onClick={handleSaveLayout}
-              disabled={isSaving}
-              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 disabled:opacity-50"
+              onClick={handleUploadVideo}
+              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3"
               whileHover={{ x: 2 }}
+              disabled={hasVideo}
             >
-              <LayoutTemplate className="w-4 h-4 text-text-secondary" />
+              <Upload className="w-4 h-4 text-text-secondary" />
               <div>
-                <div className="text-sm font-medium text-text-primary">
-                  {isSaving ? 'Saving...' : 'Export Layout'}
-                </div>
+                <div className="text-sm font-medium text-text-primary">Upload Video</div>
                 <div className="text-xs text-text-secondary">
-                  Save current layout as .ssl file
+                  {hasVideo ? 'Video already uploaded' : 'Add a video to your project'}
                 </div>
               </div>
             </motion.button>
 
-            {/* Export Options */}
+            {/* Change Video */}
             <motion.button
-              onClick={() => {/* Export logic would go here */}}
-              disabled={!currentProject}
-              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 disabled:opacity-50"
+              onClick={handleUploadVideo}
+              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3"
               whileHover={{ x: 2 }}
+              disabled={!hasVideo}
             >
-              <Download className="w-4 h-4 text-text-secondary" />
+              <RefreshCw className="w-4 h-4 text-text-secondary" />
               <div>
-                <div className="text-sm font-medium text-text-primary">Export Subtitles</div>
-                <div className="text-xs text-text-secondary">Export as SRT, VTT, or other formats</div>
+                <div className="text-sm font-medium text-text-primary">Change Video</div>
+                <div className="text-xs text-text-secondary">
+                  {hasVideo ? 'Replace current video' : 'No video to replace'}
+                </div>
               </div>
             </motion.button>
           </div>

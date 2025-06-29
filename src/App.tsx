@@ -1,4 +1,5 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AreaRenderer } from './components/Layout/AreaRenderer';
 import { useLayoutStore } from './stores/layoutStore';
 import { shallow } from 'zustand/shallow';
@@ -14,10 +15,13 @@ import { VideoReuploadDialog } from './components/UI/VideoReuploadDialog';
 import { useToast } from './hooks/useToast';
 import { VideoInfo } from './utils/videoUtils';
 import { LayoutTemplateButton } from './components/UI/LayoutTemplateButton';
-import { Moon, Sun, Save, File as FileExport, Undo, Redo, Menu } from 'lucide-react';
+import { Moon, Sun, Save, File as FileExport, Undo, Redo, Menu, FileText, Upload, RefreshCw, LayoutTemplate } from 'lucide-react';
 import logoDark from './assets/logo.svg';
 import logoLight from './assets/logo_light.svg';
-import { motion } from 'framer-motion';
+import { AutoSaveMenu } from './components/UI/AutoSaveMenu';
+import { ExportMenu } from './components/UI/ExportMenu';
+import { NewProjectDialog } from './components/UI/NewProjectDialog';
+import { useProjectStore } from './stores/projectStore';
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(
@@ -33,13 +37,19 @@ export default function App() {
 
   // Project save functionality
   const { saveProjectToFileSystem, canSave, loadProjectFromFileSystem, loadProjectWithVideo } = useProjectSave();
-  const [isFileMenuOpen, setIsFileMenuOpen] = React.useState(false);
+  const [isFileMenuOpen, setIsFileMenuOpen] = useState(false);
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [isAutoSaveMenuOpen, setIsAutoSaveMenuOpen] = useState(false);
+  const [isNewProjectDialogOpen, setIsNewProjectDialogOpen] = useState(false);
+  
   const fileMenuTriggerRef = React.useRef<HTMLButtonElement>(null);
+  const exportMenuTriggerRef = React.useRef<HTMLButtonElement>(null);
+  const autoSaveMenuTriggerRef = React.useRef<HTMLButtonElement>(null);
 
   // Video reupload dialog state - moved to App level for immediate access
-  const [showVideoDialog, setShowVideoDialog] = React.useState(false);
-  const [pendingProject, setPendingProject] = React.useState<any>(null);
-  const [pendingVideoInfo, setPendingVideoInfo] = React.useState<VideoInfo | null>(null);
+  const [showVideoDialog, setShowVideoDialog] = useState(false);
+  const [pendingProject, setPendingProject] = useState<any>(null);
+  const [pendingVideoInfo, setPendingVideoInfo] = useState<VideoInfo | null>(null);
 
   // Toast system
   const { toasts, removeToast } = useToast();
@@ -51,6 +61,9 @@ export default function App() {
     undo: state.undo,
     redo: state.redo
   }));
+  
+  // Project state
+  const { currentProject } = useProjectStore();
 
   // Set theme on mount
   useEffect(() => {
@@ -135,10 +148,6 @@ export default function App() {
     };
   }, []);
 
-  const handleSaveProject = async () => {
-    await saveProjectToFileSystem();
-  };
-
   const logoSrc = isDarkMode ? logoDark : logoLight;
 
   return (
@@ -168,44 +177,62 @@ export default function App() {
           <div className="flex items-center space-x-2">
             <motion.button
               ref={fileMenuTriggerRef}
-              onClick={() => setIsFileMenuOpen(!isFileMenuOpen)}
+              onClick={() => {
+                setIsFileMenuOpen(!isFileMenuOpen);
+                setIsExportMenuOpen(false);
+                setIsAutoSaveMenuOpen(false);
+              }}
               className="btn-sm px-4 py-2 text-sm hover:bg-mid-color transition-all"
               whileHover={{ scale: 1.07, boxShadow: '0 2px 12px 0 rgba(94,129,172,0.10)' }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
+              <FileText className="w-4 h-4 mr-2" />
               Project
             </motion.button>
             
             <motion.button
-              onClick={handleSaveProject}
-              disabled={!canSave}
+              ref={exportMenuTriggerRef}
+              onClick={() => {
+                setIsExportMenuOpen(!isExportMenuOpen);
+                setIsFileMenuOpen(false);
+                setIsAutoSaveMenuOpen(false);
+              }}
+              className="btn-sm px-4 py-2 text-sm flex items-center space-x-2 hover:bg-mid-color disabled:opacity-50 transition-all"
+              whileHover={{ scale: 1.07, boxShadow: '0 2px 12px 0 rgba(94,129,172,0.10)' }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              disabled={!currentProject || !currentProject.subtitles.length}
+            >
+              <FileExport className="w-4 h-4 mr-2" />
+              Export
+            </motion.button>
+            
+            <LayoutTemplateButton />
+            
+            <motion.button
+              ref={autoSaveMenuTriggerRef}
+              onClick={() => {
+                setIsAutoSaveMenuOpen(!isAutoSaveMenuOpen);
+                setIsFileMenuOpen(false);
+                setIsExportMenuOpen(false);
+              }}
               className="btn-sm px-4 py-2 text-sm flex items-center space-x-2 hover:bg-mid-color disabled:opacity-50 transition-all"
               whileHover={{ scale: 1.07, boxShadow: '0 2px 12px 0 rgba(94,129,172,0.10)' }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
-              <Save size={16} />
-              <span>Save</span>
+              <Save className="w-4 h-4 mr-2" />
+              Auto Save
             </motion.button>
-            
-            <motion.button
-              className="btn-sm px-4 py-2 text-sm flex items-center space-x-2 hover:bg-mid-color transition-all"
-              whileHover={{ scale: 1.07, boxShadow: '0 2px 12px 0 rgba(94,129,172,0.10)' }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            >
-              <FileExport size={16} />
-              <span>Export</span>
-            </motion.button>
-            
-            <LayoutTemplateButton />
           </div>
         </div>
 
         {/* Center Section - Project Title */}
         <div className="flex-1 flex justify-center">
-          <div className="text-base opacity-80 font-medium">Untitled Project</div>
+          <div className="text-base opacity-80 font-medium">
+            {currentProject?.name || "Untitled Project"}
+          </div>
         </div>
 
         {/* Right Section - Tools and Theme Toggle */}
@@ -268,6 +295,28 @@ export default function App() {
         onClose={() => setIsFileMenuOpen(false)}
         triggerRef={fileMenuTriggerRef}
         onLoadProject={handleProjectLoad}
+        onNewProject={() => setIsNewProjectDialogOpen(true)}
+        hasVideo={!!currentProject?.videoMeta}
+      />
+
+      {/* Export Menu */}
+      <ExportMenu
+        isOpen={isExportMenuOpen}
+        onClose={() => setIsExportMenuOpen(false)}
+        triggerRef={exportMenuTriggerRef}
+      />
+
+      {/* Auto Save Menu */}
+      <AutoSaveMenu
+        isOpen={isAutoSaveMenuOpen}
+        onClose={() => setIsAutoSaveMenuOpen(false)}
+        triggerRef={autoSaveMenuTriggerRef}
+      />
+
+      {/* New Project Dialog */}
+      <NewProjectDialog
+        isOpen={isNewProjectDialogOpen}
+        onClose={() => setIsNewProjectDialogOpen(false)}
       />
 
       {/* Video Reupload Dialog - Now at App level for immediate access */}
