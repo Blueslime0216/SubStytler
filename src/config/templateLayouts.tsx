@@ -139,5 +139,32 @@ export const templateLayouts: Record<string, TemplateLayout> = {
       { id: 'subtitle-preview', x: 33, y: 60, width: 33, height: 40, minWidth: 15, minHeight: 20 },
       { id: 'style-manager', x: 66, y: 60, width: 34, height: 40, minWidth: 15, minHeight: 20 },
     ]
+  },
+  
+  expert7: {
+    name: "Expert 7-Panel",
+    description: "Full professional layout with 7 panels",
+    icon: QuadPanelIcon,
+    areas: [
+      { id: 'video-preview', x: 0, y: 0, width: 33.34, height: 35, minWidth: 10, minHeight: 15 },
+      { id: 'audio-waveform', x: 33.34, y: 0, width: 33.33, height: 35, minWidth: 10, minHeight: 15 },
+      { id: 'style-manager', x: 66.67, y: 0, width: 33.33, height: 35, minWidth: 10, minHeight: 15 },
+      { id: 'script-viewer', x: 0, y: 35, width: 33.34, height: 35, minWidth: 10, minHeight: 15 },
+      { id: 'effects-library', x: 33.34, y: 35, width: 33.33, height: 35, minWidth: 10, minHeight: 15 },
+      { id: 'notes', x: 66.67, y: 35, width: 33.33, height: 35, minWidth: 10, minHeight: 15 },
+      { id: 'subtitle-timeline', x: 0, y: 70, width: 100, height: 30, minWidth: 15, minHeight: 20 },
+    ]
+  },
+  
+  previewFocused: {
+    name: "Vertical Editing",
+    description: "Tall video layout with tools stacked on the right",
+    icon: StandardIcon,
+    areas: [
+      { id: 'video-preview', x: 0, y: 0, width: 60, height: 70, minWidth: 15, minHeight: 20 },
+      { id: 'text-editor', x: 60, y: 0, width: 40, height: 35, minWidth: 15, minHeight: 20 },
+      { id: 'subtitle-timeline', x: 60, y: 35, width: 40, height: 35, minWidth: 15, minHeight: 20 },
+      { id: 'subtitle-preview', x: 0, y: 70, width: 100, height: 30, minWidth: 15, minHeight: 20 },
+    ]
   }
 };

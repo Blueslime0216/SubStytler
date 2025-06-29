@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useProjectStore } from '../../../stores/projectStore';
 import { useTimelineStore } from '../../../stores/timelineStore';
 import { useSelectedTrackStore } from '../../../stores/selectedTrackStore';
-import { SubtitlePreviewHeader } from './SubtitlePreviewHeader';
+import { SubtitlePreviewFooter } from './SubtitlePreviewFooter';
 import { SubtitlePreviewList } from './SubtitlePreviewList';
 import { SubtitlePreviewEmpty } from './SubtitlePreviewEmpty';
 import { SubtitleBlock } from '../../../types/project';
@@ -54,10 +54,22 @@ export const SubtitlePreviewPanel: React.FC = () => {
     setActiveSubtitleId(activeSubtitle?.id || null);
   }, [currentTime, trackSubtitles]);
   
-  // Get selected track name
+  // Get selected track name (빈 상태 메시지용)
   const selectedTrackName = selectedTrackId 
     ? currentProject?.tracks.find(track => track.id === selectedTrackId)?.name || 'Unknown Track'
     : 'All Tracks';
+  
+  // "원문 복사" 버튼 핸들러
+  const handleCopyOriginal = () => {
+    if (!activeSubtitleId) return;
+    const subtitle = trackSubtitles.find(sub => sub.id === activeSubtitleId);
+    if (!subtitle) return;
+    const originalText = subtitle.spans.map(span => span.text).join('');
+    if (!originalText) return;
+
+    // 클립보드에 복사
+    navigator.clipboard.writeText(originalText).catch(console.error);
+  };
   
   // Handle empty state
   if (trackSubtitles.length === 0) {
@@ -72,16 +84,14 @@ export const SubtitlePreviewPanel: React.FC = () => {
   
   return (
     <div className="h-full flex flex-col bg-surface">
-      <SubtitlePreviewHeader 
-        trackName={selectedTrackName}
-        subtitleCount={trackSubtitles.length}
-      />
-      
       <SubtitlePreviewList 
         subtitles={trackSubtitles}
         activeSubtitleId={activeSubtitleId}
         currentTime={currentTime}
       />
+
+      {/* Footer */}
+      <SubtitlePreviewFooter onCopyOriginal={handleCopyOriginal} />
     </div>
   );
 };
