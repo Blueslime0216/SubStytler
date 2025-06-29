@@ -23,10 +23,10 @@ const VideoControllerTimeDisplay: React.FC<VideoControllerTimeDisplayProps> = ({
         {String(frameNumber).padStart(5, '0')}
       </span>
       <span className="video-controller-fps">
-        {fps}FPS
+        {fps.toFixed(2)}FPS
       </span>
     </div>
   );
 };
 
-export default VideoControllerTimeDisplay; 
+export default VideoControllerTimeDisplay;
