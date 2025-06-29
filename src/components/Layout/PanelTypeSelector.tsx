@@ -24,24 +24,21 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
   const [tooltipPosition, setTooltipPosition] = useState<{x: number, y: number} | null>(null);
   const tooltipTimeoutRef = useRef<number | null>(null);
 
-  // Reorder panel types to put empty after subtitle-preview
+  // Reorder panel types to match the requested order
   const panelTypes = useMemo(() => {
-    const types = Object.keys(panelConfig) as PanelType[];
-    
-    // Find the indices of 'subtitle-preview' and 'empty'
-    const previewIndex = types.indexOf('subtitle-preview');
-    const emptyIndex = types.indexOf('empty');
-    
-    // If both exist, reorder them
-    if (previewIndex !== -1 && emptyIndex !== -1) {
-      // Remove 'empty' from its current position
-      types.splice(emptyIndex, 1);
-      
-      // Insert 'empty' after 'subtitle-preview'
-      types.splice(previewIndex + 1, 0, 'empty');
-    }
-    
-    return types;
+    return [
+      'video-preview',
+      'subtitle-timeline',
+      'text-editor',
+      'audio-waveform',
+      'effects-library',
+      'style-manager',
+      'script-viewer',
+      'history',
+      'notes',
+      'subtitle-preview',
+      'empty'
+    ] as PanelType[];
   }, []);
   
   // 현재 선택된 패널 타입의 설정
