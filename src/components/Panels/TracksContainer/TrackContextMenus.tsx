@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Plus, Eye, EyeOff, Lock, Unlock, Trash2, Edit, Type, FileText } from 'lucide-react';
 import { ContextMenu, ContextMenuItem, ContextMenuDivider, ContextMenuSectionTitle } from '../../UI/ContextMenu';
 import { useProjectStore } from '../../../stores/projectStore';
 import { useHistoryStore } from '../../../stores/historyStore';
 import { useTimelineStore } from '../../../stores/timelineStore';
 import { SubtitleTrack } from '../../../types/project';
+import { TrackDeleteConfirmationModal } from '../../UI/TrackDeleteConfirmationModal';
 
 interface TrackContextMenusProps {
   trackHeaderContextMenu: {
@@ -39,6 +40,10 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
 }) => {
   const { addTrack, updateTrack, deleteTrack, addSubtitle, deleteSubtitle, currentProject } = useProjectStore();
   const { setCurrentTime } = useTimelineStore();
+  
+  // Delete confirmation modal state
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [trackToDelete, setTrackToDelete] = useState<SubtitleTrack | null>(null);
   
   // Refs for track headers to access their methods
   const trackHeaderRefs = React.useRef<Map<string, React.RefObject<any>>>(new Map());
@@ -186,7 +191,7 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
     closeAllContextMenus();
   };
 
-  const handleDeleteTrack = (trackId: string) => {
+  const handleDeleteTrackClick = (trackId: string) => {
     if (!trackId) return;
     
     const track = tracks.find(t => t.id === trackId);
@@ -198,11 +203,18 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
       return;
     }
     
-    if (window.confirm(`Delete track "${track.name}" and all its subtitles?`)) {
-      deleteTrack(trackId);
-    }
-    
+    // Open the delete confirmation modal
+    setTrackToDelete(track);
+    setDeleteModalOpen(true);
     closeAllContextMenus();
+  };
+  
+  const handleConfirmDeleteTrack = () => {
+    if (!trackToDelete) return;
+    
+    deleteTrack(trackToDelete.id);
+    setDeleteModalOpen(false);
+    setTrackToDelete(null);
   };
 
   const handleRenameTrack = (trackId: string) => {
@@ -293,7 +305,7 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
               return (
                 <ContextMenuItem 
                   icon={track?.locked ? <Unlock /> : <Lock />}
-                  onClick={() => handleToggleTrackLock(trackHeaderContextMenu.trackId!)}
+                  onClick={() => handleToggleLock(trackHeaderContextMenu.trackId!)}
                 >
                   {track?.locked ? 'Unlock Track' : 'Lock Track'}
                 </ContextMenuItem>
@@ -316,7 +328,7 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
             
             <ContextMenuItem 
               icon={<Trash2 />}
-              onClick={() => handleDeleteTrack(trackHeaderContextMenu.trackId!)}
+              onClick={() => handleDeleteTrackClick(trackHeaderContextMenu.trackId!)}
               danger
               disabled={tracks.length <= 1}
             >
@@ -364,6 +376,17 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
           </>
         )}
       </ContextMenu>
+      
+      {/* Delete Track Confirmation Modal */}
+      <TrackDeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setTrackToDelete(null);
+        }}
+        onConfirm={handleConfirmDeleteTrack}
+        track={trackToDelete}
+      />
     </>
   );
 };
