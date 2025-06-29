@@ -182,13 +182,13 @@ export default function App() {
                 setIsExportMenuOpen(false);
                 setIsAutoSaveMenuOpen(false);
               }}
-              className="btn-sm px-4 py-2 text-sm hover:bg-mid-color transition-all"
+              className="btn-sm px-4 py-2 text-sm flex items-center hover:bg-mid-color transition-all"
               whileHover={{ scale: 1.07, boxShadow: '0 2px 12px 0 rgba(94,129,172,0.10)' }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
               <FileText className="w-4 h-4 mr-2" />
-              Project
+              <span>Project</span>
             </motion.button>
             
             <motion.button
@@ -198,14 +198,14 @@ export default function App() {
                 setIsFileMenuOpen(false);
                 setIsAutoSaveMenuOpen(false);
               }}
-              className="btn-sm px-4 py-2 text-sm flex items-center space-x-2 hover:bg-mid-color disabled:opacity-50 transition-all"
+              className="btn-sm px-4 py-2 text-sm flex items-center hover:bg-mid-color disabled:opacity-50 transition-all"
               whileHover={{ scale: 1.07, boxShadow: '0 2px 12px 0 rgba(94,129,172,0.10)' }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               disabled={!currentProject || !currentProject.subtitles.length}
             >
               <FileExport className="w-4 h-4 mr-2" />
-              Export
+              <span>Export</span>
             </motion.button>
             
             <LayoutTemplateButton />
@@ -217,13 +217,13 @@ export default function App() {
                 setIsFileMenuOpen(false);
                 setIsExportMenuOpen(false);
               }}
-              className="btn-sm px-4 py-2 text-sm flex items-center space-x-2 hover:bg-mid-color disabled:opacity-50 transition-all"
+              className="btn-sm px-4 py-2 text-sm flex items-center hover:bg-mid-color disabled:opacity-50 transition-all"
               whileHover={{ scale: 1.07, boxShadow: '0 2px 12px 0 rgba(94,129,172,0.10)' }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
               <Save className="w-4 h-4 mr-2" />
-              Auto Save
+              <span>Auto Save</span>
             </motion.button>
           </div>
         </div>
