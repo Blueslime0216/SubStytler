@@ -24,13 +24,32 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
   const [tooltipPosition, setTooltipPosition] = useState<{x: number, y: number} | null>(null);
   const tooltipTimeoutRef = useRef<number | null>(null);
 
-  // 패널 타입 목록 생성 (현재 타입을 중앙에 배치)
-  const panelTypes = Object.keys(panelConfig) as PanelType[];
-  const currentIndex = panelTypes.indexOf(currentType);
+  // Reorder panel types to put empty after subtitle-preview
+  const panelTypes = useMemo(() => {
+    const types = Object.keys(panelConfig) as PanelType[];
+    
+    // Find the indices of 'subtitle-preview' and 'empty'
+    const previewIndex = types.indexOf('subtitle-preview');
+    const emptyIndex = types.indexOf('empty');
+    
+    // If both exist, reorder them
+    if (previewIndex !== -1 && emptyIndex !== -1) {
+      // Remove 'empty' from its current position
+      types.splice(emptyIndex, 1);
+      
+      // Insert 'empty' after 'subtitle-preview'
+      types.splice(previewIndex + 1, 0, 'empty');
+    }
+    
+    return types;
+  }, []);
   
   // 현재 선택된 패널 타입의 설정
   const currentConfig = panelConfig[currentType];
   const CurrentIcon = currentConfig.icon;
+
+  // 현재 타입의 인덱스 찾기
+  const currentIndex = panelTypes.indexOf(currentType);
 
   // 선택기가 열릴 때 현재 타입을 중앙에 배치
   useEffect(() => {
@@ -357,32 +376,6 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
           </motion.div>
         </Portal>
       )}
-
-      {/* 선택기가 열렸을 때 상태 표시 - 하단 툴팁 */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 5 }}
-            transition={animationConfig}
-            className="absolute top-full mt-1 px-2 py-1 rounded-lg text-xs font-medium panel-selector-tooltip"
-            style={{
-              background: 'var(--surface-color)',
-              border: '1px solid var(--border-color)',
-              color: 'var(--text-primary)',
-              whiteSpace: 'nowrap',
-              zIndex: 1000,
-              width: '100px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              textAlign: 'center' as const,
-            }}
-          >
-            {panelConfig[panelTypes[selectedIndex]]?.title || 'Unknown'}
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
