@@ -33,6 +33,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
           className="bg-bg border border-border-color rounded-lg shadow-elevated max-w-md w-full p-8 relative overflow-hidden"
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20, transition: { duration: 0.2 } }}
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
           {/* Background Pattern */}
@@ -89,20 +90,23 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
             
             {/* Progress Bar Container - Improved */}
             <div className="bg-surface rounded-lg p-4 shadow-outset-subtle mb-6">
-              <div className="relative h-4 bg-bg rounded-full shadow-inset overflow-hidden">
+              <div className="relative h-6 bg-bg rounded-full shadow-inset overflow-hidden">
                 {/* Progress Fill - Fixed to show actual progress */}
                 <motion.div 
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-info-color to-info-color/80 rounded-full shadow-outset-subtle"
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-info-color to-primary-color rounded-full shadow-outset-subtle"
                   initial={{ width: '0%' }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
+                  style={{
+                    boxShadow: '0 0 10px rgba(94, 129, 172, 0.3)'
+                  }}
                 />
                 
                 {/* Shimmer Effect */}
                 {!isComplete && (
                   <motion.div
-                    className="absolute top-0 left-0 h-full w-12 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                    animate={{ x: [-48, 400] }}
+                    className="absolute top-0 left-0 h-full w-16 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                    animate={{ x: [-64, 400] }}
                     transition={{
                       duration: 1.5,
                       repeat: Infinity,
