@@ -39,8 +39,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-  backdrop-filter: blur(4px);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  backdrop-filter: blur(8px);
   padding: 10px 0 12px 0;
   z-index: 30;
   overflow: hidden;
@@ -146,25 +146,103 @@
   transform: translate(-50%, -50%) scale(1.2);
 }
 
-/* Time Display */
+/* Time Display - Enhanced */
 .video-controller-time-display {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   color: white;
   font-size: 13px;
-  font-family: monospace;
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.video-controller-time-display:hover {
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .video-controller-time {
   white-space: nowrap;
+  font-weight: 500;
+}
+
+.video-controller-time-separator {
+  opacity: 0.7;
+  margin: 0 2px;
+}
+
+/* Frame and FPS Display - Redesigned */
+.video-controller-frame-container {
+  margin-left: 8px;
 }
 
 .video-controller-frame {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(94, 129, 172, 0.3);
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(94, 129, 172, 0.4);
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.video-controller-frame-icon {
+  width: 12px;
+  height: 12px;
+  opacity: 0.8;
+}
+
+.video-controller-frame-number {
   font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.video-controller-fps {
+  font-size: 11px;
+  opacity: 0.9;
   background: rgba(0, 0, 0, 0.3);
-  padding: 2px 5px;
+  padding: 1px 4px;
   border-radius: 3px;
+  margin-left: 2px;
+}
+
+/* Enhanced Time Tooltip */
+.video-time-tooltip {
+  padding: 8px 12px;
+  min-width: 160px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(94, 129, 172, 0.4);
+}
+
+.video-time-tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.video-time-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.video-time-tooltip-label {
+  font-size: 11px;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.video-time-tooltip-value {
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 /* Volume Control */
@@ -271,10 +349,6 @@
   .video-controller-time-display {
     font-size: 11px;
     gap: 5px;
-  }
-  
-  .video-controller-fps {
-    display: none;
   }
   
   .video-controller-additional-buttons {
