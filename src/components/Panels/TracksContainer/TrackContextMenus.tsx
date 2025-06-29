@@ -1,0 +1,364 @@
+import React from 'react';
+import { Plus, Eye, EyeOff, Lock, Unlock, Trash2, Edit, Type, FileText } from 'lucide-react';
+import { ContextMenu, ContextMenuItem, ContextMenuDivider, ContextMenuSectionTitle } from '../../UI/ContextMenu';
+import { useProjectStore } from '../../../stores/projectStore';
+import { useHistoryStore } from '../../../stores/historyStore';
+import { SubtitleTrack } from '../../../types/project';
+
+interface TrackContextMenusProps {
+  trackHeaderContextMenu: {
+    isOpen: boolean;
+    x: number;
+    y: number;
+    trackId: string | null;
+  };
+  trackContentContextMenu: {
+    isOpen: boolean;
+    x: number;
+    y: number;
+    trackId: string | null;
+    subtitleId: string | null;
+    time: number | null;
+  };
+  tracks: SubtitleTrack[];
+  closeAllContextMenus: () => void;
+  selectedTrackId: string | null;
+  setSelectedTrackId: (id: string | null) => void;
+  flashIds: (ids: string[], duration?: number) => void;
+}
+
+export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
+  trackHeaderContextMenu,
+  trackContentContextMenu,
+  tracks,
+  closeAllContextMenus,
+  selectedTrackId,
+  setSelectedTrackId,
+  flashIds
+}) => {
+  const { addTrack, updateTrack, deleteTrack, addSubtitle, deleteSubtitle, currentProject } = useProjectStore();
+  
+  // Refs for track headers to access their methods
+  const trackHeaderRefs = React.useRef<Map<string, React.RefObject<any>>>(new Map());
+
+  // Context menu action handlers
+  const handleAddTrack = () => {
+    const tracks = currentProject?.tracks || [];
+    const trackNumber = tracks.length + 1;
+    const trackId = addTrack(`Track ${trackNumber}`);
+    if (trackId) {
+      setSelectedTrackId(trackId);
+    }
+    closeAllContextMenus();
+  };
+
+  const handleAddSubtitle = (trackId: string, time: number) => {
+    if (!trackId || time === null) return;
+    
+    // Check if the track is locked
+    const track = tracks.find(t => t.id === trackId);
+    if (track?.locked) {
+      console.warn(`Cannot add subtitle to a locked track: "${track.name}"`);
+      closeAllContextMenus();
+      return;
+    }
+
+    // Record state before adding subtitle
+    useHistoryStore.getState().record(
+      { 
+        project: {
+          subtitles: [...(currentProject?.subtitles || [])],
+          selectedSubtitleId: null
+        }
+      },
+      'Before adding subtitle from context menu',
+      true
+    );
+    
+    const newStartTime = time;
+    const newEndTime = time + 2000; // Default duration is 2s
+
+    // Check for overlapping subtitles on the target track
+    const overlapping = currentProject?.subtitles.find(
+      (sub) =>
+        sub.trackId === trackId && // Same track
+        newStartTime < sub.endTime &&   // New sub starts before other ends
+        newEndTime > sub.startTime      // New sub ends after other starts
+    );
+
+    if (overlapping) {
+      // Flash highlight the overlapping subtitle
+      flashIds([overlapping.id], 600);
+      closeAllContextMenus();
+      return; // do not add new subtitle
+    }
+    
+    const newSubtitle = {
+      id: crypto.randomUUID(),
+      spans: [{
+        id: crypto.randomUUID(),
+        text: 'New subtitle',
+        startTime: time,
+        endTime: time + 2000
+      }],
+      startTime: time,
+      endTime: time + 2000,
+      trackId
+    };
+    
+    addSubtitle(newSubtitle);
+    
+    // Record state after adding subtitle
+    setTimeout(() => {
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            subtitles: currentProject?.subtitles || [],
+            selectedSubtitleId: newSubtitle.id
+          }
+        },
+        `Added new subtitle at ${formatTimeForHistory(time)} from context menu`
+      );
+    }, 0);
+    
+    closeAllContextMenus();
+  };
+
+  const handleDeleteSubtitle = (subtitleId: string) => {
+    if (!subtitleId) return;
+    
+    // Find the subtitle to delete
+    const subtitleToDelete = currentProject?.subtitles.find(s => s.id === subtitleId);
+    if (!subtitleToDelete) return;
+    
+    // Record state before deleting
+    useHistoryStore.getState().record(
+      { 
+        project: {
+          subtitles: [...(currentProject?.subtitles || [])],
+          selectedSubtitleId: null
+        }
+      },
+      'Before deleting subtitle from context menu',
+      true
+    );
+    
+    deleteSubtitle(subtitleId);
+    
+    // Record state after deleting
+    setTimeout(() => {
+      useHistoryStore.getState().record(
+        { 
+          project: {
+            subtitles: currentProject?.subtitles || [],
+            selectedSubtitleId: null
+          }
+        },
+        `Deleted subtitle from context menu`
+      );
+    }, 0);
+    
+    closeAllContextMenus();
+  };
+
+  const handleToggleTrackVisibility = (trackId: string) => {
+    if (!trackId) return;
+    
+    const track = tracks.find(t => t.id === trackId);
+    if (!track) return;
+    
+    updateTrack(trackId, { visible: !track.visible });
+    closeAllContextMenus();
+  };
+
+  const handleToggleTrackLock = (trackId: string) => {
+    if (!trackId) return;
+    
+    const track = tracks.find(t => t.id === trackId);
+    if (!track) return;
+    
+    updateTrack(trackId, { locked: !track.locked });
+    closeAllContextMenus();
+  };
+
+  const handleDeleteTrack = (trackId: string) => {
+    if (!trackId) return;
+    
+    const track = tracks.find(t => t.id === trackId);
+    if (!track) return;
+    
+    if (tracks.length <= 1) {
+      alert('Cannot delete the last remaining track. At least one track must exist.');
+      closeAllContextMenus();
+      return;
+    }
+    
+    if (window.confirm(`Delete track "${track.name}" and all its subtitles?`)) {
+      deleteTrack(trackId);
+    }
+    
+    closeAllContextMenus();
+  };
+
+  const handleRenameTrack = (trackId: string) => {
+    if (!trackId) return;
+    
+    const trackHeader = document.querySelector(`[data-track-id="${trackId}"]`);
+    if (trackHeader) {
+      const trackNameElement = trackHeader.querySelector('.track-name');
+      if (trackNameElement) {
+        // Simulate double click to trigger inline editing
+        const doubleClickEvent = new MouseEvent('dblclick', {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        });
+        trackNameElement.dispatchEvent(doubleClickEvent);
+      }
+    }
+    
+    closeAllContextMenus();
+  };
+
+  const handleChangeTrackDetail = (trackId: string) => {
+    if (!trackId) return;
+    
+    const trackHeader = document.querySelector(`[data-track-id="${trackId}"]`);
+    if (trackHeader) {
+      const trackDetailElement = trackHeader.querySelector('.track-detail');
+      if (trackDetailElement) {
+        // Simulate double click to trigger inline editing
+        const doubleClickEvent = new MouseEvent('dblclick', {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        });
+        trackDetailElement.dispatchEvent(doubleClickEvent);
+      }
+    }
+    
+    closeAllContextMenus();
+  };
+
+  // Helper function to format time for history descriptions
+  const formatTimeForHistory = (ms: number): string => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <>
+      {/* Track Header Context Menu */}
+      <ContextMenu
+        isOpen={trackHeaderContextMenu.isOpen}
+        x={trackHeaderContextMenu.x}
+        y={trackHeaderContextMenu.y}
+        onClose={() => setTrackHeaderContextMenu(prev => ({ ...prev, isOpen: false }))}
+      >
+        <ContextMenuItem 
+          icon={<Plus />}
+          onClick={handleAddTrack}
+        >
+          Add Track
+        </ContextMenuItem>
+
+        {trackHeaderContextMenu.trackId && (
+          <>
+            <ContextMenuDivider />
+            <ContextMenuSectionTitle>Track Options</ContextMenuSectionTitle>
+            
+            {/* Track visibility toggle */}
+            {(() => {
+              const track = tracks.find(t => t.id === trackHeaderContextMenu.trackId);
+              return (
+                <ContextMenuItem 
+                  icon={track?.visible ? <EyeOff /> : <Eye />}
+                  onClick={() => handleToggleTrackVisibility(trackHeaderContextMenu.trackId!)}
+                >
+                  {track?.visible ? 'Hide Track' : 'Show Track'}
+                </ContextMenuItem>
+              );
+            })()}
+            
+            {/* Track lock toggle */}
+            {(() => {
+              const track = tracks.find(t => t.id === trackHeaderContextMenu.trackId);
+              return (
+                <ContextMenuItem 
+                  icon={track?.locked ? <Unlock /> : <Lock />}
+                  onClick={() => handleToggleTrackLock(trackHeaderContextMenu.trackId!)}
+                >
+                  {track?.locked ? 'Unlock Track' : 'Lock Track'}
+                </ContextMenuItem>
+              );
+            })()}
+            
+            <ContextMenuItem 
+              icon={<Edit />}
+              onClick={() => handleRenameTrack(trackHeaderContextMenu.trackId!)}
+            >
+              Rename Track
+            </ContextMenuItem>
+            
+            <ContextMenuItem 
+              icon={<FileText />}
+              onClick={() => handleChangeTrackDetail(trackHeaderContextMenu.trackId!)}
+            >
+              Change Detail
+            </ContextMenuItem>
+            
+            <ContextMenuItem 
+              icon={<Trash2 />}
+              onClick={() => handleDeleteTrack(trackHeaderContextMenu.trackId!)}
+              danger
+              disabled={tracks.length <= 1}
+            >
+              Delete Track
+            </ContextMenuItem>
+          </>
+        )}
+      </ContextMenu>
+
+      {/* Track Content Context Menu */}
+      <ContextMenu
+        isOpen={trackContentContextMenu.isOpen}
+        x={trackContentContextMenu.x}
+        y={trackContentContextMenu.y}
+        onClose={() => setTrackContentContextMenu(prev => ({ ...prev, isOpen: false }))}
+      >
+        {trackContentContextMenu.trackId && trackContentContextMenu.time !== null && (
+          <ContextMenuItem 
+            icon={<Type />}
+            onClick={() => handleAddSubtitle(trackContentContextMenu.trackId!, trackContentContextMenu.time!)}
+            disabled={tracks.find(t => t.id === trackContentContextMenu.trackId)?.locked}
+          >
+            Add Subtitle
+          </ContextMenuItem>
+        )}
+        
+        <ContextMenuItem 
+          icon={<Plus />}
+          onClick={handleAddTrack}
+        >
+          Add Track
+        </ContextMenuItem>
+        
+        {trackContentContextMenu.subtitleId && (
+          <>
+            <ContextMenuDivider />
+            <ContextMenuSectionTitle>Subtitle Options</ContextMenuSectionTitle>
+            <ContextMenuItem 
+              icon={<Trash2 />}
+              onClick={() => handleDeleteSubtitle(trackContentContextMenu.subtitleId!)}
+              danger
+            >
+              Delete Subtitle
+            </ContextMenuItem>
+          </>
+        )}
+      </ContextMenu>
+    </>
+  );
+};
