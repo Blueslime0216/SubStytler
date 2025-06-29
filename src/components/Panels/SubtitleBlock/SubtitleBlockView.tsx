@@ -61,6 +61,7 @@ export const SubtitleBlockView: React.FC<SubtitleBlockViewProps> = ({
         boxShadow: isDragging ? "0 8px 25px rgba(0,0,0,0.3)" : "var(--shadow-outset-subtle)",
       }}
       transition={{ duration: 0.2 }}
+      data-subtitle-id={subtitle.id}
     >
       <AnimatePresence>
         {isHighlighted && (

@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Lock, Unlock, Trash2 } from 'lucide-react';
 import { SubtitleTrack } from '../../types/project';
 import { useProjectStore } from '../../stores/projectStore';
 import { useHistoryStore } from '../../stores/historyStore';
+
+export interface TrackHeaderRef {
+  startEditingName: () => void;
+  startEditingDetail: () => void;
+}
 
 interface TrackHeaderProps {
   track: SubtitleTrack;
@@ -16,7 +21,7 @@ interface TrackHeaderProps {
   onToggleLock: (id: string, locked: boolean) => void;
 }
 
-export const TrackHeader: React.FC<TrackHeaderProps> = ({
+export const TrackHeader = forwardRef<TrackHeaderRef, TrackHeaderProps>(({
   track,
   isActive,
   onSelect,
@@ -25,7 +30,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
   onUpdateDetail,
   onToggleVisibility,
   onToggleLock,
-}) => {
+}, ref) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [nameValue, setNameValue] = React.useState(track.name);
   const [isEditingDetail, setIsEditingDetail] = React.useState(false);
@@ -36,6 +41,20 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
   // Get current project to check track count
   const { currentProject } = useProjectStore();
   const isLastTrack = currentProject?.tracks.length === 1;
+
+  // Expose methods to parent component
+  useImperativeHandle(ref, () => ({
+    startEditingName: () => {
+      if (!track.locked) {
+        setIsEditing(true);
+      }
+    },
+    startEditingDetail: () => {
+      if (!track.locked) {
+        setIsEditingDetail(true);
+      }
+    }
+  }));
 
   const handleDoubleClick = () => {
     if (!track.locked) {
@@ -122,6 +141,7 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
+      data-track-id={track.id}
     >
       {/* Track Name Section */}
       <div className="track-name-section">
@@ -204,6 +224,8 @@ export const TrackHeader: React.FC<TrackHeaderProps> = ({
       </div>
     </motion.div>
   );
-};
+});
+
+TrackHeader.displayName = 'TrackHeader';
 
 export default TrackHeader;

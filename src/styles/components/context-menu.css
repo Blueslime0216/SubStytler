@@ -1,0 +1,105 @@
+/* Context Menu Styles - Modern Clean Design */
+
+.context-menu {
+  position: fixed;
+  background: var(--surface-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-outset-strong);
+  border: 1px solid var(--border-color);
+  min-width: 180px;
+  max-width: 280px;
+  z-index: 1000;
+  overflow: hidden;
+  padding: 4px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  user-select: none;
+  position: relative;
+  margin: 1px 0;
+}
+
+.context-menu-item:hover {
+  background: var(--mid-color);
+}
+
+.context-menu-item:active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.context-menu-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.context-menu-item-icon {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.context-menu-item:hover .context-menu-item-icon {
+  color: var(--text-primary);
+}
+
+.context-menu-item:active .context-menu-item-icon {
+  color: white;
+}
+
+.context-menu-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+}
+
+.context-menu-section-title {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+
+/* Animation for context menu */
+@keyframes context-menu-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.context-menu-enter {
+  animation: context-menu-fade-in 0.15s ease-out forwards;
+  transform-origin: top left;
+}
+
+/* Ensure context menu is always on top */
+.context-menu-portal {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  overflow: visible;
+}

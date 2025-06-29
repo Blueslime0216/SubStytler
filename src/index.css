@@ -31,6 +31,7 @@
 @import './styles/components/panel-selector.css';
 @import './styles/components/history.css';
 @import './styles/components/text-editor.css';
+@import './styles/components/context-menu.css';
 
 /* Timeline Components */
 @import './styles/components/timeline/timeline-base.css';
