@@ -75,7 +75,7 @@ const PanelComponent: React.FC<PanelProps> = ({ type, className = '', areaId, ch
 
   return (
     <motion.div
-      className={`panel ${className} bg-surface shadow-outset rounded-lg border border-border-color`}
+      className={`panel ${className} bg-surface shadow-outset rounded-lg`}
       initial={{ opacity: 1, scale: 1 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.15, ease: 'easeOut' }}

@@ -20,7 +20,7 @@
 }
 
 .neu-track-header-redesigned.active {
-  background: var(--light-surface-color);
+  background: var(--primary-color);
   color: white;
   box-shadow: var(--shadow-outset-subtle);
   transform: translateY(-1px);
@@ -84,4 +84,12 @@
   text-overflow: ellipsis;
   line-height: 1.2;
   padding: 1px 0;
+}
+
+/* Track detail empty state */
+.track-detail:empty::before {
+  content: 'empty';
+  color: var(--text-muted);
+  opacity: 0.6;
+  font-style: italic;
 }

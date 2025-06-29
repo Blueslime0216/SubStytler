@@ -9,7 +9,6 @@
   flex-direction: column;
   height: 100%;
   box-shadow: var(--shadow-outset);
-  border: 1px solid var(--border-color);
   position: relative;
   transition: all 0.2s ease;
 }
@@ -42,14 +41,14 @@
 
 /* Panel Types */
 .panel-primary {
-  border: 1px solid var(--light-surface-color);
+  border: 1px solid var(--primary-color);
   box-shadow: 
     var(--shadow-outset),
     0 0 0 1px var(--primary-color);
 }
 
 .panel-primary .panel-header {
-  background-color: var(--light-surface-color);
+  background-color: var(--primary-color);
   color: white;
 }
 
@@ -83,7 +82,7 @@
 }
 
 .resize-handle:hover {
-  background-color: var(--light-surface-color);
+  background-color: var(--primary-color);
 }
 
 /* Panel Type Selector */
@@ -95,13 +94,11 @@
   border-radius: 8px;
   background-color: var(--surface-color);
   cursor: pointer;
-  border: 1px solid var(--border-color);
   transition: all 0.15s ease;
 }
 
 .panel-type-selector:hover {
   background-color: var(--mid-color);
-  border-color: var(--border-color-light);
 }
 
 .panel-type-selector:active {
@@ -113,7 +110,6 @@
   background: var(--surface-color);
   border-radius: 12px;
   box-shadow: var(--shadow-outset);
-  border: 1px solid var(--border-color);
   position: relative;
   overflow: hidden;
   transition: all 0.2s ease;
@@ -121,7 +117,6 @@
 
 .neu-panel:hover {
   box-shadow: var(--shadow-outset-hover);
-  border-color: var(--border-color-light);
 }
 
 /* Panel Header Enhanced */

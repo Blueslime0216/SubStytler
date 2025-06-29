@@ -131,7 +131,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-bg text-text-primary">
       {/* Header */}
-      <header className="h-14 flex items-center justify-between px-4 shadow-outset bg-surface border-b border-border-color">
+      <header className="h-14 flex items-center justify-between px-4 shadow-outset bg-surface">
         <div className="flex items-center space-x-3">
           <div className="flex items-center justify-center w-8 h-8 bg-primary-color rounded-md text-white">
             <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5-9-5-9 5 9 5z"/></svg>
@@ -183,7 +183,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="h-6 bg-surface border-t border-border-color text-xs text-text-secondary flex items-center justify-end px-4">
+      <footer className="h-6 bg-surface text-xs text-text-secondary flex items-center justify-end px-4">
         <span>Sub-Stytler Professional v1.0.0</span>
       </footer>
 

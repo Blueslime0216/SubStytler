@@ -123,7 +123,7 @@
   top: 50%;
   left: 0;
   height: 100%;
-  background: var(--light-surface-color);
+  background: var(--primary-color);
   border-radius: 3px;
   transition: width 0.1s linear;
   transform: translateY(-50%);

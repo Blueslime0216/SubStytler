@@ -1,7 +1,7 @@
 /* Color System Variables - Modern Dark Theme with Light Mode Support */
 
 :root {
-  --light-surface-color: #f5f5f7; /* 은은하게 밝은 하얀색 */
+  --light-surface-color: #5e81ac; /* Nordic blue - primary color */
 
   /* Base Colors - Dark Theme */
   --base-color: #1a1a1a;       /* 어두운 배경 */
@@ -12,8 +12,8 @@
   --darker-color: #0a0a0a;     /* 가장 어두운 배경 */
   
   /* Border Colors */
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-color-light: rgba(255, 255, 255, 0.12);
+  --border-color: rgba(55, 65, 81, 0.5);
+  --border-color-light: rgba(75, 85, 99, 0.5);
   
   /* UI Element Colors */
   --bg-color: var(--base-color);
@@ -43,8 +43,8 @@
   --darker-color: #eceff4;     /* 가장 밝은 배경 */
   
   /* Border Colors */
-  --border-color: rgba(0, 0, 0, 0.08);
-  --border-color-light: rgba(0, 0, 0, 0.12);
+  --border-color: rgba(75, 85, 99, 0.2);
+  --border-color-light: rgba(75, 85, 99, 0.3);
   
   /* UI Element Colors */
   --bg-color: var(--base-color);

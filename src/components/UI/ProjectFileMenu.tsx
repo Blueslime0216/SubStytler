@@ -128,7 +128,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
           initial={{ opacity: 0, scale: 0.95, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
-          className="fixed z-50 bg-surface border border-border-color rounded-lg shadow-outset-strong overflow-hidden"
+          className="fixed z-50 bg-surface rounded-lg shadow-outset-strong overflow-hidden"
           style={{
             top: position.top,
             left: position.left,

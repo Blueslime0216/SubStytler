@@ -1,7 +1,7 @@
 /* Subtitle Block Styles - Modern Clean Design */
 
 .neu-subtitle-block {
-  background: var(--light-surface-color);
+  background: var(--primary-color);
   border-radius: 6px;
   box-shadow: var(--shadow-outset-subtle);
   color: white;
@@ -70,8 +70,4 @@
   pointer-events: none;
   z-index: -1;
   box-shadow: 0 0 10px 2px var(--highlight-color);
-}
-
-.neu-subtitle-block[style*="outline"] {
-  box-shadow: var(--shadow-outset);
 }

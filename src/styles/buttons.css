@@ -57,7 +57,7 @@
 
 /* Button Variants */
 .btn-primary {
-  background-color: var(--light-surface-color);
+  background-color: var(--primary-color);
   color: white;
   border-color: transparent;
 }
@@ -108,7 +108,6 @@
   border-radius: 6px;
   box-shadow: var(--shadow-outset-subtle);
   cursor: pointer;
-  border: 1px solid var(--border-color);
   transition: all 0.2s ease;
 }
 
@@ -132,7 +131,6 @@
   cursor: not-allowed;
   box-shadow: var(--shadow-outset-subtle);
   background-color: var(--surface-color);
-  border-color: var(--border-color);
   transform: none;
 }
 

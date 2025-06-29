@@ -1,4 +1,4 @@
-/* Area Block Styles for Inset/Outset Theme */
+/* Area Block Styles - Modern Clean Design */
 
 .area-block {
   position: absolute;
@@ -26,11 +26,11 @@
 }
 
 .area-border:hover {
-  background-color: rgba(127, 179, 181, 0.2);
+  background-color: rgba(94, 129, 172, 0.2);
   opacity: 1;
 }
 
 .area-border-active {
-  background-color: rgba(127, 179, 181, 0.3);
+  background-color: rgba(94, 129, 172, 0.3);
   opacity: 1;
-} 
+}

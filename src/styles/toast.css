@@ -4,7 +4,6 @@
   background: var(--surface-color);
   border-radius: 8px;
   box-shadow: var(--shadow-outset);
-  border: 1px solid var(--border-color);
   position: relative;
   overflow: hidden;
   max-width: 320px;

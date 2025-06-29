@@ -1,4 +1,4 @@
-/* Panel Type Selector - New Inset/Outset Theme with Framer Motion Integration */
+/* Panel Type Selector - Modern Clean Design */
 
 .panel-selector-container {
   position: relative;
@@ -7,8 +7,8 @@
 
 .panel-selector-button {
   background: var(--surface-color);
-  border: 2px solid var(--border-color);
-  box-shadow: var(--shadow-outset);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-outset-subtle);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease, box-shadow 0.2s ease;
@@ -17,11 +17,13 @@
 }
 
 .panel-selector-button:hover {
-  filter: brightness(1.05);
+  background: var(--mid-color);
+  border-color: var(--border-color-light);
 }
 
 .panel-selector-button.open {
-  box-shadow: -1px -1px 2px var(--highlight-color), 2px 2px 4px var(--shadow-color);
+  box-shadow: var(--shadow-inset-subtle);
+  background: var(--mid-color);
 }
 
 .panel-selector-icon-container {
@@ -40,12 +42,11 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* box-shadow 제거하고 가상 요소로 대체 */
   border-radius: 8px;
-  z-index: 1; /* 기본 z-index 낮춤 */
+  z-index: 1;
 }
 
-/* 그림자를 가상 요소로 구현 */
+/* Shadow as pseudo-element */
 .panel-selector-carousel::after {
   content: '';
   position: absolute;
@@ -55,7 +56,7 @@
   bottom: 0;
   border-radius: 8px;
   pointer-events: none;
-  box-shadow: var(--shadow-inset);
+  box-shadow: var(--shadow-inset-subtle);
   z-index: 10;
 }
 
@@ -68,7 +69,7 @@
   align-items: center;
   position: absolute;
   transition: transform 0.2s ease-out;
-  z-index: 2; /* 그라데이션 아래 */
+  z-index: 2;
 }
 
 .panel-selector-icon-item {
@@ -87,21 +88,13 @@
   align-items: center;
   justify-content: center;
   background: var(--surface-color);
-  border: 1px solid var(--border-color);
   transition: all 0.2s ease;
-  /* 🔧 기본 아이콘들은 튀어나온 것처럼 (outset) - 왼쪽 상단 밝게, 오른쪽 하단 어둡게 */
-  box-shadow: 
-    -1px -1px 2px var(--highlight-color),
-    2px 2px 4px var(--shadow-color);
+  box-shadow: var(--shadow-outset-subtle);
 }
 
 .panel-selector-icon-wrapper.selected {
-  background: transparent;
-  /* border: 2px solid var(--highlight-color); */
-  /* 🔧 선택된 아이콘은 들어간 것처럼 (inset) - 왼쪽 상단 어둡게, 오른쪽 하단 밝게 */
-  box-shadow: 
-    inset 2px 2px 4px var(--shadow-color),
-    inset -1px -1px 2px var(--highlight-color);
+  background: var(--primary-color);
+  box-shadow: var(--shadow-inset-subtle);
 }
 
 .panel-selector-icon {
@@ -122,7 +115,7 @@
   bottom: 0;
   width: 32px;
   pointer-events: none;
-  z-index: 5; /* 아이콘 위, 그림자 아래 */
+  z-index: 5;
 }
 
 .panel-selector-gradient-left {
@@ -143,9 +136,8 @@
   margin-top: 8px;
   padding: 6px 12px;
   background: var(--surface-color);
-  border: 2px solid var(--border-color);
   border-radius: 8px;
-  box-shadow: var(--shadow-outset);
+  box-shadow: var(--shadow-outset-subtle);
   color: var(--text-primary);
   font-size: 12px;
   font-weight: 500;
@@ -178,29 +170,5 @@
   .panel-selector-tooltip {
     font-size: 11px;
     padding: 4px 8px;
-  }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-  .panel-selector-button {
-    border: 3px solid var(--text-primary);
-  }
-  
-  .panel-selector-icon-wrapper {
-    border: 2px solid var(--text-primary);
-  }
-  
-  .panel-selector-icon-wrapper.selected {
-    border: 3px solid var(--light-surface-color);
-  }
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .panel-selector-button,
-  .panel-selector-icon-wrapper,
-  .panel-selector-icons {
-    transition: none;
   }
 }

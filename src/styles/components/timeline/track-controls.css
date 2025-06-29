@@ -15,8 +15,6 @@
   justify-content: center;
   border-radius: 6px;
   background: var(--surface-color);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-outset-subtle);
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -25,9 +23,8 @@
 .track-control-btn:hover {
   background: var(--mid-color);
   color: var(--text-primary);
-  border-color: var(--border-color-light);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-outset);
+  box-shadow: var(--shadow-outset-subtle);
 }
 
 .track-control-btn:active {
@@ -39,13 +36,11 @@
 .track-control-btn.visibility.active {
   color: var(--primary-color);
   background: var(--surface-color);
-  border-color: var(--light-surface-color);
 }
 
 .track-control-btn.lock.active {
   color: var(--warning-color);
   background: var(--surface-color);
-  border-color: var(--warning-color);
 }
 
 .track-control-btn.delete {
@@ -54,15 +49,13 @@
 
 .track-control-btn.delete:hover {
   color: var(--error-color);
-  border-color: var(--error-color);
 }
 
 .track-control-btn.delete.disabled {
   opacity: 0.4;
   cursor: not-allowed;
   color: var(--text-muted);
-  border-color: var(--border-color);
-  box-shadow: var(--shadow-outset-subtle);
+  box-shadow: none;
   transform: none;
 }
 
