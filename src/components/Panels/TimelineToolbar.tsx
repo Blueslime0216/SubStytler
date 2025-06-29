@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
+import { Plus } from 'lucide-react';
 
 interface TimelineToolbarProps {
   onAddSubtitle: () => void;
@@ -114,15 +115,17 @@ export const TimelineToolbar: React.FC<TimelineToolbarProps> = ({
     <div className="timeline-toolbar">
       <button
         onClick={onAddSubtitle}
-        className="timeline-toolbar-btn"
+        className="timeline-toolbar-btn bg-primary text-white border-primary hover:bg-primary/90"
       >
+        <Plus className="w-4 h-4" />
         <span className="timeline-toolbar-btn-label">Add Subtitle</span>
       </button>
 
       <button
         onClick={onAddTrack}
-        className="timeline-toolbar-btn"
+        className="timeline-toolbar-btn bg-primary text-white border-primary hover:bg-primary/90"
       >
+        <Plus className="w-4 h-4" />
         <span className="timeline-toolbar-btn-label">Add Track</span>
       </button>
 
