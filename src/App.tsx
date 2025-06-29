@@ -157,8 +157,6 @@ export default function App() {
 
           {/* Main Menu Items */}
           <div className="flex items-center space-x-1">
-            <LayoutTemplateButton />
-            
             <button 
               ref={fileMenuTriggerRef}
               onClick={() => setIsFileMenuOpen(!isFileMenuOpen)}
@@ -180,6 +178,8 @@ export default function App() {
               <FileExport size={12} />
               <span>Export</span>
             </button>
+            
+            <LayoutTemplateButton />
           </div>
         </div>
 
