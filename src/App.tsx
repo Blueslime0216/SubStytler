@@ -14,7 +14,7 @@ import { VideoReuploadDialog } from './components/UI/VideoReuploadDialog';
 import { useToast } from './hooks/useToast';
 import { VideoInfo } from './utils/videoUtils';
 import { LayoutTemplateButton } from './components/UI/LayoutTemplateButton';
-import { Moon, Sun, Save, FileExport, Undo, Redo, Menu } from 'lucide-react';
+import { Moon, Sun, Save, File as FileExport, Undo, Redo, Menu } from 'lucide-react';
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(
