@@ -136,7 +136,7 @@ export const FpsConfirmationModal: React.FC<FpsConfirmationModalProps> = ({
           <div className="flex justify-end gap-3 p-5 border-t border-border-color bg-bg/50">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-border-color text-text-secondary hover:bg-mid-color/30 transition-colors"
+              className="px-4 py-2 rounded-lg border border-border-color text-text-secondary hover:bg-mid-color transition-colors"
             >
               취소
             </button>

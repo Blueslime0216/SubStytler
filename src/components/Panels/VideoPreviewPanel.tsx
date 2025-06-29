@@ -9,6 +9,7 @@ import VideoPreviewOverlays from './VideoPreviewOverlays';
 import VideoPreviewController from './VideoPreviewController';
 import { useToast } from '../../hooks/useToast';
 import { LargeVideoWarningModal } from '../UI/LargeVideoWarningModal';
+import { FpsConfirmationModal } from '../UI/FpsConfirmationModal';
 
 export const VideoPreviewPanel: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -27,7 +28,10 @@ export const VideoPreviewPanel: React.FC = () => {
     showSizeWarning, 
     pendingLargeFile,
     confirmLargeFileUpload,
-    cancelLargeFileUpload
+    cancelLargeFileUpload,
+    showFpsConfirmation,
+    detectedFps,
+    handleFpsConfirm
   } = useVideoUpload(videoRef);
   
   useVideoSync(videoRef, isVideoLoaded);
@@ -322,6 +326,14 @@ export const VideoPreviewPanel: React.FC = () => {
           fileSize={pendingLargeFile.size}
         />
       )}
+
+      {/* FPS Confirmation Modal */}
+      <FpsConfirmationModal
+        isOpen={showFpsConfirmation}
+        onClose={() => setShowFpsConfirmation(false)}
+        detectedFps={detectedFps}
+        onConfirm={handleFpsConfirm}
+      />
     </div>
   );
 };

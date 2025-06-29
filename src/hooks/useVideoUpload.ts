@@ -18,6 +18,15 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
 
   const [pendingLargeFile, setPendingLargeFile] = useState<File | null>(null);
   const [showSizeWarning, setShowSizeWarning] = useState(false);
+  
+  // FPS 확인 모달 상태
+  const [showFpsConfirmation, setShowFpsConfirmation] = useState(false);
+  const [detectedFps, setDetectedFps] = useState(30);
+  const [pendingVideoData, setPendingVideoData] = useState<{
+    file: File;
+    metadata: any;
+    url: string;
+  } | null>(null);
 
   const { setVideoMeta, currentProject } = useProjectStore();
   const { setDuration, setFPS, setCurrentTime } = useTimelineStore();
@@ -358,32 +367,32 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         uploadStage: 'Setting up timeline...'
       }));
 
-      // Stage 4: Update stores with metadata
-      setVideoMeta({
-        filename: file.name,
-        duration: metadata.duration,
-        fps: metadata.fps, // Use detected FPS
-        width: metadata.width,
-        height: metadata.height,
-        file
-      });
+      // 비정상적인 FPS 값 확인 (5 미만 또는 10 미만이면서 일반적인 값이 아닌 경우)
+      const isAbnormalFps = metadata.fps < 5 || 
+                           (metadata.fps < 10 && ![23.976, 24, 25, 29.97, 30].includes(metadata.fps));
+      
+      if (isAbnormalFps) {
+        // FPS 확인 모달 표시를 위해 현재 처리 중인 데이터 저장
+        setPendingVideoData({
+          file,
+          metadata,
+          url
+        });
+        setDetectedFps(metadata.fps);
+        setShowFpsConfirmation(true);
+        
+        // 업로드 상태 초기화
+        setUploadState({
+          isUploading: false,
+          uploadProgress: 0,
+          uploadStage: ''
+        });
+        
+        return;
+      }
 
-      setDuration(metadata.duration);
-      setFPS(metadata.fps); // Use detected FPS
-      setCurrentTime(0); // Reset to beginning
-
-      setUploadState(prev => ({ 
-        ...prev, 
-        uploadProgress: 100,
-        uploadStage: 'Complete!'
-      }));
-
-      // Show success toast
-      const fileSizeMB = Math.round(file.size / (1024 * 1024));
-      success({
-        title: 'Video loaded successfully!',
-        message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height}, ${fileSizeMB}MB, ${metadata.fps}fps)`
-      });
+      // 정상적인 FPS 값이면 바로 처리 완료
+      finalizeVideoProcessing(file, metadata, url);
 
     } catch (err) {
       console.error('Video processing error:', err);
@@ -409,6 +418,56 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
     }
   }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, warning, videoRef]);
 
+  // FPS 확인 후 최종 처리 함수
+  const finalizeVideoProcessing = useCallback((file: File, metadata: any, url: string) => {
+    // Stage 4: Update stores with metadata
+    setVideoMeta({
+      filename: file.name,
+      duration: metadata.duration,
+      fps: metadata.fps,
+      width: metadata.width,
+      height: metadata.height,
+      file
+    });
+
+    setDuration(metadata.duration);
+    setFPS(metadata.fps);
+    setCurrentTime(0); // Reset to beginning
+
+    setUploadState(prev => ({ 
+      ...prev, 
+      uploadProgress: 100,
+      uploadStage: 'Complete!'
+    }));
+
+    // Show success toast
+    const fileSizeMB = Math.round(file.size / (1024 * 1024));
+    success({
+      title: 'Video loaded successfully!',
+      message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height}, ${fileSizeMB}MB, ${metadata.fps}fps)`
+    });
+  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success]);
+
+  // FPS 확인 모달에서 사용자가 확인 버튼을 눌렀을 때
+  const handleFpsConfirm = useCallback((confirmedFps: number) => {
+    if (!pendingVideoData) return;
+    
+    const { file, metadata, url } = pendingVideoData;
+    
+    // 사용자가 확인한 FPS 값으로 업데이트
+    const updatedMetadata = {
+      ...metadata,
+      fps: confirmedFps
+    };
+    
+    // 최종 처리 진행
+    finalizeVideoProcessing(file, updatedMetadata, url);
+    
+    // 상태 초기화
+    setShowFpsConfirmation(false);
+    setPendingVideoData(null);
+  }, [pendingVideoData, finalizeVideoProcessing]);
+
   const confirmLargeFileUpload = useCallback(() => {
     if (pendingLargeFile) {
       continueVideoProcessing(pendingLargeFile);
@@ -428,6 +487,9 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
     showSizeWarning,
     pendingLargeFile,
     confirmLargeFileUpload,
-    cancelLargeFileUpload
+    cancelLargeFileUpload,
+    showFpsConfirmation,
+    detectedFps,
+    handleFpsConfirm
   };
 };
