@@ -1,6 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { formatTime } from '../../../utils/timeUtils';
-import { Portal } from '../../UI/Portal';
 import { Clock } from 'lucide-react';
 
 interface VideoControllerTimeDisplayProps {
@@ -16,47 +15,23 @@ const VideoControllerTimeDisplay: React.FC<VideoControllerTimeDisplayProps> = ({
   frameNumber,
   fps
 }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
-  const timeDisplayRef = useRef<HTMLDivElement>(null);
-  const [tooltipPos, setTooltipPos] = useState<{left: number, top: number} | null>(null);
-  
-  // Format FPS value to display nicely (integer or one decimal place)
+  // FPS value to display nicely (integer or one decimal place)
   const displayFps = Number.isInteger(fps) ? fps.toString() : fps.toFixed(1);
   
-  // Handle mouse enter for tooltip
-  const handleMouseEnter = () => {
-    if (timeDisplayRef.current) {
-      const rect = timeDisplayRef.current.getBoundingClientRect();
-      setTooltipPos({
-        left: rect.left + rect.width / 2,
-        top: rect.top
-      });
-      setShowTooltip(true);
-    }
-  };
-  
-  // Handle mouse leave for tooltip
-  const handleMouseLeave = () => {
-    setShowTooltip(false);
-  };
-  
   return (
-    <div 
-      ref={timeDisplayRef}
-      className="video-controller-time-display"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className="video-controller-time-display">
       {/* Current Time / Duration */}
-      <span className="video-controller-time">
-        {formatTime(currentTime, fps, 'ms')}
-      </span>
-      
-      <span className="video-controller-time-separator">/</span>
-      
-      <span className="video-controller-time">
-        {formatTime(duration, fps, 'ms')}
-      </span>
+      <div className="video-controller-time-section">
+        <span className="video-controller-time">
+          {formatTime(currentTime, fps, 'ms')}
+        </span>
+        
+        <span className="video-controller-time-separator">/</span>
+        
+        <span className="video-controller-time">
+          {formatTime(duration, fps, 'ms')}
+        </span>
+      </div>
       
       {/* Frame Number and FPS in a badge */}
       <div className="video-controller-frame-container">
@@ -70,37 +45,6 @@ const VideoControllerTimeDisplay: React.FC<VideoControllerTimeDisplayProps> = ({
           </span>
         </div>
       </div>
-      
-      {/* Detailed Tooltip */}
-      {showTooltip && tooltipPos && (
-        <Portal>
-          <div
-            className="video-controller-tooltip video-time-tooltip"
-            style={{
-              position: 'fixed',
-              left: tooltipPos.left,
-              top: tooltipPos.top - 60,
-              transform: 'translateX(-50%)',
-              zIndex: 9999
-            }}
-          >
-            <div className="video-time-tooltip-content">
-              <div className="video-time-tooltip-row">
-                <span className="video-time-tooltip-label">Current:</span>
-                <span className="video-time-tooltip-value">{formatTime(currentTime, fps, 'frames')}</span>
-              </div>
-              <div className="video-time-tooltip-row">
-                <span className="video-time-tooltip-label">Frame:</span>
-                <span className="video-time-tooltip-value">{frameNumber}</span>
-              </div>
-              <div className="video-time-tooltip-row">
-                <span className="video-time-tooltip-label">FPS:</span>
-                <span className="video-time-tooltip-value">{displayFps}</span>
-              </div>
-            </div>
-          </div>
-        </Portal>
-      )}
     </div>
   );
 };

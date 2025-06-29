@@ -146,103 +146,78 @@
   transform: translate(-50%, -50%) scale(1.2);
 }
 
-/* Time Display - Enhanced */
+/* Time Display - Completely Redesigned */
 .video-controller-time-display {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: white;
-  font-size: 13px;
-  font-family: 'JetBrains Mono', monospace;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 6px;
-  transition: background-color 0.2s ease;
-  cursor: pointer;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 12px;
 }
 
-.video-controller-time-display:hover {
-  background: rgba(0, 0, 0, 0.5);
+.video-controller-time-section {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .video-controller-time {
-  white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
   font-weight: 500;
+  color: white;
+  letter-spacing: 0.5px;
 }
 
 .video-controller-time-separator {
   opacity: 0.7;
   margin: 0 2px;
+  color: white;
 }
 
-/* Frame and FPS Display - Redesigned */
+/* Frame and FPS Display - Completely Redesigned */
 .video-controller-frame-container {
-  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  padding-left: 12px;
 }
 
 .video-controller-frame {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(94, 129, 172, 0.3);
-  padding: 3px 6px;
+  gap: 6px;
+  background: rgba(94, 129, 172, 0.2);
+  padding: 4px 8px;
   border-radius: 4px;
-  border: 1px solid rgba(94, 129, 172, 0.4);
-  font-weight: 600;
-  font-size: 12px;
-  white-space: nowrap;
+  border: 1px solid rgba(94, 129, 172, 0.3);
 }
 
 .video-controller-frame-icon {
   width: 12px;
   height: 12px;
-  opacity: 0.8;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .video-controller-frame-number {
-  font-weight: bold;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 13px;
+  color: white;
   letter-spacing: 0.5px;
 }
 
 .video-controller-fps {
-  font-size: 11px;
-  opacity: 0.9;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 1px 4px;
-  border-radius: 3px;
-  margin-left: 2px;
-}
-
-/* Enhanced Time Tooltip */
-.video-time-tooltip {
-  padding: 8px 12px;
-  min-width: 160px;
-  background: rgba(0, 0, 0, 0.85);
-  border: 1px solid rgba(94, 129, 172, 0.4);
-}
-
-.video-time-tooltip-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.video-time-tooltip-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.video-time-tooltip-label {
-  font-size: 11px;
-  opacity: 0.8;
-  font-weight: 500;
-}
-
-.video-time-tooltip-value {
-  font-size: 12px;
-  font-weight: 600;
   font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2px 4px;
+  border-radius: 3px;
+  margin-left: 4px;
 }
 
 /* Volume Control */
@@ -303,7 +278,7 @@
   z-index: 9999;
 }
 
-/* Additional Buttons Container - FIXED: Now displays horizontally */
+/* Additional Buttons Container */
 .video-controller-additional-buttons {
   display: flex;
   align-items: center;
@@ -348,7 +323,7 @@
   
   .video-controller-time-display {
     font-size: 11px;
-    gap: 5px;
+    padding: 4px 6px;
   }
   
   .video-controller-additional-buttons {
