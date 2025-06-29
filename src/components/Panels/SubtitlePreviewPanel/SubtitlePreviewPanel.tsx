@@ -83,15 +83,11 @@ export const SubtitlePreviewPanel: React.FC = () => {
   }
   
   return (
-    <div className="h-full flex flex-col bg-surface">
+    <div className="h-full flex flex-col bg-surface min-h-0">
       <SubtitlePreviewList 
         subtitles={trackSubtitles}
-        activeSubtitleId={activeSubtitleId}
-        currentTime={currentTime}
+        styles={currentProject?.styles || []}
       />
-
-      {/* Footer */}
-      <SubtitlePreviewFooter onCopyOriginal={handleCopyOriginal} />
     </div>
   );
 };
