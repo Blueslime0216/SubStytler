@@ -62,4 +62,4 @@ if (!colorsContent.includes('--light-surface-color')) {
 // 2. 전체 src 디렉토리 순회하며 교체
 walk(TARGET_DIR);
 
-console.log('Done!'); 
+console.log('Done!');
