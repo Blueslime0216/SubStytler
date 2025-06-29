@@ -163,34 +163,121 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
           reject(new Error('Video loading timed out. This may be due to the large file size or unsupported format.'));
         }, 60000); // Increased timeout for large files
 
-        // Function to detect FPS from video
+        // Function to detect FPS from video using requestVideoFrameCallback
         const detectFPS = async (videoElement: HTMLVideoElement): Promise<number> => {
-          // Default fallback FPS
-          let detectedFPS = 0;
-          
-          try {
-            console.log('🎬 FPS 감지 시작...');
+          return new Promise((resolveFps) => {
+            let detectedFPS = 30; // Default fallback
             
-            // Try to get FPS from video properties if available
-            // @ts-ignore - Some browsers expose this non-standard property
-            if (videoElement.webkitDecodedFrameCount !== undefined && videoElement.duration) {
-              // @ts-ignore
-              const webkitFrames = videoElement.webkitDecodedFrameCount;
-              detectedFPS = Math.round(webkitFrames / videoElement.duration);
-              console.log('🎬 Webkit 속성으로 FPS 감지:', { webkitFrames, duration: videoElement.duration, detectedFPS });
+            try {
+              console.log('🎬 FPS 감지 시작...');
+              
+              // Method 1: Use requestVideoFrameCallback if available
+              if ('requestVideoFrameCallback' in videoElement) {
+                console.log('🎬 requestVideoFrameCallback 방식으로 FPS 감지 시도');
+                
+                let frameCount = 0;
+                const startTime = performance.now();
+                const measureDuration = 1000; // 1 second measurement
+                
+                const frameCallback = (now: number, metadata: any) => {
+                  frameCount++;
+                  
+                  const elapsedTime = performance.now() - startTime;
+                  
+                  if (elapsedTime < measureDuration) {
+                    // Continue counting frames
+                    (videoElement as any).requestVideoFrameCallback(frameCallback);
+                  } else {
+                    // Calculate FPS
+                    const measuredFPS = (frameCount / elapsedTime) * 1000;
+                    console.log('🎬 requestVideoFrameCallback 결과:', { 
+                      frameCount, 
+                      elapsedTime, 
+                      measuredFPS 
+                    });
+                    
+                    // Round to 2 decimal places
+                    detectedFPS = Math.round(measuredFPS * 100) / 100;
+                    resolveFps(detectedFPS);
+                  }
+                };
+                
+                // Start measuring
+                (videoElement as any).requestVideoFrameCallback(frameCallback);
+                
+                // Ensure video is playing for accurate measurement
+                const playPromise = videoElement.play();
+                if (playPromise) {
+                  playPromise.catch(() => {
+                    // Playback failed, use method 2
+                    method2();
+                  });
+                }
+                
+                // Set timeout to ensure we don't wait forever
+                setTimeout(() => {
+                  if (detectedFPS === 30) {
+                    method2();
+                  }
+                }, measureDuration + 500);
+                
+                return;
+              } else {
+                method2();
+              }
+              
+              // Method 2: Use webkitDecodedFrameCount
+              function method2() {
+                console.log('🎬 webkitDecodedFrameCount 방식으로 FPS 감지 시도');
+                
+                // @ts-ignore - Some browsers expose this non-standard property
+                if (videoElement.webkitDecodedFrameCount !== undefined && videoElement.duration) {
+                  // Take initial measurement
+                  // @ts-ignore
+                  const initialFrameCount = videoElement.webkitDecodedFrameCount || 0;
+                  const initialTime = performance.now();
+                  
+                  // Wait a second and measure again
+                  setTimeout(() => {
+                    try {
+                      // @ts-ignore
+                      const currentFrameCount = videoElement.webkitDecodedFrameCount || 0;
+                      const elapsedTime = (performance.now() - initialTime) / 1000; // in seconds
+                      
+                      const framesDelta = currentFrameCount - initialFrameCount;
+                      
+                      if (framesDelta > 0 && elapsedTime > 0) {
+                        const calculatedFPS = framesDelta / elapsedTime;
+                        console.log('🎬 webkitDecodedFrameCount 결과:', { 
+                          initialFrameCount, 
+                          currentFrameCount, 
+                          framesDelta, 
+                          elapsedTime, 
+                          calculatedFPS 
+                        });
+                        
+                        // Round to 2 decimal places
+                        detectedFPS = Math.round(calculatedFPS * 100) / 100;
+                      } else {
+                        console.log('🎬 webkitDecodedFrameCount 방식 실패, 기본값 사용');
+                      }
+                      
+                      resolveFps(detectedFPS);
+                    } catch (e) {
+                      console.warn('🎬 FPS 계산 중 오류:', e);
+                      resolveFps(detectedFPS);
+                    }
+                  }, 1000);
+                } else {
+                  console.log('🎬 FPS 감지 방법 모두 실패, 기본값 30 사용');
+                  resolveFps(detectedFPS);
+                }
+              }
+            } catch (e) {
+              console.warn('🎬 FPS 감지 중 오류 발생:', e);
+              resolveFps(30); // 오류 발생 시 기본값
             }
-            
-            // If detection failed or returned 0, use default
-            if (detectedFPS <= 0) {
-              console.log('🎬 FPS 감지 실패, 기본값 30 사용');
-              detectedFPS = 30;
-            }
-          } catch (e) {
-            console.warn('🎬 FPS 감지 중 오류 발생:', e);
-            detectedFPS = 30; // 오류 발생 시 기본값
-          }
-          
-          return detectedFPS;
+          });
         };
 
         const handleLoadedMetadata = async () => {
