@@ -129,20 +129,11 @@ export const SubtitleOverlay: React.FC = () => {
     return sz;
   };
 
-  // Calculate opacity values
-  const getOpacities = () => {
-    const fontOpacity = style?.fo !== undefined ? style.fo : 1;
-    const bgOpacity = style?.bo !== undefined ? style.bo : 0.5;
-    
-    return { fontOpacity, bgOpacity };
-  };
-
   const positionStyle = getPositionStyle();
   const fontFamily = getFontFamily();
   const textOutlineStyle = getTextOutlineStyle();
   const verticalTextStyle = getVerticalTextStyle();
   const fontSize = getFontSize();
-  const { fontOpacity, bgOpacity } = getOpacities();
 
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -166,8 +157,8 @@ export const SubtitleOverlay: React.FC = () => {
             style={{
               display: 'inline-block',
               padding: '0.5em 1em',
-              backgroundColor: style?.bc ? `${style.bc}${Math.round(bgOpacity * 255).toString(16).padStart(2, '0')}` : 'transparent',
-              color: style?.fc ? `${style.fc}${Math.round(fontOpacity * 255).toString(16).padStart(2, '0')}` : '#FFFFFF',
+              backgroundColor: style?.bc || '#000000',
+              color: style?.fc || '#FFFFFF',
               fontFamily,
               fontSize,
               fontWeight: isBold ? 'bold' : 'normal',
