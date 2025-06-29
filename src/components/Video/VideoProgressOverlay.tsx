@@ -10,12 +10,6 @@ interface VideoProgressOverlayProps {
 export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
   progress
 }) => {
-  const stage = progress < 20 ? 'Validating'
-    : progress < 40 ? 'Loading' 
-    : progress < 60 ? 'Processing'
-    : progress < 80 ? 'Setting up'
-    : 'Completing';
-
   const isComplete = progress >= 100;
 
   return (
@@ -83,7 +77,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
                   </span>
                 </div>
                 <p className="text-text-secondary text-sm">
-                  {isComplete ? 'Video ready for editing' : stage}
+                  {isComplete ? 'Video ready for editing' : 'Please wait while we process your video'}
                 </p>
               </div>
             </div>
@@ -113,39 +107,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
                 )}
               </div>
             </div>
-            
-            {/* Stage Indicators */}
-            <div className="grid grid-cols-5 gap-2">
-              {[
-                { label: 'Validate', threshold: 20, icon: '🔍' },
-                { label: 'Load', threshold: 40, icon: '📁' },
-                { label: 'Process', threshold: 60, icon: '⚙️' },
-                { label: 'Setup', threshold: 80, icon: '🔧' },
-                { label: 'Complete', threshold: 100, icon: '✅' }
-              ].map((stage, index) => (
-                <motion.div
-                  key={stage.label}
-                  className={`text-center p-2 rounded-lg transition-all duration-300 ${
-                    progress >= stage.threshold 
-                      ? 'bg-info-color/10 shadow-inset-subtle text-info-color' 
-                      : 'bg-surface shadow-outset-subtle text-text-secondary'
-                  }`}
-                  animate={{
-                    scale: progress >= stage.threshold ? 1.05 : 1,
-                    filter: progress >= stage.threshold ? 'brightness(1.1)' : 'brightness(1)'
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="text-lg mb-1">{stage.icon}</div>
-                  <div className="text-xs font-medium">{stage.label}</div>
-                </motion.div>
-              ))}
-            </div>
           </div>
-
-          {/* Decorative Elements */}
-          <div className="absolute top-4 right-4 w-2 h-2 bg-info-color/30 rounded-full" />
-          <div className="absolute bottom-4 left-4 w-1 h-1 bg-info-color/20 rounded-full" />
         </motion.div>
       </div>
     </Portal>

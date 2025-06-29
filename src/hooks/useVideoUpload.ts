@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useProjectStore } from '../stores/projectStore';
 import { useTimelineStore } from '../stores/timelineStore';
 import { useToast } from './useToast';
@@ -22,6 +22,21 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
   const { setVideoMeta, currentProject } = useProjectStore();
   const { setDuration, setFPS, setCurrentTime } = useTimelineStore();
   const { success, error, info, warning } = useToast();
+
+  // Auto-close progress overlay when complete
+  useEffect(() => {
+    if (uploadState.uploadProgress >= 100) {
+      const timer = setTimeout(() => {
+        setUploadState({
+          isUploading: false,
+          uploadProgress: 0,
+          uploadStage: ''
+        });
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [uploadState.uploadProgress]);
 
   const processVideoFile = useCallback(async (file: File) => {
     setUploadState({
@@ -128,8 +143,6 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         throw new Error('Video element not available');
       }
 
-      // console.log('Setting video URL:', url);
-      
       // Set up video loading promise
       const videoLoadPromise = new Promise<{
         duration: number;
@@ -143,12 +156,6 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
 
         const handleLoadedMetadata = () => {
           cleanup();
-          
-          // console.log('Video metadata loaded successfully:', {
-          //   duration: video.duration,
-          //   width: video.videoWidth,
-          //   height: video.videoHeight
-          // });
           
           const duration = video.duration;
           const width = video.videoWidth;
@@ -237,15 +244,6 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         title: 'Video loaded successfully!',
         message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height}, ${fileSizeMB}MB)`
       });
-
-      // Reset upload state after a brief delay
-      setTimeout(() => {
-        setUploadState({
-          isUploading: false,
-          uploadProgress: 0,
-          uploadStage: ''
-        });
-      }, 1500);
 
     } catch (err) {
       console.error('Video processing error:', err);

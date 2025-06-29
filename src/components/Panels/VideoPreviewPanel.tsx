@@ -45,13 +45,11 @@ export const VideoPreviewPanel: React.FC = () => {
     if (!video) return;
 
     const handleCanPlay = () => {
-      // console.log('Video can play event triggered');
       setIsVideoLoaded(true);
       setVideoError(null);
     };
 
     const handleLoadedData = () => {
-      // console.log('Video loaded data event triggered');
       setIsVideoLoaded(true);
       setVideoError(null);
     };
@@ -68,7 +66,6 @@ export const VideoPreviewPanel: React.FC = () => {
     };
 
     const handleLoadStart = () => {
-      // console.log('Video load start event triggered');
       setVideoError(null);
     };
 
@@ -189,23 +186,11 @@ export const VideoPreviewPanel: React.FC = () => {
     setForceRender(f => f + 1);
     setIsVideoLoaded(false);
     
-    // console.log('Video metadata changed:', {
-    //   hasFile: !!currentProject?.videoMeta?.file,
-    //   file: currentProject?.videoMeta?.file?.name?.substring(0, 30) + '...',
-    //   duration: currentProject?.videoMeta?.duration,
-    //   dimensions: currentProject?.videoMeta ? 
-    //     `${currentProject.videoMeta.width}x${currentProject.videoMeta.height}` : 'none'
-    // });
-    
     if (videoRef.current && currentProject?.videoMeta?.file) {
       videoRef.current.src = URL.createObjectURL(currentProject.videoMeta.file);
       videoRef.current.load();
     }
   }, [currentProject?.videoMeta]);
-
-  useEffect(() => {
-    // console.log('Video loaded state:', { isVideoLoaded, videoError, hasVideo });
-  }, [isVideoLoaded, videoError, hasVideo]);
 
   // 컨트롤러 위치 동적 계산 -> 클리핑 컨테이너 크기 계산으로 변경
   useLayoutEffect(() => {
@@ -286,8 +271,6 @@ export const VideoPreviewPanel: React.FC = () => {
           justifyContent: 'center',
           overflow: 'hidden',
           background: 'var(--base-color)',
-          // The panel's inner shadow has a z-index of 800.
-          // Ensure any overlapping modals have a higher z-index.
         }}
       >
         <div
