@@ -14,21 +14,21 @@ const StandardIcon = (
 
 const EditingFocusIcon = (
   <div className="w-full h-full p-1 flex flex-col">
-    <div className="h-1/2 bg-primary/30 rounded-sm mb-1"></div>
     <div className="h-1/2 flex">
       <div className="w-1/2 bg-primary/30 rounded-sm mr-1"></div>
       <div className="w-1/2 bg-primary/30 rounded-sm"></div>
     </div>
+    <div className="h-1/2 bg-primary/30 rounded-sm mt-1"></div>
   </div>
 );
 
 const TimelineFirstIcon = (
   <div className="w-full h-full p-1 flex flex-col">
-    <div className="h-3/5 bg-primary/30 rounded-sm mb-1"></div>
     <div className="h-2/5 flex">
       <div className="w-1/2 bg-primary/30 rounded-sm mr-1"></div>
       <div className="w-1/2 bg-primary/30 rounded-sm"></div>
     </div>
+    <div className="h-3/5 bg-primary/30 rounded-sm mt-1"></div>
   </div>
 );
 
@@ -42,11 +42,22 @@ const QuadPanelIcon = (
 );
 
 const AdvancedEditingIcon = (
-  <div className="w-full h-full p-1 grid grid-cols-3 grid-rows-2 gap-1">
-    <div className="col-span-2 row-span-1 bg-primary/30 rounded-sm"></div>
+  <div className="w-full h-full p-1 grid grid-cols-3 grid-rows-3 gap-1">
+    <div className="col-span-2 row-span-2 bg-primary/30 rounded-sm"></div>
+    <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
+    <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
+    <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
+    <div className="col-span-3 row-span-1 bg-primary/30 rounded-sm"></div>
+  </div>
+);
+
+const AudioFocusedIcon = (
+  <div className="w-full h-full p-1 grid grid-cols-3 grid-rows-3 gap-1">
     <div className="col-span-1 row-span-2 bg-primary/30 rounded-sm"></div>
+    <div className="col-span-2 row-span-2 bg-primary/30 rounded-sm"></div>
     <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
     <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
+    <div className="col-span-3 row-span-1 bg-primary/30 rounded-sm"></div>
   </div>
 );
 
@@ -72,23 +83,23 @@ export const templateLayouts: Record<string, TemplateLayout> = {
   
   editingFocus: {
     name: "Editing Focus",
-    description: "Large editor with video and timeline",
+    description: "Video and timeline with editor below",
     icon: EditingFocusIcon,
     areas: [
-      { id: 'text-editor', x: 0, y: 0, width: 100, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'video-preview', x: 0, y: 50, width: 50, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-timeline', x: 50, y: 50, width: 50, height: 50, minWidth: 15, minHeight: 20 },
+      { id: 'video-preview', x: 0, y: 0, width: 50, height: 50, minWidth: 15, minHeight: 20 },
+      { id: 'subtitle-timeline', x: 50, y: 0, width: 50, height: 50, minWidth: 15, minHeight: 20 },
+      { id: 'text-editor', x: 0, y: 50, width: 100, height: 50, minWidth: 15, minHeight: 20 },
     ]
   },
   
   timelineFirst: {
     name: "Timeline First",
-    description: "Large timeline with video and editor",
+    description: "Video and editor with timeline below",
     icon: TimelineFirstIcon,
     areas: [
-      { id: 'subtitle-timeline', x: 0, y: 0, width: 100, height: 60, minWidth: 15, minHeight: 20 },
-      { id: 'video-preview', x: 0, y: 60, width: 50, height: 40, minWidth: 15, minHeight: 20 },
-      { id: 'text-editor', x: 50, y: 60, width: 50, height: 40, minWidth: 15, minHeight: 20 },
+      { id: 'video-preview', x: 0, y: 0, width: 50, height: 40, minWidth: 15, minHeight: 20 },
+      { id: 'text-editor', x: 50, y: 0, width: 50, height: 40, minWidth: 15, minHeight: 20 },
+      { id: 'subtitle-timeline', x: 0, y: 40, width: 100, height: 60, minWidth: 15, minHeight: 20 },
     ]
   },
   
@@ -98,40 +109,35 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     icon: QuadPanelIcon,
     areas: [
       { id: 'video-preview', x: 0, y: 0, width: 50, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-timeline', x: 50, y: 0, width: 50, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'text-editor', x: 0, y: 50, width: 50, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'style-manager', x: 50, y: 50, width: 50, height: 50, minWidth: 15, minHeight: 20 },
+      { id: 'style-manager', x: 50, y: 0, width: 50, height: 50, minWidth: 15, minHeight: 20 },
+      { id: 'subtitle-timeline', x: 0, y: 50, width: 50, height: 50, minWidth: 15, minHeight: 20 },
+      { id: 'text-editor', x: 50, y: 50, width: 50, height: 50, minWidth: 15, minHeight: 20 },
     ]
   },
   
   advancedEditing: {
     name: "Advanced Editing",
-    description: "Complex layout with 5 specialized panels",
+    description: "Five specialized panels layout",
     icon: AdvancedEditingIcon,
     areas: [
-      { id: 'video-preview', x: 0, y: 0, width: 66, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'style-manager', x: 66, y: 0, width: 34, height: 100, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-timeline', x: 0, y: 50, width: 33, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'text-editor', x: 33, y: 50, width: 33, height: 50, minWidth: 15, minHeight: 20 },
+      { id: 'video-preview', x: 0, y: 0, width: 66, height: 60, minWidth: 15, minHeight: 20 },
+      { id: 'audio-waveform', x: 66, y: 0, width: 34, height: 30, minWidth: 15, minHeight: 20 },
+      { id: 'style-manager', x: 66, y: 30, width: 34, height: 30, minWidth: 15, minHeight: 20 },
+      { id: 'script-viewer', x: 66, y: 60, width: 34, height: 40, minWidth: 15, minHeight: 20 },
+      { id: 'subtitle-timeline', x: 0, y: 60, width: 66, height: 40, minWidth: 15, minHeight: 20 },
     ]
   },
   
   audioFocused: {
     name: "Audio Focused",
-    description: "Waveform and timeline with video",
-    icon: (
-      <div className="w-full h-full p-1 flex flex-col">
-        <div className="h-2/5 bg-primary/30 rounded-sm mb-1"></div>
-        <div className="h-3/5 flex">
-          <div className="w-1/2 bg-primary/30 rounded-sm mr-1"></div>
-          <div className="w-1/2 bg-primary/30 rounded-sm"></div>
-        </div>
-      </div>
-    ),
+    description: "Five panels with audio emphasis",
+    icon: AudioFocusedIcon,
     areas: [
-      { id: 'video-preview', x: 0, y: 0, width: 100, height: 40, minWidth: 15, minHeight: 20 },
-      { id: 'audio-waveform', x: 0, y: 40, width: 50, height: 60, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-timeline', x: 50, y: 40, width: 50, height: 60, minWidth: 15, minHeight: 20 },
+      { id: 'video-preview', x: 0, y: 0, width: 33, height: 60, minWidth: 15, minHeight: 20 },
+      { id: 'audio-waveform', x: 33, y: 0, width: 67, height: 60, minWidth: 15, minHeight: 20 },
+      { id: 'text-editor', x: 0, y: 60, width: 33, height: 40, minWidth: 15, minHeight: 20 },
+      { id: 'style-manager', x: 33, y: 60, width: 33, height: 40, minWidth: 15, minHeight: 20 },
+      { id: 'subtitle-timeline', x: 66, y: 60, width: 34, height: 40, minWidth: 15, minHeight: 20 },
     ]
   }
 };
