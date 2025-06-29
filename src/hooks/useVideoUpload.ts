@@ -33,7 +33,6 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
           uploadStage: ''
         });
       }, 1500);
-      
       return () => clearTimeout(timer);
     }
   }, [uploadState.uploadProgress]);

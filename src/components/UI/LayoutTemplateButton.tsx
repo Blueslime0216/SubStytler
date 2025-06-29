@@ -40,7 +40,7 @@ export const LayoutTemplateButton: React.FC = () => {
 
   return (
     <div className="relative">
-      <button
+      <motion.button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="btn-sm px-4 py-2 text-sm flex items-center hover:bg-mid-color transition-all"
@@ -51,7 +51,7 @@ export const LayoutTemplateButton: React.FC = () => {
       >
         <LayoutTemplate className="w-4 h-4 mr-2" />
         <span>Layout</span>
-      </button>
+      </motion.button>
 
       <AnimatePresence>
         {isOpen && (
