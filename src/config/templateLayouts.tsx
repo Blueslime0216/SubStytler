@@ -136,7 +136,7 @@ export const templateLayouts: Record<string, TemplateLayout> = {
       { id: 'video-preview', x: 0, y: 0, width: 33, height: 60, minWidth: 15, minHeight: 20 },
       { id: 'audio-waveform', x: 33, y: 0, width: 67, height: 60, minWidth: 15, minHeight: 20 },
       { id: 'text-editor', x: 0, y: 60, width: 33, height: 40, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-timeline', x: 33, y: 60, width: 33, height: 40, minWidth: 15, minHeight: 20 },
+      { id: 'subtitle-preview', x: 33, y: 60, width: 33, height: 40, minWidth: 15, minHeight: 20 },
       { id: 'style-manager', x: 66, y: 60, width: 34, height: 40, minWidth: 15, minHeight: 20 },
     ]
   }

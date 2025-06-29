@@ -114,4 +114,5 @@ export type PanelType =
   | 'effects-library'
   | 'history'
   | 'notes'
-  | 'empty'; // 🆕 빈 패널 타입 추가
+  | 'empty'
+  | 'subtitle-preview'; // 새로운 자막 미리보기 패널 타입 추가

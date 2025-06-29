@@ -1,4 +1,4 @@
-import { Monitor, Clock, AudioWaveform as Waveform, Type, Palette, FileText, Zap, History, StickyNote, Square } from 'lucide-react';
+import { Monitor, Clock, AudioWaveform as Waveform, Type, Palette, FileText, Zap, History, StickyNote, Square, Eye } from 'lucide-react';
 import { PanelType } from '../types/project';
 
 export const panelConfig: Record<PanelType, { title: string; icon: React.ComponentType<any>; description: string }> = {
@@ -11,5 +11,6 @@ export const panelConfig: Record<PanelType, { title: string; icon: React.Compone
   'effects-library': { title: 'Effects Library', icon: Zap, description: 'Animation effects library' },
   'history': { title: 'History', icon: History, description: 'Undo/redo history' },
   'notes': { title: 'Notes', icon: StickyNote, description: 'Project notes and comments' },
-  'empty': { title: 'Empty Panel', icon: Square, description: 'Empty panel - select a type' }, // 🆕 빈 패널 설정
+  'empty': { title: 'Empty Panel', icon: Square, description: 'Empty panel - select a type' },
+  'subtitle-preview': { title: 'Subtitle Preview', icon: Eye, description: 'Preview subtitles in text format' },
 };

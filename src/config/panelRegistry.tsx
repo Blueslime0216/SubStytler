@@ -21,6 +21,7 @@ export const basePanelRegistry = {
   'history': createPanelComponent('history'),
   'notes': createPanelComponent('notes'),
   'empty': createPanelComponent('empty'),
+  'subtitle-preview': createPanelComponent('subtitle-preview'),
 } as const;
 
 // 🎯 동적 패널 레지스트리 - 패턴 매칭 지원
@@ -50,6 +51,7 @@ export const panelRegistry = new Proxy(basePanelRegistry, {
       video: 'video-preview',
       timeline: 'subtitle-timeline',
       text: 'text-editor',
+      preview: 'subtitle-preview',
     };
     if (prop in aliasMap) {
       const mappedType = aliasMap[prop];
@@ -89,6 +91,7 @@ export const extractPanelType = (areaId: string): PanelType => {
     video: 'video-preview',
     timeline: 'subtitle-timeline',
     text: 'text-editor',
+    preview: 'subtitle-preview',
   };
   if (areaId in aliasMap) {
     return aliasMap[areaId];
