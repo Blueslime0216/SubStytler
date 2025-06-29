@@ -18,7 +18,7 @@ export const VideoPreviewPanel: React.FC = () => {
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   
-  const { currentProject } = useProjectStore();
+  const { currentProject, triggerUploadCounter } = useProjectStore();
   const { error } = useToast();
   
   const { 
@@ -121,7 +121,7 @@ export const VideoPreviewPanel: React.FC = () => {
     }
   }, [processVideoFile, error]);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     accept: {
       'video/*': ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv', '.m4v']
@@ -132,6 +132,13 @@ export const VideoPreviewPanel: React.FC = () => {
     noClick: true, // 🎯 기본 클릭 비활성화
     noKeyboard: true // 키보드 이벤트도 비활성화
   });
+
+  // Handle programmatic video upload trigger
+  useEffect(() => {
+    if (triggerUploadCounter > 0 && !uploadState.isUploading) {
+      open();
+    }
+  }, [triggerUploadCounter, open, uploadState.isUploading]);
 
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
@@ -160,18 +167,8 @@ export const VideoPreviewPanel: React.FC = () => {
   // 🎯 수동 파일 선택 핸들러 (중복 방지)
   const handleManualFileSelect = React.useCallback(() => {
     if (uploadState.isUploading) return;
-    
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'video/*';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        processVideoFile(file);
-      }
-    };
-    input.click();
-  }, [uploadState.isUploading, processVideoFile]);
+    open();
+  }, [uploadState.isUploading, open]);
 
   const hasVideo = !!(currentProject?.videoMeta && currentProject.videoMeta.file);
   const [forceRender, setForceRender] = useState(0);

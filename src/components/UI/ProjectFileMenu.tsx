@@ -30,7 +30,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
     saveProjectToFileSystem, 
     canSave 
   } = useProjectSave();
-  const { currentProject, isModified } = useProjectStore();
+  const { currentProject, isModified, triggerVideoUpload } = useProjectStore();
   const { error } = useToast();
 
   useEffect(() => {
@@ -80,33 +80,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
   };
 
   const handleUploadVideo = () => {
-    // Create a file input element
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'video/*';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        // Find the video element and trigger the upload
-        const videoElement = document.querySelector('video');
-        if (videoElement) {
-          // Simulate a drop event on the video panel
-          const dropEvent = new Event('drop', { bubbles: true });
-          Object.defineProperty(dropEvent, 'dataTransfer', {
-            value: {
-              files: [file]
-            }
-          });
-          videoElement.dispatchEvent(dropEvent);
-        } else {
-          error({
-            title: 'Video upload failed',
-            message: 'Could not find video element'
-          });
-        }
-      }
-    };
-    input.click();
+    triggerVideoUpload();
     onClose();
   };
 

@@ -5,6 +5,7 @@ import { createProjectActions } from './projectActions';
 interface ProjectState {
   currentProject: Project | null;
   isModified: boolean;
+  triggerUploadCounter: number;
   
   // Actions injected from slice
   createProject: (name: string) => void;
@@ -22,11 +23,21 @@ interface ProjectState {
   addTrack: (name: string) => string | null;
   updateTrack: (id: string, updates: Partial<SubtitleTrack>) => void;
   deleteTrack: (id: string) => void;
+  
+  // Video upload trigger
+  triggerVideoUpload: () => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
   currentProject: null,
   isModified: false,
+  triggerUploadCounter: 0,
+
+  triggerVideoUpload: () => {
+    set((state) => ({
+      triggerUploadCounter: state.triggerUploadCounter + 1
+    }));
+  },
 
   ...createProjectActions(set, get, {} as any),
 }));
