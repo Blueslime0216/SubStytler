@@ -49,7 +49,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
 
   return (
     <div className="panel-header">
-      <div className="flex items-center space-x-4 flex-1 min-w-0">
+      <div className="flex items-center space-x-2 flex-1 min-w-0">
         {/* 패널 타입 선택기 */}
         <PanelTypeSelector
           currentType={type}
@@ -79,7 +79,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <SplitSquareHorizontal className="w-3.5 h-3.5" />
+            <SplitSquareHorizontal className="w-3 h-3" />
           </motion.button>
 
           {/* 분할 옵션 작은 팝업 */}
@@ -99,14 +99,14 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                   className="panel-action-btn mb-1"
                   title="가로 분할"
                 >
-                  <SplitSquareHorizontal className="w-4 h-4" />
+                  <SplitSquareHorizontal className="w-3 h-3" />
                 </motion.button>
                 <motion.button
                   onClick={() => { onSplitPanel('horizontal', 'empty'); setShowSplitOptions(false); }}
                   className="panel-action-btn"
                   title="세로 분할"
                 >
-                  <SplitSquareVertical className="w-4 h-4" />
+                  <SplitSquareVertical className="w-3 h-3" />
                 </motion.button>
               </motion.div>
             )}
@@ -123,7 +123,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <ChevronDown className="w-3.5 h-3.5" />
+              <ChevronDown className="w-3 h-3" />
             </motion.button>
 
             {/* 덮기 방향 옵션 팝업 */}
@@ -138,7 +138,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                   style={{ zIndex: 100 }}
                   onMouseLeave={() => setShowCoverOptions(false)}
                 >
-                  <div className="grid grid-cols-3 grid-rows-3 gap-1 w-24 h-24">
+                  <div className="grid grid-cols-3 grid-rows-3 gap-1 w-20 h-20">
                     {/* 상단 영역 */}
                     <motion.button
                       onClick={() => { onCover('top'); setShowCoverOptions(false); }}
@@ -147,7 +147,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <ArrowUp className="w-3.5 h-3.5" />
+                      <ArrowUp className="w-3 h-3" />
                     </motion.button>
                     
                     {/* 좌측 영역 */}
@@ -158,7 +158,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <ArrowLeft className="w-3 h-3" />
                     </motion.button>
                     
                     {/* 우측 영역 */}
@@ -169,7 +169,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3 h-3" />
                     </motion.button>
                     
                     {/* 하단 영역 */}
@@ -180,7 +180,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <ArrowDown className="w-3.5 h-3.5" />
+                      <ArrowDown className="w-3 h-3" />
                     </motion.button>
                   </div>
                 </motion.div>

@@ -119,11 +119,11 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
   };
 
   // 아이콘 및 간격 설정
-  const iconSize = 40;
-  const iconSpacing = 12;
+  const iconSize = 32; // Reduced from 40
+  const iconSpacing = 8; // Reduced from 12
   const totalIconWidth = iconSize + iconSpacing;
-  const openWidth = 200;
-  const centerOffset = 80;
+  const openWidth = 180; // Reduced from 200
+  const centerOffset = 74; // Adjusted from 80
 
   return (
     <div ref={selectorRef} className={`relative ${className}`}>
@@ -134,9 +134,9 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
         title={`${currentConfig.title} - 클릭하여 패널 변경`}
         initial={false}
         animate={{
-          width: isOpen ? 200 : 48,
-          height: 48,
-          borderRadius: isOpen ? 12 : 8,
+          width: isOpen ? 180 : 36, // Reduced from 48
+          height: 36, // Reduced from 48
+          borderRadius: isOpen ? 10 : 6, // Reduced from 12/8
         }}
         transition={animationConfig}
         style={{
@@ -162,7 +162,7 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
               transition={animationConfig}
               className="flex items-center justify-center w-full h-full"
             >
-              <CurrentIcon className="w-5 h-5 text-text-primary transition-colors duration-200" />
+              <CurrentIcon className="w-4 h-4 text-text-primary transition-colors duration-200" />
             </motion.div>
           ) : (
             // 열린 상태: 아이콘 캐러셀
@@ -237,14 +237,14 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
                       }}
                     >
                       <motion.div
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center panel-selector-icon-wrapper ${isSelected ? 'selected' : ''}`}
+                        className={`w-6 h-6 rounded-lg flex items-center justify-center panel-selector-icon-wrapper ${isSelected ? 'selected' : ''}`}
                         animate={{
                           backgroundColor: 'transparent',
                         }}
                         transition={animationConfig}
                       >
                         <Icon 
-                          className={`w-4 h-4 transition-colors duration-200 panel-selector-icon ${
+                          className={`w-3 h-3 transition-colors duration-200 panel-selector-icon ${
                             isSelected ? 'text-white' : 'text-text-secondary'
                           }`} 
                         />
@@ -287,7 +287,7 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
               color: 'var(--text-primary)',
               whiteSpace: 'nowrap',
               zIndex: 1000,
-              width: '140px',
+              width: '120px', /* Reduced from 140px */
               left: '50%',
               transform: 'translateX(-50%)',
               textAlign: 'center' as const,

@@ -87,10 +87,10 @@
 
 /* Icon Button */
 .btn-icon {
-  width: 36px;
-  height: 36px;
+  width: 28px; /* Reduced from 36px */
+  height: 28px; /* Reduced from 36px */
   padding: 0;
-  border-radius: 8px;
+  border-radius: 6px; /* Reduced from 8px */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,14 +98,14 @@
 
 /* Panel Action Buttons */
 .panel-action-btn {
-  width: 28px;
-  height: 28px;
+  width: 22px; /* Reduced from 28px */
+  height: 22px; /* Reduced from 28px */
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: var(--surface-color);
   color: var(--text-secondary);
-  border-radius: 6px;
+  border-radius: 4px; /* Reduced from 6px */
   box-shadow: var(--shadow-outset-subtle);
   cursor: pointer;
   transition: all 0.2s ease;
