@@ -1,4 +1,5 @@
 import { useCallback, useState, useEffect } from 'react';
+import * as MP4Box from 'mp4box';
 import { useProjectStore } from '../stores/projectStore';
 import { useTimelineStore } from '../stores/timelineStore';
 import { useToast } from './useToast';
@@ -8,6 +9,51 @@ interface VideoUploadState {
   uploadProgress: number;
   uploadStage: string;
 }
+
+// Helper function to get video metadata using mp4box.js
+const getVideoMetadata = (
+  file: File
+): Promise<{
+  duration: number;
+  width: number;
+  height: number;
+  fps: number;
+}> => {
+  return new Promise((resolve, reject) => {
+    const mp4boxfile = MP4Box.createFile();
+
+    mp4boxfile.onReady = (info: any) => {
+      const videoTrack = info.tracks.find((track: any) => track.type === 'video');
+      if (videoTrack) {
+        const fps = videoTrack.nb_samples / (videoTrack.duration / videoTrack.timescale);
+        resolve({
+          duration: info.duration / info.timescale,
+          width: videoTrack.video.width,
+          height: videoTrack.video.height,
+          fps: Math.round(fps * 100) / 100, // Round to 2 decimal places
+        });
+      } else {
+        reject(new Error('No video track found in the file.'));
+      }
+    };
+
+    mp4boxfile.onError = (e: any) => {
+      reject(new Error(`mp4box failed to parse file: ${e}`));
+    };
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      const arrayBuffer = e.target?.result as ArrayBuffer;
+      (arrayBuffer as any).fileStart = 0;
+      mp4boxfile.appendBuffer(arrayBuffer as MP4Box.MP4BoxBuffer);
+      mp4boxfile.flush();
+    };
+    reader.onerror = () => {
+      reject(new Error('Failed to read file.'));
+    };
+    reader.readAsArrayBuffer(file);
+  });
+};
 
 export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
   const [uploadState, setUploadState] = useState<VideoUploadState>({
@@ -130,262 +176,61 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         });
       }
 
-      setUploadState(prev => ({ 
-        ...prev, 
+      setUploadState(prev => ({
+        ...prev,
         uploadProgress: 20,
         uploadStage: 'Creating video URL...'
       }));
 
       // Stage 2: Create object URL
       const url = URL.createObjectURL(file);
-      
-      setUploadState(prev => ({ 
-        ...prev, 
+
+      setUploadState(prev => ({
+        ...prev,
         uploadProgress: 40,
-        uploadStage: 'Loading video...'
+        uploadStage: 'Loading video metadata...'
       }));
 
-      // Stage 3: Load video metadata
+      // Stage 3: Load video metadata using mp4box
       const video = videoRef.current;
       if (!video) {
         throw new Error('Video element not available');
       }
 
-      // Set up video loading promise
-      const videoLoadPromise = new Promise<{
-        duration: number;
-        width: number;
-        height: number;
-        fps: number;
-      }>((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          console.error('Video loading timed out after 60 seconds');
-          reject(new Error('Video loading timed out. This may be due to the large file size or unsupported format.'));
-        }, 60000); // Increased timeout for large files
+      const metadata = await getVideoMetadata(file);
+      console.log('🎬 Extracted metadata:', metadata);
 
-        // Function to detect FPS from video using requestVideoFrameCallback
-        const detectFPS = async (videoElement: HTMLVideoElement): Promise<number> => {
-          return new Promise((resolveFps) => {
-            let detectedFPS = 30; // Default fallback
-            
-            try {
-              console.log('🎬 FPS 감지 시작...');
-              
-              // Method 1: Use requestVideoFrameCallback if available
-              if ('requestVideoFrameCallback' in videoElement) {
-                console.log('🎬 requestVideoFrameCallback 방식으로 FPS 감지 시도');
-                
-                let frameCount = 0;
-                const startTime = performance.now();
-                const measureDuration = 1000; // 1 second measurement
-                
-                const frameCallback = (now: number, metadata: any) => {
-                  frameCount++;
-                  
-                  const elapsedTime = performance.now() - startTime;
-                  
-                  if (elapsedTime < measureDuration) {
-                    // Continue counting frames
-                    (videoElement as any).requestVideoFrameCallback(frameCallback);
-                  } else {
-                    // Calculate FPS
-                    const measuredFPS = (frameCount / elapsedTime) * 1000;
-                    console.log('🎬 requestVideoFrameCallback 결과:', { 
-                      frameCount, 
-                      elapsedTime, 
-                      measuredFPS 
-                    });
-                    
-                    // Round to 2 decimal places
-                    detectedFPS = Math.round(measuredFPS * 100) / 100;
-                    resolveFps(detectedFPS);
-                  }
-                };
-                
-                // Start measuring
-                (videoElement as any).requestVideoFrameCallback(frameCallback);
-                
-                // Ensure video is playing for accurate measurement
-                const playPromise = videoElement.play();
-                if (playPromise) {
-                  playPromise.catch(() => {
-                    // Playback failed, use method 2
-                    method2();
-                  });
-                }
-                
-                // Set timeout to ensure we don't wait forever
-                setTimeout(() => {
-                  if (detectedFPS === 30) {
-                    method2();
-                  }
-                }, measureDuration + 500);
-                
-                return;
-              } else {
-                method2();
-              }
-              
-              // Method 2: Use webkitDecodedFrameCount
-              function method2() {
-                console.log('🎬 webkitDecodedFrameCount 방식으로 FPS 감지 시도');
-                
-                // @ts-ignore - Some browsers expose this non-standard property
-                if (videoElement.webkitDecodedFrameCount !== undefined && videoElement.duration) {
-                  // Take initial measurement
-                  // @ts-ignore
-                  const initialFrameCount = videoElement.webkitDecodedFrameCount || 0;
-                  const initialTime = performance.now();
-                  
-                  // Wait a second and measure again
-                  setTimeout(() => {
-                    try {
-                      // @ts-ignore
-                      const currentFrameCount = videoElement.webkitDecodedFrameCount || 0;
-                      const elapsedTime = (performance.now() - initialTime) / 1000; // in seconds
-                      
-                      const framesDelta = currentFrameCount - initialFrameCount;
-                      
-                      if (framesDelta > 0 && elapsedTime > 0) {
-                        const calculatedFPS = framesDelta / elapsedTime;
-                        console.log('🎬 webkitDecodedFrameCount 결과:', { 
-                          initialFrameCount, 
-                          currentFrameCount, 
-                          framesDelta, 
-                          elapsedTime, 
-                          calculatedFPS 
-                        });
-                        
-                        // Round to 2 decimal places
-                        detectedFPS = Math.round(calculatedFPS * 100) / 100;
-                      } else {
-                        console.log('🎬 webkitDecodedFrameCount 방식 실패, 기본값 사용');
-                      }
-                      
-                      resolveFps(detectedFPS);
-                    } catch (e) {
-                      console.warn('🎬 FPS 계산 중 오류:', e);
-                      resolveFps(detectedFPS);
-                    }
-                  }, 1000);
-                } else {
-                  console.log('🎬 FPS 감지 방법 모두 실패, 기본값 30 사용');
-                  resolveFps(detectedFPS);
-                }
-              }
-            } catch (e) {
-              console.warn('🎬 FPS 감지 중 오류 발생:', e);
-              resolveFps(30); // 오류 발생 시 기본값
-            }
-          });
-        };
+      // Ask for confirmation for unusual FPS values
+      const commonFpsValues = [23.97, 24, 25, 29.97, 30, 50, 59.94, 60];
+      const isUnusualFps = !commonFpsValues.some(fps => Math.abs(fps - metadata.fps) < 0.1);
 
-        const handleLoadedMetadata = async () => {
-          cleanup();
-          
-          const duration = video.duration;
-          const width = video.videoWidth;
-          const height = video.videoHeight;
-
-          if (duration <= 0) {
-            console.error('Invalid video duration:', duration);
-            reject(new Error('Invalid video duration'));
-            return;
-          }
-
-          if (width <= 0 || height <= 0) {
-            console.error('Invalid video dimensions:', { width, height });
-            reject(new Error('Invalid video dimensions'));
-            return;
-          }
-
-          // Detect FPS
-          const fps = await detectFPS(video);
-
-          resolve({
-            duration: duration * 1000, // Convert to milliseconds
-            width,
-            height,
-            fps
-          });
-        };
-
-        const handleError = (e: Event) => {
-          cleanup();
-          console.error('Video loading error:', e);
-          reject(new Error('Failed to load video. The file may be corrupted, in an unsupported format, or too large for your device to handle.'));
-        };
-
-        const cleanup = () => {
-          clearTimeout(timeout);
-          video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-          video.removeEventListener('error', handleError);
-        };
-
-        // Add event listeners
-        video.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
-        video.addEventListener('error', handleError, { once: true });
-
-        // Start loading
-        video.src = url;
-        video.preload = 'metadata';
-        video.load();
-      });
-
-      setUploadState(prev => ({ 
-        ...prev, 
-        uploadProgress: 60,
-        uploadStage: 'Processing metadata...'
-      }));
-      
-      const metadata = await videoLoadPromise;
-      
-      setUploadState(prev => ({ 
-        ...prev, 
-        uploadProgress: 80,
-        uploadStage: 'Setting up timeline...'
-      }));
-
-      // 비정상적인 FPS 값 확인 (5 미만 또는 10 미만이면서 일반적인 값이 아닌 경우)
-      const isAbnormalFps = metadata.fps < 5 || 
-                           (metadata.fps < 10 && ![23.976, 24, 25, 29.97, 30].includes(metadata.fps));
-      
-      if (isAbnormalFps) {
-        // FPS 확인 모달 표시를 위해 현재 처리 중인 데이터 저장
-        setPendingVideoData({
-          file,
-          metadata,
-          url
-        });
+      if (isUnusualFps && (metadata.fps < 10 || metadata.fps > 120)) {
         setDetectedFps(metadata.fps);
+        setPendingVideoData({ file, metadata, url });
         setShowFpsConfirmation(true);
-        
-        // 업로드 상태 초기화
-        setUploadState({
-          isUploading: false,
-          uploadProgress: 0,
-          uploadStage: ''
-        });
-        
+        // Pause processing until user confirms
+        setUploadState(prev => ({
+          ...prev,
+          isUploading: false
+        }));
         return;
       }
 
-      // 정상적인 FPS 값이면 바로 처리 완료
-      finalizeVideoProcessing(file, metadata, url);
+      // If FPS is standard, or we don't want to confirm, proceed directly
+      await finalizeVideoLoad({ file, metadata, url });
+    } catch (uploadError) {
+      console.error('Video upload error:', uploadError);
 
-    } catch (err) {
-      console.error('Video processing error:', err);
-      
-      const errorMessage = err instanceof Error ? err.message : 'Failed to process video file';
-      
+      const errorMessage = uploadError instanceof Error ? uploadError.message : 'Failed to process video file';
+
       // Clean up on error
       if (videoRef.current) {
         videoRef.current.src = '';
       }
-      
+
       // Show error toast
       error({
-        title: 'Video processing failed',
+        title: 'Video upload failed',
         message: errorMessage
       });
 
@@ -395,80 +240,96 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         uploadStage: ''
       });
     }
-  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success, error, warning, videoRef]);
+  }, [videoRef, warning, error]);
 
-  // FPS 확인 후 최종 처리 함수
-  const finalizeVideoProcessing = useCallback((file: File, metadata: any, url: string) => {
-    // Stage 4: Update stores with metadata
-    setVideoMeta({
-      filename: file.name,
-      duration: metadata.duration,
-      fps: metadata.fps,
-      width: metadata.width,
-      height: metadata.height,
-      file
-    });
+  const finalizeVideoLoad = useCallback(
+    async ({ file, metadata, url }: { file: File; metadata: any; url: string }) => {
+      setUploadState({
+        isUploading: true,
+        uploadProgress: 80,
+        uploadStage: 'Applying metadata...'
+      });
 
-    setDuration(metadata.duration);
-    setFPS(metadata.fps);
-    setCurrentTime(0); // Reset to beginning
+      const video = videoRef.current;
+      if (!video) {
+        error({ title: 'Error', message: 'Video element disappeared.' });
+        return;
+      }
 
-    setUploadState(prev => ({ 
-      ...prev, 
-      uploadProgress: 100,
-      uploadStage: 'Complete!'
-    }));
+      // Set video source
+      video.src = url;
 
-    // Show success toast
-    const fileSizeMB = Math.round(file.size / (1024 * 1024));
-    success({
-      title: 'Video loaded successfully!',
-      message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height}, ${fileSizeMB}MB, ${metadata.fps}fps)`
-    });
-  }, [setVideoMeta, setDuration, setFPS, setCurrentTime, success]);
+      // Apply metadata to stores
+      setVideoMeta({
+        filename: file.name,
+        duration: metadata.duration,
+        width: metadata.width,
+        height: metadata.height,
+        fps: metadata.fps,
+        file: file
+      });
+      setDuration(metadata.duration);
+      setFPS(metadata.fps);
+      setCurrentTime(0);
 
-  // FPS 확인 모달에서 사용자가 확인 버튼을 눌렀을 때
-  const handleFpsConfirm = useCallback((confirmedFps: number) => {
-    if (!pendingVideoData) return;
-    
-    const { file, metadata, url } = pendingVideoData;
-    
-    // 사용자가 확인한 FPS 값으로 업데이트
-    const updatedMetadata = {
-      ...metadata,
-      fps: confirmedFps
-    };
-    
-    // 최종 처리 진행
-    finalizeVideoProcessing(file, updatedMetadata, url);
-    
-    // 상태 초기화
-    setShowFpsConfirmation(false);
-    setPendingVideoData(null);
-  }, [pendingVideoData, finalizeVideoProcessing]);
+      setUploadState({
+        isUploading: true,
+        uploadProgress: 100,
+        uploadStage: 'Upload complete!'
+      });
 
-  const confirmLargeFileUpload = useCallback(() => {
+      success({
+        title: 'Video loaded successfully!',
+        message: `${file.name} (${metadata.width}x${metadata.height} @ ${metadata.fps.toFixed(2)}fps)`
+      });
+    },
+    [videoRef, setVideoMeta, setDuration, setFPS, setCurrentTime, success, error]
+  );
+
+  const handleConfirmLargeFile = () => {
     if (pendingLargeFile) {
       continueVideoProcessing(pendingLargeFile);
-      setPendingLargeFile(null);
-      setShowSizeWarning(false);
     }
-  }, [pendingLargeFile, continueVideoProcessing]);
-
-  const cancelLargeFileUpload = useCallback(() => {
-    setPendingLargeFile(null);
     setShowSizeWarning(false);
-  }, []);
+    setPendingLargeFile(null);
+  };
+
+  const handleFpsConfirm = (newFps: number) => {
+    if (pendingVideoData) {
+      const { file, metadata, url } = pendingVideoData;
+      const updatedMetadata = { ...metadata, fps: newFps };
+      finalizeVideoLoad({ file, metadata: updatedMetadata, url });
+    }
+    setShowFpsConfirmation(false);
+    setPendingVideoData(null);
+  };
+
+  const handleFpsCancel = () => {
+    if (pendingVideoData && pendingVideoData.url) {
+      URL.revokeObjectURL(pendingVideoData.url);
+    }
+    setShowFpsConfirmation(false);
+    setPendingVideoData(null);
+    setUploadState({
+      isUploading: false,
+      uploadProgress: 0,
+      uploadStage: ''
+    });
+    info({
+      title: 'Video Upload Canceled',
+      message: 'You can select a different file to upload.'
+    });
+  };
 
   return {
     uploadState,
     processVideoFile,
     showSizeWarning,
     pendingLargeFile,
-    confirmLargeFileUpload,
-    cancelLargeFileUpload,
+    handleConfirmLargeFile,
     showFpsConfirmation,
     detectedFps,
-    handleFpsConfirm
+    handleFpsConfirm,
+    handleFpsCancel
   };
 };
