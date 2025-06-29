@@ -156,6 +156,8 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
 
         // Function to detect FPS from video
         const detectFPS = async (videoElement: HTMLVideoElement): Promise<number> => {
+          console.log('🎬 FPS 감지 시작...');
+          
           // Default fallback FPS
           let detectedFPS = 30;
           
@@ -169,14 +171,19 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
               // @ts-ignore
               const mozFrames = videoElement.mozDecodedFrames || videoElement.mozParsedFrames;
               detectedFPS = Math.round(mozFrames / videoElement.duration);
+              console.log('🎬 Mozilla 속성으로 FPS 감지:', { mozFrames, duration: videoElement.duration, detectedFPS });
             } 
             // @ts-ignore - Some browsers expose this non-standard property
             else if (videoElement.webkitDecodedFrameCount !== undefined && videoElement.duration) {
               // @ts-ignore
-              detectedFPS = Math.round(videoElement.webkitDecodedFrameCount / videoElement.duration);
+              const webkitFrames = videoElement.webkitDecodedFrameCount;
+              detectedFPS = Math.round(webkitFrames / videoElement.duration);
+              console.log('🎬 Webkit 속성으로 FPS 감지:', { webkitFrames, duration: videoElement.duration, detectedFPS });
             }
             // If we couldn't detect from properties, use a more reliable method
             else {
+              console.log('🎬 브라우저 속성으로 FPS를 감지할 수 없음, 프레임 분석 시도...');
+              
               // Try to detect by seeking and counting frames
               const seekTest = async (): Promise<number> => {
                 const testDuration = 2; // seconds to test
@@ -193,7 +200,12 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
                 canvas.height = 32;
                 const ctx = canvas.getContext('2d');
                 
-                if (!ctx) return 30; // Fallback if canvas not supported
+                if (!ctx) {
+                  console.log('🎬 캔버스 컨텍스트를 가져올 수 없음, 기본값 30fps 사용');
+                  return 30; // Fallback if canvas not supported
+                }
+                
+                console.log('🎬 프레임 분석 시작:', { testDuration, startTime, endTime, seekStep });
                 
                 // Function to check if frame changed
                 const isNewFrame = (): boolean => {
@@ -236,6 +248,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
                 // Reset video position
                 videoElement.currentTime = 0;
                 
+                console.log('🎬 프레임 분석 결과:', { frameCount, testDuration, calculatedFPS: Math.round(frameCount / testDuration) });
                 return Math.round(frameCount / testDuration);
               };
               
@@ -243,15 +256,16 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
                 detectedFPS = await seekTest();
                 // Validate result is reasonable
                 if (detectedFPS < 10 || detectedFPS > 120) {
+                  console.log('🎬 감지된 FPS가 비정상적임:', detectedFPS, '기본값 30fps 사용');
                   detectedFPS = 30; // Fallback to common value
                 }
               } catch (e) {
-                console.warn('FPS detection failed:', e);
+                console.warn('🎬 FPS 감지 실패:', e);
                 detectedFPS = 30;
               }
             }
           } catch (e) {
-            console.warn('Error detecting FPS:', e);
+            console.warn('🎬 FPS 감지 중 오류 발생:', e);
           }
           
           // Common FPS values for normalization
@@ -268,6 +282,13 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
               closestFPS = fps;
             }
           }
+          
+          console.log('🎬 FPS 감지 최종 결과:', { 
+            rawDetectedFPS: detectedFPS, 
+            normalizedFPS: closestFPS, 
+            difference: minDiff,
+            commonFPSValues: commonFPS
+          });
           
           return closestFPS;
         };
