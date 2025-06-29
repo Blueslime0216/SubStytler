@@ -35,6 +35,9 @@ export const VideoPreviewPanel: React.FC = () => {
   const videoAreaRef = useRef<HTMLDivElement>(null);
   const [clippingContainerStyle, setClippingContainerStyle] = useState({});
   const [videoUrl, setVideoUrl] = useState<string | undefined>();
+  
+  // Track if we've already processed the current trigger count
+  const processedTriggerRef = useRef<number>(0);
 
   // Video event handlers
   useEffect(() => {
@@ -133,10 +136,18 @@ export const VideoPreviewPanel: React.FC = () => {
     noKeyboard: true // 키보드 이벤트도 비활성화
   });
 
-  // Handle programmatic video upload trigger
+  // Handle programmatic video upload trigger with proper dependency tracking
   useEffect(() => {
-    if (triggerUploadCounter > 0 && !uploadState.isUploading) {
-      open();
+    // Only open file dialog if this is a new trigger count and we're not already uploading
+    if (triggerUploadCounter > 0 && 
+        triggerUploadCounter !== processedTriggerRef.current && 
+        !uploadState.isUploading) {
+      // Update the processed trigger reference
+      processedTriggerRef.current = triggerUploadCounter;
+      // Use setTimeout to break the render cycle and prevent infinite loop
+      setTimeout(() => {
+        open();
+      }, 0);
     }
   }, [triggerUploadCounter, open, uploadState.isUploading]);
 
