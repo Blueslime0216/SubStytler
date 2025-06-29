@@ -14,7 +14,7 @@ import { VideoReuploadDialog } from './components/UI/VideoReuploadDialog';
 import { useToast } from './hooks/useToast';
 import { VideoInfo } from './utils/videoUtils';
 import { LayoutTemplateButton } from './components/UI/LayoutTemplateButton';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, Save, FileExport, Undo, Redo, Menu } from 'lucide-react';
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(
@@ -40,6 +40,14 @@ export default function App() {
 
   // Toast system
   const { toasts, removeToast } = useToast();
+
+  // History state for undo/redo
+  const { pastStates, futureStates, undo, redo } = useHistoryStore(state => ({
+    pastStates: state.pastStates,
+    futureStates: state.futureStates,
+    undo: state.undo,
+    redo: state.redo
+  }));
 
   // Set theme on mount
   useEffect(() => {
@@ -130,43 +138,90 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-bg text-text-primary">
-      {/* Header */}
-      <header className="h-14 flex items-center justify-between px-4 shadow-outset bg-surface">
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center justify-center w-8 h-8 bg-primary-color rounded-md text-white">
-            <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5-9-5-9 5 9 5z"/></svg>
-          </div>
-          <div>
-            <div className="heading-primary text-lg">Sub-Stytler</div>
-            <div className="caption text-xs">Professional Editor</div>
-          </div>
-        </div>
-        <div className="flex items-center space-x-3">
-          <LayoutTemplateButton />
-          <button 
-            ref={fileMenuTriggerRef}
-            onClick={() => setIsFileMenuOpen(!isFileMenuOpen)}
-            className="btn px-4 py-1.5 text-sm"
-          >
-            Project
-          </button>
-          <button 
-            onClick={handleSaveProject}
-            disabled={!canSave}
-            className="btn px-4 py-1.5 text-sm disabled:opacity-50"
-          >
-            Save Project
-          </button>
-          <button className="btn px-4 py-1.5 text-sm">Export YTT</button>
-        </div>
+      {/* Header - Adobe-style App Bar */}
+      <header className="h-12 flex items-center px-2 bg-surface border-b border-border-color shadow-sm">
+        {/* Left Section - Logo and Main Menu */}
         <div className="flex items-center space-x-2">
-          <div className="text-sm opacity-80">Untitled Project</div>
+          {/* App Logo */}
+          <div className="flex items-center space-x-2 px-2">
+            <div className="flex items-center justify-center w-7 h-7 bg-primary-color rounded-md text-white">
+              <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5-9-5-9 5 9 5z"/></svg>
+            </div>
+            <div>
+              <div className="heading-primary text-sm font-semibold">Sub-Stytler</div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="h-6 w-px bg-border-color mx-1"></div>
+
+          {/* Main Menu Items */}
+          <div className="flex items-center space-x-1">
+            <LayoutTemplateButton />
+            
+            <button 
+              ref={fileMenuTriggerRef}
+              onClick={() => setIsFileMenuOpen(!isFileMenuOpen)}
+              className="btn-sm px-3 py-1 text-xs hover:bg-mid-color"
+            >
+              Project
+            </button>
+            
+            <button 
+              onClick={handleSaveProject}
+              disabled={!canSave}
+              className="btn-sm px-3 py-1 text-xs flex items-center space-x-1 hover:bg-mid-color disabled:opacity-50"
+            >
+              <Save size={12} />
+              <span>Save</span>
+            </button>
+            
+            <button className="btn-sm px-3 py-1 text-xs flex items-center space-x-1 hover:bg-mid-color">
+              <FileExport size={12} />
+              <span>Export</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Center Section - Project Title */}
+        <div className="flex-1 flex justify-center">
+          <div className="text-sm opacity-80 font-medium">Untitled Project</div>
+        </div>
+
+        {/* Right Section - Tools and Theme Toggle */}
+        <div className="flex items-center space-x-2">
+          {/* History Controls */}
+          <div className="flex items-center space-x-1 mr-2">
+            <button 
+              onClick={undo}
+              disabled={pastStates.length === 0}
+              className="btn-icon w-7 h-7 flex items-center justify-center disabled:opacity-50"
+              title="Undo (Ctrl+Z)"
+            >
+              <Undo size={14} />
+            </button>
+            <button 
+              onClick={redo}
+              disabled={futureStates.length === 0}
+              className="btn-icon w-7 h-7 flex items-center justify-center disabled:opacity-50"
+              title="Redo (Ctrl+Y)"
+            >
+              <Redo size={14} />
+            </button>
+          </div>
+          
+          {/* Theme Toggle */}
           <button 
             onClick={toggleTheme}
-            className="btn-icon w-8 h-8 flex items-center justify-center"
+            className="btn-icon w-7 h-7 flex items-center justify-center"
             title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
           >
-            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+            {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
+          
+          {/* More Options Menu */}
+          <button className="btn-icon w-7 h-7 flex items-center justify-center ml-1">
+            <Menu size={14} />
           </button>
         </div>
       </header>
@@ -183,7 +238,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="h-6 bg-surface text-xs text-text-secondary flex items-center justify-end px-4">
+      <footer className="h-6 bg-surface text-xs text-text-secondary flex items-center justify-end px-4 border-t border-border-color">
         <span>Sub-Stytler Professional v1.0.0</span>
       </footer>
 

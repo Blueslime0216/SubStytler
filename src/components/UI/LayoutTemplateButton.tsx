@@ -43,11 +43,11 @@ export const LayoutTemplateButton: React.FC = () => {
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="btn px-4 py-1.5 text-sm flex items-center gap-2"
+        className="btn-sm px-3 py-1 text-xs flex items-center space-x-1 hover:bg-mid-color"
         title="Change layout template"
       >
-        <LayoutTemplate className="w-4 h-4" />
-        <span>Templates</span>
+        <LayoutTemplate size={12} />
+        <span>Layout</span>
       </button>
 
       <AnimatePresence>
@@ -64,7 +64,7 @@ export const LayoutTemplateButton: React.FC = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="absolute left-0 top-full mt-2 z-50 bg-surface rounded-lg shadow-outset-strong p-3 w-80"
+              className="absolute left-0 top-full mt-1 z-50 bg-surface rounded-lg shadow-outset-strong p-3 w-80"
             >
               <h3 className="text-sm font-medium text-text-primary mb-3">Layout Templates</h3>
               
