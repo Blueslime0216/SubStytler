@@ -9,12 +9,7 @@ export const EmptyPanel: React.FC = () => {
   
   return (
     <div className="h-full w-full flex flex-col items-center justify-center text-text-secondary">
-      <div 
-        className="flex flex-col items-center"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div className="flex flex-col items-center">
         <img 
           src={logoSrc} 
           alt="Sub-Stytler Logo" 
