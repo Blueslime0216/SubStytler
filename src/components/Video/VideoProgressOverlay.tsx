@@ -24,7 +24,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
         />
         
         <motion.div 
-          className="bg-bg border border-border-color rounded-lg shadow-elevated max-w-md w-full p-8 relative overflow-hidden"
+          className="bg-bg border border-primary rounded-lg shadow-elevated max-w-md w-full p-8 relative overflow-hidden"
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20, transition: { duration: 0.2 } }}
@@ -87,7 +87,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
               <div className="relative h-6 bg-bg rounded-full shadow-inset overflow-hidden">
                 {/* Progress Fill */}
                 <motion.div
-                  className="absolute top-0 left-0 h-full rounded-full bg-primary-color z-10"
+                  className="absolute top-0 left-0 right-0 h-full rounded-full neu-progress-fill z-10"
                   style={{ minWidth: 0, left: 0, right: 0 }}
                   initial={{ width: '0%' }}
                   animate={{ width: `${progress}%` }}
