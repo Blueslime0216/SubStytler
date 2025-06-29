@@ -3,6 +3,7 @@ import { Plus, Eye, EyeOff, Lock, Unlock, Trash2, Edit, Type, FileText } from 'l
 import { ContextMenu, ContextMenuItem, ContextMenuDivider, ContextMenuSectionTitle } from '../../UI/ContextMenu';
 import { useProjectStore } from '../../../stores/projectStore';
 import { useHistoryStore } from '../../../stores/historyStore';
+import { useTimelineStore } from '../../../stores/timelineStore';
 import { SubtitleTrack } from '../../../types/project';
 
 interface TrackContextMenusProps {
@@ -37,6 +38,7 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
   flashIds
 }) => {
   const { addTrack, updateTrack, deleteTrack, addSubtitle, deleteSubtitle, currentProject } = useProjectStore();
+  const { setCurrentTime } = useTimelineStore();
   
   // Refs for track headers to access their methods
   const trackHeaderRefs = React.useRef<Map<string, React.RefObject<any>>>(new Map());
@@ -107,6 +109,9 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
     };
     
     addSubtitle(newSubtitle);
+    
+    // Move the indicator to the start position of the new subtitle
+    setCurrentTime(time);
     
     // Record state after adding subtitle
     setTimeout(() => {

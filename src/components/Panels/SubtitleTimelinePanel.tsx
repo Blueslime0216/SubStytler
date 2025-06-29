@@ -22,6 +22,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
     viewEnd: globalViewEnd,
     setZoom: setGlobalZoom,
     setViewRange: setGlobalViewRange,
+    setCurrentTime
   } = useTimelineStore();
   const { currentProject, addSubtitle, addTrack, deleteSubtitle } = useProjectStore();
   const { selectedTrackId, setSelectedTrackId } = useSelectedTrackStore();
