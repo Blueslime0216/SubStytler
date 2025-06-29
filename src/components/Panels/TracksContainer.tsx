@@ -9,6 +9,7 @@ import { useSelectedTrackStore } from '../../stores/selectedTrackStore';
 import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
 import { ContextMenu, ContextMenuItem, ContextMenuDivider, ContextMenuSectionTitle } from '../UI/ContextMenu';
 import { useHistoryStore } from '../../stores/historyStore';
+import { useSubtitleHighlightStore } from '../../stores/subtitleHighlightStore';
 
 interface TracksContainerProps {
   currentTime: number;
@@ -56,6 +57,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
 
   const { selectedTrackId, setSelectedTrackId } = useSelectedTrackStore();
   const { setSelectedSubtitleId } = useSelectedSubtitleStore();
+  const { flashIds, setHighlightedIds } = useSubtitleHighlightStore();
 
   // Context menu state
   const [trackHeaderContextMenu, setTrackHeaderContextMenu] = useState<{
@@ -371,6 +373,24 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
       'Before adding subtitle from context menu',
       true
     );
+    
+    const newStartTime = time;
+    const newEndTime = time + 2000; // Default duration is 2s
+
+    // Check for overlapping subtitles on the target track
+    const overlapping = currentProject?.subtitles.find(
+      (sub) =>
+        sub.trackId === trackId && // Same track
+        newStartTime < sub.endTime &&   // New sub starts before other ends
+        newEndTime > sub.startTime      // New sub ends after other starts
+    );
+
+    if (overlapping) {
+      // Flash highlight the overlapping subtitle
+      flashIds([overlapping.id], 600);
+      closeAllContextMenus();
+      return; // do not add new subtitle
+    }
     
     const newSubtitle = {
       id: crypto.randomUUID(),
