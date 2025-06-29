@@ -34,7 +34,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = ({
       whileTap={{ scale: 0.98 }}
     >
       {icon && <span className="context-menu-item-icon">{icon}</span>}
-      <span>{children}</span>
+      <span style={{ lineHeight: '16px' }}>{children}</span>
     </motion.div>
   );
 };
