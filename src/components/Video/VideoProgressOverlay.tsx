@@ -82,22 +82,10 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
               </div>
             </div>
             
-            {/* Progress Bar Container - DO NOT MODIFY THIS SECTION */}
-            {/* 
-              ⚠️ WARNING: DO NOT MODIFY THE PROGRESS BAR CODE BELOW ⚠️
-              This code is working correctly and any changes may break functionality.
-              The current implementation has been carefully tested and optimized.
-            */}
+            {/* Progress Bar Container */}
             <div className="bg-surface rounded-lg p-4 shadow-outset-subtle mb-6">
               <div className="relative h-6 bg-bg rounded-full shadow-inset overflow-hidden">
                 {/* Progress Fill */}
-                {/*
-                  ⚠️ WARNING: Do NOT change the className below!
-                  The className must remain 'neu-progress-fill'.
-                  If you replace it with Tailwind utilities (e.g., bg-primary-color),
-                  the progress bar will not be visible or the style will break.
-                  This must use the custom CSS for gradient and layout. DO NOT MODIFY!
-                */}
                 <motion.div
                   className="absolute top-0 left-0 h-full rounded-full neu-progress-fill z-10"
                   style={{ minWidth: 0, left: 0, right: 0 }}
@@ -120,7 +108,6 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
                 )}
               </div>
             </div>
-            {/* ⚠️ END OF DO NOT MODIFY SECTION ⚠️ */}
           </div>
         </motion.div>
       </div>

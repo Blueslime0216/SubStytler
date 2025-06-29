@@ -47,32 +47,6 @@
   overflow: hidden;
 }
 
-.neu-progress-track::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(13, 17, 23, 0.6) 50%, 
-    transparent 100%);
-}
-
-.neu-progress-track::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(45, 55, 72, 0.4) 50%, 
-    transparent 100%);
-}
-
 /* ⚠️ WARNING: DO NOT MODIFY THE PROGRESS FILL STYLES BELOW ⚠️
    This code is working correctly and any changes may break functionality.
    The current implementation has been carefully tested and optimized. */
