@@ -15,6 +15,8 @@
   background: transparent;
   z-index: 10;
   opacity: 0;
+  /* Ensure border doesn't intrude into panel content */
+  pointer-events: auto;
 }
 
 .area-border-vertical {
@@ -25,12 +27,36 @@
   cursor: ns-resize;
 }
 
+/* Hover effect - thinner and more subtle */
 .area-border:hover {
-  background-color: rgba(94, 129, 172, 0.2);
+  background-color: rgba(94, 129, 172, 0.15);
   opacity: 1;
 }
 
+/* Active state - slightly more visible but still thin */
 .area-border-active {
-  background-color: rgba(94, 129, 172, 0.3);
+  background-color: rgba(94, 129, 172, 0.25);
   opacity: 1;
+}
+
+/* Ensure borders don't interfere with panel content */
+.area-block.dragging .area-border {
+  pointer-events: auto;
+}
+
+/* Ensure borders are properly positioned */
+.area-border.left-0 {
+  left: 0;
+}
+
+.area-border.right-0 {
+  right: 0;
+}
+
+.area-border.top-0 {
+  top: 0;
+}
+
+.area-border.bottom-0 {
+  bottom: 0;
 }

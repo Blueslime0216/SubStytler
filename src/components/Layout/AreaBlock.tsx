@@ -18,7 +18,8 @@ interface AreaBlockProps {
   renderPanel?: (area: Area) => React.ReactNode;
 }
 
-const BORDER_THICKNESS = 20;
+// Reduced border thickness to prevent panel intrusion
+const BORDER_THICKNESS = 10; // Reduced from 20px to 10px
 
 const AreaBlockComponent: React.FC<AreaBlockProps> = ({
   areas,
