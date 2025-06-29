@@ -147,6 +147,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         duration: number;
         width: number;
         height: number;
+        fps: number;
       }>((resolve, reject) => {
         const timeout = setTimeout(() => {
           console.error('Video loading timed out after 60 seconds');
@@ -154,6 +155,11 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         }, 60000); // Increased timeout for large files
 
         const handleLoadedMetadata = () => {
+          // We need to wait for loadeddata to get more accurate information
+          video.addEventListener('loadeddata', handleLoadedData, { once: true });
+        };
+
+        const handleLoadedData = () => {
           cleanup();
           
           const duration = video.duration;
@@ -172,11 +178,61 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
             return;
           }
 
-          resolve({
-            duration: duration * 1000, // Convert to milliseconds
-            width,
-            height
-          });
+          // Detect FPS using requestVideoFrameCallback if available
+          if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+            let lastTime = 0;
+            let frameCount = 0;
+            let totalDelta = 0;
+            const framesToCount = 10;
+            
+            const countFrames = (now: number, metadata: any) => {
+              if (lastTime) {
+                const delta = metadata.presentationTime - lastTime;
+                totalDelta += delta;
+                frameCount++;
+                
+                if (frameCount >= framesToCount) {
+                  const avgDelta = totalDelta / frameCount;
+                  const detectedFps = Math.round(1000 / avgDelta);
+                  
+                  resolve({
+                    duration: duration * 1000, // Convert to milliseconds
+                    width,
+                    height,
+                    fps: detectedFps
+                  });
+                  return;
+                }
+              }
+              
+              lastTime = metadata.presentationTime;
+              // @ts-ignore - TypeScript doesn't know about requestVideoFrameCallback
+              video.requestVideoFrameCallback(countFrames);
+            };
+            
+            // Start playing to get frames
+            video.muted = true;
+            video.play().then(() => {
+              // @ts-ignore - TypeScript doesn't know about requestVideoFrameCallback
+              video.requestVideoFrameCallback(countFrames);
+            }).catch(() => {
+              // If we can't play, just use a default FPS
+              resolve({
+                duration: duration * 1000,
+                width,
+                height,
+                fps: 30 // Default fallback
+              });
+            });
+          } else {
+            // Fallback for browsers without requestVideoFrameCallback
+            resolve({
+              duration: duration * 1000,
+              width,
+              height,
+              fps: 30 // Default fallback
+              });
+          }
         };
 
         const handleError = (e: Event) => {
@@ -216,19 +272,17 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
       }));
 
       // Stage 4: Update stores with metadata
-      const detectedFPS = 30; // Default FPS - could be enhanced with better detection
-      
       setVideoMeta({
         filename: file.name,
         duration: metadata.duration,
-        fps: detectedFPS,
+        fps: metadata.fps,
         width: metadata.width,
         height: metadata.height,
         file
       });
 
       setDuration(metadata.duration);
-      setFPS(detectedFPS);
+      setFPS(metadata.fps);
       setCurrentTime(0); // Reset to beginning
 
       setUploadState(prev => ({ 
@@ -241,7 +295,7 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
       const fileSizeMB = Math.round(file.size / (1024 * 1024));
       success({
         title: 'Video loaded successfully!',
-        message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height}, ${fileSizeMB}MB)`
+        message: `${file.name} (${Math.round(metadata.duration / 1000)}s, ${metadata.width}×${metadata.height}, ${fileSizeMB}MB, ${metadata.fps}fps)`
       });
 
     } catch (err) {
