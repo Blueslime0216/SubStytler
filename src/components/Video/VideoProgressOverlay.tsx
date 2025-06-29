@@ -91,15 +91,12 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
             {/* Progress Bar Container - Improved */}
             <div className="bg-surface rounded-lg p-4 shadow-outset-subtle mb-6">
               <div className="relative h-6 bg-bg rounded-full shadow-inset overflow-hidden">
-                {/* Progress Fill - Fixed to show actual progress */}
+                {/* Progress Fill - Fixed to show actual progress with blue color */}
                 <motion.div 
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-info-color to-primary-color rounded-full shadow-outset-subtle"
+                  className="absolute top-0 left-0 h-full bg-primary-color rounded-full"
                   initial={{ width: '0%' }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
-                  style={{
-                    boxShadow: '0 0 10px rgba(94, 129, 172, 0.3)'
-                  }}
                 />
                 
                 {/* Shimmer Effect */}
