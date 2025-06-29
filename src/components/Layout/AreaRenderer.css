@@ -41,21 +41,14 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: layout style;
-  /* Reduced thickness to prevent panel intrusion */
-  width: 10px !important; /* For vertical borders */
-  height: 10px !important; /* For horizontal borders */
 }
 
 .area-border-vertical {
   cursor: ew-resize;
-  /* Position the border to straddle the edge */
-  margin-left: -5px;
 }
 
 .area-border-horizontal {
   cursor: ns-resize;
-  /* Position the border to straddle the edge */
-  margin-top: -5px;
 }
 
 /* 🔧 성능 최적화: 드래그 중 포인터 이벤트 최적화 */
