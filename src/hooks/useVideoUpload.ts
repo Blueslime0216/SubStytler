@@ -147,13 +147,132 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         duration: number;
         width: number;
         height: number;
+        fps: number; // Added FPS detection
       }>((resolve, reject) => {
         const timeout = setTimeout(() => {
           console.error('Video loading timed out after 60 seconds');
           reject(new Error('Video loading timed out. This may be due to the large file size or unsupported format.'));
         }, 60000); // Increased timeout for large files
 
-        const handleLoadedMetadata = () => {
+        // Function to detect FPS from video
+        const detectFPS = async (videoElement: HTMLVideoElement): Promise<number> => {
+          // Default fallback FPS
+          let detectedFPS = 30;
+          
+          try {
+            // Try to get FPS from video properties if available
+            // @ts-ignore - Some browsers expose this non-standard property
+            if (videoElement.mozDecodedFrames !== undefined && 
+                // @ts-ignore
+                videoElement.mozParsedFrames !== undefined && 
+                videoElement.duration) {
+              // @ts-ignore
+              const mozFrames = videoElement.mozDecodedFrames || videoElement.mozParsedFrames;
+              detectedFPS = Math.round(mozFrames / videoElement.duration);
+            } 
+            // @ts-ignore - Some browsers expose this non-standard property
+            else if (videoElement.webkitDecodedFrameCount !== undefined && videoElement.duration) {
+              // @ts-ignore
+              detectedFPS = Math.round(videoElement.webkitDecodedFrameCount / videoElement.duration);
+            }
+            // If we couldn't detect from properties, use a more reliable method
+            else {
+              // Try to detect by seeking and counting frames
+              const seekTest = async (): Promise<number> => {
+                const testDuration = 2; // seconds to test
+                const startTime = 0;
+                const endTime = Math.min(testDuration, videoElement.duration);
+                const seekStep = 1/60; // 60fps max detection
+                
+                let frameCount = 0;
+                let lastImageData: ImageData | null = null;
+                
+                // Create a canvas to compare frames
+                const canvas = document.createElement('canvas');
+                canvas.width = 32; // Small size for performance
+                canvas.height = 32;
+                const ctx = canvas.getContext('2d');
+                
+                if (!ctx) return 30; // Fallback if canvas not supported
+                
+                // Function to check if frame changed
+                const isNewFrame = (): boolean => {
+                  ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                  
+                  if (!lastImageData) {
+                    lastImageData = imageData;
+                    return true;
+                  }
+                  
+                  // Compare with previous frame
+                  const data1 = lastImageData.data;
+                  const data2 = imageData.data;
+                  
+                  // Check a sample of pixels
+                  for (let i = 0; i < data1.length; i += 40) {
+                    if (Math.abs(data1[i] - data2[i]) > 5) {
+                      lastImageData = imageData;
+                      return true;
+                    }
+                  }
+                  
+                  return false;
+                };
+                
+                // Seek through video and count frames
+                videoElement.currentTime = startTime;
+                await new Promise(r => videoElement.addEventListener('seeked', r, { once: true }));
+                
+                for (let time = startTime; time <= endTime; time += seekStep) {
+                  videoElement.currentTime = time;
+                  await new Promise(r => videoElement.addEventListener('seeked', r, { once: true }));
+                  
+                  if (isNewFrame()) {
+                    frameCount++;
+                  }
+                }
+                
+                // Reset video position
+                videoElement.currentTime = 0;
+                
+                return Math.round(frameCount / testDuration);
+              };
+              
+              try {
+                detectedFPS = await seekTest();
+                // Validate result is reasonable
+                if (detectedFPS < 10 || detectedFPS > 120) {
+                  detectedFPS = 30; // Fallback to common value
+                }
+              } catch (e) {
+                console.warn('FPS detection failed:', e);
+                detectedFPS = 30;
+              }
+            }
+          } catch (e) {
+            console.warn('Error detecting FPS:', e);
+          }
+          
+          // Common FPS values for normalization
+          const commonFPS = [23.976, 24, 25, 29.97, 30, 50, 59.94, 60];
+          
+          // Find closest common FPS
+          let closestFPS = 30;
+          let minDiff = Number.MAX_VALUE;
+          
+          for (const fps of commonFPS) {
+            const diff = Math.abs(detectedFPS - fps);
+            if (diff < minDiff) {
+              minDiff = diff;
+              closestFPS = fps;
+            }
+          }
+          
+          return closestFPS;
+        };
+
+        const handleLoadedMetadata = async () => {
           cleanup();
           
           const duration = video.duration;
@@ -172,10 +291,14 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
             return;
           }
 
+          // Detect FPS
+          const fps = await detectFPS(video);
+
           resolve({
             duration: duration * 1000, // Convert to milliseconds
             width,
-            height
+            height,
+            fps
           });
         };
 
@@ -216,19 +339,17 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
       }));
 
       // Stage 4: Update stores with metadata
-      const detectedFPS = 30; // Default FPS - could be enhanced with better detection
-      
       setVideoMeta({
         filename: file.name,
         duration: metadata.duration,
-        fps: detectedFPS,
+        fps: metadata.fps, // Use detected FPS
         width: metadata.width,
         height: metadata.height,
         file
       });
 
       setDuration(metadata.duration);
-      setFPS(detectedFPS);
+      setFPS(metadata.fps); // Use detected FPS
       setCurrentTime(0); // Reset to beginning
 
       setUploadState(prev => ({ 

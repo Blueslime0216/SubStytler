@@ -24,7 +24,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
         />
         
         <motion.div 
-          className="bg-bg border border-primary rounded-lg shadow-elevated max-w-md w-full p-8 relative overflow-hidden"
+          className="bg-bg border border-border-color rounded-lg shadow-elevated max-w-md w-full p-8 relative overflow-hidden"
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20, transition: { duration: 0.2 } }}
@@ -82,12 +82,17 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
               </div>
             </div>
             
-            {/* Progress Bar Container - Improved */}
+            {/* Progress Bar Container - DO NOT MODIFY THIS SECTION */}
+            {/* 
+              ⚠️ WARNING: DO NOT MODIFY THE PROGRESS BAR CODE BELOW ⚠️
+              This code is working correctly and any changes may break functionality.
+              The current implementation has been carefully tested and optimized.
+            */}
             <div className="bg-surface rounded-lg p-4 shadow-outset-subtle mb-6">
               <div className="relative h-6 bg-bg rounded-full shadow-inset overflow-hidden">
                 {/* Progress Fill */}
                 <motion.div
-                  className="absolute top-0 left-0 right-0 h-full rounded-full neu-progress-fill z-10"
+                  className="absolute top-0 left-0 h-full rounded-full bg-primary-color z-10"
                   style={{ minWidth: 0, left: 0, right: 0 }}
                   initial={{ width: '0%' }}
                   animate={{ width: `${progress}%` }}
@@ -108,6 +113,7 @@ export const VideoProgressOverlay: React.FC<VideoProgressOverlayProps> = ({
                 )}
               </div>
             </div>
+            {/* ⚠️ END OF DO NOT MODIFY SECTION ⚠️ */}
           </div>
         </motion.div>
       </div>

@@ -176,14 +176,16 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
             {/* Upload Video */}
             <motion.button
               onClick={handleUploadVideo}
-              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3"
-              whileHover={{ x: 2 }}
               disabled={hasVideo}
+              className={`w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 ${hasVideo ? 'opacity-50 cursor-not-allowed' : ''}`}
+              whileHover={!hasVideo ? { x: 2 } : undefined}
             >
-              <Upload className="w-4 h-4 text-text-secondary" />
+              <Upload className={`w-4 h-4 ${hasVideo ? 'text-text-muted' : 'text-text-secondary'}`} />
               <div>
-                <div className="text-sm font-medium text-text-primary">Upload Video</div>
-                <div className="text-xs text-text-secondary">
+                <div className={`text-sm font-medium ${hasVideo ? 'text-text-muted' : 'text-text-primary'}`}>
+                  Upload Video
+                </div>
+                <div className={`text-xs ${hasVideo ? 'text-text-muted' : 'text-text-secondary'}`}>
                   {hasVideo ? 'Video already uploaded' : 'Add a video to your project'}
                 </div>
               </div>
@@ -192,14 +194,16 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
             {/* Change Video */}
             <motion.button
               onClick={handleUploadVideo}
-              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3"
-              whileHover={{ x: 2 }}
               disabled={!hasVideo}
+              className={`w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 ${!hasVideo ? 'opacity-50 cursor-not-allowed' : ''}`}
+              whileHover={hasVideo ? { x: 2 } : undefined}
             >
-              <RefreshCw className="w-4 h-4 text-text-secondary" />
+              <RefreshCw className={`w-4 h-4 ${!hasVideo ? 'text-text-muted' : 'text-text-secondary'}`} />
               <div>
-                <div className="text-sm font-medium text-text-primary">Change Video</div>
-                <div className="text-xs text-text-secondary">
+                <div className={`text-sm font-medium ${!hasVideo ? 'text-text-muted' : 'text-text-primary'}`}>
+                  Change Video
+                </div>
+                <div className={`text-xs ${!hasVideo ? 'text-text-muted' : 'text-text-secondary'}`}>
                   {hasVideo ? 'Replace current video' : 'No video to replace'}
                 </div>
               </div>
