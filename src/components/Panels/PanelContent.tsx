@@ -9,7 +9,7 @@ import { ScriptViewerPanel } from '../Panels/ScriptViewerPanel';
 import { EffectsLibraryPanel } from '../Panels/EffectsLibraryPanel';
 import { HistoryPanel } from '../Panels/HistoryPanel';
 import { NotesPanel } from '../Panels/NotesPanel';
-import { EmptyPanel } from '../Panels/EmptyPanel';
+import { EmptyPanel } from '../Panels/EmptyPanel'; // 🆕 빈 패널 추가
 import SubtitlePreviewPanel from '../Panels/SubtitlePreviewPanel';
 
 interface PanelContentProps {
