@@ -85,6 +85,7 @@ export interface Project {
   dependencies: string[];
   createdAt: number;
   updatedAt: number;
+  layout?: any[]; // Store the current layout configuration
 }
 
 export interface WorkspaceLayout {

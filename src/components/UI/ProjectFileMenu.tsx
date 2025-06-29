@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Save, FolderOpen, FileText, Download, AlertCircle } from 'lucide-react';
+import { Save, FolderOpen, FileText, Download, AlertCircle, LayoutTemplate } from 'lucide-react';
 import { useProjectSave } from '../../hooks/useProjectSave';
 import { useProjectStore } from '../../stores/projectStore';
 
@@ -21,13 +21,18 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const { saveProjectToFileSystem, canSave } = useProjectSave();
+  const { 
+    saveProjectToFileSystem, 
+    saveLayoutToFileSystem,
+    loadLayoutFromFileSystem,
+    canSave 
+  } = useProjectSave();
   const { currentProject, isModified } = useProjectStore();
 
   React.useEffect(() => {
     if (isOpen && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
-      const menuHeight = 200;
+      const menuHeight = 300; // Increased for new menu items
       const menuWidth = 250;
       
       let top = rect.bottom + 8;
@@ -58,6 +63,18 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
     }
   };
 
+  const handleSaveLayout = async () => {
+    if (isSaving) return;
+    
+    setIsSaving(true);
+    try {
+      await saveLayoutToFileSystem();
+      onClose();
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleLoad = async () => {
     if (isLoading) return;
     
@@ -65,6 +82,18 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
     try {
       // 🆕 Use the callback provided by App component
       await onLoadProject();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoadLayout = async () => {
+    if (isLoading) return;
+    
+    setIsLoading(true);
+    try {
+      await loadLayoutFromFileSystem();
+      onClose();
     } finally {
       setIsLoading(false);
     }
@@ -148,6 +177,22 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
               </div>
             </motion.button>
 
+            {/* Load Layout */}
+            <motion.button
+              onClick={handleLoadLayout}
+              disabled={isLoading}
+              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 disabled:opacity-50"
+              whileHover={{ x: 2 }}
+            >
+              <LayoutTemplate className="w-4 h-4 text-text-secondary" />
+              <div>
+                <div className="text-sm font-medium text-text-primary">
+                  {isLoading ? 'Loading...' : 'Import Layout'}
+                </div>
+                <div className="text-xs text-text-secondary">Load a .ssl layout file</div>
+              </div>
+            </motion.button>
+
             {/* Divider */}
             <div className="my-2 border-t border-border-color" />
 
@@ -165,6 +210,24 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
                 </div>
                 <div className="text-xs text-text-secondary">
                   {canSave ? 'Save as .ssp file' : 'No project to save'}
+                </div>
+              </div>
+            </motion.button>
+
+            {/* Save Layout */}
+            <motion.button
+              onClick={handleSaveLayout}
+              disabled={isSaving}
+              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 disabled:opacity-50"
+              whileHover={{ x: 2 }}
+            >
+              <LayoutTemplate className="w-4 h-4 text-text-secondary" />
+              <div>
+                <div className="text-sm font-medium text-text-primary">
+                  {isSaving ? 'Saving...' : 'Export Layout'}
+                </div>
+                <div className="text-xs text-text-secondary">
+                  Save current layout as .ssl file
                 </div>
               </div>
             </motion.button>

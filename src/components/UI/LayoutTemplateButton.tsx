@@ -1,15 +1,17 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutTemplate, Grid3X3, Columns, Rows, PanelTop, PanelBottomClose, LayoutGrid } from 'lucide-react';
+import { LayoutTemplate, Grid3X3, Columns, Rows, PanelTop, PanelBottomClose, LayoutGrid, Save, FolderOpen } from 'lucide-react';
 import { useLayoutStore } from '../../stores/layoutStore';
 import { useHistoryStore } from '../../stores/historyStore';
 import { Area } from '../../types/area';
 import { templateLayouts } from '../../config/templateLayouts';
+import { useProjectSave } from '../../hooks/useProjectSave';
 
 export const LayoutTemplateButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const { setAreas } = useLayoutStore();
+  const { saveLayoutToFileSystem, loadLayoutFromFileSystem } = useProjectSave();
   
   const handleTemplateSelect = (template: Area[]) => {
     // Record current layout for undo
@@ -23,6 +25,16 @@ export const LayoutTemplateButton: React.FC = () => {
     useHistoryStore.getState().record(template, 'Changed layout template');
     
     // Close dropdown
+    setIsOpen(false);
+  };
+
+  const handleSaveLayout = async () => {
+    await saveLayoutToFileSystem();
+    setIsOpen(false);
+  };
+
+  const handleLoadLayout = async () => {
+    await loadLayoutFromFileSystem();
     setIsOpen(false);
   };
 
@@ -72,6 +84,31 @@ export const LayoutTemplateButton: React.FC = () => {
                     <div className="text-xs text-text-secondary mt-1">{template.description}</div>
                   </motion.button>
                 ))}
+              </div>
+
+              {/* Layout Import/Export Options */}
+              <div className="mt-4 border-t border-border-color pt-3">
+                <div className="flex items-center justify-between gap-3">
+                  <motion.button
+                    onClick={handleSaveLayout}
+                    className="flex-1 flex items-center justify-center gap-2 bg-bg p-2 rounded-lg shadow-outset-subtle border border-border-color hover:border-light-surface-color transition-all"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Save className="w-3.5 h-3.5 text-text-secondary" />
+                    <span className="text-xs font-medium">Export Layout</span>
+                  </motion.button>
+                  
+                  <motion.button
+                    onClick={handleLoadLayout}
+                    className="flex-1 flex items-center justify-center gap-2 bg-bg p-2 rounded-lg shadow-outset-subtle border border-border-color hover:border-light-surface-color transition-all"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <FolderOpen className="w-3.5 h-3.5 text-text-secondary" />
+                    <span className="text-xs font-medium">Import Layout</span>
+                  </motion.button>
+                </div>
               </div>
             </motion.div>
           </>

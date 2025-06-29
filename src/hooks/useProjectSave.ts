@@ -1,14 +1,16 @@
 import { useCallback, useRef } from 'react';
 import { useProjectStore } from '../stores/projectStore';
 import { useTimelineStore } from '../stores/timelineStore';
+import { useLayoutStore } from '../stores/layoutStore';
 import { useToast } from './useToast';
 import { saveProjectToFile, loadProjectFromFile, SaveResult, LoadResult } from '../utils/projectFileUtils';
 import { VideoInfo } from '../utils/videoUtils';
 
 export const useProjectSave = () => {
-  const { currentProject, loadProject, saveProject: updateProjectTimestamp } = useProjectStore();
+  const { setVideoMeta, currentProject, loadProject, saveProject: updateProjectTimestamp } = useProjectStore();
   const { setCurrentTime, setDuration, setFPS, setZoom, setViewRange, setPlaying } = useTimelineStore();
-  const { success, error, info } = useToast();
+  const { setAreas } = useLayoutStore();
+  const { success, error, info, warning } = useToast();
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
 
   // Get reference to video element for thumbnail capture
@@ -27,8 +29,8 @@ export const useProjectSave = () => {
     return null;
   }, []);
 
-  const saveProjectToFileSystem = useCallback(async (): Promise<SaveResult> => {
-    if (!currentProject) {
+  const saveProjectToFileSystem = useCallback(async (options = { saveLayoutOnly: false }): Promise<SaveResult> => {
+    if (!currentProject && !options.saveLayoutOnly) {
       const result = {
         success: false,
         message: 'No project to save'
@@ -44,29 +46,31 @@ export const useProjectSave = () => {
 
     try {
       info({
-        title: 'Saving Project',
-        message: 'Please choose a location to save your project...',
+        title: options.saveLayoutOnly ? 'Saving Layout' : 'Saving Project',
+        message: 'Please choose a location to save...',
         duration: 3000
       });
 
       // Get video element for thumbnail capture
       const videoElement = getVideoElement();
 
-      const result = await saveProjectToFile(currentProject, {}, videoElement);
+      const result = await saveProjectToFile(currentProject!, options, videoElement);
 
       if (result.success) {
         // Update the project's timestamp to mark it as saved
-        updateProjectTimestamp();
+        if (!options.saveLayoutOnly) {
+          updateProjectTimestamp();
+        }
         
         success({
-          title: 'Project Saved',
+          title: options.saveLayoutOnly ? 'Layout Saved' : 'Project Saved',
           message: result.filePath 
-            ? `Project saved as "${result.filePath}"` 
-            : 'Project saved successfully'
+            ? `${options.saveLayoutOnly ? 'Layout' : 'Project'} saved as "${result.filePath}"` 
+            : `${options.saveLayoutOnly ? 'Layout' : 'Project'} saved successfully`
         });
       } else {
         error({
-          title: 'Save Failed',
+          title: options.saveLayoutOnly ? 'Layout Save Failed' : 'Save Failed',
           message: result.message
         });
       }
@@ -79,7 +83,7 @@ export const useProjectSave = () => {
       };
 
       error({
-        title: 'Save Error',
+        title: options.saveLayoutOnly ? 'Layout Save Error' : 'Save Error',
         message: result.message
       });
 
@@ -87,25 +91,45 @@ export const useProjectSave = () => {
     }
   }, [currentProject, updateProjectTimestamp, success, error, info, getVideoElement]);
 
-  const loadProjectFromFileSystem = useCallback(async (): Promise<LoadResult> => {
+  const saveLayoutToFileSystem = useCallback(async (): Promise<SaveResult> => {
+    return saveProjectToFileSystem({ saveLayoutOnly: true });
+  }, [saveProjectToFileSystem]);
+
+  const loadProjectFromFileSystem = useCallback(async (options = { layoutOnly: false }): Promise<LoadResult> => {
     try {
       info({
-        title: 'Loading Project',
-        message: 'Please select a project file to load...',
+        title: options.layoutOnly ? 'Loading Layout' : 'Loading Project',
+        message: `Please select a ${options.layoutOnly ? 'layout' : 'project'} file to load...`,
         duration: 3000
       });
 
-      const result = await loadProjectFromFile();
+      const result = await loadProjectFromFile(options);
 
-      if (result.success && result.project) {
-        // 🆕 Always return the result without loading the project here
-        // Let the caller handle the video dialog logic
-        if (!result.videoInfo) {
-          // Only show success message for projects without video info
-          // Projects with video info will show success after video is handled
+      if (result.success) {
+        if (options.layoutOnly && result.layout) {
+          // Only load the layout
+          setAreas(result.layout);
           success({
-            title: 'Project Loaded',
-            message: `"${result.project.name}" loaded successfully`
+            title: 'Layout Loaded',
+            message: 'Layout configuration loaded successfully'
+          });
+        } else if (!options.layoutOnly && result.project) {
+          // 🆕 Always return the result without loading the project here
+          // Let the caller handle the video dialog logic
+          if (!result.videoInfo) {
+            // Only show success message for projects without video info
+            // Projects with video info will show success after video is handled
+            success({
+              title: 'Project Loaded',
+              message: `"${result.project.name}" loaded successfully`
+            });
+          }
+        } else if (result.message !== 'File selection was cancelled') {
+          error({
+            title: 'Load Failed',
+            message: options.layoutOnly 
+              ? 'Invalid layout file format' 
+              : 'Invalid project file format'
           });
         }
       } else if (result.message !== 'File selection was cancelled') {
@@ -129,7 +153,11 @@ export const useProjectSave = () => {
         message: errorMessage
       };
     }
-  }, [success, error, info]);
+  }, [success, error, info, setAreas]);
+
+  const loadLayoutFromFileSystem = useCallback(async (): Promise<LoadResult> => {
+    return loadProjectFromFileSystem({ layoutOnly: true });
+  }, [loadProjectFromFileSystem]);
 
   const loadProjectWithVideo = useCallback((project: any, videoFile?: File) => {
     if (videoFile) {
@@ -177,6 +205,11 @@ export const useProjectSave = () => {
       }
     }
 
+    // 🆕 Restore layout if available
+    if (project.layout && Array.isArray(project.layout)) {
+      setAreas(project.layout);
+    }
+
     // Load the project into the store
     loadProject(project);
     
@@ -184,11 +217,13 @@ export const useProjectSave = () => {
       title: 'Project Loaded',
       message: `"${project.name}" loaded successfully${videoFile ? ' with video' : ''}`
     });
-  }, [loadProject, success, setCurrentTime, setDuration, setFPS, setZoom, setViewRange, setPlaying]);
+  }, [loadProject, success, setCurrentTime, setDuration, setFPS, setZoom, setViewRange, setPlaying, setAreas]);
 
   return {
     saveProjectToFileSystem,
+    saveLayoutToFileSystem,
     loadProjectFromFileSystem,
+    loadLayoutFromFileSystem,
     loadProjectWithVideo,
     canSave: !!currentProject
   };

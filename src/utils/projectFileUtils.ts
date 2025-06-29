@@ -1,6 +1,8 @@
 import { Project } from '../types/project';
 import { VideoInfo, extractVideoInfo } from './videoUtils';
 import { useTimelineStore } from '../stores/timelineStore';
+import { useLayoutStore } from '../stores/layoutStore';
+import { Area } from '../types/area';
 
 export interface SaveResult {
   success: boolean;
@@ -13,18 +15,20 @@ export interface LoadResult {
   project?: Project;
   videoInfo?: VideoInfo;
   message: string;
+  layout?: Area[];
 }
 
 export interface SaveOptions {
   filePath?: string;
   createDirectories?: boolean;
   overwrite?: boolean;
+  saveLayoutOnly?: boolean;
 }
 
 /**
  * Validates a file path for saving project files
  */
-export const validateSavePath = (filePath: string): { valid: boolean; error?: string } => {
+export const validateSavePath = (filePath: string, extension = '.ssp'): { valid: boolean; error?: string } => {
   if (!filePath || filePath.trim() === '') {
     return { valid: false, error: 'File path cannot be empty' };
   }
@@ -37,9 +41,9 @@ export const validateSavePath = (filePath: string): { valid: boolean; error?: st
     return { valid: false, error: 'File name contains invalid characters' };
   }
 
-  // Ensure .ssp extension
-  if (!filePath.toLowerCase().endsWith('.ssp')) {
-    return { valid: false, error: 'File must have .ssp extension' };
+  // Ensure correct extension
+  if (!filePath.toLowerCase().endsWith(extension)) {
+    return { valid: false, error: `File must have ${extension} extension` };
   }
 
   // Check filename length (most filesystems have 255 char limit)
@@ -55,9 +59,19 @@ export const validateSavePath = (filePath: string): { valid: boolean; error?: st
  */
 export const sanitizeProjectForSave = async (
   project: Project, 
-  videoElement?: HTMLVideoElement
+  videoElement?: HTMLVideoElement,
+  saveLayoutOnly: boolean = false
 ): Promise<any> => {
+  if (saveLayoutOnly) {
+    // Only save layout data
+    const layout = useLayoutStore.getState().areas;
+    return { layout };
+  }
+
   const sanitized = { ...project };
+
+  // Save layout state
+  sanitized.layout = useLayoutStore.getState().areas;
 
   // 🆕 Capture current timeline state from the timeline store
   const timelineState = useTimelineStore.getState();
@@ -127,6 +141,42 @@ export const sanitizeProjectForSave = async (
 
   sanitized.updatedAt = Date.now();
 
+  // Ensure all subtitles have styling flags
+  if (sanitized.subtitles) {
+    sanitized.subtitles = sanitized.subtitles.map(subtitle => ({
+      ...subtitle,
+      spans: subtitle.spans.map(span => ({
+        ...span,
+        isBold: span.isBold || false,
+        isItalic: span.isItalic || false,
+        isUnderline: span.isUnderline || false,
+        styleId: span.styleId || 'default'
+      }))
+    }));
+  }
+
+  // Ensure all tracks have required properties
+  if (sanitized.tracks) {
+    sanitized.tracks = sanitized.tracks.map(track => ({
+      ...track,
+      detail: track.detail || '',
+      visible: track.visible !== undefined ? track.visible : true,
+      locked: track.locked || false
+    }));
+  }
+
+  // Ensure all styles have required properties
+  if (sanitized.styles) {
+    sanitized.styles = sanitized.styles.map(style => ({
+      ...style,
+      name: style.name || 'Unnamed Style',
+      fc: style.fc || '#FFFFFF',
+      fo: style.fo !== undefined ? style.fo : 1,
+      bc: style.bc || '#000000',
+      bo: style.bo !== undefined ? style.bo : 0.5
+    }));
+  }
+
   return sanitized;
 };
 
@@ -135,19 +185,21 @@ export const sanitizeProjectForSave = async (
  */
 export const createProjectFileContent = async (
   project: Project, 
+  options: SaveOptions = {},
   videoElement?: HTMLVideoElement
 ): Promise<string> => {
   try {
-    const sanitizedProject = await sanitizeProjectForSave(project, videoElement);
+    const sanitizedProject = await sanitizeProjectForSave(project, videoElement, options.saveLayoutOnly);
     
     // Create the file structure with metadata
     const fileContent = {
       version: '1.0.0',
-      format: 'Sub-Stytler Project',
+      format: options.saveLayoutOnly ? 'Sub-Stytler Layout' : 'Sub-Stytler Project',
       encoding: 'UTF-8',
       createdBy: 'Sub-Stytler',
       savedAt: new Date().toISOString(),
-      project: sanitizedProject
+      project: options.saveLayoutOnly ? undefined : sanitizedProject,
+      layout: options.saveLayoutOnly ? sanitizedProject.layout : undefined
     };
 
     // Pretty print with 2-space indentation for readability
@@ -167,42 +219,47 @@ export const saveProjectToFile = async (
 ): Promise<SaveResult> => {
   try {
     // Validate project data
-    if (!project) {
+    if (!project && !options.saveLayoutOnly) {
       return {
         success: false,
         message: 'No project data provided'
       };
     }
 
-    if (!project.name || project.name.trim() === '') {
+    if (!options.saveLayoutOnly && (!project.name || project.name.trim() === '')) {
       return {
         success: false,
         message: 'Project must have a name'
       };
     }
 
+    // Determine file extension
+    const fileExtension = options.saveLayoutOnly ? '.ssl' : '.ssp';
+
     // Check if File System Access API is supported
     if (!('showSaveFilePicker' in window)) {
-      return await saveProjectFallback(project, options, videoElement);
+      return await saveProjectFallback(project, { ...options, fileExtension }, videoElement);
     }
 
     try {
       // Generate default filename
-      const defaultFileName = `${project.name.replace(/[<>:"|?*\x00-\x1f]/g, '_')}.ssp`;
+      const defaultFileName = options.saveLayoutOnly 
+        ? `layout_${new Date().toISOString().replace(/[:.]/g, '-')}.ssl`
+        : `${project.name.replace(/[<>:"|?*\x00-\x1f]/g, '_')}.ssp`;
 
       // Show save file picker
       const fileHandle = await (window as any).showSaveFilePicker({
         suggestedName: defaultFileName,
         types: [{
-          description: 'Sub-Stytler Project Files',
+          description: options.saveLayoutOnly ? 'Sub-Stytler Layout Files' : 'Sub-Stytler Project Files',
           accept: {
-            'application/json': ['.ssp']
+            'application/json': [fileExtension]
           }
         }]
       });
 
       // Validate the chosen path
-      const validation = validateSavePath(fileHandle.name);
+      const validation = validateSavePath(fileHandle.name, fileExtension);
       if (!validation.valid) {
         return {
           success: false,
@@ -211,7 +268,7 @@ export const saveProjectToFile = async (
       }
 
       // Create file content with video info and timeline state
-      const fileContent = await createProjectFileContent(project, videoElement);
+      const fileContent = await createProjectFileContent(project, options, videoElement);
 
       // Create writable stream and write content
       const writable = await fileHandle.createWritable();
@@ -220,7 +277,7 @@ export const saveProjectToFile = async (
 
       return {
         success: true,
-        message: 'Project saved successfully',
+        message: options.saveLayoutOnly ? 'Layout saved successfully' : 'Project saved successfully',
         filePath: fileHandle.name
       };
 
@@ -266,11 +323,16 @@ export const saveProjectFallback = async (
   videoElement?: HTMLVideoElement
 ): Promise<SaveResult> => {
   try {
+    // Determine file extension
+    const fileExtension = options.saveLayoutOnly ? '.ssl' : '.ssp';
+    
     // Generate filename
-    const fileName = options.filePath || `${project.name.replace(/[<>:"|?*\x00-\x1f]/g, '_')}.ssp`;
+    const fileName = options.filePath || (options.saveLayoutOnly 
+      ? `layout_${new Date().toISOString().replace(/[:.]/g, '-')}${fileExtension}`
+      : `${project.name.replace(/[<>:"|?*\x00-\x1f]/g, '_')}${fileExtension}`);
     
     // Validate filename
-    const validation = validateSavePath(fileName);
+    const validation = validateSavePath(fileName, fileExtension);
     if (!validation.valid) {
       return {
         success: false,
@@ -279,7 +341,7 @@ export const saveProjectFallback = async (
     }
 
     // Create file content with video info and timeline state
-    const fileContent = await createProjectFileContent(project, videoElement);
+    const fileContent = await createProjectFileContent(project, options, videoElement);
 
     // Create blob and download
     const blob = new Blob([fileContent], { 
@@ -302,7 +364,7 @@ export const saveProjectFallback = async (
 
     return {
       success: true,
-      message: 'Project download initiated',
+      message: options.saveLayoutOnly ? 'Layout download initiated' : 'Project download initiated',
       filePath: fileName
     };
 
@@ -318,16 +380,18 @@ export const saveProjectFallback = async (
 /**
  * Loads a project from a file with video info and timeline state
  */
-export const loadProjectFromFile = async (): Promise<LoadResult> => {
+export const loadProjectFromFile = async (options: { layoutOnly?: boolean } = {}): Promise<LoadResult> => {
   try {
+    const fileExtension = options.layoutOnly ? '.ssl' : '.ssp';
+    
     // Check if File System Access API is supported
     if ('showOpenFilePicker' in window) {
       try {
         const [fileHandle] = await (window as any).showOpenFilePicker({
           types: [{
-            description: 'Sub-Stytler Project Files',
+            description: options.layoutOnly ? 'Sub-Stytler Layout Files' : 'Sub-Stytler Project Files',
             accept: {
-              'application/json': ['.ssp']
+              'application/json': [fileExtension]
             }
           }]
         });
@@ -335,7 +399,7 @@ export const loadProjectFromFile = async (): Promise<LoadResult> => {
         const file = await fileHandle.getFile();
         const content = await file.text();
         
-        return parseProjectFile(content);
+        return parseProjectFile(content, options);
       } catch (error: any) {
         if (error.name === 'AbortError') {
           return {
@@ -350,7 +414,7 @@ export const loadProjectFromFile = async (): Promise<LoadResult> => {
       return new Promise((resolve) => {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = '.ssp';
+        input.accept = fileExtension;
         
         input.onchange = async (e) => {
           const file = (e.target as HTMLInputElement).files?.[0];
@@ -364,7 +428,7 @@ export const loadProjectFromFile = async (): Promise<LoadResult> => {
 
           try {
             const content = await file.text();
-            resolve(parseProjectFile(content));
+            resolve(parseProjectFile(content, options));
           } catch (error) {
             resolve({
               success: false,
@@ -387,11 +451,27 @@ export const loadProjectFromFile = async (): Promise<LoadResult> => {
 /**
  * Parses project file content with video info and timeline state extraction
  */
-export const parseProjectFile = (content: string): LoadResult => {
+export const parseProjectFile = (content: string, options: { layoutOnly?: boolean } = {}): LoadResult => {
   try {
     const parsed = JSON.parse(content);
     
-    // Validate file format
+    // Check if this is a layout-only file
+    if (parsed.format === 'Sub-Stytler Layout' || options.layoutOnly) {
+      if (!parsed.layout || !Array.isArray(parsed.layout)) {
+        return {
+          success: false,
+          message: 'Invalid layout file format'
+        };
+      }
+      
+      return {
+        success: true,
+        layout: parsed.layout,
+        message: 'Layout loaded successfully'
+      };
+    }
+    
+    // Validate file format for project files
     if (!parsed.project) {
       return {
         success: false,
@@ -430,6 +510,9 @@ export const parseProjectFile = (content: string): LoadResult => {
       };
     }
 
+    // Extract layout if available
+    const layout = project.layout || parsed.layout;
+
     // Extract video info if available
     let videoInfo: VideoInfo | undefined;
     if (project.videoMeta?.videoInfo) {
@@ -440,6 +523,7 @@ export const parseProjectFile = (content: string): LoadResult => {
       success: true,
       project,
       videoInfo,
+      layout,
       message: 'Project loaded successfully'
     };
 
