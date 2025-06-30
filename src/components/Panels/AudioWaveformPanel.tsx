@@ -44,9 +44,6 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
   // 마지막 애니메이션 프레임 ID 참조
   const rafRef = useRef<number | null>(null);
   
-  const { currentTime, duration, isPlaying, setCurrentTime, snapToFrame } = useTimelineStore();
-  const { currentProject } = useProjectStore();
-  
   // Context menu state
   const [contextMenu, setContextMenu] = useState<{
     isOpen: boolean;
@@ -57,6 +54,9 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     x: 0,
     y: 0
   });
+  
+  const { currentTime, duration, isPlaying, setCurrentTime, snapToFrame } = useTimelineStore();
+  const { currentProject } = useProjectStore();
   
   // 비디오 요소 직접 참조
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -179,7 +179,7 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
       setPrecomputedWaveform(null);
       setPrecomputedSpectrogram(null);
       setAudioDuration(0);
-      console.error('오디오 분석 실패:', error); // 이 로그는 유지하여 실제 에러를 파악합니다.
+      console.error('오디오 분석 실패:', error);
     } finally {
       setIsAnalyzing(false);
     }
@@ -508,7 +508,7 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
       ctx.stroke();
       ctx.restore();
     }
-  }, [localViewStart, localViewEnd, mode, timeToPixel, precomputedWaveform, precomputedSpectrogram, audioDuration, isAnalyzing, getViewWaveformData, getViewSpectrogramData, drawWaveform, drawSpectrogram, getAccurateTime]);
+  }, [localViewStart, localViewEnd, mode, timeToPixel, precomputedWaveform, precomputedSpectrogram, audioDuration, isAnalyzing, getViewWaveformData, getViewSpectrogramData, drawWaveform, drawSpectrogram, getAccurateTime, isDraggingIndicator]);
 
   // 애니메이션 프레임을 사용한 지속적인 업데이트
   useEffect(() => {
@@ -693,6 +693,15 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     });
   }, []);
 
+  // 오디오가 없을 때 placeholder 보여주기
+  if (!currentProject?.videoMeta) {
+    return (
+      <div className="neu-audio-waveform-panel h-full flex items-center justify-center neu-text-secondary">
+        <p className="text-sm">오디오 파형을 보려면 비디오를 로드하세요</p>
+      </div>
+    );
+  }
+
   // wheel 이벤트 passive: false로 등록
   useEffect(() => {
     const container = containerRef.current;
@@ -708,40 +717,8 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     return () => container.removeEventListener('wheel', handler);
   }, [handleWheel]);
 
-  // 오디오가 없을 때 placeholder 보여주기
-  if (!currentProject?.videoMeta) {
-    return (
-      <div className="neu-audio-waveform-panel h-full flex items-center justify-center neu-text-secondary">
-        <p className="text-sm">오디오 파형을 보려면 비디오를 로드하세요</p>
-      </div>
-    );
-  }
-
   return (
     <div className="neu-audio-waveform-panel h-full min-w-0 min-h-0 neu-bg-base p-3 flex flex-col">
-      <div className="flex gap-2 mb-2">
-        <button 
-          className={`p-2 rounded-md flex items-center justify-center ${mode === 'waveform' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-          onClick={() => handleModeChange('waveform')}
-          title="파형 뷰"
-        >
-          <Waves size={16} />
-        </button>
-        <button 
-          className={`p-2 rounded-md flex items-center justify-center ${mode === 'spectrogram' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-          onClick={() => handleModeChange('spectrogram')}
-          title="스펙트로그램 뷰"
-        >
-          <BarChart3 size={16} />
-        </button>
-        <button 
-          className={`p-2 rounded-md flex items-center justify-center ${mode === 'mixed' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-          onClick={() => handleModeChange('mixed')}
-          title="혼합 뷰"
-        >
-          <Layers size={16} />
-        </button>
-      </div>
       <div 
         ref={containerRef}
         className="flex-1 min-w-0 min-h-0 relative cursor-pointer rounded-lg neu-shadow-inset overflow-hidden"
