@@ -26,6 +26,9 @@ interface ProjectState {
   
   // Video upload trigger
   triggerVideoUpload: () => void;
+  
+  // Project update
+  updateProject: (updates: Partial<Project>) => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -37,6 +40,20 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     set((state) => ({
       triggerUploadCounter: state.triggerUploadCounter + 1
     }));
+  },
+  
+  updateProject: (updates) => {
+    const { currentProject } = get();
+    if (!currentProject) return;
+    
+    set({
+      currentProject: {
+        ...currentProject,
+        ...updates,
+        updatedAt: Date.now()
+      },
+      isModified: true
+    });
   },
 
   ...createProjectActions(set, get, {} as any),

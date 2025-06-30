@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaRenderer } from './components/Layout/AreaRenderer';
 import { useLayoutStore } from './stores/layoutStore';
@@ -63,7 +63,12 @@ export default function App() {
   }));
   
   // Project state
-  const { currentProject } = useProjectStore();
+  const { currentProject, updateProject } = useProjectStore();
+  
+  // Project title editing state
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleValue, setTitleValue] = useState('');
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   // Set theme on mount
   useEffect(() => {
@@ -80,6 +85,13 @@ export default function App() {
       }, 100); // Small delay to ensure all stores are initialized
     }
   }, [areas]);
+  
+  // Update title value when project changes
+  useEffect(() => {
+    if (currentProject) {
+      setTitleValue(currentProject.name);
+    }
+  }, [currentProject]);
 
   // 🆕 Auto-load project with video dialog when needed
   const handleProjectLoad = React.useCallback(async () => {
@@ -125,6 +137,39 @@ export default function App() {
     setPendingProject(null);
     setPendingVideoInfo(null);
   }, []);
+  
+  // Handle title double click
+  const handleTitleDoubleClick = () => {
+    if (!currentProject) return;
+    setIsEditingTitle(true);
+  };
+
+  // Handle title input blur
+  const handleTitleBlur = () => {
+    if (!currentProject) return;
+    updateProject({ name: titleValue });
+    setIsEditingTitle(false);
+  };
+
+  // Handle title input key down
+  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      if (!currentProject) return;
+      updateProject({ name: titleValue });
+      setIsEditingTitle(false);
+    } else if (e.key === 'Escape') {
+      setTitleValue(currentProject?.name || 'Untitled Project');
+      setIsEditingTitle(false);
+    }
+  };
+
+  // Focus input when editing starts
+  useEffect(() => {
+    if (isEditingTitle && titleInputRef.current) {
+      titleInputRef.current.focus();
+      titleInputRef.current.select();
+    }
+  }, [isEditingTitle]);
 
   // 🎯 동적 패널 렌더링 로직 - 모든 ID 패턴 지원
   const renderPanel = useMemo(() => {
@@ -230,9 +275,25 @@ export default function App() {
 
         {/* Center Section - Project Title */}
         <div className="flex-1 flex justify-center">
-          <div className="text-base opacity-80 font-medium">
-            {currentProject?.name || "Untitled Project"}
-          </div>
+          {isEditingTitle ? (
+            <input
+              ref={titleInputRef}
+              type="text"
+              value={titleValue}
+              onChange={(e) => setTitleValue(e.target.value)}
+              onBlur={handleTitleBlur}
+              onKeyDown={handleTitleKeyDown}
+              className="text-base bg-bg shadow-inset rounded px-2 py-1 text-text-primary w-64 text-center"
+            />
+          ) : (
+            <div 
+              className="text-base opacity-80 font-medium cursor-pointer hover:opacity-100 transition-opacity duration-200"
+              onDoubleClick={handleTitleDoubleClick}
+              title="Double-click to edit project name"
+            >
+              {currentProject?.name || "Untitled Project"}
+            </div>
+          )}
         </div>
 
         {/* Right Section - Tools and Theme Toggle */}
