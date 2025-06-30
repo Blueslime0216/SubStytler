@@ -1,24 +1,45 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
 import { useYTTStore } from '../../stores/yttStore';
+
+// ResizeObserver 타입 지원을 위해 전역 타입이 없는 경우를 대비한 선언
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const ResizeObserver = window.ResizeObserver || (class { constructor(cb:any){} observe(){} unobserve(){} disconnect(){} });
 
 export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivElement> }> = ({ containerRef }) => {
   // 모든 Hook을 최상단에 선언
   const { currentTime } = useTimelineStore();
   const { currentProject } = useProjectStore();
   const { parsed } = useYTTStore();
-  const [dynamicFontSize, setDynamicFontSize] = useState(11);
+  // 컨테이너 리사이즈 시 리렌더를 트리거하기 위해 state 를 쓰지 않고,
+  // containerRef 크기를 의존성으로 하는 useEffect 에서 forceUpdate 를 수행
+  const [, forceUpdate] = React.useReducer((c) => c + 1, 0);
   useEffect(() => {
     if (!containerRef?.current) return;
-    const updateFontSize = () => {
-      const h = containerRef.current?.clientHeight || 319;
-      setDynamicFontSize(h * 0.055); // 5.5% 비율 (YouTube 기준 자막 높이 약 5.5%)
+
+    // ① 윈도우 리사이즈(전체 화면 크기 변화) 대응
+    const handleWinResize = () => forceUpdate();
+    window.addEventListener('resize', handleWinResize);
+
+    // 관찰 대상: 실제 비디오 요소가 있으면 그것을, 없으면 컨테이너를 관찰
+    const targetEl = containerRef.current.querySelector(
+      '.video-player-element.video-loaded'
+    ) || containerRef.current;
+
+    const ro = new ResizeObserver(() => {
+      const h = getVideoHeight();
+      console.log('[SubtitleOverlay] video height(px):', h);
+      forceUpdate();
+    });
+    ro.observe(targetEl as Element);
+
+    return () => {
+      window.removeEventListener('resize', handleWinResize);
+      ro.disconnect();
     };
-    updateFontSize();
-    window.addEventListener('resize', updateFontSize);
-    return () => window.removeEventListener('resize', updateFontSize);
   }, [containerRef]);
 
   // 프로젝트 편집 중엔 currentProject 가 가장 최신 데이터를 보유하므로 우선 사용한다.
@@ -140,17 +161,33 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
     }
   };
 
-  // Calculate font size
-  const getFontSize = () => {
-    const sz = style?.sz || '100%';
-    return sz;
+  // -------- 크기 계산 (박스 높이 및 폰트 크기) -----------------------
+  const getSizing = () => {
+    const containerH = getVideoHeight();
+    console.log('[SubtitleOverlay] sizing compute - videoH:', containerH);
+
+    // 1) 기본 박스 높이 (1080 → 58px 비례)
+    const baseBoxHeight = (containerH / 1080) * 58;
+
+    // 2) Youtube 크기 공식 비율 계산
+    const szStr = style?.sz || '100%';
+    const szNum = parseFloat(szStr);
+    const scale = (100 + (szNum - 100) / 4) / 100; // e.g. 100→1 , 200→1.25
+
+    const finalBoxHeight = baseBoxHeight * scale;
+
+    // 3) 텍스트 폰트 크기 = 박스 * 0.9 (상수)
+    const fontPx = finalBoxHeight * 0.9;
+
+    return { boxHeight: finalBoxHeight, fontSizePx: fontPx };
   };
+
+  const { boxHeight, fontSizePx } = getSizing();
 
   const positionStyle = getPositionStyle();
   const fontFamily = getFontFamily();
   const textOutlineStyle = getTextOutlineStyle();
   const verticalTextStyle = getVerticalTextStyle();
-  const fontSize = getFontSize();
 
   // Hex -> rgba 변환 헬퍼
   const hexToRgba = (hex: string, alpha: number) => {
@@ -170,6 +207,17 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
 
   const colorCss = hexToRgba(fgColorHex, fgOpacity);
   const backgroundCss = hexToRgba(bgColorHex, bgOpacity);
+
+  // 헬퍼: 실제 재생 중인 <video> 요소 높이를 구한다.
+  function getVideoHeight(): number {
+    const container = containerRef?.current;
+    if (!container) return 1080;
+    const videoEl = container.querySelector(
+      '.video-player-element.video-loaded'
+    ) as HTMLElement | null;
+    if (videoEl && videoEl.clientHeight) return videoEl.clientHeight;
+    return container.clientHeight || 1080;
+  }
 
   return (
     <div className="absolute inset-0 pointer-events-none">
@@ -191,11 +239,11 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
           <div
             style={{
               width: 'auto',
-              height: 'auto',
+              height: `${boxHeight}px`,
               backgroundColor: backgroundCss,
               color: colorCss,
               fontFamily: fontFamily,
-              fontSize: '1.2em', // height 기준 상대값, 필요시 조정
+              fontSize: `${fontSizePx}px`,
               fontWeight: isBold ? 'bold' : 'normal',
               fontStyle: isItalic ? 'italic' : 'normal',
               textDecoration: isUnderline ? 'underline' : 'none',
@@ -203,7 +251,6 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
               whiteSpace: 'nowrap',
               lineHeight: 1,
               overflow: 'hidden',
-              borderRadius: 2,
               ...textOutlineStyle,
               ...verticalTextStyle
             }}
