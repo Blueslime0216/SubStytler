@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Area } from '../../../types/area';
+import { Area, DEFAULT_MIN_WIDTH, DEFAULT_MIN_HEIGHT, DEFAULT_MAX_HEIGHT } from '../../../types/area';
 import { BorderDir, LinkedArea, detectLinkedAreas, clamp, EPSILON } from './areaDragUtils';
 import { useHistoryStore } from '../../../stores/historyStore';
 
@@ -152,7 +152,8 @@ export function useAreaDrag(
           const a = newAreas.find(x => x.id === id);
           if (!a) continue;
           
-          const minSize = isHorizontal ? (a.minWidth || 5) : (a.minHeight || 5);
+          const minSize = isHorizontal ? DEFAULT_MIN_WIDTH : DEFAULT_MIN_HEIGHT;
+          const maxSize = isHorizontal ? 100 : DEFAULT_MAX_HEIGHT;
           const currentSize = isHorizontal ? a.width : a.height;
           const capacity = currentSize - minSize;
 

@@ -79,9 +79,9 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     description: "Video preview with timeline and editor",
     icon: StandardIcon,
     areas: [
-      { id: 'video-preview', x: 0, y: 0, width: 60, height: 100, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-timeline', x: 60, y: 0, width: 40, height: 55, minWidth: 15, minHeight: 20 },
-      { id: 'text-editor', x: 60, y: 55, width: 40, height: 45, minWidth: 15, minHeight: 20 },
+      { id: 'video-preview', x: 0, y: 0, width: 60, height: 100 },
+      { id: 'subtitle-timeline', x: 60, y: 0, width: 40, height: 55 },
+      { id: 'text-editor', x: 60, y: 55, width: 40, height: 45 },
     ]
   },
   
@@ -90,9 +90,9 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     description: "Video and timeline with editor below",
     icon: EditingFocusIcon,
     areas: [
-      { id: 'video-preview', x: 0, y: 0, width: 50, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-timeline', x: 50, y: 0, width: 50, height: 50, minWidth: 15, minHeight: 20 },
-      { id: 'text-editor', x: 0, y: 50, width: 100, height: 50, minWidth: 15, minHeight: 20 },
+      { id: 'video-preview', x: 0, y: 0, width: 50, height: 50 },
+      { id: 'subtitle-timeline', x: 50, y: 0, width: 50, height: 50 },
+      { id: 'text-editor', x: 0, y: 50, width: 100, height: 50 },
     ]
   },
   
@@ -101,9 +101,9 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     description: "Video and editor with timeline below",
     icon: TimelineFirstIcon,
     areas: [
-      { id: 'video-preview', x: 0, y: 0, width: 50, height: 40, minWidth: 15, minHeight: 20 },
-      { id: 'text-editor', x: 50, y: 0, width: 50, height: 40, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-timeline', x: 0, y: 40, width: 100, height: 60, minWidth: 15, minHeight: 20 },
+      { id: 'video-preview', x: 0, y: 0, width: 50, height: 40 },
+      { id: 'text-editor', x: 50, y: 0, width: 50, height: 40 },
+      { id: 'subtitle-timeline', x: 0, y: 40, width: 100, height: 60 },
     ]
   },
   
@@ -112,11 +112,11 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     description: "Five specialized panels layout",
     icon: AdvancedEditingIcon,
     areas: [
-      { id: 'video-preview', x: 0, y: 0, width: 66, height: 60, minWidth: 15, minHeight: 20 },
-      { id: 'audio-waveform', x: 66, y: 0, width: 34, height: 30, minWidth: 15, minHeight: 20 },
-      { id: 'style-manager', x: 66, y: 30, width: 34, height: 30, minWidth: 15, minHeight: 20 },
-      { id: 'script-viewer', x: 66, y: 60, width: 34, height: 40, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-timeline', x: 0, y: 60, width: 66, height: 40, minWidth: 15, minHeight: 20 },
+      { id: 'video-preview', x: 0, y: 0, width: 66, height: 60 },
+      { id: 'audio-waveform', x: 66, y: 0, width: 34, height: 30 },
+      { id: 'style-manager', x: 66, y: 30, width: 34, height: 30 },
+      { id: 'script-viewer', x: 66, y: 60, width: 34, height: 40 },
+      { id: 'subtitle-timeline', x: 0, y: 60, width: 66, height: 40 },
     ]
   },
   
@@ -125,11 +125,11 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     description: "Five panels with audio emphasis",
     icon: AudioFocusedIcon,
     areas: [
-      { id: 'video-preview', x: 0, y: 0, width: 33, height: 60, minWidth: 15, minHeight: 20 },
-      { id: 'audio-waveform', x: 33, y: 0, width: 67, height: 60, minWidth: 15, minHeight: 20 },
-      { id: 'text-editor', x: 0, y: 60, width: 33, height: 40, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-preview', x: 33, y: 60, width: 33, height: 40, minWidth: 15, minHeight: 20 },
-      { id: 'style-manager', x: 66, y: 60, width: 34, height: 40, minWidth: 15, minHeight: 20 },
+      { id: 'video-preview', x: 0, y: 0, width: 33, height: 60 },
+      { id: 'audio-waveform', x: 33, y: 0, width: 67, height: 60 },
+      { id: 'text-editor', x: 0, y: 60, width: 33, height: 40 },
+      { id: 'subtitle-preview', x: 33, y: 60, width: 33, height: 40 },
+      { id: 'style-manager', x: 66, y: 60, width: 34, height: 40 },
     ]
   },
   
@@ -138,10 +138,10 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     description: "Tall video layout with tools stacked on the right",
     icon: VerticalEditingIcon,
     areas: [
-      { id: 'video-preview', x: 0, y: 0, width: 60, height: 70, minWidth: 15, minHeight: 20 },
-      { id: 'text-editor', x: 60, y: 0, width: 40, height: 35, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-timeline', x: 60, y: 35, width: 40, height: 35, minWidth: 15, minHeight: 20 },
-      { id: 'subtitle-preview', x: 0, y: 70, width: 100, height: 30, minWidth: 15, minHeight: 20 },
+      { id: 'video-preview', x: 0, y: 0, width: 60, height: 70 },
+      { id: 'text-editor', x: 60, y: 0, width: 40, height: 35 },
+      { id: 'subtitle-timeline', x: 60, y: 35, width: 40, height: 35 },
+      { id: 'subtitle-preview', x: 0, y: 70, width: 100, height: 30 },
     ]
   }
 };

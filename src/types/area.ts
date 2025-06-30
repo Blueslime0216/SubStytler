@@ -4,6 +4,9 @@ export interface Area {
   y: number;
   width: number;
   height: number;
-  minWidth: number;
-  minHeight: number;
-} 
+}
+
+// 고정된 기본값 상수
+export const DEFAULT_MIN_WIDTH = 15; // %
+export const DEFAULT_MIN_HEIGHT = 15; // %
+export const DEFAULT_MAX_HEIGHT = 10; // % 
