@@ -51,30 +51,30 @@ const TextTab: React.FC<TextTabProps> = ({
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
           <label className="text-sm font-medium text-text-primary">
-            자막 텍스트
+            Subtitle Text
           </label>
           <div className="text-xs text-text-secondary">
-            {selectedText.length}자
+            {selectedText.length} chars
           </div>
         </div>
         <textarea
           value={selectedText}
           onChange={(e) => handleTextChange(e.target.value)}
           className="w-full h-32 bg-bg shadow-inset rounded-lg p-3 text-base text-text-primary resize-none focus:ring-2 focus:ring-primary focus:outline-none"
-          placeholder="자막 텍스트를 입력하세요..."
+          placeholder="Enter subtitle text..."
         />
       </div>
       
       {/* 폰트 설정 섹션 */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-          폰트 설정
+          Font Settings
         </h3>
         
         {/* 폰트 선택 */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-xs font-medium text-text-secondary">폰트</label>
+            <label className="text-xs font-medium text-text-secondary">Font</label>
             <KeyframeButton property="fs" getCurrentValue={() => fontFamily} />
           </div>
           <select
@@ -82,7 +82,7 @@ const TextTab: React.FC<TextTabProps> = ({
             onChange={(e) => setFontFamily(e.target.value)}
             className="w-full bg-bg shadow-inset rounded p-2.5 text-sm text-text-primary focus:ring-2 focus:ring-primary focus:outline-none"
           >
-            <option value="0">Roboto (기본)</option>
+            <option value="0">Roboto (Default)</option>
             <option value="1">Courier New</option>
             <option value="2">Times New Roman</option>
             <option value="3">Lucida Console</option>
@@ -96,7 +96,7 @@ const TextTab: React.FC<TextTabProps> = ({
         {/* 폰트 크기 */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-xs font-medium text-text-secondary">폰트 크기</label>
+            <label className="text-xs font-medium text-text-secondary">Font Size</label>
             <KeyframeButton property="sz" getCurrentValue={() => fontSize} />
           </div>
           <div className="flex items-center gap-2">
@@ -106,7 +106,7 @@ const TextTab: React.FC<TextTabProps> = ({
               onChange={(e) => handleFontSizeChange(e.target.value)}
               onWheel={handleFontSizeWheel}
               className="flex-1 bg-bg shadow-inset rounded p-2.5 text-sm text-text-primary focus:ring-2 focus:ring-primary focus:outline-none"
-              placeholder="예: 150%"
+              placeholder="e.g., 150%"
             />
             <div className="flex space-x-1">
               <button
@@ -129,12 +129,12 @@ const TextTab: React.FC<TextTabProps> = ({
       {/* 텍스트 방향 섹션 */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-          텍스트 방향
+          Text Direction
         </h3>
         
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-xs font-medium text-text-secondary">텍스트 방향</label>
+            <label className="text-xs font-medium text-text-secondary">Text Direction</label>
             <KeyframeButton property="pd" getCurrentValue={() => printDirection} />
           </div>
           <select
@@ -142,18 +142,18 @@ const TextTab: React.FC<TextTabProps> = ({
             onChange={(e) => setPrintDirection(e.target.value)}
             className="w-full bg-bg shadow-inset rounded p-2.5 text-sm text-text-primary focus:ring-2 focus:ring-primary focus:outline-none"
           >
-            <option value="00">가로 LTR (기본)</option>
-            <option value="20">세로 RTL</option>
-            <option value="21">세로 LTR</option>
-            <option value="30">90° 회전, LTR</option>
-            <option value="31">90° 회전, RTL</option>
+            <option value="00">Horizontal LTR (Default)</option>
+            <option value="20">Vertical RTL</option>
+            <option value="21">Vertical LTR</option>
+            <option value="30">Rotated 90°, LTR</option>
+            <option value="31">Rotated 90°, RTL</option>
           </select>
         </div>
       </div>
       
       {/* 텍스트 샘플 미리보기 */}
       <div className="mt-6 p-3 bg-bg rounded-lg">
-        <div className="text-xs text-text-secondary mb-1">샘플 미리보기</div>
+        <div className="text-xs text-text-secondary mb-1">Sample Preview</div>
         <div 
           className="p-2 overflow-hidden"
           style={{
@@ -173,7 +173,7 @@ const TextTab: React.FC<TextTabProps> = ({
             direction: printDirection === '31' ? 'rtl' : 'ltr',
           }}
         >
-          {selectedText || '샘플 텍스트'}
+          {selectedText || 'Sample Text'}
         </div>
       </div>
     </div>

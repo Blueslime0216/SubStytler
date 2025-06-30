@@ -51,11 +51,20 @@ export function generateYTTContent(project: Project): string {
     return v;
   };
 
+  /** "150%" → 150 (정수)로 변환. 실패 시 undefined */
+  const normalizeSize = (size?: string): number | undefined => {
+    if (!size) return undefined;
+    const numericValue = parseInt(size, 10);
+    return isNaN(numericValue) ? undefined : numericValue;
+  };
+
   /** pen(글꼴/색 등) 속성 Key 생성 → Map 키로 사용
    *   Bold / Italic / Underline 여부도 포함하여 동일 조합이면 재사용되도록 한다.
    */
-  const makePenKey = (s: SubtitleStyle & { isBold?: boolean; isItalic?: boolean; isUnderline?: boolean }): string =>
-    [s.fc, s.fo, s.bc, s.bo, s.ec, s.et, s.fs, s.sz, s.isBold ? 1 : 0, s.isItalic ? 1 : 0, s.isUnderline ? 1 : 0].join('|');
+  const makePenKey = (s: SubtitleStyle & { isBold?: boolean; isItalic?: boolean; isUnderline?: boolean }): string => {
+    const normalizedSz = normalizeSize(s.sz);
+    return [s.fc, s.fo, s.bc, s.bo, s.ec, s.et, s.fs, normalizedSz, s.isBold ? 1 : 0, s.isItalic ? 1 : 0, s.isUnderline ? 1 : 0].join('|');
+  };
 
   /** ws(정렬/방향) 속성 Key */
   const makeWsKey = (s: SubtitleStyle): string =>

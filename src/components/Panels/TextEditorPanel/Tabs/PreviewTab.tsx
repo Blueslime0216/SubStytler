@@ -160,28 +160,28 @@ const PreviewTab: React.FC<PreviewTabProps> = ({
       {/* 미리보기 배경 선택 */}
       <div className="p-4 border-b border-border-color">
         <div className="flex justify-between items-center">
-          <h3 className="text-sm font-medium text-text-primary">미리보기 배경</h3>
+          <h3 className="text-sm font-medium text-text-primary">Preview Background</h3>
           <div className="flex space-x-2">
             <button 
               className={`w-8 h-8 rounded-full bg-gray-900 ${previewBackground === 'dark' ? 'ring-2 ring-primary' : ''}`}
               onClick={() => setPreviewBackground('dark')}
-              title="어두운 배경"
+              title="Dark Background"
             />
             <button 
               className={`w-8 h-8 rounded-full bg-gray-100 ${previewBackground === 'light' ? 'ring-2 ring-primary' : ''}`}
               onClick={() => setPreviewBackground('light')}
-              title="밝은 배경"
+              title="Light Background"
             />
             <button 
               className={`w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 ${previewBackground === 'gradient' ? 'ring-2 ring-primary' : ''}`}
               onClick={() => setPreviewBackground('gradient')}
-              title="그라데이션 배경"
+              title="Gradient Background"
             />
             <button 
               className={`w-8 h-8 rounded-full bg-cover bg-center ${previewBackground === 'image' ? 'ring-2 ring-primary' : ''}`}
               style={{ backgroundImage: 'url("https://source.unsplash.com/random/100x100/?nature")' }}
               onClick={() => setPreviewBackground('image')}
-              title="이미지 배경"
+              title="Image Background"
             />
           </div>
         </div>
@@ -213,17 +213,17 @@ const PreviewTab: React.FC<PreviewTabProps> = ({
               transform: getTransformStyle(),
             }}
           >
-            {selectedText || '미리보기 텍스트'}
+            {selectedText || 'Preview Text'}
           </div>
         </div>
       </div>
       
       {/* 스타일 요약 */}
       <div className="p-4 bg-surface border-t border-border-color">
-        <h3 className="text-sm font-medium text-text-primary mb-2">스타일 요약</h3>
+        <h3 className="text-sm font-medium text-text-primary mb-2">Style Summary</h3>
         <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
           <div className="flex justify-between">
-            <span className="text-text-secondary">폰트:</span>
+            <span className="text-text-secondary">Font:</span>
             <span className="font-medium">{
               fontFamily === '0' ? 'Roboto' :
               fontFamily === '1' ? 'Courier New' :
@@ -236,39 +236,39 @@ const PreviewTab: React.FC<PreviewTabProps> = ({
             }</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-text-secondary">크기:</span>
+            <span className="text-text-secondary">Size:</span>
             <span className="font-medium">{fontSize}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-text-secondary">텍스트 색상:</span>
+            <span className="text-text-secondary">Text Color:</span>
             <span className="font-medium flex items-center">
               {textColor}
               <span className="w-3 h-3 ml-1 rounded-full" style={{ backgroundColor: textColor }}></span>
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-text-secondary">배경 색상:</span>
+            <span className="text-text-secondary">Background Color:</span>
             <span className="font-medium flex items-center">
               {backgroundColor}
               <span className="w-3 h-3 ml-1 rounded-full" style={{ backgroundColor: backgroundColor }}></span>
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-text-secondary">효과:</span>
+            <span className="text-text-secondary">Effect:</span>
             <span className="font-medium">{
-              outlineType === 0 ? '없음' :
-              outlineType === 1 ? '하드 그림자' :
-              outlineType === 2 ? '베벨' :
-              outlineType === 3 ? '글로우/외곽선' :
-              '소프트 그림자'
+              outlineType === 0 ? 'None' :
+              outlineType === 1 ? 'Hard Shadow' :
+              outlineType === 2 ? 'Bevel' :
+              outlineType === 3 ? 'Glow/Outline' :
+              'Soft Shadow'
             }</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-text-secondary">정렬:</span>
+            <span className="text-text-secondary">Alignment:</span>
             <span className="font-medium">{
-              textAlignment === 1 ? '왼쪽' :
-              textAlignment === 2 ? '오른쪽' :
-              '가운데'
+              textAlignment === 1 ? 'Left' :
+              textAlignment === 2 ? 'Right' :
+              'Center'
             }</span>
           </div>
         </div>

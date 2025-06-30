@@ -370,23 +370,23 @@ export const TextEditorPanel: React.FC = () => {
             <TabsList className="grid grid-cols-5 gap-1">
               <TabsTrigger value="text" className="flex items-center gap-1">
                 <Type className="w-3.5 h-3.5" />
-                <span>텍스트</span>
+                <span>Text</span>
               </TabsTrigger>
               <TabsTrigger value="style" className="flex items-center gap-1">
                 <Palette className="w-3.5 h-3.5" />
-                <span>스타일</span>
+                <span>Style</span>
               </TabsTrigger>
               <TabsTrigger value="position" className="flex items-center gap-1">
                 <Layout className="w-3.5 h-3.5" />
-                <span>위치</span>
+                <span>Position</span>
               </TabsTrigger>
               <TabsTrigger value="effects" className="flex items-center gap-1">
                 <Sliders className="w-3.5 h-3.5" />
-                <span>효과</span>
+                <span>Effects</span>
               </TabsTrigger>
               <TabsTrigger value="preview" className="flex items-center gap-1">
                 <Eye className="w-3.5 h-3.5" />
-                <span>미리보기</span>
+                <span>Preview</span>
               </TabsTrigger>
             </TabsList>
           </div>

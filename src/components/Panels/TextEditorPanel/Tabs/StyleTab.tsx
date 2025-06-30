@@ -41,14 +41,14 @@ const StyleTab: React.FC<StyleTabProps> = ({
       {/* 텍스트 색상 섹션 */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-          텍스트 색상
+          Text Color
         </h3>
         
         <div className="space-y-4">
           {/* 색상 선택기 */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <label className="text-xs font-medium text-text-secondary">텍스트 색상</label>
+              <label className="text-xs font-medium text-text-secondary">Text Color</label>
               <div className="flex items-center gap-2">
                 <div 
                   className="w-6 h-6 rounded cursor-pointer border border-border-color"
@@ -76,7 +76,7 @@ const StyleTab: React.FC<StyleTabProps> = ({
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <label className="text-xs font-medium text-text-secondary">
-                텍스트 불투명도: {Math.round((textOpacity / 255) * 100)}%
+                Text Opacity: {Math.round((textOpacity / 255) * 100)}%
               </label>
               <KeyframeButton property="fo" getCurrentValue={() => textOpacity} />
             </div>
@@ -105,14 +105,14 @@ const StyleTab: React.FC<StyleTabProps> = ({
       {/* 배경 색상 섹션 */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-          배경 색상
+          Background Color
         </h3>
         
         <div className="space-y-4">
           {/* 색상 선택기 */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <label className="text-xs font-medium text-text-secondary">배경 색상</label>
+              <label className="text-xs font-medium text-text-secondary">Background Color</label>
               <div className="flex items-center gap-2">
                 <div 
                   className="w-6 h-6 rounded cursor-pointer border border-border-color"
@@ -140,7 +140,7 @@ const StyleTab: React.FC<StyleTabProps> = ({
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <label className="text-xs font-medium text-text-secondary">
-                배경 불투명도: {Math.round((backgroundOpacity / 255) * 100)}%
+                Background Opacity: {Math.round((backgroundOpacity / 255) * 100)}%
               </label>
               <KeyframeButton property="bo" getCurrentValue={() => backgroundOpacity} />
             </div>
@@ -169,7 +169,7 @@ const StyleTab: React.FC<StyleTabProps> = ({
       {/* 미리보기 섹션 */}
       <div className="space-y-2">
         <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-          색상 미리보기
+          Color Preview
         </h3>
         
         <div className="p-4 bg-bg rounded-lg flex items-center justify-center">
@@ -180,7 +180,7 @@ const StyleTab: React.FC<StyleTabProps> = ({
               color: hexToRgba(textColor, textOpacity),
             }}
           >
-            샘플 텍스트
+            Sample Text
           </div>
         </div>
         

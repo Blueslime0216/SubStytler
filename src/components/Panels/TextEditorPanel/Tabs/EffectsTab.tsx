@@ -20,11 +20,11 @@ const EffectsTab: React.FC<EffectsTabProps> = ({
   
   // 외곽선 스타일 정의
   const outlineTypes = [
-    { value: 0, name: '없음', description: '외곽선 효과 없음' },
-    { value: 1, name: '하드 그림자', description: '텍스트에 선명한 그림자 효과 적용' },
-    { value: 2, name: '베벨', description: '텍스트에 입체감 있는 효과 적용' },
-    { value: 3, name: '글로우/외곽선', description: '텍스트 주변에 빛나는 효과 적용' },
-    { value: 4, name: '소프트 그림자', description: '텍스트에 부드러운 그림자 효과 적용' }
+    { value: 0, name: 'None', description: 'No outline effect' },
+    { value: 1, name: 'Hard Shadow', description: 'Apply a sharp shadow effect to the text' },
+    { value: 2, name: 'Bevel', description: 'Apply a 3D bevel effect to the text' },
+    { value: 3, name: 'Glow/Outline', description: 'Apply a glowing effect around the text' },
+    { value: 4, name: 'Soft Shadow', description: 'Apply a soft shadow effect to the text' }
   ];
   
   // 외곽선 스타일에 따른 CSS 스타일 계산
@@ -48,12 +48,12 @@ const EffectsTab: React.FC<EffectsTabProps> = ({
       {/* 외곽선 색상 섹션 */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-          외곽선 색상
+          Outline Color
         </h3>
         
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-xs font-medium text-text-secondary">외곽선 색상</label>
+            <label className="text-xs font-medium text-text-secondary">Outline Color</label>
             <div className="flex items-center gap-2">
               <div 
                 className="w-6 h-6 rounded cursor-pointer border border-border-color"
@@ -82,7 +82,7 @@ const EffectsTab: React.FC<EffectsTabProps> = ({
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-            외곽선 스타일
+            Outline Style
           </h3>
           <KeyframeButton property="et" getCurrentValue={() => outlineType} />
         </div>
@@ -119,7 +119,7 @@ const EffectsTab: React.FC<EffectsTabProps> = ({
       {/* 미리보기 섹션 */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-          효과 미리보기
+          Effects Preview
         </h3>
         
         <div className="p-6 bg-bg rounded-lg flex items-center justify-center">
@@ -130,7 +130,7 @@ const EffectsTab: React.FC<EffectsTabProps> = ({
               ...getOutlineStyle(outlineType, outlineColor)
             }}
           >
-            샘플 텍스트
+            Sample Text
           </div>
         </div>
         
@@ -165,11 +165,11 @@ const EffectsTab: React.FC<EffectsTabProps> = ({
       
       {/* 고급 효과 팁 */}
       <div className="bg-bg p-3 rounded-lg text-sm text-text-secondary">
-        <h4 className="font-medium text-text-primary mb-1">효과 팁</h4>
+        <h4 className="font-medium text-text-primary mb-1">Effect Tips</h4>
         <ul className="list-disc pl-4 space-y-1">
-          <li>글로우/외곽선은 텍스트를 더 잘 보이게 합니다.</li>
-          <li>소프트 그림자는 배경과 텍스트 사이의 대비를 부드럽게 합니다.</li>
-          <li>베벨 효과는 텍스트에 입체감을 줍니다.</li>
+          <li>Glow/Outline improves text visibility.</li>
+          <li>Soft shadow softens the contrast between text and background.</li>
+          <li>Bevel effect gives the text a 3D look.</li>
         </ul>
       </div>
     </div>

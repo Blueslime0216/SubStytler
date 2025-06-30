@@ -20,15 +20,15 @@ const PositionTab: React.FC<PositionTabProps> = ({
 }) => {
   // 앵커 포인트 그리드 위치 매핑
   const anchorPositions = [
-    { value: 0, label: '좌상단', x: 0, y: 0 },
-    { value: 1, label: '상단 중앙', x: 1, y: 0 },
-    { value: 2, label: '우상단', x: 2, y: 0 },
-    { value: 3, label: '좌측 중앙', x: 0, y: 1 },
-    { value: 4, label: '중앙', x: 1, y: 1 },
-    { value: 5, label: '우측 중앙', x: 2, y: 1 },
-    { value: 6, label: '좌하단', x: 0, y: 2 },
-    { value: 7, label: '하단 중앙', x: 1, y: 2 },
-    { value: 8, label: '우하단', x: 2, y: 2 },
+    { value: 0, label: 'Top Left', x: 0, y: 0 },
+    { value: 1, label: 'Top Center', x: 1, y: 0 },
+    { value: 2, label: 'Top Right', x: 2, y: 0 },
+    { value: 3, label: 'Middle Left', x: 0, y: 1 },
+    { value: 4, label: 'Middle Center', x: 1, y: 1 },
+    { value: 5, label: 'Middle Right', x: 2, y: 1 },
+    { value: 6, label: 'Bottom Left', x: 0, y: 2 },
+    { value: 7, label: 'Bottom Center', x: 1, y: 2 },
+    { value: 8, label: 'Bottom Right', x: 2, y: 2 },
   ];
 
   return (
@@ -37,7 +37,7 @@ const PositionTab: React.FC<PositionTabProps> = ({
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-            앵커 포인트
+            Anchor Point
           </h3>
           <KeyframeButton property="ap" getCurrentValue={() => anchorPoint} />
         </div>
@@ -63,21 +63,21 @@ const PositionTab: React.FC<PositionTabProps> = ({
         
         {/* 선택된 앵커 포인트 설명 */}
         <div className="text-center text-sm text-text-secondary">
-          선택된 앵커: {anchorPositions.find(p => p.value === anchorPoint)?.label || '중앙'}
+          Selected Anchor: {anchorPositions.find(p => p.value === anchorPoint)?.label || 'Center'}
         </div>
       </div>
       
       {/* 위치 슬라이더 */}
       <div className="space-y-6">
         <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-          자막 위치
+          Subtitle Position
         </h3>
         
         {/* 수평 위치 (X) */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <label className="text-xs font-medium text-text-secondary">
-              수평 위치 (X): {positionX}%
+              Horizontal Position (X): {positionX}%
             </label>
             <KeyframeButton property="ah" getCurrentValue={() => positionX} />
           </div>
@@ -105,7 +105,7 @@ const PositionTab: React.FC<PositionTabProps> = ({
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <label className="text-xs font-medium text-text-secondary">
-              수직 위치 (Y): {positionY}%
+              Vertical Position (Y): {positionY}%
             </label>
             <KeyframeButton property="av" getCurrentValue={() => positionY} />
           </div>
@@ -133,20 +133,20 @@ const PositionTab: React.FC<PositionTabProps> = ({
       {/* 위치 프리셋 */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-          위치 프리셋
+          Position Presets
         </h3>
         
         <div className="grid grid-cols-3 gap-2">
           {[
-            { name: '상단', x: 50, y: 10, anchor: 1 },
-            { name: '중앙', x: 50, y: 50, anchor: 4 },
-            { name: '하단', x: 50, y: 90, anchor: 7 },
-            { name: '좌측', x: 10, y: 50, anchor: 3 },
-            { name: '우측', x: 90, y: 50, anchor: 5 },
-            { name: '좌상단', x: 10, y: 10, anchor: 0 },
-            { name: '우상단', x: 90, y: 10, anchor: 2 },
-            { name: '좌하단', x: 10, y: 90, anchor: 6 },
-            { name: '우하단', x: 90, y: 90, anchor: 8 },
+            { name: 'Top', x: 50, y: 10, anchor: 1 },
+            { name: 'Center', x: 50, y: 50, anchor: 4 },
+            { name: 'Bottom', x: 50, y: 90, anchor: 7 },
+            { name: 'Left', x: 10, y: 50, anchor: 3 },
+            { name: 'Right', x: 90, y: 50, anchor: 5 },
+            { name: 'Top Left', x: 10, y: 10, anchor: 0 },
+            { name: 'Top Right', x: 90, y: 10, anchor: 2 },
+            { name: 'Bottom Left', x: 10, y: 90, anchor: 6 },
+            { name: 'Bottom Right', x: 90, y: 90, anchor: 8 },
           ].map((preset, index) => (
             <button
               key={index}
@@ -166,7 +166,7 @@ const PositionTab: React.FC<PositionTabProps> = ({
       {/* 위치 미리보기 */}
       <div className="space-y-2">
         <h3 className="text-sm font-medium text-text-primary border-b border-border-color pb-2">
-          위치 미리보기
+          Position Preview
         </h3>
         
         <div className="relative bg-bg rounded-lg h-48 overflow-hidden">
@@ -195,7 +195,7 @@ const PositionTab: React.FC<PositionTabProps> = ({
               transform: `translate(${anchorPoint % 3 === 0 ? '0' : anchorPoint % 3 === 1 ? '-50%' : '-100%'}, ${Math.floor(anchorPoint / 3) === 0 ? '0' : Math.floor(anchorPoint / 3) === 1 ? '-50%' : '-100%'})`,
             }}
           >
-            샘플 텍스트
+            Sample Text
           </div>
         </div>
       </div>
