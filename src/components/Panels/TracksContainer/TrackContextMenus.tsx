@@ -112,9 +112,6 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
     
     addSubtitle(newSubtitle);
     
-    // Move the indicator to the start position of the new subtitle
-    setCurrentTime(time);
-    
     // Record state after adding subtitle
     setTimeout(() => {
       useHistoryStore.getState().record(
