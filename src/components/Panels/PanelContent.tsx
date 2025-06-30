@@ -50,6 +50,11 @@ export const PanelContent: React.FC<PanelContentProps> = ({ type }) => {
     );
   }
   
+  // 📝 Text editor 패널은 div 없이 PanelComponent만 반환 (불필요한 div 제거)
+  if (type === 'text-editor') {
+    return <PanelComponent />;
+  }
+  
   return (
     <div className="h-full w-full overflow-hidden">
       <PanelComponent />

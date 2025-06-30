@@ -7,13 +7,15 @@ interface VideoControllerTimeDisplayProps {
   duration: number;
   frameNumber: number;
   fps: number;
+  showFrame?: boolean;
 }
 
 const VideoControllerTimeDisplay: React.FC<VideoControllerTimeDisplayProps> = ({
   currentTime,
   duration,
   frameNumber,
-  fps
+  fps,
+  showFrame = true
 }) => {
   // FPS value to display nicely (integer or one decimal place)
   const displayFps = Number.isInteger(fps) ? fps.toString() : fps.toFixed(1);
@@ -34,17 +36,19 @@ const VideoControllerTimeDisplay: React.FC<VideoControllerTimeDisplayProps> = ({
       </div>
       
       {/* Frame Number and FPS in a badge */}
-      <div className="video-controller-frame-container">
-        <div className="video-controller-frame">
-          <Clock className="video-controller-frame-icon" />
-          <span className="video-controller-frame-number">
-            {String(frameNumber).padStart(5, '0')}
-          </span>
-          <span className="video-controller-fps">
-            {displayFps}FPS
-          </span>
+      {showFrame && (
+        <div className="video-controller-frame-container">
+          <div className="video-controller-frame">
+            <Clock className="video-controller-frame-icon" />
+            <span className="video-controller-frame-number">
+              {String(frameNumber).padStart(5, '0')}
+            </span>
+            <span className="video-controller-fps">
+              {displayFps}FPS
+            </span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

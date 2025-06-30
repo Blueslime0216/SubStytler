@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Pin, PinOff, Settings } from 'lucide-react';
+import { Pin, PinOff, Smartphone } from 'lucide-react';
 import { Portal } from '../../UI/Portal';
 
 interface VideoControllerAdditionalButtonsProps {
@@ -17,7 +17,7 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{left: number, top: number} | null>(null);
   const subtitleBtnRef = useRef<HTMLButtonElement>(null);
-  const settingsBtnRef = useRef<HTMLButtonElement>(null);
+  const mobileBtnRef = useRef<HTMLButtonElement>(null);
   const pinBtnRef = useRef<HTMLButtonElement>(null);
   
   // 자막 토글
@@ -31,7 +31,7 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
     setShowTooltip(tooltipType);
     let ref: React.RefObject<HTMLButtonElement> | null = null;
     if (tooltipType === 'subtitle') ref = subtitleBtnRef;
-    if (tooltipType === 'settings') ref = settingsBtnRef;
+    if (tooltipType === 'mobile') ref = mobileBtnRef;
     if (tooltipType === 'pin') ref = pinBtnRef;
     if (ref && ref.current) {
       const rect = ref.current.getBoundingClientRect();
@@ -83,20 +83,19 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
         )}
       </div>
       
-      {/* 설정 버튼 */}
+      {/* 모바일 모드 버튼 */}
       <div className="video-controller-button-wrapper">
         <button 
-          ref={settingsBtnRef}
+          ref={mobileBtnRef}
           className="video-controller-button"
-          onClick={onSettings}
-          onMouseEnter={() => handleMouseEnter('settings')}
+          onMouseEnter={() => handleMouseEnter('mobile')}
           onMouseLeave={handleMouseLeave}
-          title="설정"
+          title="모바일 모드"
         >
-          <Settings className="video-controller-icon" width={20} height={20} />
+          <Smartphone className="video-controller-icon" width={20} height={20} />
         </button>
         
-        {showTooltip === 'settings' && tooltipPos && (
+        {showTooltip === 'mobile' && tooltipPos && (
           <Portal>
             <div
               className="video-controller-tooltip"
@@ -108,7 +107,7 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
                 zIndex: 9999
               }}
             >
-              설정
+              모바일 모드
             </div>
           </Portal>
         )}

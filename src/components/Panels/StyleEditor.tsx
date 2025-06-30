@@ -135,15 +135,19 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
             </div>
             <div className="mt-1">
               <label className="block text-xs font-medium text-text-secondary mb-1">
-                Opacity: {Math.round((style.fo !== undefined ? style.fo : 1) * 100)}%
+                Opacity: {(() => {
+                  const v = style.fo !== undefined ? style.fo : 255;
+                  const percent = Math.round((v / 255) * 100);
+                  return `${v} (${percent}%)`;
+                })()}
               </label>
               <input
                 type="range"
                 min="0"
-                max="1"
-                step="0.01"
-                value={style.fo !== undefined ? style.fo : 1}
-                onChange={e => handleOpacityChange('fo', parseFloat(e.target.value))}
+                max="255"
+                step="1"
+                value={style.fo !== undefined ? style.fo : 255}
+                onChange={e => handleOpacityChange('fo', parseInt(e.target.value))}
                 className="w-full"
               />
             </div>
@@ -168,15 +172,19 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ style, onUpdate }) => {
             </div>
             <div className="mt-1">
               <label className="block text-xs font-medium text-text-secondary mb-1">
-                Opacity: {Math.round((style.bo !== undefined ? style.bo : 0.5) * 100)}%
+                Opacity: {(() => {
+                  const v = style.bo !== undefined ? style.bo : 127;
+                  const percent = Math.round((v / 255) * 100);
+                  return `${v} (${percent}%)`;
+                })()}
               </label>
               <input
                 type="range"
                 min="0"
-                max="1"
-                step="0.01"
-                value={style.bo !== undefined ? style.bo : 0.5}
-                onChange={e => handleOpacityChange('bo', parseFloat(e.target.value))}
+                max="255"
+                step="1"
+                value={style.bo !== undefined ? style.bo : 127}
+                onChange={e => handleOpacityChange('bo', parseInt(e.target.value))}
                 className="w-full"
               />
             </div>

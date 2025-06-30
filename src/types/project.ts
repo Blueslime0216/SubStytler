@@ -22,9 +22,9 @@ export interface SubtitleStyle {
   id: string;
   name: string;
   fc?: string; // font color
-  fo?: number; // font opacity
+  fo?: number; // font opacity (0-255)
   bc?: string; // background color
-  bo?: number; // background opacity
+  bo?: number; // background opacity (0-255)
   ec?: string; // edge color
   et?: number; // edge type
   fs?: string; // font style

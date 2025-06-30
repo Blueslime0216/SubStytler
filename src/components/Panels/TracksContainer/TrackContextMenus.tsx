@@ -4,6 +4,7 @@ import { ContextMenu, ContextMenuItem, ContextMenuDivider, ContextMenuSectionTit
 import { useProjectStore } from '../../../stores/projectStore';
 import { useHistoryStore } from '../../../stores/historyStore';
 import { useTimelineStore } from '../../../stores/timelineStore';
+import { useSnapStore } from '../../../stores/snapStore';
 import { SubtitleTrack } from '../../../types/project';
 import { TrackDeleteConfirmationModal } from '../../UI/TrackDeleteConfirmationModal';
 
@@ -40,6 +41,7 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
 }) => {
   const { addTrack, updateTrack, deleteTrack, addSubtitle, deleteSubtitle, currentProject } = useProjectStore();
   const { setCurrentTime, setZoom, setViewRange, duration } = useTimelineStore();
+  const { enabled: snapEnabled, toggle: toggleSnap } = useSnapStore();
   
   // Delete confirmation modal state
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -258,6 +260,12 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
     closeAllContextMenus();
   };
 
+  // Snap toggle
+  const handleToggleSnap = () => {
+    toggleSnap();
+    closeAllContextMenus();
+  };
+
   // Helper function to format time for history descriptions
   const formatTimeForHistory = (ms: number): string => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -280,6 +288,12 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
           onClick={handleAddTrack}
         >
           Add Track
+        </ContextMenuItem>
+
+        <ContextMenuItem
+          onClick={handleToggleSnap}
+        >
+          {snapEnabled ? 'Disable Snapping' : 'Enable Snapping'}
         </ContextMenuItem>
 
         {trackHeaderContextMenu.trackId && (
@@ -361,6 +375,12 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
           onClick={handleAddTrack}
         >
           Add Track
+        </ContextMenuItem>
+        
+        <ContextMenuItem
+          onClick={handleToggleSnap}
+        >
+          {snapEnabled ? 'Disable Snapping' : 'Enable Snapping'}
         </ContextMenuItem>
         
         {/* 줌 초기화 - 자막 블록이 아닌 빈 공간을 클릭했을 때만 표시 */}

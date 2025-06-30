@@ -7,6 +7,7 @@ import TextEditorHeader from './TextEditorHeader';
 import TextEditorContent from './TextEditorContent';
 import TextEditorPreview from './TextEditorPreview';
 import TextEditorEmptyState from './TextEditorEmptyState';
+import '../../../styles/components/text-editor-panel.css';
 
 export const TextEditorPanel: React.FC = () => {
   const [selectedText, setSelectedText] = useState('');
@@ -198,91 +199,91 @@ export const TextEditorPanel: React.FC = () => {
   }
 
   return (
-    <div className="h-full p-4 overflow-y-auto">
-      <TextEditorHeader 
-        toggleTextStyle={toggleTextStyle}
-        isBold={isBold}
-        isItalic={isItalic}
-        isUnderline={isUnderline}
-        textAlignment={textAlignment}
-        setTextAlignment={(value) => {
-          setTextAlignment(value);
-          handleStyleChange('ju', value);
-        }}
-      />
-      
-      <TextEditorContent
-        selectedText={selectedText}
-        handleTextChange={handleTextChange}
-        textColor={textColor}
-        textOpacity={textOpacity}
-        backgroundColor={backgroundColor}
-        backgroundOpacity={backgroundOpacity}
-        fontSize={fontSize}
-        fontFamily={fontFamily}
-        outlineColor={outlineColor}
-        outlineType={outlineType}
-        anchorPoint={anchorPoint}
-        printDirection={printDirection}
-        setTextColor={(value) => {
-          setTextColor(value);
-          handleStyleChange('fc', value);
-        }}
-        setTextOpacity={(value) => {
-          setTextOpacity(value);
-          handleStyleChange('fo', value);
-        }}
-        setBackgroundColor={(value) => {
-          setBackgroundColor(value);
-          handleStyleChange('bc', value);
-        }}
-        setBackgroundOpacity={(value) => {
-          setBackgroundOpacity(value);
-          handleStyleChange('bo', value);
-        }}
-        setFontSize={(value) => {
-          setFontSize(value);
-          handleStyleChange('sz', value);
-        }}
-        setFontFamily={(value) => {
-          setFontFamily(value);
-          handleStyleChange('fs', value);
-        }}
-        setOutlineColor={(value) => {
-          setOutlineColor(value);
-          handleStyleChange('ec', value);
-        }}
-        setOutlineType={(value) => {
-          setOutlineType(value);
-          handleStyleChange('et', value);
-        }}
-        setAnchorPoint={(value) => {
-          setAnchorPoint(value);
-          handleStyleChange('ap', value);
-        }}
-        setPrintDirection={(value) => {
-          setPrintDirection(value);
-          handleStyleChange('pd', value);
-        }}
-      />
-      
-      <TextEditorPreview
-        selectedText={selectedText}
-        textColor={textColor}
-        textOpacity={textOpacity}
-        backgroundColor={backgroundColor}
-        backgroundOpacity={backgroundOpacity}
-        fontSize={fontSize}
-        fontFamily={fontFamily}
-        textAlignment={textAlignment}
-        outlineColor={outlineColor}
-        outlineType={outlineType}
-        anchorPoint={anchorPoint}
-        printDirection={printDirection}
-        isBold={isBold}
-        isItalic={isItalic}
-        isUnderline={isUnderline}
-      />
+    <div className="h-full min-w-0 min-h-0 flex flex-col text-editor-panel-root">
+      <div className="flex-1 min-w-0 min-h-0 overflow-auto">
+        <TextEditorHeader 
+          toggleTextStyle={toggleTextStyle}
+          isBold={isBold}
+          isItalic={isItalic}
+          isUnderline={isUnderline}
+          textAlignment={textAlignment}
+          setTextAlignment={(value) => {
+            setTextAlignment(value);
+            handleStyleChange('ju', value);
+          }}
+        />
+        <TextEditorContent
+          selectedText={selectedText}
+          handleTextChange={handleTextChange}
+          textColor={textColor}
+          textOpacity={textOpacity}
+          backgroundColor={backgroundColor}
+          backgroundOpacity={backgroundOpacity}
+          fontSize={fontSize}
+          fontFamily={fontFamily}
+          outlineColor={outlineColor}
+          outlineType={outlineType}
+          anchorPoint={anchorPoint}
+          printDirection={printDirection}
+          setTextColor={(value) => {
+            setTextColor(value);
+            handleStyleChange('fc', value);
+          }}
+          setTextOpacity={(value) => {
+            setTextOpacity(value);
+            handleStyleChange('fo', value);
+          }}
+          setBackgroundColor={(value) => {
+            setBackgroundColor(value);
+            handleStyleChange('bc', value);
+          }}
+          setBackgroundOpacity={(value) => {
+            setBackgroundOpacity(value);
+            handleStyleChange('bo', value);
+          }}
+          setFontSize={(value) => {
+            setFontSize(value);
+            handleStyleChange('sz', value);
+          }}
+          setFontFamily={(value) => {
+            setFontFamily(value);
+            handleStyleChange('fs', value);
+          }}
+          setOutlineColor={(value) => {
+            setOutlineColor(value);
+            handleStyleChange('ec', value);
+          }}
+          setOutlineType={(value) => {
+            setOutlineType(value);
+            handleStyleChange('et', value);
+          }}
+          setAnchorPoint={(value) => {
+            setAnchorPoint(value);
+            handleStyleChange('ap', value);
+          }}
+          setPrintDirection={(value) => {
+            setPrintDirection(value);
+            handleStyleChange('pd', value);
+          }}
+        />
+        <TextEditorPreview
+          selectedText={selectedText}
+          textColor={textColor}
+          textOpacity={textOpacity}
+          backgroundColor={backgroundColor}
+          backgroundOpacity={backgroundOpacity}
+          fontSize={fontSize}
+          fontFamily={fontFamily}
+          textAlignment={textAlignment}
+          outlineColor={outlineColor}
+          outlineType={outlineType}
+          anchorPoint={anchorPoint}
+          printDirection={printDirection}
+          isBold={isBold}
+          isItalic={isItalic}
+          isUnderline={isUnderline}
+        />
+      </div>
     </div>
   );
 };

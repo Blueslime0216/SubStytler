@@ -30,16 +30,20 @@ body {
 }
 
 /* Ensure all panel containers allow shadow visibility */
+/*
 .h-screen,
 .h-full,
 .flex-1 {
   overflow: visible !important;
 }
+*/
 
 /* Override any Tailwind overflow settings that might clip shadows */
+/*
 .overflow-hidden {
   overflow: visible !important;
 }
+*/
 
 /* Scrollbar Styling */
 * {
@@ -69,4 +73,9 @@ body {
 
 ::-webkit-scrollbar-corner {
   background: var(--surface-color);
+}
+
+/* 텍스트 에디터 패널 전용 스크롤 예외 */
+.text-editor-panel-scrollable {
+  overflow: auto !important;
 }

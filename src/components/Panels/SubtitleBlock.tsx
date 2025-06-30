@@ -4,6 +4,8 @@ import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
 import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
 import { useSubtitleHighlightStore } from '../../stores/subtitleHighlightStore';
+import { useSnapHighlightStore } from '../../stores/snapHighlightStore';
+import { useSnapStore } from '../../stores/snapStore';
 import { SubtitleBlock as SubtitleBlockType } from '../../types/project';
 import { useHistoryStore } from '../../stores/historyStore';
 
@@ -47,6 +49,8 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   const { snapToFrame, duration } = useTimelineStore();
   const { selectedSubtitleId, setSelectedSubtitleId } = useSelectedSubtitleStore();
   const { highlightedIds, setHighlightedIds } = useSubtitleHighlightStore();
+  const { snapIds, setSnapIds, clear: clearSnapIds } = useSnapHighlightStore();
+  const { enabled: isSnapEnabled } = useSnapStore();
   const [resizeSide, setResizeSide] = useState<'left' | 'right' | null>(null);
   const resizeStartData = useRef<{ startX: number; startTime: number; endTime: number } | null>(null);
   const prevOverlapRef = useRef<string[]>([]);
@@ -70,6 +74,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   // Selected state
   const isSelected = selectedSubtitleId === subtitle.id;
   const isHighlighted = highlightedIds.has(subtitle.id);
+  const isSnapHighlighted = snapIds.has(subtitle.id);
 
   const dragThreshold = 4; // px
 
@@ -153,7 +158,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       recordInitialState();
     }
 
-    const deltaX = deltaXFromStart;
+    let deltaX = deltaXFromStart;
 
     // Determine which track we're currently hovering over and snap vertically
     const { containerRect } = dragStartData.current;
@@ -165,8 +170,6 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 
     const offsetTrack = targetTrackIndex - trackIndex;
     const snappedY = offsetTrack * trackHeight;
-
-    setDragOffset({ x: deltaX, y: snappedY });
 
     // --- Overlap Detection ---
     const { viewStart, viewEnd, snapToFrame } = useTimelineStore.getState();
@@ -198,9 +201,76 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     }
     setIsDropInvalid(isInvalid);
 
+    // -------------------------------------------------------------
+    // Snap Handling (position)
+    // -------------------------------------------------------------
+    const { fps } = useTimelineStore.getState();
+    const thresholdMs = (() => {
+      const pixelsPerSecond = (1000 / viewDuration) * containerRect.width;
+      const pixelsPerFrame = pixelsPerSecond / fps;
+      const minMinor = 5;
+      let frameStep = 1;
+      if (pixelsPerFrame < minMinor) {
+        frameStep = Math.ceil(minMinor / pixelsPerFrame);
+        if (frameStep > 2 && frameStep <= 5) frameStep = 5;
+        else if (frameStep > 5 && frameStep <= 10) frameStep = 10;
+        else if (frameStep > 10 && frameStep <= 30) frameStep = 30;
+        else if (frameStep > 30) frameStep = 60;
+      }
+      const frameDuration = 1000 / fps;
+      return 3 * frameStep * frameDuration;
+    })();
+
+    const snapCandidateIds: string[] = [];
+    let snapAdjustmentTime = 0;
+
+    if (isSnapEnabled && !e.altKey && currentProject) {
+      let closestDiff = thresholdMs + 1;
+      const targetStart = tempStartTime;
+      const targetEnd = tempEndTime;
+
+      for (const other of currentProject?.subtitles || []) {
+        if (other.id === subtitle.id) continue;
+        for (const edge of [other.startTime, other.endTime]) {
+          // Check against start edge
+          let diff = targetStart - edge;
+          if (Math.abs(diff) < Math.abs(closestDiff)) {
+            closestDiff = diff;
+            snapAdjustmentTime = -diff;
+            snapCandidateIds.length = 0;
+            snapCandidateIds.push(other.id);
+          } else if (Math.abs(diff) === Math.abs(closestDiff)) {
+            snapCandidateIds.push(other.id);
+          }
+          // Check against end edge
+          diff = targetEnd - edge;
+          if (Math.abs(diff) < Math.abs(closestDiff)) {
+            closestDiff = diff;
+            snapAdjustmentTime = -diff;
+            snapCandidateIds.length = 0;
+            snapCandidateIds.push(other.id);
+          } else if (Math.abs(diff) === Math.abs(closestDiff)) {
+            snapCandidateIds.push(other.id);
+          }
+        }
+      }
+
+      if (Math.abs(closestDiff) <= thresholdMs) {
+        // apply snap adjustment
+        deltaX += (snapAdjustmentTime / timePerPixel);
+        setSnapIds([subtitle.id, ...snapCandidateIds]);
+      } else {
+        clearSnapIds();
+      }
+    } else {
+      clearSnapIds();
+    }
+
+    setDragOffset({ x: deltaX, y: snappedY });
+
     setHighlightedIds(overlappingIds);
 
-  }, [mouseDown, isDragging, dragStartPos, trackHeight, trackIndex, subtitle.id, subtitle.trackId, onDragStart, duration, subtitleDuration, setHighlightedIds, recordInitialState]);
+  }, [mouseDown, isDragging, dragStartPos, trackHeight, trackIndex, subtitle.id, subtitle.trackId, onDragStart, duration, subtitleDuration, setHighlightedIds, recordInitialState, isSnapEnabled, clearSnapIds, setSnapIds]);
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
     if (!mouseDown) return;
@@ -232,15 +302,56 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     // Clamp to valid range
     newStartTime = Math.max(0, Math.min(duration - subtitleDuration, newStartTime));
     
-    // Snap to frame
+    // Snap to frame first
     newStartTime = snapToFrame(newStartTime);
-    const newEndTime = newStartTime + subtitleDuration;
-    
+
+    let newEndTime = newStartTime + subtitleDuration;
+
+    // Apply subtitle-edge snapping on drop (same threshold calc) if enabled and Alt not pressed
+    const { fps } = useTimelineStore.getState();
+    const thresholdMs = (() => {
+      const pixelsPerSecond = (1000 / viewDuration) * containerWidth;
+      const pixelsPerFrame = pixelsPerSecond / fps;
+      const minMinor = 5;
+      let frameStep = 1;
+      if (pixelsPerFrame < minMinor) {
+        frameStep = Math.ceil(minMinor / pixelsPerFrame);
+        if (frameStep > 2 && frameStep <= 5) frameStep = 5;
+        else if (frameStep > 5 && frameStep <= 10) frameStep = 10;
+        else if (frameStep > 10 && frameStep <= 30) frameStep = 30;
+        else if (frameStep > 30) frameStep = 60;
+      }
+      return 3 * frameStep * (1000 / fps);
+    })();
+
+    const snapCandidateIds: string[] = [];
+    const currentProject = useProjectStore.getState().currentProject;
+    if (isSnapEnabled && !e.altKey && currentProject) {
+      let closestDiff = thresholdMs + 1;
+      for (const other of currentProject?.subtitles || []) {
+        if (other.id === subtitle.id) continue;
+        for (const edge of [other.startTime, other.endTime]) {
+          const diffStart = newStartTime - edge;
+          if (Math.abs(diffStart) < Math.abs(closestDiff)) {
+            closestDiff = diffStart;
+            snapCandidateIds.length = 0;
+            snapCandidateIds.push(other.id);
+          } else if (Math.abs(diffStart) === Math.abs(closestDiff)) {
+            snapCandidateIds.push(other.id);
+          }
+        }
+      }
+      if (Math.abs(closestDiff) <= thresholdMs) {
+        newStartTime = newStartTime - closestDiff;
+      }
+    }
+
+    // Recompute end time to preserve original duration after possible snap adjustment
+    newEndTime = newStartTime + subtitleDuration;
+
     // Determine target track based on Y position
-    const { currentProject } = useProjectStore.getState();
-    if (!currentProject) return;
-    
-    const tracks = currentProject.tracks;
+    const tracks = currentProject?.tracks;
+    if (!tracks) return;
     const relativeY = e.clientY - containerRect.top - 40; // Account for ruler height
     const targetTrackIndex = Math.floor(relativeY / trackHeight);
     const targetTrack = tracks[targetTrackIndex];
@@ -305,10 +416,11 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     onDragEnd();
     setIsDropInvalid(false);
     setHighlightedIds([]);
+    clearSnapIds();
     
     // Reset the initial state recording flag
     hasRecordedInitialState.current = false;
-  }, [mouseDown, isDragging, dragStartPos, containerRef, updateSubtitle, onDragEnd, subtitleDuration, trackHeight, snapToFrame, duration, subtitle.id, setHighlightedIds, selectedSubtitleId]);
+  }, [mouseDown, isDragging, dragStartPos, containerRef, updateSubtitle, onDragEnd, subtitleDuration, trackHeight, snapToFrame, duration, subtitle.id, setHighlightedIds, selectedSubtitleId, isSnapEnabled]);
 
   // Click to select (only when not dragging)
   const handleClick = useCallback(() => {

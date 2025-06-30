@@ -14,6 +14,7 @@ interface VideoOverlaysProps {
   onRetry: () => void;
   onUpload: () => void;
   isVideoLoaded?: boolean;
+  containerRef?: React.RefObject<HTMLDivElement>;
 }
 
 export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
@@ -24,7 +25,8 @@ export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
   isDragActive,
   onRetry,
   onUpload,
-  isVideoLoaded = false
+  isVideoLoaded = false,
+  containerRef
 }) => {
   return (
     <div className="absolute inset-0 z-20 pointer-events-none video-overlay">
@@ -53,7 +55,7 @@ export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
       )}
       
       {/* 자막 오버레이 - 비디오가 로드되었을 때 표시 */}
-      {hasVideo && !videoError && isVideoLoaded && <SubtitleOverlay />}
+      {hasVideo && !videoError && isVideoLoaded && <SubtitleOverlay containerRef={containerRef} />}
     </div>
   );
 };

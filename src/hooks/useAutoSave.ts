@@ -3,6 +3,7 @@ import { useProjectStore } from '../stores/projectStore';
 import { useLayoutStore } from '../stores/layoutStore';
 import { useTimelineStore } from '../stores/timelineStore';
 import { useToast } from './useToast';
+import { useAutoSaveStore } from '../stores/autoSaveStore';
 
 interface AutoSaveBackup {
   timestamp: string;
@@ -15,9 +16,14 @@ const AUTO_SAVE_KEY = 'sub-stytler-auto-save';
 const AUTO_SAVE_SETTINGS_KEY = 'sub-stytler-auto-save-settings';
 
 export const useAutoSave = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [interval, setInterval] = useState(15000); // Default: 15 seconds
-  const [maxBackups, setMaxBackups] = useState(5); // Default: 5 backups
+  const {
+    isEnabled,
+    interval,
+    maxBackups,
+    setInterval,
+    setMaxBackups,
+    toggleAutoSave,
+  } = useAutoSaveStore();
   const [backups, setBackups] = useState<AutoSaveBackup[]>([]);
   const [totalStorageUsed, setTotalStorageUsed] = useState(0);
   const [lastSaveTime, setLastSaveTime] = useState(0);
@@ -27,43 +33,11 @@ export const useAutoSave = () => {
   const timelineState = useTimelineStore();
   const { success, error, info } = useToast();
   
-  // Load settings from localStorage
-  useEffect(() => {
-    try {
-      const savedSettings = localStorage.getItem(AUTO_SAVE_SETTINGS_KEY);
-      if (savedSettings) {
-        const { isEnabled, interval, maxBackups } = JSON.parse(savedSettings);
-        setIsEnabled(isEnabled);
-        setInterval(interval);
-        setMaxBackups(maxBackups);
-      }
-    } catch (err) {
-      console.error('Failed to load auto-save settings:', err);
-    }
-    
-    // Load existing backups
-    loadBackups();
-  }, []);
-  
-  // Save settings when they change
-  useEffect(() => {
-    try {
-      localStorage.setItem(AUTO_SAVE_SETTINGS_KEY, JSON.stringify({
-        isEnabled,
-        interval,
-        maxBackups
-      }));
-    } catch (err) {
-      console.error('Failed to save auto-save settings:', err);
-    }
-  }, [isEnabled, interval, maxBackups]);
-  
-  // Load existing backups
+  // Load existing backups function – placed before first effect to avoid lint errors
   const loadBackups = useCallback(() => {
     try {
       let totalSize = 0;
       const backupList: AutoSaveBackup[] = [];
-      
       // Iterate through localStorage to find all backups
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
@@ -74,12 +48,11 @@ export const useAutoSave = () => {
               const backup = JSON.parse(backupData);
               const size = new Blob([backupData]).size;
               totalSize += size;
-              
               backupList.push({
                 timestamp: key.replace(`${AUTO_SAVE_KEY}-`, ''),
                 projectName: backup.project?.name || 'Untitled',
                 data: backupData,
-                size
+                size,
               });
             } catch (parseErr) {
               console.error('Failed to parse backup:', parseErr);
@@ -87,16 +60,34 @@ export const useAutoSave = () => {
           }
         }
       }
-      
+
       // Sort by timestamp (newest first)
       backupList.sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
-      
       setBackups(backupList);
       setTotalStorageUsed(totalSize);
     } catch (err) {
       console.error('Failed to load backups:', err);
     }
   }, []);
+  
+  // Initialisation – load existing backups once
+  useEffect(() => {
+    loadBackups();
+  }, [loadBackups]);
+  
+  // Persist settings when they change – the zustand 'persist' middleware already does this,
+  // but we keep this effect to maintain backward-compatibility with older keys.
+  useEffect(() => {
+    try {
+      localStorage.setItem(AUTO_SAVE_SETTINGS_KEY, JSON.stringify({
+        isEnabled,
+        interval,
+        maxBackups,
+      }));
+    } catch (err) {
+      console.error('Failed to save auto-save settings:', err);
+    }
+  }, [isEnabled, interval, maxBackups]);
   
   // Auto-save timer
   useEffect(() => {
@@ -187,24 +178,25 @@ export const useAutoSave = () => {
     loadBackups();
   }, [backups, maxBackups, loadBackups]);
   
-  // Toggle auto-save
-  const toggleAutoSave = useCallback(() => {
-    setIsEnabled(prev => !prev);
-    
-    if (!isEnabled) {
+  // Augment the store's toggle so it still fires our notifications & optional immediate save
+  const handleToggleAutoSave = useCallback(() => {
+    const willEnable = !isEnabled;
+    toggleAutoSave();
+
+    if (willEnable) {
       // If enabling, save immediately
       saveBackup();
       success({
         title: 'Auto-Save Enabled',
-        message: 'Your work will be automatically saved'
+        message: 'Your work will be automatically saved',
       });
     } else {
       info({
         title: 'Auto-Save Disabled',
-        message: 'Automatic saving has been turned off'
+        message: 'Automatic saving has been turned off',
       });
     }
-  }, [isEnabled, saveBackup, success, info]);
+  }, [isEnabled, toggleAutoSave, saveBackup, success, info]);
   
   // Restore backup
   const restoreBackup = useCallback((timestamp: string) => {
@@ -278,7 +270,7 @@ export const useAutoSave = () => {
   
   return {
     isEnabled,
-    toggleAutoSave,
+    toggleAutoSave: handleToggleAutoSave,
     interval,
     setInterval,
     maxBackups,
@@ -286,6 +278,6 @@ export const useAutoSave = () => {
     backups,
     totalStorageUsed,
     restoreBackup,
-    clearAllBackups
+    clearAllBackups,
   };
 };

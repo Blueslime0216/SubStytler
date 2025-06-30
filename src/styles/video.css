@@ -39,27 +39,47 @@
   bottom: 0;
   left: 0;
   right: 0;
+  height: 50px;
+  min-height: 50px;
+  max-height: 50px;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
   backdrop-filter: blur(8px);
-  padding: 10px 0 12px 0;
+  padding: 0;
   z-index: 30;
-  overflow: hidden;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-/* Controller Layout */
+.video-controller-progress-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  display: block;
+  height: 8px;
+  margin: 0;
+  background: rgba(255,255,255,0.15);
+  pointer-events: auto;
+}
+
 .video-controller-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
-  margin-top: 10px;
+  padding: 0 16px;
+  height: 100%;
+  margin: 0;
 }
 
 .video-controller-left, 
 .video-controller-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  height: 100%;
 }
 
 /* Button Styles */
@@ -67,8 +87,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   background: transparent;
   border: none;
   border-radius: 4px;
@@ -76,6 +96,7 @@
   cursor: pointer;
   position: relative;
   transition: all 0.2s ease;
+  font-size: 18px;
 }
 
 .video-controller-button:hover {
@@ -94,6 +115,11 @@
 .video-controller-button.disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.video-controller-button .video-controller-icon {
+  width: 22px;
+  height: 22px;
 }
 
 /* Progress Bar */
@@ -156,7 +182,9 @@
   border-radius: 6px;
   padding: 6px 10px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  gap: 12px;
+  gap: 10px;
+  height: 36px;
+  min-width: 120px;
 }
 
 .video-controller-time-section {
@@ -184,17 +212,19 @@
   display: flex;
   align-items: center;
   border-left: 1px solid rgba(255, 255, 255, 0.2);
-  padding-left: 12px;
+  padding-left: 8px;
+  height: 100%;
 }
 
 .video-controller-frame {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background: rgba(94, 129, 172, 0.2);
-  padding: 4px 8px;
+  padding: 2px 6px;
   border-radius: 4px;
   border: 1px solid rgba(94, 129, 172, 0.3);
+  height: 28px;
 }
 
 .video-controller-frame-icon {
@@ -226,7 +256,7 @@
 .video-controller-volume-container {
   display: flex;
   align-items: center;
-  position: relative;
+  height: 100%;
 }
 
 .video-controller-volume-slider {
@@ -284,8 +314,8 @@
 .video-controller-additional-buttons {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-direction: row;
+  gap: 8px;
+  height: 100%;
 }
 
 /* Button wrapper for consistent spacing */
@@ -330,5 +360,26 @@
   
   .video-controller-additional-buttons {
     gap: 8px;
+  }
+}
+
+@media (max-width: 900px) {
+  .video-controller-frame-container {
+    display: none !important;
+  }
+}
+@media (max-width: 780px) {
+  .video-controller-time-display {
+    display: none !important;
+  }
+}
+@media (max-width: 650px) {
+  .video-controller-volume-container {
+    display: none !important;
+  }
+}
+@media (max-width: 540px) {
+  .video-controller-button-wrapper {
+    display: none !important;
   }
 }

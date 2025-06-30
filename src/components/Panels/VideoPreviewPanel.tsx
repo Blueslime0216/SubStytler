@@ -18,6 +18,7 @@ export const VideoPreviewPanel: React.FC = () => {
   const [videoError, setVideoError] = useState<string | null>(null);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
+  const [showFpsConfirmation, setShowFpsConfirmation] = useState(false);
   
   const { currentProject, triggerUploadCounter } = useProjectStore();
   const { error } = useToast();
@@ -27,9 +28,9 @@ export const VideoPreviewPanel: React.FC = () => {
     processVideoFile, 
     showSizeWarning, 
     pendingLargeFile,
-    confirmLargeFileUpload,
-    cancelLargeFileUpload,
-    showFpsConfirmation,
+    handleConfirmLargeFile,
+    handleFpsCancel,
+    showFpsConfirmation: currentShowFpsConfirmation,
     detectedFps,
     handleFpsConfirm
   } = useVideoUpload(videoRef);
@@ -313,6 +314,7 @@ export const VideoPreviewPanel: React.FC = () => {
             onUpload={handleManualFileSelect}
             isDragActive={isDragActive}
             isVideoLoaded={isVideoLoaded}
+            containerRef={videoAreaRef}
           />
         </div>
       </div>
@@ -321,15 +323,15 @@ export const VideoPreviewPanel: React.FC = () => {
       {pendingLargeFile && (
         <LargeVideoWarningModal
           isOpen={showSizeWarning}
-          onClose={cancelLargeFileUpload}
-          onConfirm={confirmLargeFileUpload}
+          onClose={handleFpsCancel}
+          onConfirm={handleConfirmLargeFile}
           fileSize={pendingLargeFile.size}
         />
       )}
 
       {/* FPS Confirmation Modal */}
       <FpsConfirmationModal
-        isOpen={showFpsConfirmation}
+        isOpen={currentShowFpsConfirmation}
         onClose={() => setShowFpsConfirmation(false)}
         detectedFps={detectedFps}
         onConfirm={handleFpsConfirm}

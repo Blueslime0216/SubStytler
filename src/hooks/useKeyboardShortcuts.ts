@@ -8,6 +8,10 @@ import { useProjectStore } from '../stores/projectStore';
 import { useHistoryStore } from '../stores/historyStore';
 import { useLayoutStore } from '../stores/layoutStore';
 import { useProjectSave } from './useProjectSave';
+import { useClipboardStore } from '../stores/clipboardStore';
+import { useSelectedSubtitleStore } from '../stores/selectedSubtitleStore';
+import { useSubtitleHighlightStore } from '../stores/subtitleHighlightStore';
+import { SubtitleBlock } from '../types/project';
 
 export const useKeyboardShortcuts = () => {
   const { 
@@ -15,8 +19,7 @@ export const useKeyboardShortcuts = () => {
     isPlaying, 
     setPlaying, 
     setCurrentTime, 
-    fps,
-    snapToFrame 
+    fps
   } = useTimelineStore();
   
   const { saveProject } = useProjectStore();
@@ -128,4 +131,70 @@ export const useKeyboardShortcuts = () => {
       coverArea(focusedAreaId, 'right');
     }
   }, [focusedAreaId, coverArea]);
+
+  // ──────────────────────────────────
+  // Subtitle Copy / Paste
+
+  // Copy selected subtitle (Ctrl+C / Cmd+C)
+  useHotkeys('ctrl+c, meta+c', (e) => {
+    e.preventDefault();
+    const { selectedSubtitleId } = useSelectedSubtitleStore.getState();
+    const { currentProject } = useProjectStore.getState();
+    if (!selectedSubtitleId || !currentProject) return;
+
+    const subtitle = currentProject.subtitles.find(sub => sub.id === selectedSubtitleId);
+    if (subtitle) {
+      // 깊은 복사로 클립보드 저장
+      const cloned = JSON.parse(JSON.stringify(subtitle)) as SubtitleBlock;
+      useClipboardStore.getState().setCopiedSubtitle(cloned);
+    }
+  }, []);
+
+  // Paste subtitle at playhead (Ctrl+V / Cmd+V)
+  useHotkeys('ctrl+v, meta+v', (e) => {
+    e.preventDefault();
+    const clipboardSubtitle = useClipboardStore.getState().copiedSubtitle;
+    if (!clipboardSubtitle) return;
+
+    const { currentProject, addSubtitle } = useProjectStore.getState();
+    if (!currentProject) return;
+
+    const { currentTime, snapToFrame } = useTimelineStore.getState();
+    const newStart = snapToFrame(currentTime);
+    const duration = clipboardSubtitle.endTime - clipboardSubtitle.startTime;
+    const newEnd = newStart + duration;
+    const targetTrackId = clipboardSubtitle.trackId;
+
+    // 중첩 검사
+    const overlapping = currentProject.subtitles.find(
+      sub =>
+        sub.trackId === targetTrackId &&
+        newStart < sub.endTime &&
+        newEnd > sub.startTime
+    );
+
+    if (overlapping) {
+      useSubtitleHighlightStore.getState().flashIds([overlapping.id], 600);
+      return;
+    }
+
+    const offset = newStart - clipboardSubtitle.startTime;
+
+    const newSubtitle: SubtitleBlock = {
+      ...clipboardSubtitle,
+      id: crypto.randomUUID(),
+      startTime: newStart,
+      endTime: newEnd,
+      trackId: targetTrackId,
+      spans: clipboardSubtitle.spans.map(span => ({
+        ...span,
+        id: crypto.randomUUID(),
+        startTime: span.startTime + offset,
+        endTime: span.endTime + offset,
+      })),
+    };
+
+    addSubtitle(newSubtitle);
+    useSelectedSubtitleStore.getState().setSelectedSubtitleId(newSubtitle.id);
+  }, []);
 };

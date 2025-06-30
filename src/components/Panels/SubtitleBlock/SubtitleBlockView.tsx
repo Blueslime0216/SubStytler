@@ -12,6 +12,7 @@ interface SubtitleBlockViewProps extends SubtitleBlockProps {
   isSelected: boolean;
   isHighlighted: boolean;
   isLocked: boolean;
+  isSnapHighlighted?: boolean;
   handleMouseDown: (e: React.MouseEvent) => void;
   handleClick: () => void;
   startResize: (e: React.MouseEvent, side: 'left' | 'right') => void;
@@ -27,6 +28,7 @@ export const SubtitleBlockView: React.FC<SubtitleBlockViewProps> = ({
   isSelected,
   isHighlighted,
   isLocked,
+  isSnapHighlighted = false,
   handleMouseDown,
   handleClick,
   startResize,
@@ -63,6 +65,16 @@ export const SubtitleBlockView: React.FC<SubtitleBlockViewProps> = ({
       transition={{ duration: 0.2 }}
       data-subtitle-id={subtitle.id}
     >
+      {/* Snap highlight effect */}
+      {isSnapHighlighted && (
+        <motion.div
+          className="neu-subtitle-snap-highlight"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, repeat: Infinity, repeatType: 'reverse' }}
+        />
+      )}
       <AnimatePresence>
         {isHighlighted && (
           <motion.div

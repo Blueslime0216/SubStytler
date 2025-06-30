@@ -28,15 +28,19 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
         true // Mark as internal
       );
 
-      // Ensure the subtitle has a styleId (default if not specified)
+      // Ensure the subtitle has a styleId (default if not specified) and 시간 정수화
       const updatedSubtitle = {
         ...subtitle,
+        startTime: Math.round(subtitle.startTime),
+        endTime: Math.round(subtitle.endTime),
         spans: subtitle.spans.map(span => ({
           ...span,
           styleId: span.styleId || 'default',
           isBold: span.isBold || false,
           isItalic: span.isItalic || false,
-          isUnderline: span.isUnderline || false
+          isUnderline: span.isUnderline || false,
+          startTime: Math.round(span.startTime ?? 0),
+          endTime: Math.round(span.endTime ?? 0),
         }))
       };
       
@@ -67,7 +71,7 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
     const { currentProject } = get();
     if (currentProject) {
       // Find the subtitle to update
-      const subtitleToUpdate = currentProject.subtitles.find(sub => sub.id === id);
+      const subtitleToUpdate = currentProject.subtitles.find((sub: SubtitleBlock) => sub.id === id);
       if (!subtitleToUpdate) return;
 
       // 🆕 Record state BEFORE updating subtitle
@@ -85,9 +89,17 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
         );
       }
 
-      // Create updated subtitles array
-      const updatedSubtitles = currentProject.subtitles.map(sub =>
-        sub.id === id ? { ...sub, ...updates } : sub
+      // 시간 정수화
+      const roundedUpdates: Partial<SubtitleBlock> = { ...updates };
+      if (updates.startTime !== undefined) {
+        roundedUpdates.startTime = Math.round(updates.startTime);
+      }
+      if (updates.endTime !== undefined) {
+        roundedUpdates.endTime = Math.round(updates.endTime);
+      }
+
+      const updatedSubtitles = currentProject.subtitles.map((sub: SubtitleBlock) =>
+        sub.id === id ? { ...sub, ...roundedUpdates } : sub
       );
 
       // Update the project
@@ -131,7 +143,7 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
     const { currentProject } = get();
     if (currentProject) {
       // Find the subtitle to delete
-      const subtitleToDelete = currentProject.subtitles.find(sub => sub.id === id);
+      const subtitleToDelete = currentProject.subtitles.find((sub: SubtitleBlock) => sub.id === id);
       if (!subtitleToDelete) return;
 
       // 🆕 Record state BEFORE deleting subtitle
@@ -148,7 +160,7 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
       );
 
       // Create updated subtitles array
-      const updatedSubtitles = currentProject.subtitles.filter(sub => sub.id !== id);
+      const updatedSubtitles = currentProject.subtitles.filter((sub: SubtitleBlock) => sub.id !== id);
 
       // Update the project
       set({

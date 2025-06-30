@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
 import VideoControllerPlayButton from './VideoController/VideoControllerPlayButton';
 import VideoControllerProgressBar from './VideoController/VideoControllerProgressBar';
 import VideoControllerVolumeButton from './VideoController/VideoControllerVolumeButton';
 import VideoControllerTimeDisplay from './VideoController/VideoControllerTimeDisplay';
 import VideoControllerAdditionalButtons from './VideoController/VideoControllerAdditionalButtons';
-import VideoControllerSkipForwardButton from './VideoController/VideoControllerSkipForwardButton';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface VideoControllerProps {
@@ -16,6 +15,53 @@ interface VideoControllerProps {
   onMuteToggle: () => void;
   onSettings: () => void;
   parentRef?: React.RefObject<HTMLElement>;
+}
+
+// 커스텀 훅: 현재 window width 반환
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return width;
+}
+
+// 커스텀 훅: 비디오 렌더링 영역의 width 반환 (ResizeObserver 기반, 0일 때 fallback)
+function useVideoAreaWidth(parentRef?: React.RefObject<HTMLElement>) {
+  const [width, setWidth] = useState<number>(() => {
+    if (parentRef?.current && parentRef.current.clientWidth > 0) {
+      return parentRef.current.clientWidth;
+    }
+    return window.innerWidth;
+  });
+
+  useLayoutEffect(() => {
+    if (!parentRef?.current) return;
+
+    function updateWidth() {
+      if (parentRef?.current && parentRef.current.clientWidth > 0) {
+        setWidth(parentRef.current.clientWidth);
+      } else {
+        setWidth(window.innerWidth);
+      }
+    }
+
+    updateWidth();
+
+    const observer = new window.ResizeObserver(() => {
+      updateWidth();
+    });
+
+    observer.observe(parentRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [parentRef]);
+
+  return width;
 }
 
 export const VideoController: React.FC<VideoControllerProps> = ({
@@ -41,6 +87,8 @@ export const VideoController: React.FC<VideoControllerProps> = ({
   const controllerRef = useRef<HTMLDivElement>(null);
   const hideTimeoutRef = useRef<number | null>(null);
   const [isPinned, setIsPinned] = useState(false);
+  const windowWidth = useWindowWidth();
+  const videoAreaWidth = useVideoAreaWidth(parentRef);
 
   const togglePin = () => setIsPinned(p => !p);
 
@@ -191,30 +239,37 @@ export const VideoController: React.FC<VideoControllerProps> = ({
                 isVideoLoaded={isVideoLoaded}
                 onToggle={handlePlayPause}
               />
-              <VideoControllerVolumeButton 
-                volume={volume}
-                isMuted={isMuted}
-                onVolumeChange={onVolumeChange}
-                onMuteToggle={onMuteToggle}
-                onInteractionStart={handleInteractionStart}
-                onInteractionEnd={handleInteractionEnd}
-              />
-              <VideoControllerTimeDisplay 
-                currentTime={currentTime}
-                duration={duration}
-                frameNumber={Math.floor((currentTime * fps) / 1000)}
-                fps={fps}
-              />
-          </div>
-          
+              {videoAreaWidth > 230 && (
+                <VideoControllerVolumeButton 
+                  volume={volume}
+                  isMuted={isMuted}
+                  onVolumeChange={onVolumeChange}
+                  onMuteToggle={onMuteToggle}
+                  onInteractionStart={handleInteractionStart}
+                  onInteractionEnd={handleInteractionEnd}
+                />
+              )}
+              {videoAreaWidth > 400 && (
+                <VideoControllerTimeDisplay 
+                  currentTime={currentTime}
+                  duration={duration}
+                  frameNumber={Math.floor((currentTime * fps) / 1000)}
+                  fps={fps}
+                  showFrame={videoAreaWidth > 550}
+                />
+              )}
+            </div>
+            
             <div className="video-controller-right">
-              <VideoControllerAdditionalButtons
-                onSettings={onSettings}
-                onPinToggle={togglePin}
-                isPinned={isPinned}
-              />
-        </div>
-      </div>
+              {videoAreaWidth > 190 && (
+                <VideoControllerAdditionalButtons
+                  onSettings={onSettings}
+                  onPinToggle={togglePin}
+                  isPinned={isPinned}
+                />
+              )}
+            </div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

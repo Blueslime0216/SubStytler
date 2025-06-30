@@ -6,6 +6,7 @@ import { useToast } from './hooks/useToast';
 import { useThemeStore } from './stores/themeStore';
 import { useProjectStore } from './stores/projectStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { useYTTSync } from './hooks/useYTTSync';
 
 // Import component parts
 import { AppHeader } from './components/App/AppHeader';
@@ -79,6 +80,9 @@ export default function App() {
       createProject('Untitled Project');
     }
   }, [currentProject, createProject]);
+
+  // YTT ↔︎ Project 동기화
+  useYTTSync();
 
   return (
     <div className="min-h-screen flex flex-col bg-bg text-text-primary">

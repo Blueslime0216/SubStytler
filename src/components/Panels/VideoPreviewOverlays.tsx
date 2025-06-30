@@ -10,6 +10,7 @@ interface VideoPreviewOverlaysProps {
   onRetry: () => void;
   onUpload: () => void;
   isVideoLoaded?: boolean;
+  containerRef?: React.RefObject<HTMLDivElement>;
 }
 
 const VideoPreviewOverlays: React.FC<VideoPreviewOverlaysProps> = ({
@@ -20,7 +21,8 @@ const VideoPreviewOverlays: React.FC<VideoPreviewOverlaysProps> = ({
   isDragActive,
   onRetry,
   onUpload,
-  isVideoLoaded
+  isVideoLoaded,
+  containerRef
 }) => (
   <VideoOverlays 
     isLoading={isLoading}
@@ -31,6 +33,7 @@ const VideoPreviewOverlays: React.FC<VideoPreviewOverlaysProps> = ({
     onRetry={onRetry}
     onUpload={onUpload}
     isVideoLoaded={isVideoLoaded}
+    containerRef={containerRef}
   />
 );
 

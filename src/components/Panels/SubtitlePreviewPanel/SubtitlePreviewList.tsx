@@ -67,8 +67,8 @@ const generateYtt = ({ subtitles, styles }: GenerateYttOptions) => {
   // 3️⃣ <body> 섹션 구성
   let body = '';
   subtitles.forEach(sub => {
-    const start = sub.startTime;
-    const duration = sub.endTime - sub.startTime;
+    const start = Math.round(sub.startTime);
+    const duration = Math.round(sub.endTime - sub.startTime);
     const firstSpan = sub.spans[0];
     const penId = firstSpan.styleId ? styleMap.get(firstSpan.styleId) ?? 0 : 0;
     const textEscaped = escapeXml(firstSpan.text || '');
