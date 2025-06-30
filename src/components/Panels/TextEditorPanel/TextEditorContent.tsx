@@ -1,4 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Palette, Type, Sliders, Layout, Pipette } from 'lucide-react';
+import CollapsibleSection from '../../UI/CollapsibleSection';
+import CustomRangeInput from '../../UI/CustomRangeInput';
+import ColorPicker from '../../UI/ColorPicker';
 
 interface TextEditorContentProps {
   selectedText: string;
@@ -57,153 +61,130 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
   setPositionX,
   setPositionY
 }) => {
+  // 색상 피커 표시 상태
+  const [showTextColorPicker, setShowTextColorPicker] = useState(false);
+  const [showBgColorPicker, setShowBgColorPicker] = useState(false);
+  const [showOutlineColorPicker, setShowOutlineColorPicker] = useState(false);
+
+  // 폰트 크기 직접 입력 핸들러
+  const handleFontSizeChange = (value: string) => {
+    // 숫자만 추출하고 '%' 추가
+    const numericValue = value.replace(/[^0-9]/g, '');
+    if (numericValue) {
+      setFontSize(`${numericValue}%`);
+    }
+  };
+
   return (
-    <>
+    <div className="p-4">
       {/* Text Editor */}
       <div className="mb-4">
         <label className="block text-xs font-medium text-text-secondary mb-1">
-          Subtitle Text
+          자막 텍스트
         </label>
         <textarea
           value={selectedText}
           onChange={(e) => handleTextChange(e.target.value)}
           className="w-full bg-bg shadow-inset rounded-lg p-3 text-sm text-text-primary resize-none"
-          placeholder="Enter subtitle text..."
+          placeholder="자막 텍스트를 입력하세요..."
           rows={3}
         />
       </div>
       
-      {/* Color Controls */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1">
-            Text Color
-          </label>
-          <div className="flex space-x-2">
-            <input
-              type="color"
-              value={textColor}
-              onChange={(e) => setTextColor(e.target.value)}
-              className="w-8 h-8 rounded shadow-inset border-none"
-            />
-            <input
-              type="text"
-              value={textColor}
-              onChange={(e) => setTextColor(e.target.value)}
-              className="flex-1 bg-bg shadow-inset rounded p-1 text-xs text-text-primary"
-            />
+      {/* 색상 및 스타일 섹션 */}
+      <CollapsibleSection 
+        title="색상 및 불투명도" 
+        defaultOpen={true}
+        icon={<Palette className="w-4 h-4 text-primary" />}
+      >
+        {/* 텍스트 색상 */}
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-1">
+            <label className="text-xs font-medium text-text-secondary">텍스트 색상</label>
+            <div className="flex items-center gap-1">
+              <div 
+                className="w-4 h-4 rounded cursor-pointer border border-border-color"
+                style={{ backgroundColor: textColor }}
+                onClick={() => setShowTextColorPicker(!showTextColorPicker)}
+              />
+            </div>
           </div>
-          <div className="mt-1">
-            <label className="block text-xs font-medium text-text-secondary mb-1">
-              불투명도: {(() => {
-                const v = Math.round(textOpacity);
-                const pct = Math.round((v / 255) * 100);
-                return `${v} (${pct}%)`;
-              })()}
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="255"
-              step="1"
-              value={textOpacity}
-              onChange={(e) => setTextOpacity(parseInt(e.target.value))}
-              className="w-full"
-            />
-          </div>
+          
+          {showTextColorPicker && (
+            <div className="relative z-10">
+              <div className="absolute right-0">
+                <ColorPicker
+                  color={textColor}
+                  onChange={setTextColor}
+                  onClose={() => setShowTextColorPicker(false)}
+                />
+              </div>
+            </div>
+          )}
+          
+          <CustomRangeInput
+            min={0}
+            max={255}
+            value={textOpacity}
+            onChange={setTextOpacity}
+            label="텍스트 불투명도"
+            unit=""
+          />
         </div>
         
-        <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1">
-            Background Color
-          </label>
-          <div className="flex space-x-2">
-            <input
-              type="color"
-              value={backgroundColor}
-              onChange={(e) => setBackgroundColor(e.target.value)}
-              className="w-8 h-8 rounded shadow-inset border-none"
-            />
-            <input
-              type="text"
-              value={backgroundColor}
-              onChange={(e) => setBackgroundColor(e.target.value)}
-              className="flex-1 bg-bg shadow-inset rounded p-1 text-xs text-text-primary"
-            />
+        {/* 배경 색상 */}
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-1">
+            <label className="text-xs font-medium text-text-secondary">배경 색상</label>
+            <div className="flex items-center gap-1">
+              <div 
+                className="w-4 h-4 rounded cursor-pointer border border-border-color"
+                style={{ backgroundColor: backgroundColor }}
+                onClick={() => setShowBgColorPicker(!showBgColorPicker)}
+              />
+            </div>
           </div>
-          <div className="mt-1">
-            <label className="block text-xs font-medium text-text-secondary mb-1">
-              불투명도: {(() => {
-                const v = Math.round(backgroundOpacity);
-                const pct = Math.round((v / 255) * 100);
-                return `${v} (${pct}%)`;
-              })()}
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="255"
-              step="1"
-              value={backgroundOpacity}
-              onChange={(e) => setBackgroundOpacity(parseInt(e.target.value))}
-              className="w-full"
-            />
-          </div>
+          
+          {showBgColorPicker && (
+            <div className="relative z-10">
+              <div className="absolute right-0">
+                <ColorPicker
+                  color={backgroundColor}
+                  onChange={setBackgroundColor}
+                  onClose={() => setShowBgColorPicker(false)}
+                />
+              </div>
+            </div>
+          )}
+          
+          <CustomRangeInput
+            min={0}
+            max={255}
+            value={backgroundOpacity}
+            onChange={setBackgroundOpacity}
+            label="배경 불투명도"
+            unit=""
+          />
         </div>
-      </div>
+      </CollapsibleSection>
       
-      {/* Outline Controls */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
+      {/* 글꼴 및 크기 섹션 */}
+      <CollapsibleSection 
+        title="글꼴 및 크기" 
+        defaultOpen={true}
+        icon={<Type className="w-4 h-4 text-primary" />}
+      >
+        {/* 글꼴 선택 */}
+        <div className="mb-4">
           <label className="block text-xs font-medium text-text-secondary mb-1">
-            Outline Color
-          </label>
-          <div className="flex space-x-2">
-            <input
-              type="color"
-              value={outlineColor}
-              onChange={(e) => setOutlineColor(e.target.value)}
-              className="w-8 h-8 rounded shadow-inset border-none"
-            />
-            <input
-              type="text"
-              value={outlineColor}
-              onChange={(e) => setOutlineColor(e.target.value)}
-              className="flex-1 bg-bg shadow-inset rounded p-1 text-xs text-text-primary"
-            />
-          </div>
-        </div>
-        
-        <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1">
-            Outline Style
-          </label>
-          <select
-            value={outlineType}
-            onChange={(e) => setOutlineType(parseInt(e.target.value))}
-            className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
-          >
-            <option value={0}>None</option>
-            <option value={1}>Hard Shadow</option>
-            <option value={2}>Bevel</option>
-            <option value={3}>Glow/Outline</option>
-            <option value={4}>Soft Shadow</option>
-          </select>
-        </div>
-      </div>
-      
-      {/* Font Controls */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1">
-            Font Family
+            글꼴
           </label>
           <select
             value={fontFamily}
             onChange={(e) => setFontFamily(e.target.value)}
             className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
-            <option value="0">Roboto (Default)</option>
+            <option value="0">Roboto (기본)</option>
             <option value="1">Courier New</option>
             <option value="2">Times New Roman</option>
             <option value="3">Lucida Console</option>
@@ -214,107 +195,153 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
           </select>
         </div>
         
-        <div>
+        {/* 글꼴 크기 */}
+        <div className="mb-4">
           <label className="block text-xs font-medium text-text-secondary mb-1">
-            Font Size
+            글꼴 크기
           </label>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <input
               type="text"
               value={fontSize}
-              onChange={(e) => setFontSize(e.target.value)}
-              className="flex-1 bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
+              onChange={(e) => handleFontSizeChange(e.target.value)}
+              className="w-16 bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
             />
             <select
               value={fontSize}
               onChange={(e) => setFontSize(e.target.value)}
-              className="bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
+              className="flex-1 bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
             >
-              <option value="75%">75%</option>
-              <option value="100%">100%</option>
-              <option value="125%">125%</option>
-              <option value="150%">150%</option>
-              <option value="200%">200%</option>
+              <option value="75%">75% (작게)</option>
+              <option value="100%">100% (기본)</option>
+              <option value="125%">125% (조금 크게)</option>
+              <option value="150%">150% (크게)</option>
+              <option value="200%">200% (매우 크게)</option>
             </select>
           </div>
         </div>
-      </div>
+      </CollapsibleSection>
       
-      {/* Position Controls */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
+      {/* 윤곽선 및 효과 섹션 */}
+      <CollapsibleSection 
+        title="윤곽선 및 효과" 
+        icon={<Sliders className="w-4 h-4 text-primary" />}
+      >
+        {/* 윤곽선 색상 */}
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-1">
+            <label className="text-xs font-medium text-text-secondary">윤곽선 색상</label>
+            <div className="flex items-center gap-1">
+              <div 
+                className="w-4 h-4 rounded cursor-pointer border border-border-color"
+                style={{ backgroundColor: outlineColor }}
+                onClick={() => setShowOutlineColorPicker(!showOutlineColorPicker)}
+              />
+            </div>
+          </div>
+          
+          {showOutlineColorPicker && (
+            <div className="relative z-10">
+              <div className="absolute right-0">
+                <ColorPicker
+                  color={outlineColor}
+                  onChange={setOutlineColor}
+                  onClose={() => setShowOutlineColorPicker(false)}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* 윤곽선 스타일 */}
+        <div className="mb-4">
           <label className="block text-xs font-medium text-text-secondary mb-1">
-            Anchor Point
+            윤곽선 스타일
+          </label>
+          <select
+            value={outlineType}
+            onChange={(e) => setOutlineType(parseInt(e.target.value))}
+            className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
+          >
+            <option value={0}>없음</option>
+            <option value={1}>하드 그림자</option>
+            <option value={2}>베벨</option>
+            <option value={3}>글로우/외곽선</option>
+            <option value={4}>부드러운 그림자</option>
+          </select>
+        </div>
+      </CollapsibleSection>
+      
+      {/* 위치 및 방향 섹션 */}
+      <CollapsibleSection 
+        title="위치 및 방향" 
+        icon={<Layout className="w-4 h-4 text-primary" />}
+      >
+        {/* 앵커 포인트 */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-text-secondary mb-1">
+            기준점
           </label>
           <select
             value={anchorPoint}
             onChange={(e) => setAnchorPoint(parseInt(e.target.value))}
             className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
-            <option value={0}>Top-Left</option>
-            <option value={1}>Top-Center</option>
-            <option value={2}>Top-Right</option>
-            <option value={3}>Middle-Left</option>
-            <option value={4}>Center (Default)</option>
-            <option value={5}>Middle-Right</option>
-            <option value={6}>Bottom-Left</option>
-            <option value={7}>Bottom-Center</option>
-            <option value={8}>Bottom-Right</option>
+            <option value={0}>좌상단</option>
+            <option value={1}>상단 중앙</option>
+            <option value={2}>우상단</option>
+            <option value={3}>좌측 중앙</option>
+            <option value={4}>중앙 (기본)</option>
+            <option value={5}>우측 중앙</option>
+            <option value={6}>좌하단</option>
+            <option value={7}>하단 중앙</option>
+            <option value={8}>우하단</option>
           </select>
         </div>
         
-        <div>
+        {/* 텍스트 방향 */}
+        <div className="mb-4">
           <label className="block text-xs font-medium text-text-secondary mb-1">
-            Text Direction
+            텍스트 방향
           </label>
           <select
             value={printDirection}
             onChange={(e) => setPrintDirection(e.target.value)}
             className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
-            <option value="00">Horizontal LTR (Default)</option>
-            <option value="20">Vertical RTL</option>
-            <option value="21">Vertical LTR</option>
-            <option value="30">Rotated 90° CCW, LTR</option>
-            <option value="31">Rotated 90° CCW, RTL</option>
+            <option value="00">가로 왼쪽→오른쪽 (기본)</option>
+            <option value="20">세로 오른쪽→왼쪽</option>
+            <option value="21">세로 왼쪽→오른쪽</option>
+            <option value="30">90° 회전, 왼쪽→오른쪽</option>
+            <option value="31">90° 회전, 오른쪽→왼쪽</option>
           </select>
         </div>
-      </div>
-      
-      {/* X / Y Position Sliders */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1">
-            Horizontal Position (X%)
-          </label>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            step="1"
+        
+        {/* 수평 위치 */}
+        <div className="mb-4">
+          <CustomRangeInput
+            min={0}
+            max={100}
             value={positionX}
-            onChange={(e)=> setPositionX(parseInt(e.target.value))}
-            className="w-full"
+            onChange={setPositionX}
+            label="수평 위치 (X%)"
+            unit="%"
           />
-          <div className="text-xs text-text-secondary mt-1">{positionX}%</div>
         </div>
-        <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1">
-            Vertical Position (Y%)
-          </label>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            step="1"
+        
+        {/* 수직 위치 */}
+        <div className="mb-4">
+          <CustomRangeInput
+            min={0}
+            max={100}
             value={positionY}
-            onChange={(e)=> setPositionY(parseInt(e.target.value))}
-            className="w-full"
+            onChange={setPositionY}
+            label="수직 위치 (Y%)"
+            unit="%"
           />
-          <div className="text-xs text-text-secondary mt-1">{positionY}%</div>
         </div>
-      </div>
-    </>
+      </CollapsibleSection>
+    </div>
   );
 };
 

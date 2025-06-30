@@ -10,6 +10,8 @@ import { useSelectedSubtitleStore } from '../../../stores/selectedSubtitleStore'
 import { ContextMenu, ContextMenuItem, ContextMenuDivider, ContextMenuSectionTitle } from '../../UI/ContextMenu';
 import { useHistoryStore } from '../../../stores/historyStore';
 import { useSubtitleHighlightStore } from '../../../stores/subtitleHighlightStore';
+import { TrackContextMenus } from './TrackContextMenus';
+import { TrackContentsSection } from './TrackContentsSection';
 
 interface TracksContainerProps {
   currentTime: number;
@@ -124,6 +126,11 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   };
   const handleWheel = (e: React.WheelEvent) => {
     if (isResizingRef.current) return;
+    // 자막 드래그 중에는 휠 줌을 무시 (사용자 요청)
+    if (draggedSubtitle) {
+      e.preventDefault();
+      return;
+    }
     tWheel(e);
   };
 
@@ -418,40 +425,32 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
           containerWidth={containerRef.current?.clientWidth || 0}
         />
 
-        {tracks.map((track, trackIndex) => (
-          <div
-            key={track.id}
-            className={`neu-track-content${track.locked ? ' track-locked' : ''}${dragOverTrackId === track.id ? ' track-drag-over' : ''}${selectedTrackId === track.id ? ' bg-blue-500' : ''}`}
-            style={{ 
-              height: TRACK_HEIGHT,
-              flexShrink: 0 // ✅ Prevent track height from shrinking
-            }}
-            onMouseEnter={() => handleTrackMouseEnter(track.id)}
-            onMouseLeave={handleTrackMouseLeave}
-            onMouseDown={() => {
-              setSelectedTrackId(track.id);
-              setSelectedSubtitleId(null);
-            }}
-          >
-            {/* Render subtitles for this track */}
-            {subtitles
-              .filter((subtitle) => subtitle.trackId === track.id && track.visible)
-              .map((subtitle) => (
-                <SubtitleBlock
-                  key={subtitle.id}
-                  subtitle={subtitle}
-                  timeToPixel={timeToPixel}
-                  pixelToTime={pixelToTime}
-                  containerRef={containerRef}
-                  onDragStart={handleSubtitleDragStart}
-                  onDragEnd={handleSubtitleDragEnd}
-                  isLocked={track.locked}
-                  trackIndex={trackIndex}
-                  trackHeight={TRACK_HEIGHT}
-                />
-              ))}
-          </div>
-        ))}
+        <TrackContentsSection
+          containerRef={containerRef}
+          tracks={tracks}
+          subtitles={subtitles}
+          selectedTrackId={selectedTrackId}
+          setSelectedTrackId={setSelectedTrackId}
+          setSelectedSubtitleId={setSelectedSubtitleId}
+          viewStart={viewStart}
+          viewEnd={viewEnd}
+          fps={fps}
+          timeToPixel={timeToPixel}
+          pixelToTime={pixelToTime}
+          handleMouseDown={handleMouseDown}
+          handleMouseMove={handleMouseMove}
+          handleMouseUp={handleMouseUp}
+          handleWheel={handleWheel}
+          setIsHovered={setIsHovered}
+          handleTrackContentContextMenu={handleTrackContentContextMenu}
+          handleTrackMouseEnter={handleTrackMouseEnter}
+          handleTrackMouseLeave={handleTrackMouseLeave}
+          handleSubtitleDragStart={handleSubtitleDragStart}
+          handleSubtitleDragEnd={handleSubtitleDragEnd}
+          dragOverTrackId={dragOverTrackId}
+          TRACK_HEIGHT={TRACK_HEIGHT}
+          isSubtitleDragging={!!draggedSubtitle}
+        />
       </div>
 
       {/* Track Context Menus */}

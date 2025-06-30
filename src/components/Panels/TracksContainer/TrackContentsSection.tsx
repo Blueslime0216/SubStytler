@@ -27,6 +27,7 @@ interface TrackContentsSectionProps {
   handleSubtitleDragEnd: () => void;
   dragOverTrackId: string | null;
   TRACK_HEIGHT: number;
+  isSubtitleDragging?: boolean;
 }
 
 export const TrackContentsSection: React.FC<TrackContentsSectionProps> = ({
@@ -52,7 +53,8 @@ export const TrackContentsSection: React.FC<TrackContentsSectionProps> = ({
   handleSubtitleDragStart,
   handleSubtitleDragEnd,
   dragOverTrackId,
-  TRACK_HEIGHT
+  TRACK_HEIGHT,
+  isSubtitleDragging = false
 }) => {
   const handleContentScroll = React.useCallback(() => {
     if (!containerRef.current || !document.querySelector('.neu-tracks-header')) return;
@@ -71,7 +73,13 @@ export const TrackContentsSection: React.FC<TrackContentsSectionProps> = ({
       onMouseUp={handleMouseUp}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => { setIsHovered(false); }}
-      onWheel={handleWheel}
+      onWheel={e => {
+        if (isSubtitleDragging) {
+          e.preventDefault();
+          return;
+        }
+        handleWheel(e);
+      }}
       onScroll={handleContentScroll}
       onContextMenu={handleTrackContentContextMenu}
     >
@@ -100,7 +108,7 @@ export const TrackContentsSection: React.FC<TrackContentsSectionProps> = ({
         >
           {/* Render subtitles for this track */}
           {subtitles
-            .filter((subtitle) => subtitle.trackId === track.id && track.visible)
+            .filter((subtitle) => subtitle.trackId === track.id)
             .map((subtitle) => (
               <SubtitleBlock
                 key={subtitle.id}
@@ -111,6 +119,7 @@ export const TrackContentsSection: React.FC<TrackContentsSectionProps> = ({
                 onDragStart={handleSubtitleDragStart}
                 onDragEnd={handleSubtitleDragEnd}
                 isLocked={track.locked}
+                isHiddenTrack={!track.visible}
                 trackIndex={trackIndex}
                 trackHeight={TRACK_HEIGHT}
               />

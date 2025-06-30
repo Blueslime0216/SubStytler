@@ -1,7 +1,6 @@
 import React, { useRef, useLayoutEffect, useState, useEffect } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
-import TimelineToolbar from './TimelineToolbar';
 import TimelineOverviewBar from './TimelineOverviewBar';
 import { useHotkeys } from 'react-hotkeys-hook';
 import TracksContainer from './TracksContainer';
@@ -235,16 +234,6 @@ export const SubtitleTimelinePanel: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col neu-timeline" style={{ overflow: 'hidden' }}>
-      <TimelineToolbar 
-        onAddSubtitle={addNewSubtitle} 
-        onAddTrack={handleAddTrack}
-        zoom={localZoom} 
-        setZoom={setZoom as any} 
-        viewStart={localViewStart} 
-        viewEnd={localViewEnd} 
-        setViewRange={setViewRange} 
-        duration={duration} 
-      />
       <div className="flex-1 flex flex-col relative" style={{ minHeight: 0, overflow: 'hidden' }}>
         <div className="flex-1 relative" style={{ minHeight: 0, overflow: 'hidden' }}>
           <TracksContainer 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLayoutStore } from './stores/layoutStore';
 import { shallow } from 'zustand/shallow';
 import { useHistoryStore } from './stores/historyStore';
@@ -7,6 +7,8 @@ import { useThemeStore } from './stores/themeStore';
 import { useProjectStore } from './stores/projectStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useYTTSync } from './hooks/useYTTSync';
+import { motion, AnimatePresence } from 'framer-motion';
+import boltLogo from './assets/bolt.png';
 
 // Import component parts
 import { AppHeader } from './components/App/AppHeader';
@@ -17,6 +19,57 @@ import { AppToasts } from './components/App/AppToasts';
 import { usePanelRenderer } from './components/App/usePanelRenderer';
 import { useProjectHandlers } from './components/App/useProjectHandlers';
 import { useProjectTitle } from './components/App/useProjectTitle';
+
+function BoltFloatingLogo() {
+  const handleClick = () => {
+    window.open('https://bolt.new/', '_blank', 'noopener,noreferrer');
+  };
+
+  return (
+    <motion.div
+      onClick={handleClick}
+      animate={{
+        x: [0, 4, -4, 0],
+        boxShadow: [
+          '0 2px 16px rgba(0,0,0,0.18), 0 0 0 0px #fff0',
+          '0 2px 16px rgba(0,0,0,0.18), 0 0 12px 4px #fff4',
+          '0 2px 16px rgba(0,0,0,0.18), 0 0 12px 4px #fff4',
+          '0 2px 16px rgba(0,0,0,0.18), 0 0 0 0px #fff0',
+        ],
+      }}
+      transition={{
+        x: {
+          duration: 2.4,
+          repeat: Infinity,
+          ease: 'easeInOut',
+          repeatType: 'loop',
+        },
+        boxShadow: {
+          duration: 2.4,
+          repeat: Infinity,
+          ease: 'easeInOut',
+          repeatType: 'loop',
+        },
+      }}
+      style={{
+        position: 'fixed',
+        right: 24,
+        bottom: 64,
+        zIndex: 1000,
+        width: 100,
+        height: 100,
+        borderRadius: '50%',
+        background: 'rgba(0,0,0,0.0)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+      }}
+    >
+      <img src={boltLogo} alt="bolt logo" style={{ width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }} />
+    </motion.div>
+  );
+}
 
 export default function App() {
   const { areas, setAreas } = useLayoutStore(
@@ -85,41 +138,44 @@ export default function App() {
   useYTTSync();
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg text-text-primary">
-      {/* Header */}
-      <AppHeader
-        titleValue={titleValue}
-        setTitleValue={setTitleValue}
-        isEditingTitle={isEditingTitle}
-        setIsEditingTitle={setIsEditingTitle}
-        titleInputRef={titleInputRef}
-        onLoadProject={handleProjectLoad}
-        onNewProject={() => setIsNewProjectDialogOpen(true)}
-      />
+    <>
+      <div className="min-h-screen flex flex-col bg-bg text-text-primary">
+        {/* Header */}
+        <AppHeader
+          titleValue={titleValue}
+          setTitleValue={setTitleValue}
+          isEditingTitle={isEditingTitle}
+          setIsEditingTitle={setIsEditingTitle}
+          titleInputRef={titleInputRef}
+          onLoadProject={handleProjectLoad}
+          onNewProject={() => setIsNewProjectDialogOpen(true)}
+        />
 
-      {/* Main Content */}
-      <AppContent
-        areas={areas}
-        setAreas={setAreas}
-        renderPanel={renderPanel}
-      />
+        {/* Main Content */}
+        <AppContent
+          areas={areas}
+          setAreas={setAreas}
+          renderPanel={renderPanel}
+        />
 
-      {/* Footer */}
-      <AppFooter />
+        {/* Footer */}
+        <AppFooter />
 
-      {/* Dialogs */}
-      <AppDialogs
-        showVideoDialog={showVideoDialog}
-        pendingVideoInfo={pendingVideoInfo}
-        handleVideoSelected={handleVideoSelected}
-        handleSkipVideo={handleSkipVideo}
-        handleCloseVideoDialog={handleCloseVideoDialog}
-        isNewProjectDialogOpen={isNewProjectDialogOpen}
-        setIsNewProjectDialogOpen={setIsNewProjectDialogOpen}
-      />
+        {/* Dialogs */}
+        <AppDialogs
+          showVideoDialog={showVideoDialog}
+          pendingVideoInfo={pendingVideoInfo}
+          handleVideoSelected={handleVideoSelected}
+          handleSkipVideo={handleSkipVideo}
+          handleCloseVideoDialog={handleCloseVideoDialog}
+          isNewProjectDialogOpen={isNewProjectDialogOpen}
+          setIsNewProjectDialogOpen={setIsNewProjectDialogOpen}
+        />
 
-      {/* Toast Container */}
-      <AppToasts toasts={toasts} onClose={removeToast} />
-    </div>
+        {/* Toast Container */}
+        <AppToasts toasts={toasts} onClose={removeToast} />
+      </div>
+      <BoltFloatingLogo />
+    </>
   );
 }

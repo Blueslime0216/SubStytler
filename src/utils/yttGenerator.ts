@@ -75,7 +75,7 @@ export function generateYTTContent(project: Project): string {
   // 다음에 할당될 ID (YouTube 규칙상 1부터 시작)
   let nextPenId = 1;
   let nextWsId = 1;
-  let nextWpId = 0; // wp 는 0 포함 허용 (샘플 파일 참조)
+  let nextWpId = 1; // wp ID는 1부터 시작하도록 변경하여 중복/누락 방지
 
   /* ------------------------------------------------------------------ */
   /* 2. 자막을 시간순으로 스캔하며 Map 구축                              */
@@ -95,7 +95,19 @@ export function generateYTTContent(project: Project): string {
   }
   const resolvedList: ResolvedEntry[] = [];
 
+  // Helper to check if track is visible
+  const isTrackVisible = (trackId: string): boolean => {
+    const track = project?.tracks?.find?.((t) => t.id === trackId);
+    // project.tracks 가 없거나 track 정보를 찾지 못하면 기본적으로 표시된 것으로 간주
+    return track ? track.visible !== false : true;
+  };
+
   for (const sub of subtitles) {
+    // 숨김 트랙 자막은 YTT에서 제외
+    if (!isTrackVisible(sub.trackId)) {
+      continue;
+    }
+
     // 자막(span)이 직접 보유한 스타일 속성을 사용한다.
     // 기존 코드처럼 Project.styles 배열을 조회하지 않고, span 안에 포함된 속성을 바로 읽는다.
 
@@ -154,7 +166,8 @@ export function generateYTTContent(project: Project): string {
     /* -------- wp 처리 -------- */
     const wpKey = makeWpKey(effStyle);
     let wpId = wpMap.get(wpKey);
-    if (!wpId && wpKey !== 'undefined|undefined|undefined') {
+    // wpId가 아직 없을 때만 새 ID 할당 (0값과 혼동 방지)
+    if (wpId === undefined && wpKey !== 'undefined|undefined|undefined') {
       wpId = nextWpId++;
       wpMap.set(wpKey, wpId);
     }

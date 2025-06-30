@@ -4,12 +4,13 @@ import TrackHeader, { TrackHeaderRef } from './TrackHeader';
 import SubtitleBlock from './SubtitleBlock';
 import TimelineRuler from './TimelineRuler';
 import { useTimelineInteraction } from '../../hooks/useTimelineInteraction';
-import { Plus, Eye, EyeOff, Lock, Unlock, Trash2, Edit, Type, FileText } from 'lucide-react';
+import { Plus, Eye, EyeOff, Lock, Unlock, Trash2, Edit, Type, FileText, Magnet, Slash } from 'lucide-react';
 import { useSelectedTrackStore } from '../../stores/selectedTrackStore';
 import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
 import { ContextMenu, ContextMenuItem, ContextMenuDivider, ContextMenuSectionTitle } from '../UI/ContextMenu';
 import { useHistoryStore } from '../../stores/historyStore';
 import { useSubtitleHighlightStore } from '../../stores/subtitleHighlightStore';
+import { useSnapStore } from '../../stores/snapStore';
 
 interface TracksContainerProps {
   currentTime: number;
@@ -58,6 +59,9 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   const { selectedTrackId, setSelectedTrackId } = useSelectedTrackStore();
   const { selectedSubtitleId, setSelectedSubtitleId } = useSelectedSubtitleStore();
   const { flashIds, setHighlightedIds } = useSubtitleHighlightStore();
+
+  const snapEnabled = useSnapStore(s => s.enabled);
+  const toggleSnap = useSnapStore(s => s.toggle);
 
   // Context menu state
   const [trackHeaderContextMenu, setTrackHeaderContextMenu] = useState<{
@@ -505,6 +509,11 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
     closeAllContextMenus();
   };
 
+  const handleToggleSnap = () => {
+    toggleSnap();
+    closeAllContextMenus();
+  };
+
   const closeAllContextMenus = () => {
     setTrackHeaderContextMenu(prev => ({ ...prev, isOpen: false }));
     setTrackContentContextMenu(prev => ({ ...prev, isOpen: false }));
@@ -641,6 +650,18 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
           Add Track
         </ContextMenuItem>
 
+        <ContextMenuItem
+          icon={snapEnabled ? <Magnet /> : (
+            <span style={{ position: 'relative', display: 'inline-block', width: 24, height: 24 }}>
+              <Magnet style={{ position: 'absolute', left: 0, top: 0 }} />
+              <Slash style={{ position: 'absolute', left: 0, top: 0 }} />
+            </span>
+          )}
+          onClick={handleToggleSnap}
+        >
+          {snapEnabled ? 'Disable Snapping' : 'Enable Snapping'}
+        </ContextMenuItem>
+
         {trackHeaderContextMenu.trackId && (
           <>
             <ContextMenuDivider />
@@ -680,7 +701,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
             </ContextMenuItem>
             
             <ContextMenuItem 
-              icon={<FileText />}
+              icon={<Type />}
               onClick={() => handleChangeTrackDetail(trackHeaderContextMenu.trackId!)}
             >
               Change Detail
@@ -705,6 +726,25 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
         y={trackContentContextMenu.y}
         onClose={() => setTrackContentContextMenu(prev => ({ ...prev, isOpen: false }))}
       >
+        <ContextMenuItem 
+          icon={<Plus />}
+          onClick={handleAddTrack}
+        >
+          Add Track
+        </ContextMenuItem>
+
+        <ContextMenuItem
+          icon={snapEnabled ? <Magnet /> : (
+            <span style={{ position: 'relative', display: 'inline-block', width: 24, height: 24 }}>
+              <Magnet style={{ position: 'absolute', left: 0, top: 0 }} />
+              <Slash style={{ position: 'absolute', left: 0, top: 0 }} />
+            </span>
+          )}
+          onClick={handleToggleSnap}
+        >
+          {snapEnabled ? 'Disable Snapping' : 'Enable Snapping'}
+        </ContextMenuItem>
+
         {trackContentContextMenu.trackId && trackContentContextMenu.time !== null && (
           <ContextMenuItem 
             icon={<Type />}
@@ -714,13 +754,6 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
             Add Subtitle
           </ContextMenuItem>
         )}
-        
-        <ContextMenuItem 
-          icon={<Plus />}
-          onClick={handleAddTrack}
-        >
-          Add Track
-        </ContextMenuItem>
         
         {trackContentContextMenu.subtitleId && (
           <>

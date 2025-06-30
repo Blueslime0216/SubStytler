@@ -19,6 +19,7 @@ interface SubtitleBlockProps {
   isLocked: boolean;
   trackIndex: number;
   trackHeight: number;
+  isHiddenTrack?: boolean;
 }
 
 export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
@@ -30,7 +31,8 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   onDragEnd,
   isLocked,
   trackIndex,
-  trackHeight = 50
+  trackHeight = 50,
+  isHiddenTrack = false
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [mouseDown, setMouseDown] = useState(false);
@@ -43,6 +45,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     startY: number;
     containerRect: DOMRect;
     originalTrackId: string;
+    pointerOffsetX: number;
   } | null>(null);
   
   const { updateSubtitle } = useProjectStore();
@@ -119,16 +122,20 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     const containerRect = container.getBoundingClientRect();
     const elementRect = e.currentTarget.getBoundingClientRect();
     
-    // Calculate offset from mouse to element's top-left corner
-    const offsetX = e.clientX - elementRect.left;
-    const offsetY = e.clientY - elementRect.top;
+    // Calculate time-per-pixel at drag start
+    const { viewStart, viewEnd } = useTimelineStore.getState();
+    const viewDurationStart = viewEnd - viewStart;
+    const timePerPixelStart = viewDurationStart / containerRect.width;
+    const subtitleLeftPxStart = (subtitle.startTime - viewStart) / timePerPixelStart;
+    const pointerOffsetX = e.clientX - containerRect.left - subtitleLeftPxStart;
     
     dragStartData.current = {
       startTime: subtitle.startTime,
       startX: e.clientX,
       startY: e.clientY,
       containerRect,
-      originalTrackId: subtitle.trackId
+      originalTrackId: subtitle.trackId,
+      pointerOffsetX,
     };
     
     setDragStartPos({ x: e.clientX, y: e.clientY });
@@ -162,7 +169,9 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 
     // Determine which track we're currently hovering over and snap vertically
     const { containerRect } = dragStartData.current;
-    const relativeY = e.clientY - containerRect.top - 40; // 40px ruler height
+    // Include vertical scroll offset so drag position accounts for scrolled container
+    const scrollTop = containerRef.current?.scrollTop || 0;
+    const relativeY = e.clientY - containerRect.top + scrollTop - 40; // 40px ruler height + scroll offset
     const { currentProject } = useProjectStore.getState();
     const tracksCount = currentProject?.tracks.length ?? 0;
     let targetTrackIndex = Math.floor(relativeY / trackHeight);
@@ -171,17 +180,25 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     const offsetTrack = targetTrackIndex - trackIndex;
     const snappedY = offsetTrack * trackHeight;
 
-    // --- Overlap Detection ---
-    const { viewStart, viewEnd, snapToFrame } = useTimelineStore.getState();
-    const containerWidth = containerRect.width;
-    const viewDuration = viewEnd - viewStart;
-    const timePerPixel = viewDuration / containerWidth;
-    const timeDelta = deltaX * timePerPixel;
+    // Recompute using current zoom so that dragging during wheel zoom stays accurate
+    const containerNow = containerRef.current;
+    if (!containerNow) return;
 
-    let tempStartTime = snapToFrame(dragStartData.current.startTime + timeDelta);
+    const { viewStart, viewEnd, snapToFrame } = useTimelineStore.getState();
+    const viewDuration = viewEnd - viewStart;
+    const timePerPixel = viewDuration / containerNow.clientWidth;
+
+    const pointerOffsetX = dragStartData.current.pointerOffsetX;
+    const newStartPx = e.clientX - containerNow.getBoundingClientRect().left - pointerOffsetX;
+
+    let tempStartTime = snapToFrame(viewStart + newStartPx * timePerPixel);
     tempStartTime = Math.max(0, Math.min(duration - subtitleDuration, tempStartTime));
     const tempEndTime = tempStartTime + subtitleDuration;
-    
+
+    // For visual offset relative to current zoom/time mapping
+    const leftCurrent = timeToPixel(dragStartData.current.startTime);
+    deltaX = newStartPx - leftCurrent;
+
     const targetTrack = currentProject?.tracks[targetTrackIndex];
     let isInvalid = false;
     const overlappingIds: string[] = [];
@@ -191,6 +208,9 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
         s => s.trackId === targetTrack.id && s.id !== subtitle.id
       );
       for (const other of otherSubtitles) {
+        if (other.id === subtitle.id) continue;
+        const otherTrack = currentProject.tracks.find(t => t.id === other.trackId);
+        if (otherTrack && !otherTrack.visible) continue; // 숨김 트랙은 스냅 대상으로 무시
         if (tempStartTime < other.endTime && tempEndTime > other.startTime) {
           isInvalid = true;
           overlappingIds.push(other.id);
@@ -231,6 +251,8 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
 
       for (const other of currentProject?.subtitles || []) {
         if (other.id === subtitle.id) continue;
+        const otherTrack = currentProject.tracks.find(t => t.id === other.trackId);
+        if (otherTrack && !otherTrack.visible) continue; // 숨김 트랙은 스냅 대상으로 무시
         for (const edge of [other.startTime, other.endTime]) {
           // Check against start edge
           let diff = targetStart - edge;
@@ -285,19 +307,13 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     
     const { startTime, containerRect, originalTrackId } = dragStartData.current;
     
-    // Calculate new position based on final mouse position
-    const deltaX = e.clientX - dragStartPos.x;
-    const deltaY = e.clientY - dragStartPos.y;
-    
-    // Convert pixel movement to time
-    const containerWidth = container.clientWidth;
-    const { viewStart, viewEnd } = useTimelineStore.getState();
-    const viewDuration = viewEnd - viewStart;
-    
-    const timePerPixel = viewDuration / containerWidth;
-    const timeDelta = deltaX * timePerPixel;
-    
-    let newStartTime = startTime + timeDelta;
+    // Recompute startTime based on current mouse X, considering possible zoom changes
+    const { viewStart: viewStartNow, viewEnd: viewEndNow } = useTimelineStore.getState();
+    const viewDurationNow = viewEndNow - viewStartNow;
+    const timePerPixelNow = viewDurationNow / container.clientWidth;
+
+    const subtitleLeftPxNow = (e.clientX - containerRect.left) - dragStartData.current.pointerOffsetX;
+    let newStartTime = viewStartNow + subtitleLeftPxNow * timePerPixelNow;
     
     // Clamp to valid range
     newStartTime = Math.max(0, Math.min(duration - subtitleDuration, newStartTime));
@@ -310,7 +326,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     // Apply subtitle-edge snapping on drop (same threshold calc) if enabled and Alt not pressed
     const { fps } = useTimelineStore.getState();
     const thresholdMs = (() => {
-      const pixelsPerSecond = (1000 / viewDuration) * containerWidth;
+      const pixelsPerSecond = (1000 / viewDurationNow) * container.clientWidth;
       const pixelsPerFrame = pixelsPerSecond / fps;
       const minMinor = 5;
       let frameStep = 1;
@@ -330,6 +346,8 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       let closestDiff = thresholdMs + 1;
       for (const other of currentProject?.subtitles || []) {
         if (other.id === subtitle.id) continue;
+        const otherTrack = currentProject.tracks.find(t => t.id === other.trackId);
+        if (otherTrack && !otherTrack.visible) continue; // 숨김 트랙 무시
         for (const edge of [other.startTime, other.endTime]) {
           const diffStart = newStartTime - edge;
           if (Math.abs(diffStart) < Math.abs(closestDiff)) {
@@ -352,7 +370,9 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     // Determine target track based on Y position
     const tracks = currentProject?.tracks;
     if (!tracks) return;
-    const relativeY = e.clientY - containerRect.top - 40; // Account for ruler height
+    // Include vertical scroll offset when determining drop track on mouse up
+    const scrollTop = containerRef.current?.scrollTop || 0;
+    const relativeY = e.clientY - containerRect.top + scrollTop - 40; // Account for ruler height + scroll offset
     const targetTrackIndex = Math.floor(relativeY / trackHeight);
     const targetTrack = tracks[targetTrackIndex];
     

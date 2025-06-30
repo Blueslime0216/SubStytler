@@ -29,122 +29,112 @@ const TextEditorPreview: React.FC<TextEditorPreviewProps> = ({
   textAlignment,
   outlineColor,
   outlineType,
-  anchorPoint,
   printDirection,
   isBold,
   isItalic,
   isUnderline
 }) => {
-  const getFontFamilyName = (value: string) => {
-    switch (value) {
-      case '1': return 'Courier New';
-      case '2': return 'Times New Roman';
-      case '3': return 'Lucida Console';
-      case '4': return 'Roboto';
-      case '5': return 'Comic Sans MS';
-      case '6': return 'Monotype Corsiva';
-      case '7': return 'Arial';
-      default: return 'Roboto';
+  // 폰트 패밀리 계산
+  const getFontFamily = () => {
+    switch (fontFamily) {
+      case '1': return 'Courier New, monospace';
+      case '2': return 'Times New Roman, serif';
+      case '3': return 'Lucida Console, monospace';
+      case '4': return 'Roboto, sans-serif';
+      case '5': return 'Comic Sans MS, cursive';
+      case '6': return 'Monotype Corsiva, cursive';
+      case '7': return 'Arial, sans-serif';
+      default: return 'Roboto, sans-serif';
     }
   };
 
-  const getOutlineStyleName = (value: number) => {
-    switch (value) {
-      case 1: return 'Hard Shadow';
-      case 2: return 'Bevel';
-      case 3: return 'Glow/Outline';
-      case 4: return 'Soft Shadow';
-      default: return 'None';
+  // 텍스트 정렬 계산
+  const getTextAlign = () => {
+    switch (textAlignment) {
+      case 1: return 'left';
+      case 2: return 'right';
+      case 3: return 'center';
+      default: return 'center';
     }
   };
 
-  const getAnchorPointName = (value: number) => {
-    switch (value) {
-      case 0: return 'Top-Left';
-      case 1: return 'Top-Center';
-      case 2: return 'Top-Right';
-      case 3: return 'Middle-Left';
-      case 4: return 'Center';
-      case 5: return 'Middle-Right';
-      case 6: return 'Bottom-Left';
-      case 7: return 'Bottom-Center';
-      case 8: return 'Bottom-Right';
-      default: return 'Center';
+  // 외곽선 스타일 계산
+  const getOutlineStyle = () => {
+    if (!outlineType) return {};
+
+    switch (outlineType) {
+      case 1: // Hard shadow
+        return { textShadow: `2px 2px 0 ${outlineColor}` };
+      case 2: // Bevel
+        return { textShadow: `1px 1px 0 ${outlineColor}, -1px -1px 0 ${outlineColor.replace('#', '#66')}` };
+      case 3: // Glow/Outline
+        return { textShadow: `0 0 3px ${outlineColor}, 0 0 3px ${outlineColor}, 0 0 3px ${outlineColor}, 0 0 3px ${outlineColor}` };
+      case 4: // Soft shadow
+        return { textShadow: `2px 2px 4px ${outlineColor}` };
+      default:
+        return {};
     }
   };
 
-  const getPrintDirectionName = (value: string) => {
-    switch (value) {
-      case '20': return 'Vertical RTL';
-      case '21': return 'Vertical LTR';
-      case '30': return 'Rotated 90° CCW, LTR';
-      case '31': return 'Rotated 90° CCW, RTL';
-      default: return 'Horizontal LTR';
+  // 세로쓰기 스타일 계산
+  const getVerticalStyle = () => {
+    switch (printDirection) {
+      case '20': // Vertical RTL
+        return { writingMode: 'vertical-rl' as const };
+      case '21': // Vertical LTR
+        return { writingMode: 'vertical-lr' as const };
+      case '30': // Rotated 90° CCW, LTR
+        return { transform: 'rotate(-90deg)', writingMode: 'horizontal-tb' as const };
+      case '31': // Rotated 90° CCW, RTL
+        return { transform: 'rotate(-90deg)', writingMode: 'horizontal-tb' as const, direction: 'rtl' as const };
+      default: // Horizontal LTR
+        return { writingMode: 'horizontal-tb' as const };
     }
   };
+
+  // 색상 RGBA 변환
+  const hexToRgba = (hex: string, opacity: number) => {
+    const cleanHex = hex.replace('#', '');
+    const r = parseInt(cleanHex.substring(0, 2), 16);
+    const g = parseInt(cleanHex.substring(2, 4), 16);
+    const b = parseInt(cleanHex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity / 255})`;
+  };
+
+  // 스타일 계산
+  const fontSizeValue = fontSize.replace('%', '');
+  const fontSizeNumber = parseInt(fontSizeValue, 10) || 100;
+  const fontSizePx = Math.round(16 * (fontSizeNumber / 100));
+  
+  const textColorRgba = hexToRgba(textColor, textOpacity);
+  const bgColorRgba = hexToRgba(backgroundColor, backgroundOpacity);
 
   return (
-    <>
-      {/* Preview */}
-      <div className="mb-4">
-        <label className="block text-xs font-medium text-text-secondary mb-1">
-          Preview
-        </label>
-        <div 
-          className="bg-black p-4 rounded-lg shadow-inset-subtle"
-          style={{
-            display: 'flex',
-            justifyContent: textAlignment === 1 ? 'flex-start' : textAlignment === 2 ? 'flex-end' : 'center',
-            minHeight: '100px',
-          }}
-        >
-          <div
-            style={{
-              display: 'inline-block',
-              padding: '0.5em 1em',
-              backgroundColor: `${backgroundColor}${Math.round(backgroundOpacity * 255).toString(16).padStart(2, '0')}`,
-              color: `${textColor}${Math.round(textOpacity * 255).toString(16).padStart(2, '0')}`,
-              fontFamily: getFontFamilyName(fontFamily),
-              fontSize,
-              fontWeight: isBold ? 'bold' : 'normal',
-              fontStyle: isItalic ? 'italic' : 'normal',
-              textDecoration: isUnderline ? 'underline' : 'none',
-              textShadow: getOutlineStyleName(outlineType) !== 'None' 
-                ? outlineType === 1 ? `2px 2px 0 ${outlineColor}` 
-                : outlineType === 2 ? `1px 1px 0 ${outlineColor}, -1px -1px 0 ${outlineColor.replace('#', '#66')}` 
-                : outlineType === 3 ? `0 0 3px ${outlineColor}, 0 0 3px ${outlineColor}, 0 0 3px ${outlineColor}, 0 0 3px ${outlineColor}` 
-                : `2px 2px 4px ${outlineColor}`
-                : 'none',
-              writingMode: printDirection === '20' || printDirection === '21' 
-                ? printDirection === '20' ? 'vertical-rl' : 'vertical-lr'
-                : 'horizontal-tb',
-              textOrientation: printDirection === '20' || printDirection === '21' ? 'upright' : 'mixed',
-              transform: printDirection === '30' || printDirection === '31' ? 'rotate(-90deg)' : 'none',
-              direction: printDirection === '31' ? 'rtl' : 'ltr',
-              textAlign: textAlignment === 1 ? 'left' : textAlignment === 2 ? 'right' : 'center',
-            }}
-          >
-            {selectedText || 'Preview text will appear here'}
-          </div>
-        </div>
+    <div className="p-4">
+      <div className="mb-2">
+        <h3 className="text-xs font-medium text-text-secondary">미리보기</h3>
       </div>
       
-      {/* Style Information */}
-      <div className="bg-surface rounded-lg p-3 shadow-outset-subtle">
-        <div className="text-xs text-text-secondary">
-          <p className="mb-1"><strong>Font:</strong> {getFontFamilyName(fontFamily)}</p>
-          <p className="mb-1"><strong>Size:</strong> {fontSize}</p>
-          <p className="mb-1"><strong>Outline:</strong> {getOutlineStyleName(outlineType)}</p>
-          <p className="mb-1"><strong>Anchor:</strong> {getAnchorPointName(anchorPoint)}</p>
-          <p className="mb-1"><strong>Direction:</strong> {getPrintDirectionName(printDirection)}</p>
-          <p><strong>Styling:</strong> {[
-            isBold ? 'Bold' : null,
-            isItalic ? 'Italic' : null,
-            isUnderline ? 'Underline' : null
-          ].filter(Boolean).join(', ') || 'None'}</p>
+      <div className="relative w-full h-24 bg-bg rounded-lg shadow-inset overflow-hidden flex items-center justify-center">
+        <div
+          className="px-4 py-2"
+          style={{
+            backgroundColor: bgColorRgba,
+            color: textColorRgba,
+            fontFamily: getFontFamily(),
+            fontSize: `${fontSizePx}px`,
+            fontWeight: isBold ? 'bold' : 'normal',
+            fontStyle: isItalic ? 'italic' : 'normal',
+            textDecoration: isUnderline ? 'underline' : 'none',
+            textAlign: getTextAlign(),
+            ...getOutlineStyle(),
+            ...getVerticalStyle(),
+          }}
+        >
+          {selectedText || '미리보기 텍스트'}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

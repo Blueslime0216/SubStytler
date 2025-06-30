@@ -1,23 +1,122 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Edit, Trash2, Clock } from 'lucide-react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useProjectStore } from '../../stores/projectStore';
-import { useTimelineStore } from '../../stores/timelineStore';
 import { useHistoryStore } from '../../stores/historyStore';
+import { useTimelineStore } from '../../stores/timelineStore';
+import { Clock, Edit, Check, X } from 'lucide-react';
+import { SubtitleBlock } from '../../types/project';
 
-export const ScriptViewerPanel: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSubtitleId, setSelectedSubtitleId] = useState<string | null>(null);
-  
-  const { currentProject, updateSubtitle, deleteSubtitle } = useProjectStore();
+// 개별 자막 항목 컴포넌트
+interface ScriptItemProps {
+  subtitle: SubtitleBlock;
+  isEditing: boolean;
+  onEdit: () => void;
+  onSave: (text: string) => void;
+  onCancel: () => void;
+  formatTime: (ms: number) => string;
+}
+
+const ScriptItem: React.FC<ScriptItemProps> = ({ 
+  subtitle, 
+  isEditing, 
+  onEdit, 
+  onSave, 
+  onCancel,
+  formatTime
+}) => {
+  const [editText, setEditText] = useState('');
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const { setCurrentTime } = useTimelineStore();
+  
+  // 편집 시작 시 텍스트 초기화
+  useEffect(() => {
+    if (isEditing) {
+      setEditText(subtitle.spans.map(span => span.text || '').join(''));
+      // 포커스 설정
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+          inputRef.current.select();
+        }
+      }, 10);
+    }
+  }, [isEditing, subtitle]);
+  
+  // 자막 시간으로 이동
+  const jumpToTime = () => {
+    setCurrentTime(subtitle.startTime);
+  };
+  
+  return (
+    <div className={`mb-2 rounded-md overflow-hidden ${isEditing ? 'ring-2 ring-primary-color' : 'hover:bg-mid-color'}`}>
+      {/* 자막 시간 표시 */}
+      <div 
+        className="flex items-center text-xs text-text-secondary bg-dark-color px-2 py-1 cursor-pointer"
+        onClick={jumpToTime}
+      >
+        <Clock className="w-3 h-3 mr-1" />
+        <span>{formatTime(subtitle.startTime)} → {formatTime(subtitle.endTime)}</span>
+      </div>
+      
+      {/* 자막 내용 */}
+      {isEditing ? (
+        <div className="p-2 bg-base-color">
+          <textarea
+            ref={inputRef}
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            className="w-full text-sm resize-none bg-bg shadow-inset rounded text-text-primary p-2 focus:outline-none focus:ring-1 focus:ring-primary-color"
+            rows={3}
+          />
+          <div className="flex justify-end mt-2 space-x-2">
+            <button 
+              className="flex items-center text-xs bg-error-color text-white px-2 py-1 rounded"
+              onClick={onCancel}
+            >
+              <X className="w-3 h-3 mr-1" />
+              취소
+            </button>
+            <button 
+              className="flex items-center text-xs bg-primary-color text-white px-2 py-1 rounded"
+              onClick={() => onSave(editText)}
+            >
+              <Check className="w-3 h-3 mr-1" />
+              저장
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div 
+          className="p-3 cursor-pointer flex items-start"
+          onClick={onEdit}
+        >
+          <div className="flex-1 text-sm">
+            {subtitle.spans.map(span => span.text || '').join('')}
+          </div>
+          <button className="text-text-secondary hover:text-text-primary ml-2">
+            <Edit className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
-  const filteredSubtitles = currentProject?.subtitles.filter(subtitle =>
-    subtitle.spans.some(span => 
-      span.text.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  ) || [];
-
+// 스크립트 뷰어 패널 컴포넌트
+export const ScriptViewerPanel: React.FC = () => {
+  // Zustand 스토어에서 프로젝트와 수정 액션 참조
+  const { currentProject, updateSubtitle } = useProjectStore();
+  
+  // 상태
+  const [editingId, setEditingId] = useState<string | null>(null);
+  
+  // 모든 트랙의 자막을 시간 순으로 정렬하여 메모이제이션
+  const subtitles = useProjectStore(state => state.currentProject?.subtitles ?? []);
+  
+  const sortedSubtitles = useMemo(() => {
+    return [...subtitles].sort((a, b) => a.startTime - b.startTime);
+  }, [subtitles]);
+  
+  // 시간 포맷팅 함수
   const formatTime = (ms: number) => {
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
@@ -26,263 +125,90 @@ export const ScriptViewerPanel: React.FC = () => {
     
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
   };
-
-  const jumpToSubtitle = (startTime: number) => {
-    setCurrentTime(startTime);
+  
+  // 편집 시작
+  const handleEdit = (id: string) => {
+    setEditingId(id);
   };
-
-  const handleTextEdit = (subtitleId: string, newText: string) => {
-    // 🆕 Record state before editing
-    const { currentProject } = useProjectStore.getState();
-    if (currentProject) {
-      useHistoryStore.getState().record(
-        { 
-          project: {
-            subtitles: [...currentProject.subtitles],
-            selectedSubtitleId
-          }
-        },
-        'Before editing subtitle text in script viewer',
-        true // Mark as internal
-      );
-    }
+  
+  // 편집 취소
+  const handleCancel = () => {
+    setEditingId(null);
+  };
+  
+  // 편집 저장
+  const handleSave = (id: string, newText: string) => {
+    if (!currentProject) return;
     
-    const subtitle = currentProject?.subtitles.find(s => s.id === subtitleId);
-    if (subtitle) {
-      const updatedSpans = [...subtitle.spans];
-      if (updatedSpans[0]) {
-        updatedSpans[0] = {
-          ...updatedSpans[0],
-          text: newText
-        };
-      }
-      updateSubtitle(subtitleId, { spans: updatedSpans });
-      
-      // 🆕 Record state after editing
-      setTimeout(() => {
-        const { currentProject } = useProjectStore.getState();
-        if (currentProject) {
-          useHistoryStore.getState().record(
-            { 
-              project: {
-                subtitles: currentProject.subtitles,
-                selectedSubtitleId
-              }
-            },
-            'Edited subtitle text in script viewer'
-          );
-        }
-      }, 0);
-    }
-  };
-
-  const handleTimeEdit = (subtitleId: string, field: 'start' | 'end', value: string) => {
-    // 🆕 Record state before editing
-    const { currentProject } = useProjectStore.getState();
-    if (currentProject) {
-      useHistoryStore.getState().record(
-        { 
-          project: {
-            subtitles: [...currentProject.subtitles],
-            selectedSubtitleId
-          }
-        },
-        'Before editing subtitle timing in script viewer',
-        true // Mark as internal
-      );
-    }
-    
-    const subtitle = currentProject?.subtitles.find(s => s.id === subtitleId);
-    if (subtitle) {
-      const [minutes, rest] = value.split(':');
-      const [seconds, milliseconds] = rest ? rest.split('.') : ['0', '0'];
-      
-      const timeMs = (parseInt(minutes) * 60 + parseInt(seconds)) * 1000 + parseInt(milliseconds) * 10;
-      
-      if (field === 'start') {
-        updateSubtitle(subtitleId, { 
-          startTime: timeMs,
-          spans: subtitle.spans.map(span => ({ ...span, startTime: timeMs }))
-        });
-      } else {
-        updateSubtitle(subtitleId, { 
-          endTime: timeMs,
-          spans: subtitle.spans.map(span => ({ ...span, endTime: timeMs }))
-        });
-      }
-      
-      // 🆕 Record state after editing
-      setTimeout(() => {
-        const { currentProject } = useProjectStore.getState();
-        if (currentProject) {
-          useHistoryStore.getState().record(
-            { 
-              project: {
-                subtitles: currentProject.subtitles,
-                selectedSubtitleId
-              }
-            },
-            `Adjusted subtitle ${field === 'start' ? 'start' : 'end'} time in script viewer`
-          );
-        }
-      }, 0);
-    }
-  };
-
-  const handleDeleteSubtitle = (subtitleId: string) => {
-    // 🆕 Record state before deleting
-    const { currentProject } = useProjectStore.getState();
-    if (currentProject) {
-      const subtitleToDelete = currentProject.subtitles.find(s => s.id === subtitleId);
-      if (!subtitleToDelete) return;
-      
-      useHistoryStore.getState().record(
-        { 
-          project: {
-            subtitles: [...currentProject.subtitles],
-            selectedSubtitleId
-          }
-        },
-        'Before deleting subtitle from script viewer',
-        true // Mark as internal
-      );
-      
-      deleteSubtitle(subtitleId);
-      
-      // 🆕 Record state after deleting
-      setTimeout(() => {
-        const { currentProject } = useProjectStore.getState();
-        if (currentProject) {
-          useHistoryStore.getState().record(
-            { 
-              project: {
-                subtitles: currentProject.subtitles,
-                selectedSubtitleId: null
-              }
-            },
-            `Deleted subtitle at ${formatTime(subtitleToDelete.startTime)} from script viewer`
-          );
-        }
-      }, 0);
-    }
-  };
-
-  const getStyledText = (subtitle: any) => {
-    const span = subtitle.spans[0] || { text: '' };
-    const text = span.text || '';
-    const isBold = span.isBold || false;
-    const isItalic = span.isItalic || false;
-    const isUnderline = span.isUnderline || false;
-    
-    return (
-      <span 
-        style={{
-          fontWeight: isBold ? 'bold' : 'normal',
-          fontStyle: isItalic ? 'italic' : 'normal',
-          textDecoration: isUnderline ? 'underline' : 'none'
-        }}
-      >
-        {text}
-      </span>
+    // 변경 전 상태 기록
+    useHistoryStore.getState().record(
+      { project: { subtitles: [...currentProject.subtitles] } },
+      '자막 텍스트 편집 전',
+      true
     );
+    
+    // 자막 찾기
+    const subtitle = currentProject.subtitles.find(s => s.id === id);
+    if (subtitle) {
+      // 첫 span이 존재하면 재사용, 없으면 새로 생성
+      const firstSpan = subtitle.spans[0] ?? {
+        id: crypto.randomUUID(),
+        text: '',
+        startTime: subtitle.startTime,
+        endTime: subtitle.endTime,
+      };
+      
+      // 업데이트
+      const updatedSpan = { ...firstSpan, text: newText };
+      updateSubtitle(id, { spans: [updatedSpan] });
+      
+      // 변경 후 상태 기록
+      setTimeout(() => {
+        const { currentProject: projAfter } = useProjectStore.getState();
+        if (projAfter) {
+          useHistoryStore.getState().record(
+            { project: { subtitles: projAfter.subtitles } },
+            '자막 텍스트 편집 완료'
+          );
+        }
+      }, 0);
+    }
+    
+    // 편집 모드 종료
+    setEditingId(null);
   };
-
+  
   return (
-    <div className="neu-script-viewer-panel h-full flex flex-col">
-      {/* Search Bar */}
-      <div className="neu-panel-header">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 neu-text-secondary" />
-          <input
-            type="text"
-            placeholder="Search subtitles..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 neu-input text-xs"
-          />
-        </div>
-      </div>
-
-      {/* Subtitle List */}
-      <div className="flex-1 overflow-y-auto">
-        {filteredSubtitles.length === 0 ? (
-          <div className="h-full flex items-center justify-center neu-text-secondary">
-            <p className="text-sm">No subtitles found</p>
+    <div className="h-full w-full flex flex-col bg-surface-color text-text-primary">
+      {/* 스크립트 목록 */}
+      <div className="flex-1 overflow-y-auto p-3">
+        {sortedSubtitles.length === 0 ? (
+          <div className="flex items-center justify-center h-full text-text-secondary">
+            <p>자막이 없습니다</p>
           </div>
         ) : (
-          <div className="p-2 space-y-2">
-            {filteredSubtitles.map((subtitle, index) => (
-              <motion.div
-                key={subtitle.id}
-                className="neu-card p-3"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 space-y-2">
-                    {/* Timing */}
-                    <div className="flex items-center space-x-2 text-xs">
-                      <Clock className="w-3 h-3 neu-text-secondary" />
-                      <input
-                        type="text"
-                        value={formatTime(subtitle.startTime)}
-                        onChange={(e) => handleTimeEdit(subtitle.id, 'start', e.target.value)}
-                        className="neu-input text-xs w-16"
-                      />
-                      <span className="neu-text-secondary">→</span>
-                      <input
-                        type="text"
-                        value={formatTime(subtitle.endTime)}
-                        onChange={(e) => handleTimeEdit(subtitle.id, 'end', e.target.value)}
-                        className="neu-input text-xs w-16"
-                      />
-                      <motion.button
-                        onClick={() => jumpToSubtitle(subtitle.startTime)}
-                        className="neu-btn-small px-2 py-1 text-xs"
-                      >
-                        Jump
-                      </motion.button>
-                    </div>
-                    
-                    {/* Text */}
-                    <textarea
-                      value={subtitle.spans[0]?.text || ''}
-                      onChange={(e) => handleTextEdit(subtitle.id, e.target.value)}
-                      className="w-full neu-input text-xs resize-none"
-                      rows={2}
-                      style={{
-                        fontWeight: subtitle.spans[0]?.isBold ? 'bold' : 'normal',
-                        fontStyle: subtitle.spans[0]?.isItalic ? 'italic' : 'normal',
-                        textDecoration: subtitle.spans[0]?.isUnderline ? 'underline' : 'none'
-                      }}
-                    />
-                  </div>
-                  
-                  {/* Actions */}
-                  <div className="flex items-center space-x-1 ml-3">
-                    <motion.button
-                      onClick={() => setSelectedSubtitleId(
-                        selectedSubtitleId === subtitle.id ? null : subtitle.id
-                      )}
-                      className="neu-btn-icon p-1"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </motion.button>
-                    
-                    <motion.button
-                      onClick={() => handleDeleteSubtitle(subtitle.id)}
-                      className="neu-btn-icon p-1"
-                      style={{ color: 'var(--neu-error)' }}
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          sortedSubtitles.map(subtitle => (
+            <ScriptItem
+              key={subtitle.id}
+              subtitle={subtitle}
+              isEditing={editingId === subtitle.id}
+              onEdit={() => handleEdit(subtitle.id)}
+              onSave={(text) => handleSave(subtitle.id, text)}
+              onCancel={handleCancel}
+              formatTime={formatTime}
+            />
+          ))
         )}
+      </div>
+      
+      {/* 상태 표시 */}
+      <div className="border-t border-border-color p-2 flex justify-between items-center text-xs text-text-secondary">
+        <div>
+          총 {sortedSubtitles.length}개 자막
+        </div>
+        <div>
+          {editingId ? '편집 중...' : '준비됨'}
+        </div>
       </div>
     </div>
   );
