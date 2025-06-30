@@ -108,7 +108,11 @@ export const TrackContentsSection: React.FC<TrackContentsSectionProps> = ({
         >
           {/* Render subtitles for this track */}
           {subtitles
-            .filter((subtitle) => subtitle.trackId === track.id)
+            .filter((subtitle) => {
+              if (subtitle.trackId !== track.id) return false;
+              const buffer = 1000; // ms buffer outside view
+              return subtitle.endTime > viewStart - buffer && subtitle.startTime < viewEnd + buffer;
+            })
             .map((subtitle) => (
               <SubtitleBlock
                 key={subtitle.id}

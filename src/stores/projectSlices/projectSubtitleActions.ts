@@ -249,11 +249,8 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
 
     // Record history
     const historyStore = useHistoryStore.getState();
-    historyStore.record(
-      { project: { subtitles: currentProject.subtitles } },
-      'Add keyframe',
-      true,
-    );
+    const beforeSnap = { project: { subtitles: structuredClone(currentProject.subtitles) } };
+    historyStore.record(beforeSnap, 'Add keyframe', true);
 
     set({
       currentProject: { ...currentProject, subtitles: updatedSubtitles },
@@ -261,7 +258,7 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
     });
 
     historyStore.record(
-      { project: { subtitles: updatedSubtitles } },
+      { project: { subtitles: structuredClone(updatedSubtitles) } },
       `Added keyframe (${property})`,
     );
   },
@@ -298,11 +295,11 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
     });
 
     const historyStore = useHistoryStore.getState();
-    historyStore.record({ project: { subtitles: currentProject.subtitles } }, 'Move keyframe', true);
+    historyStore.record({ project: { subtitles: structuredClone(currentProject.subtitles) } }, 'Move keyframe', true);
 
     set({ currentProject: { ...currentProject, subtitles: updatedSubtitles }, isModified: true });
 
-    historyStore.record({ project: { subtitles: updatedSubtitles } }, 'Keyframe moved');
+    historyStore.record({ project: { subtitles: structuredClone(updatedSubtitles) } }, 'Keyframe moved');
   },
 
   /**
@@ -335,11 +332,11 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
     });
 
     const historyStore = useHistoryStore.getState();
-    historyStore.record({ project: { subtitles: currentProject.subtitles } }, 'Change keyframe easing', true);
+    historyStore.record({ project: { subtitles: structuredClone(currentProject.subtitles) } }, 'Change keyframe easing', true);
 
     set({ currentProject: { ...currentProject, subtitles: updatedSubtitles }, isModified: true });
 
-    historyStore.record({ project: { subtitles: updatedSubtitles } }, 'Keyframe easing changed');
+    historyStore.record({ project: { subtitles: structuredClone(updatedSubtitles) } }, 'Keyframe easing changed');
   },
 
   deleteKeyframe: (
@@ -364,8 +361,8 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
     });
 
     const historyStore = useHistoryStore.getState();
-    historyStore.record({ project: { subtitles: prev } }, 'Delete keyframe', true);
+    historyStore.record({ project: { subtitles: structuredClone(prev) } }, 'Delete keyframe', true);
     set({ currentProject: { ...currentProject, subtitles: updatedSubtitles }, isModified: true });
-    historyStore.record({ project: { subtitles: updatedSubtitles } }, 'Keyframe deleted');
+    historyStore.record({ project: { subtitles: structuredClone(updatedSubtitles) } }, 'Keyframe deleted');
   },
 });

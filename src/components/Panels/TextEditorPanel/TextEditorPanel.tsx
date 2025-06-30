@@ -98,7 +98,7 @@ export const TextEditorPanel: React.FC = () => {
           text
         };
       }
-      updateSubtitle(currentSubtitle.id, { spans: updatedSpans });
+      updateSubtitle(currentSubtitle.id, { spans: updatedSpans }, false);
       
       // Record state after change
       if (currentProject) {
@@ -142,7 +142,15 @@ export const TextEditorPanel: React.FC = () => {
         [property]: newVal,
       } as any;
     }
-    updateSubtitle(currentSubtitle.id, { spans: updatedSpans });
+    updateSubtitle(currentSubtitle.id, { spans: updatedSpans }, false);
+
+    // After 기록
+    if (currentProject) {
+      useHistoryStore.getState().record(
+        { project: { subtitles: currentProject.subtitles } },
+        `Changed style (${property})`
+      );
+    }
   };
 
   // Toggle text style
@@ -190,7 +198,7 @@ export const TextEditorPanel: React.FC = () => {
           [style === 'bold' ? 'isBold' : style === 'italic' ? 'isItalic' : 'isUnderline']: newState
         };
       }
-      updateSubtitle(currentSubtitle.id, { spans: updatedSpans });
+      updateSubtitle(currentSubtitle.id, { spans: updatedSpans }, false);
       
       // Record state after change
       if (currentProject) {
@@ -204,7 +212,7 @@ export const TextEditorPanel: React.FC = () => {
                   selectedSubtitleId
                 }
               },
-              newState ? `Applied ${style} style to text` : `Removed ${style} style from text`
+              newState ? `Applied ${style} style` : `Removed ${style} style`
             );
           }
         }, 0);

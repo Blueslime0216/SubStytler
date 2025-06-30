@@ -311,7 +311,7 @@ function applySnapshot(snapshot: Snapshot) {
         useProjectStore.setState({
           currentProject: {
             ...currentProject,
-            subtitles: snapshot.project.subtitles,
+            subtitles: [...snapshot.project.subtitles],
           },
         });
       }

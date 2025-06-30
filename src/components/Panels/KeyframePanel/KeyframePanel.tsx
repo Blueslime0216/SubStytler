@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelectedSubtitleStore } from '../../../stores/selectedSubtitleStore';
 import { useProjectStore } from '../../../stores/projectStore';
 import { useTimelineStore } from '../../../stores/timelineStore';
@@ -10,6 +10,7 @@ import TimelineRuler from '../TimelineRuler';
 import { useTimelineInteraction } from '../../../hooks/useTimelineInteraction';
 import { formatTime, snapToTimelineGrid } from '../../../utils/timeUtils';
 import { Trash2, Plus, Copy, ArrowLeft, ArrowRight } from 'lucide-react';
+import { shallow } from 'zustand/shallow';
 
 const ROW_HEIGHT = 28;
 const KEYFRAME_SIZE = 12;
@@ -33,9 +34,14 @@ const KeyframePanel: React.FC = () => {
 
   // Get selected subtitle data
   const subtitleId = useSelectedSubtitleStore((s) => s.selectedSubtitleId);
-  const subtitle = useProjectStore((s: any) =>
-    s.currentProject?.subtitles.find((sub: any) => sub.id === subtitleId)
-  );
+  const subtitles = useProjectStore((s) => s.currentProject?.subtitles, shallow);
+  const subtitle = useMemo(() => {
+    if (!subtitles || !subtitleId) return null;
+    return subtitles.find((sub) => sub.id === subtitleId);
+  }, [subtitles, subtitleId]);
+  const animations = useMemo(() => {
+    return subtitle?.spans[0]?.animations ?? [];
+  }, [subtitle]);
 
   // Timeline store access
   const timeline = useTimelineStore();
@@ -231,11 +237,11 @@ const KeyframePanel: React.FC = () => {
     
     const { property, time } = creatingKeyframe;
     
-    // Get current value from subtitle
-    const value = subtitle?.spans[0]?.style?.[property] ?? 0;
+    // Get current value from subtitle (dynamic property access)
+    const value = subtitle?.spans[0] ? (subtitle.spans[0] as any)[property] ?? 0 : 0;
     
-    // Add keyframe
-    addKeyframe(subtitleId, property, time, value);
+    // Add keyframe (store expects keyframe object)
+    addKeyframe(subtitleId, property, { time, value });
     
     // Reset creation state
     setCreatingKeyframe(null);
@@ -254,9 +260,6 @@ const KeyframePanel: React.FC = () => {
       </div>
     );
   }
-
-  // Gather animated properties
-  const animations = subtitle.spans[0]?.animations ?? [];
 
   return (
     <div 
@@ -532,8 +535,8 @@ const KeyframePanel: React.FC = () => {
           <ContextMenuItem
             onClick={() => {
               // Copy keyframe value to clipboard
-              const kf = subtitle.spans[0].animations
-                .find((a: any) => a.property === kfMenu.property)
+              const kf = subtitle?.spans[0]?.animations
+                ?.find((a: any) => a.property === kfMenu.property)
                 ?.keyframes.find((k: any) => k.time === kfMenu.time);
                 
               if (kf) {
@@ -548,7 +551,7 @@ const KeyframePanel: React.FC = () => {
           <ContextMenuItem
             onClick={() => {
               // Navigate to previous keyframe
-              const anim = subtitle.spans[0].animations.find((a: any) => a.property === kfMenu.property);
+              const anim = subtitle?.spans[0]?.animations?.find((a: any) => a.property === kfMenu.property);
               if (anim) {
                 const kfIndex = anim.keyframes.findIndex((k: any) => k.time === kfMenu.time);
                 if (kfIndex > 0) {
@@ -565,7 +568,7 @@ const KeyframePanel: React.FC = () => {
           <ContextMenuItem
             onClick={() => {
               // Navigate to next keyframe
-              const anim = subtitle.spans[0].animations.find((a: any) => a.property === kfMenu.property);
+              const anim = subtitle?.spans[0]?.animations?.find((a: any) => a.property === kfMenu.property);
               if (anim) {
                 const kfIndex = anim.keyframes.findIndex((k: any) => k.time === kfMenu.time);
                 if (kfIndex < anim.keyframes.length - 1) {
