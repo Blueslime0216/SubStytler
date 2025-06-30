@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
-import { Waves, BarChart3, Layers } from 'lucide-react';
+import { Waves, BarChart3, Layers, RefreshCw } from 'lucide-react';
+import { ContextMenu, ContextMenuItem, ContextMenuDivider } from '../UI/ContextMenu';
 
 type WaveformMode = 'waveform' | 'spectrogram' | 'mixed';
 
@@ -45,6 +46,17 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
   
   const { currentTime, duration, isPlaying, setCurrentTime, snapToFrame } = useTimelineStore();
   const { currentProject } = useProjectStore();
+  
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState<{
+    isOpen: boolean;
+    x: number;
+    y: number;
+  }>({
+    isOpen: false,
+    x: 0,
+    y: 0
+  });
   
   // 비디오 요소 직접 참조
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -659,16 +671,27 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
   // 모드 변경 처리
   const handleModeChange = (newMode: WaveformMode) => {
     setMode(newMode);
+    setContextMenu({ isOpen: false, x: 0, y: 0 });
   };
 
-  // 오디오가 없을 때 placeholder 보여주기
-  if (!currentProject?.videoMeta) {
-    return (
-      <div className="neu-audio-waveform-panel h-full flex items-center justify-center neu-text-secondary">
-        <p className="text-sm">오디오 파형을 보려면 비디오를 로드하세요</p>
-      </div>
-    );
-  }
+  // 줌 초기화 처리
+  const handleResetZoom = useCallback(() => {
+    setLocalViewStart(0);
+    setLocalViewEnd(duration);
+    setLocalZoom(1);
+    setVerticalZoom(1);
+    setContextMenu({ isOpen: false, x: 0, y: 0 });
+  }, [duration]);
+
+  // 컨텍스트 메뉴 처리
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenu({
+      isOpen: true,
+      x: e.clientX,
+      y: e.clientY
+    });
+  }, []);
 
   // wheel 이벤트 passive: false로 등록
   useEffect(() => {
@@ -684,6 +707,15 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     container.addEventListener('wheel', handler, { passive: false });
     return () => container.removeEventListener('wheel', handler);
   }, [handleWheel]);
+
+  // 오디오가 없을 때 placeholder 보여주기
+  if (!currentProject?.videoMeta) {
+    return (
+      <div className="neu-audio-waveform-panel h-full flex items-center justify-center neu-text-secondary">
+        <p className="text-sm">오디오 파형을 보려면 비디오를 로드하세요</p>
+      </div>
+    );
+  }
 
   return (
     <div className="neu-audio-waveform-panel h-full min-w-0 min-h-0 neu-bg-base p-3 flex flex-col">
@@ -717,6 +749,7 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => setIsPanning(false)}
+        onContextMenu={handleContextMenu}
       >
         <div className="absolute inset-0 w-full h-full pointer-events-none">
           <canvas
@@ -747,6 +780,44 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
           );
         })()}
       </div>
+
+      {/* Context Menu */}
+      <ContextMenu
+        isOpen={contextMenu.isOpen}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        onClose={() => setContextMenu({ isOpen: false, x: 0, y: 0 })}
+      >
+        <ContextMenuItem 
+          icon={<Waves />}
+          onClick={() => handleModeChange('waveform')}
+        >
+          {mode === 'waveform' ? '✓ 파형 뷰' : '파형 뷰'}
+        </ContextMenuItem>
+        
+        <ContextMenuItem 
+          icon={<BarChart3 />}
+          onClick={() => handleModeChange('spectrogram')}
+        >
+          {mode === 'spectrogram' ? '✓ 스펙트로그램 뷰' : '스펙트로그램 뷰'}
+        </ContextMenuItem>
+        
+        <ContextMenuItem 
+          icon={<Layers />}
+          onClick={() => handleModeChange('mixed')}
+        >
+          {mode === 'mixed' ? '✓ 혼합 뷰' : '혼합 뷰'}
+        </ContextMenuItem>
+        
+        <ContextMenuDivider />
+        
+        <ContextMenuItem 
+          icon={<RefreshCw />}
+          onClick={handleResetZoom}
+        >
+          줌 초기화
+        </ContextMenuItem>
+      </ContextMenu>
     </div>
   );
 };

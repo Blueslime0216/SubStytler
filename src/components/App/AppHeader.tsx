@@ -60,7 +60,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         <ThemeToggle />
         
         {/* More Options Menu */}
-        <MoreOptionsButton />
+        <MoreOptionsButton setIsEditingTitle={setIsEditingTitle} />
       </div>
     </header>
   );

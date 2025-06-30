@@ -1,12 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useProjectStore } from '../../../stores/projectStore';
+import TrackHeader, { TrackHeaderRef } from '../TrackHeader';
+import SubtitleBlock from '../SubtitleBlock';
+import TimelineRuler from '../TimelineRuler';
 import { useTimelineInteraction } from '../../../hooks/useTimelineInteraction';
+import { Plus, Eye, EyeOff, Lock, Unlock, Trash2, Edit, Type, FileText } from 'lucide-react';
 import { useSelectedTrackStore } from '../../../stores/selectedTrackStore';
 import { useSelectedSubtitleStore } from '../../../stores/selectedSubtitleStore';
+import { ContextMenu, ContextMenuItem, ContextMenuDivider, ContextMenuSectionTitle } from '../../UI/ContextMenu';
+import { useHistoryStore } from '../../../stores/historyStore';
 import { useSubtitleHighlightStore } from '../../../stores/subtitleHighlightStore';
-import { TrackHeadersSection } from './TrackHeadersSection';
-import { TrackContentsSection } from './TrackContentsSection';
-import { TrackContextMenus } from './TrackContextMenus';
 
 interface TracksContainerProps {
   currentTime: number;
@@ -22,7 +25,7 @@ interface TracksContainerProps {
   onSidebarWidthChange?: (width: number) => void;
 }
 
-const TracksContainer: React.FC<TracksContainerProps> = ({
+export const TracksContainer: React.FC<TracksContainerProps> = ({
   currentTime,
   containerRef,
   viewStart,
@@ -35,7 +38,15 @@ const TracksContainer: React.FC<TracksContainerProps> = ({
   setIsHovered,
   onSidebarWidthChange
 }) => {
-  const { currentProject } = useProjectStore();
+  const {
+    currentProject,
+    addTrack,
+    updateTrack,
+    deleteTrack,
+    updateSubtitle,
+    addSubtitle,
+    deleteSubtitle
+  } = useProjectStore();
   
   const [draggedSubtitle, setDraggedSubtitle] = useState<{ id: string, sourceTrackId: string } | null>(null);
   const [dragOverTrackId, setDragOverTrackId] = useState<string | null>(null);
@@ -77,14 +88,17 @@ const TracksContainer: React.FC<TracksContainerProps> = ({
     time: null
   });
 
-  // Sidebar width state for resizable track header
-  const [sidebarWidth, setSidebarWidth] = useState<number>(180);
-  const isResizingRef = useRef(false);
-  const startXRef = useRef(0);
-  const startWidthRef = useRef(180);
+  // Refs for track headers to access their methods
+  const trackHeaderRefs = useRef<Map<string, React.RefObject<TrackHeaderRef>>>(new Map());
 
-  // Reference to the entire tracks container to calculate percentage-based limits
-  const containerWrapperRef = useRef<HTMLDivElement>(null);
+  // Ensure refs are created for all tracks
+  React.useEffect(() => {
+    tracks.forEach(track => {
+      if (!trackHeaderRefs.current.has(track.id)) {
+        trackHeaderRefs.current.set(track.id, React.createRef<TrackHeaderRef>());
+      }
+    });
+  }, [tracks]);
 
   // Interaction handling (pan/zoom/playhead)
   const { handleMouseDown: tMouseDown, handleMouseMove: tMouseMove, handleMouseUp: tMouseUp, handleWheel: tWheel } = useTimelineInteraction(containerRef, {
@@ -112,6 +126,77 @@ const TracksContainer: React.FC<TracksContainerProps> = ({
     if (isResizingRef.current) return;
     tWheel(e);
   };
+
+  // Improved time/pixel conversion functions
+  const timeToPixel = useCallback((time: number): number => {
+    if (!containerRef.current) return 0;
+    const width = containerRef.current.clientWidth;
+    const viewDuration = viewEnd - viewStart;
+    if (viewDuration === 0) return 0;
+    return ((time - viewStart) / viewDuration) * width;
+  }, [viewStart, viewEnd, containerRef]);
+
+  const pixelToTime = useCallback((pixel: number): number => {
+    if (!containerRef.current) return 0;
+    const width = containerRef.current.clientWidth;
+    const viewDuration = viewEnd - viewStart;
+    return viewStart + (pixel / width) * viewDuration;
+  }, [viewStart, viewEnd, containerRef]);
+
+  const handleSubtitleDragStart = useCallback((subtitleId: string, trackId: string) => {
+    setDraggedSubtitle({ id: subtitleId, sourceTrackId: trackId });
+    setHasLeftOriginalTrack(false);
+  }, []);
+
+  const handleSubtitleDragEnd = useCallback(() => {
+    setDraggedSubtitle(null);
+    setDragOverTrackId(null);
+    setHasLeftOriginalTrack(false);
+  }, []);
+
+  // Track hover detection for visual feedback during drag
+  const handleTrackMouseEnter = useCallback((trackId: string) => {
+    if (!draggedSubtitle) return;
+
+    // 추가: 잠긴 트랙은 하이라이트하지 않음
+    const track = tracks.find(t => t.id === trackId);
+    if (track?.locked) {
+      setDragOverTrackId(null); // 잠긴 트랙 위에서는 하이라이트 제거
+      return;
+    }
+    
+    // 추가: 원래 트랙으로 돌아오면 하이라이트하지 않음
+    if (trackId === draggedSubtitle.sourceTrackId) {
+      setDragOverTrackId(null);
+      return;
+    }
+
+    if (!hasLeftOriginalTrack) {
+      // First time leaving original track
+      if (trackId !== draggedSubtitle.sourceTrackId) {
+        setHasLeftOriginalTrack(true);
+        setDragOverTrackId(trackId);
+      }
+    } else {
+      // Already left once, highlight any track we enter (including origin)
+      setDragOverTrackId(trackId);
+    }
+  }, [draggedSubtitle, hasLeftOriginalTrack, tracks]);
+
+  const handleTrackMouseLeave = useCallback(() => {
+    setDragOverTrackId(null);
+  }, []);
+
+  const TRACK_HEIGHT = 50;
+
+  // Sidebar width state for resizable track header
+  const [sidebarWidth, setSidebarWidth] = useState<number>(180);
+  const isResizingRef = useRef(false);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(180);
+
+  // Reference to the entire tracks container to calculate percentage-based limits
+  const containerWrapperRef = useRef<HTMLDivElement>(null);
 
   const handleResizeMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -146,6 +231,26 @@ const TracksContainer: React.FC<TracksContainerProps> = ({
       window.removeEventListener('mouseup', stop);
     };
   }, []);
+
+  /* ------------------------------------------------------------------
+     Scroll Sync between Track Header (left) and Track Content (right)
+     ------------------------------------------------------------------ */
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  const syncHeaderScroll = React.useCallback(() => {
+    if (!headerRef.current || !containerRef.current) return;
+    headerRef.current.scrollTop = containerRef.current.scrollTop;
+  }, [headerRef, containerRef]);
+
+  // When header is scrolled (e.g., via mouse wheel), sync content
+  const handleHeaderScroll = React.useCallback(() => {
+    if (!headerRef.current || !containerRef.current) return;
+    containerRef.current.scrollTop = headerRef.current.scrollTop;
+  }, [headerRef, containerRef]);
+
+  const handleContentScroll = React.useCallback(() => {
+    syncHeaderScroll();
+  }, [syncHeaderScroll]);
 
   // Notify parent of sidebar width changes
   React.useEffect(() => {
@@ -240,78 +345,39 @@ const TracksContainer: React.FC<TracksContainerProps> = ({
     setTrackContentContextMenu(prev => ({ ...prev, isOpen: false }));
   };
 
-  // Improved time/pixel conversion functions
-  const timeToPixel = React.useCallback((time: number): number => {
-    if (!containerRef.current) return 0;
-    const width = containerRef.current.clientWidth;
-    const viewDuration = viewEnd - viewStart;
-    if (viewDuration === 0) return 0;
-    return ((time - viewStart) / viewDuration) * width;
-  }, [viewStart, viewEnd, containerRef]);
-
-  const pixelToTime = React.useCallback((pixel: number): number => {
-    if (!containerRef.current) return 0;
-    const width = containerRef.current.clientWidth;
-    const viewDuration = viewEnd - viewStart;
-    return viewStart + (pixel / width) * viewDuration;
-  }, [viewStart, viewEnd, containerRef]);
-
-  const handleSubtitleDragStart = React.useCallback((subtitleId: string, trackId: string) => {
-    setDraggedSubtitle({ id: subtitleId, sourceTrackId: trackId });
-    setHasLeftOriginalTrack(false);
-  }, []);
-
-  const handleSubtitleDragEnd = React.useCallback(() => {
-    setDraggedSubtitle(null);
-    setDragOverTrackId(null);
-    setHasLeftOriginalTrack(false);
-  }, []);
-
-  // Track hover detection for visual feedback during drag
-  const handleTrackMouseEnter = React.useCallback((trackId: string) => {
-    if (!draggedSubtitle) return;
-
-    // 추가: 잠긴 트랙은 하이라이트하지 않음
-    const track = tracks.find(t => t.id === trackId);
-    if (track?.locked) {
-      setDragOverTrackId(null); // 잠긴 트랙 위에서는 하이라이트 제거
-      return;
-    }
-    
-    // 추가: 원래 트랙으로 돌아오면 하이라이트하지 않음
-    if (trackId === draggedSubtitle.sourceTrackId) {
-      setDragOverTrackId(null);
-      return;
-    }
-
-    if (!hasLeftOriginalTrack) {
-      // First time leaving original track
-      if (trackId !== draggedSubtitle.sourceTrackId) {
-        setHasLeftOriginalTrack(true);
-        setDragOverTrackId(trackId);
-      }
-    } else {
-      // Already left once, highlight any track we enter (including origin)
-      setDragOverTrackId(trackId);
-    }
-  }, [draggedSubtitle, hasLeftOriginalTrack, tracks]);
-
-  const handleTrackMouseLeave = React.useCallback(() => {
-    setDragOverTrackId(null);
-  }, []);
-
-  const TRACK_HEIGHT = 50;
-
   return (
     <div className="neu-tracks-container" ref={containerWrapperRef}>
-      <TrackHeadersSection 
-        headerRef={useRef<HTMLDivElement>(null)}
-        sidebarWidth={sidebarWidth}
-        tracks={tracks}
-        selectedTrackId={selectedTrackId}
-        setSelectedTrackId={setSelectedTrackId}
-        handleTrackHeaderContextMenu={handleTrackHeaderContextMenu}
-      />
+      {/* Track headers */}
+      <div
+        className="neu-tracks-header"
+        style={{ 
+          width: sidebarWidth,
+          maxHeight: '100%', // ✅ Ensure proper height constraint
+          overflowY: 'auto', // ✅ Enable scrolling
+          overflowX: 'hidden' // ✅ Hide horizontal scroll
+        }}
+        ref={headerRef}
+        onScroll={handleHeaderScroll}
+        onContextMenu={handleTrackHeaderContextMenu}
+      >
+        {/* Spacer to align with Ruler */}
+        <div className="h-10 flex-shrink-0" />
+
+        {tracks.map((track) => (
+          <TrackHeader
+            key={track.id}
+            ref={trackHeaderRefs.current.get(track.id)}
+            track={track}
+            isActive={selectedTrackId === track.id}
+            onSelect={() => setSelectedTrackId(track.id)}
+            onDelete={deleteTrack}
+            onRename={(id, name) => updateTrack(id, { name })}
+            onUpdateDetail={(id, detail) => updateTrack(id, { detail })}
+            onToggleVisibility={(id, visible) => updateTrack(id, { visible })}
+            onToggleLock={(id, locked) => updateTrack(id, { locked })}
+          />
+        ))}
+      </div>
 
       {/* Resize handle */}
       <div className="neu-track-resize-handle" onMouseDown={handleResizeMouseDown} />
@@ -328,33 +394,68 @@ const TracksContainer: React.FC<TracksContainerProps> = ({
         <div className="neu-playhead-head" />
       </div>
 
-      <TrackContentsSection 
-        containerRef={containerRef}
-        tracks={tracks}
-        subtitles={subtitles}
-        selectedTrackId={selectedTrackId}
-        setSelectedTrackId={setSelectedTrackId}
-        setSelectedSubtitleId={setSelectedSubtitleId}
-        viewStart={viewStart}
-        viewEnd={viewEnd}
-        fps={fps}
-        timeToPixel={timeToPixel}
-        pixelToTime={pixelToTime}
-        handleMouseDown={handleMouseDown}
-        handleMouseMove={handleMouseMove}
-        handleMouseUp={handleMouseUp}
-        handleWheel={handleWheel}
-        setIsHovered={setIsHovered}
-        handleTrackContentContextMenu={handleTrackContentContextMenu}
-        handleTrackMouseEnter={handleTrackMouseEnter}
-        handleTrackMouseLeave={handleTrackMouseLeave}
-        handleSubtitleDragStart={handleSubtitleDragStart}
-        handleSubtitleDragEnd={handleSubtitleDragEnd}
-        dragOverTrackId={dragOverTrackId}
-        TRACK_HEIGHT={TRACK_HEIGHT}
-      />
+      {/* Right side: Ruler + tracks content */}
+      <div 
+        className="neu-tracks-content flex-1 flex flex-col relative"
+        style={{
+          maxHeight: '100%', // ✅ Ensure proper height constraint
+        }}
+        ref={containerRef}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => { setIsHovered(false); }}
+        onWheel={handleWheel}
+        onScroll={handleContentScroll}
+        onContextMenu={handleTrackContentContextMenu}
+      >
+        <TimelineRuler
+          viewStart={viewStart}
+          viewEnd={viewEnd}
+          fps={fps}
+          timeToPixel={timeToPixel}
+          containerWidth={containerRef.current?.clientWidth || 0}
+        />
 
-      <TrackContextMenus 
+        {tracks.map((track, trackIndex) => (
+          <div
+            key={track.id}
+            className={`neu-track-content${track.locked ? ' track-locked' : ''}${dragOverTrackId === track.id ? ' track-drag-over' : ''}${selectedTrackId === track.id ? ' bg-blue-500' : ''}`}
+            style={{ 
+              height: TRACK_HEIGHT,
+              flexShrink: 0 // ✅ Prevent track height from shrinking
+            }}
+            onMouseEnter={() => handleTrackMouseEnter(track.id)}
+            onMouseLeave={handleTrackMouseLeave}
+            onMouseDown={() => {
+              setSelectedTrackId(track.id);
+              setSelectedSubtitleId(null);
+            }}
+          >
+            {/* Render subtitles for this track */}
+            {subtitles
+              .filter((subtitle) => subtitle.trackId === track.id && track.visible)
+              .map((subtitle) => (
+                <SubtitleBlock
+                  key={subtitle.id}
+                  subtitle={subtitle}
+                  timeToPixel={timeToPixel}
+                  pixelToTime={pixelToTime}
+                  containerRef={containerRef}
+                  onDragStart={handleSubtitleDragStart}
+                  onDragEnd={handleSubtitleDragEnd}
+                  isLocked={track.locked}
+                  trackIndex={trackIndex}
+                  trackHeight={TRACK_HEIGHT}
+                />
+              ))}
+          </div>
+        ))}
+      </div>
+
+      {/* Track Context Menus */}
+      <TrackContextMenus
         trackHeaderContextMenu={trackHeaderContextMenu}
         trackContentContextMenu={trackContentContextMenu}
         tracks={tracks}

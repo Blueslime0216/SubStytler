@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Eye, EyeOff, Lock, Unlock, Trash2, Edit, Type, FileText } from 'lucide-react';
+import { Plus, Eye, EyeOff, Lock, Unlock, Trash2, Edit, Type, FileText, RefreshCw } from 'lucide-react';
 import { ContextMenu, ContextMenuItem, ContextMenuDivider, ContextMenuSectionTitle } from '../../UI/ContextMenu';
 import { useProjectStore } from '../../../stores/projectStore';
 import { useHistoryStore } from '../../../stores/historyStore';
@@ -39,14 +39,11 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
   flashIds
 }) => {
   const { addTrack, updateTrack, deleteTrack, addSubtitle, deleteSubtitle, currentProject } = useProjectStore();
-  const { setCurrentTime } = useTimelineStore();
+  const { setCurrentTime, setZoom, setViewRange, duration } = useTimelineStore();
   
   // Delete confirmation modal state
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [trackToDelete, setTrackToDelete] = useState<SubtitleTrack | null>(null);
-  
-  // Refs for track headers to access their methods
-  const trackHeaderRefs = React.useRef<Map<string, React.RefObject<any>>>(new Map());
 
   // Context menu action handlers
   const handleAddTrack = () => {
@@ -257,6 +254,13 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
     closeAllContextMenus();
   };
 
+  // Reset zoom handler
+  const handleResetZoom = () => {
+    setZoom(1);
+    setViewRange(0, duration);
+    closeAllContextMenus();
+  };
+
   // Helper function to format time for history descriptions
   const formatTimeForHistory = (ms: number): string => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -272,7 +276,7 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
         isOpen={trackHeaderContextMenu.isOpen}
         x={trackHeaderContextMenu.x}
         y={trackHeaderContextMenu.y}
-        onClose={() => setTrackHeaderContextMenu(prev => ({ ...prev, isOpen: false }))}
+        onClose={() => closeAllContextMenus()}
       >
         <ContextMenuItem 
           icon={<Plus />}
@@ -305,7 +309,7 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
               return (
                 <ContextMenuItem 
                   icon={track?.locked ? <Unlock /> : <Lock />}
-                  onClick={() => handleToggleLock(trackHeaderContextMenu.trackId!)}
+                  onClick={() => handleToggleTrackLock(trackHeaderContextMenu.trackId!)}
                 >
                   {track?.locked ? 'Unlock Track' : 'Lock Track'}
                 </ContextMenuItem>
@@ -343,7 +347,7 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
         isOpen={trackContentContextMenu.isOpen}
         x={trackContentContextMenu.x}
         y={trackContentContextMenu.y}
-        onClose={() => setTrackContentContextMenu(prev => ({ ...prev, isOpen: false }))}
+        onClose={() => closeAllContextMenus()}
       >
         {trackContentContextMenu.trackId && trackContentContextMenu.time !== null && (
           <ContextMenuItem 
@@ -361,6 +365,16 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
         >
           Add Track
         </ContextMenuItem>
+        
+        {/* 줌 초기화 - 자막 블록이 아닌 빈 공간을 클릭했을 때만 표시 */}
+        {!trackContentContextMenu.subtitleId && (
+          <ContextMenuItem 
+            icon={<RefreshCw />}
+            onClick={handleResetZoom}
+          >
+            줌 초기화
+          </ContextMenuItem>
+        )}
         
         {trackContentContextMenu.subtitleId && (
           <>
