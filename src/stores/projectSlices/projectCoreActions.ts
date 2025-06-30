@@ -99,6 +99,20 @@ export const projectCoreActions: StateCreator<any> = (set, get, _store) => ({
     }
   },
 
+  updateProject: (updates: Partial<Project>) => {
+    const { currentProject } = get();
+    if (!currentProject) return;
+    
+    set({
+      currentProject: {
+        ...currentProject,
+        ...updates,
+        updatedAt: Date.now()
+      },
+      isModified: true
+    });
+  },
+
   setVideoMeta: (meta: VideoMeta) => {
     const { currentProject } = get();
     
