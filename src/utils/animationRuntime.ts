@@ -1,8 +1,8 @@
 import { SubtitleSpan } from '../types/project';
 import { useGraphLibraryStore } from '../stores/graphLibraryStore';
 import { evaluateCurve } from './easingUtils';
-import { interpolateNumber } from './interpolation';
-import { interpolateColor } from './colorUtils';
+import { interpolateNumber, interpolateUnitNumber, isUnitNumber } from './interpolation';
+import { interpolateColor, isColor } from './colorUtils';
 
 /**
  * 주어진 시간(밀리초)에서 Span 의 애니메이션을 평가하여 실제 렌더링용 Span 을 반환한다.
@@ -49,12 +49,17 @@ export function applyAnimationsToSpan(span: SubtitleSpan, timeMs: number): Subti
     const curve = curves[curveId] || curves['linear'];
     const easedT = evaluateCurve(curve, localT);
 
-    // 숫자인지 컬러인지 판단
-    const isNumber = typeof before.value === 'number' && typeof after.value === 'number';
-
-    const value = isNumber
-      ? interpolateNumber(before.value as number, after.value as number, easedT)
-      : interpolateColor(before.value as string, after.value as string, easedT);
+    let value: any;
+    if (typeof before.value === 'number' && typeof after.value === 'number') {
+      value = interpolateNumber(before.value, after.value, easedT);
+    } else if (isUnitNumber(before.value) && isUnitNumber(after.value)) {
+      value = interpolateUnitNumber(before.value, after.value, easedT);
+    } else if (isColor(before.value) && isColor(after.value)) {
+      value = interpolateColor(before.value, after.value, easedT);
+    } else {
+      // 보간할 수 없는 타입이면 시작 값 사용
+      value = before.value;
+    }
 
     (result as any)[property] = value;
   });

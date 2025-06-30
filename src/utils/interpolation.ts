@@ -33,4 +33,31 @@ export function interpolateWithCurve(
 ) {
   const p = evaluateCurve(curve, t);
   return interpolateValue(start, end, p, type);
+}
+
+const unitRegex = /^(-?\d+\.?\d*)([a-z%]*)$/i;
+
+export function isUnitNumber(str: any): boolean {
+  if (typeof str !== 'string') return false;
+  return unitRegex.test(str);
+}
+
+export function interpolateUnitNumber(start: string, end: string, t: number): string {
+  const [, startValStr, startUnit] = start.match(unitRegex) || [];
+  const [, endValStr, endUnit] = end.match(unitRegex) || [];
+
+  const startVal = parseFloat(startValStr);
+  const endVal = parseFloat(endValStr);
+
+  // 단위가 다르거나 파싱 실패 시 보간하지 않음
+  if (startUnit !== endUnit || isNaN(startVal) || isNaN(endVal)) {
+    return start;
+  }
+
+  const interpolatedValue = interpolateNumber(startVal, endVal, t);
+
+  // 소수점 3자리까지 반올림
+  const roundedValue = Math.round(interpolatedValue * 1000) / 1000;
+
+  return `${roundedValue}${startUnit}`;
 } 

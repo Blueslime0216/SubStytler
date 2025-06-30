@@ -51,9 +51,11 @@ export function generateYTTContent(project: Project): string {
     return v;
   };
 
-  /** pen(글꼴/색 등) 속성 Key 생성 → Map 키로 사용 */
-  const makePenKey = (s: SubtitleStyle): string =>
-    [s.fc, s.fo, s.bc, s.bo, s.ec, s.et, s.fs, s.sz].join('|');
+  /** pen(글꼴/색 등) 속성 Key 생성 → Map 키로 사용
+   *   Bold / Italic / Underline 여부도 포함하여 동일 조합이면 재사용되도록 한다.
+   */
+  const makePenKey = (s: SubtitleStyle & { isBold?: boolean; isItalic?: boolean; isUnderline?: boolean }): string =>
+    [s.fc, s.fo, s.bc, s.bo, s.ec, s.et, s.fs, s.sz, s.isBold ? 1 : 0, s.isItalic ? 1 : 0, s.isUnderline ? 1 : 0].join('|');
 
   /** ws(정렬/방향) 속성 Key */
   const makeWsKey = (s: SubtitleStyle): string =>
@@ -145,6 +147,9 @@ export function generateYTTContent(project: Project): string {
       ap: (span as any).ap ?? DEFAULT_STYLE.ap,
       ah: Math.round((span as any).ah ?? DEFAULT_STYLE.ah),
       av: Math.round((span as any).av ?? DEFAULT_STYLE.av),
+      isBold: (span as any).isBold || false,
+      isItalic: (span as any).isItalic || false,
+      isUnderline: (span as any).isUnderline || false,
     } as SubtitleStyle;
 
     /* -------- pen 처리 -------- */
@@ -184,7 +189,7 @@ export function generateYTTContent(project: Project): string {
   // --- pen ---
   for (const [key, id] of penMap.entries()) {
     // key 파싱
-    const [fcRaw, foRaw, bcRaw, boRaw, ec, et, fs, sz] = key.split('|');
+    const [fcRaw, foRaw, bcRaw, boRaw, ec, et, fs, sz, boldFlag, italicFlag, underlineFlag] = key.split('|');
     const fc = normalizeColor(fcRaw || undefined);
     const fo = normalizeOpacity(foRaw ? Number(foRaw) : undefined);
     const bc = bcRaw || undefined;
@@ -199,6 +204,9 @@ export function generateYTTContent(project: Project): string {
     if (et && et !== 'undefined') penLine += ` et="${et}"`;
     if (fs && fs !== 'undefined') penLine += ` fs="${fs}"`;
     if (sz && sz !== 'undefined') penLine += ` sz="${sz}"`;
+    if (boldFlag === '1') penLine += ' b="1"';
+    if (italicFlag === '1') penLine += ' i="1"';
+    if (underlineFlag === '1') penLine += ' u="1"';
     penLine += ' />\n';
     headXml += penLine;
   }

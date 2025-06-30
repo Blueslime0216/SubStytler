@@ -70,6 +70,9 @@ const KeyframePanel: React.FC = () => {
   const [localViewStart, setLocalViewStart] = useState(timeline.viewStart);
   const [localViewEnd, setLocalViewEnd] = useState(timeline.viewEnd);
 
+  // 선택된 키프레임 (Delete 키로 삭제하기 위함)
+  const [selectedKeyframe, setSelectedKeyframe] = useState<{ property: string; time: number } | null>(null);
+
   // Update container dimensions on resize
   useEffect(() => {
     const updateDimensions = () => {
@@ -123,7 +126,13 @@ const KeyframePanel: React.FC = () => {
   });
 
   // Drag state for keyframes
-  const dragRef = useRef<{ property: string; originalTime: number; element: HTMLElement | null } | null>(null);
+  const dragRef = useRef<{ 
+    property: string;
+    originalTime: number;
+    element: HTMLElement | null;
+    startX: number;
+    dragged: boolean;
+  } | null>(null);
 
   // Row highlight when dragging a curve over it
   const [highlightRow, setHighlightRow] = useState<string | null>(null);
@@ -159,7 +168,9 @@ const KeyframePanel: React.FC = () => {
     dragRef.current = { 
       property, 
       originalTime: time,
-      element: e.currentTarget
+      element: e.currentTarget,
+      startX: e.clientX,
+      dragged: false,
     };
     
     // Add visual feedback class
@@ -178,8 +189,13 @@ const KeyframePanel: React.FC = () => {
         newTime = snapToTimelineGrid(newTime, localViewStart, localViewEnd, width, fps);
       }
       
-      // Visual feedback during drag
-      if (dragRef.current.element) {
+      // Mark as dragged if moved more than 2px
+      if (!dragRef.current.dragged && Math.abs(ev.clientX - dragRef.current.startX) > 2) {
+        dragRef.current.dragged = true;
+      }
+
+      // 드래그가 실제로 발생한 경우에만 style.left를 조작
+      if (dragRef.current.dragged && dragRef.current.element) {
         dragRef.current.element.style.left = `${timeToPixel(newTime)}px`;
       }
     };
@@ -187,10 +203,13 @@ const KeyframePanel: React.FC = () => {
     const onMouseUp = (ev: MouseEvent) => {
       if (!dragRef.current || !containerRef.current) return;
       
-      // Remove visual feedback class
+      // Remove visual feedback class 및 style.left 초기화
       if (dragRef.current.element) {
         dragRef.current.element.classList.remove('dragging');
-        dragRef.current.element.style.left = ''; // Reset inline style
+        // 드래그 동안 style.left를 임시로 조작한 경우에만 원복
+        if (dragRef.current.dragged) {
+          dragRef.current.element.style.left = '';
+        }
       }
       
       const rect = containerRef.current.getBoundingClientRect();
@@ -202,7 +221,7 @@ const KeyframePanel: React.FC = () => {
         newTime = snapToTimelineGrid(newTime, localViewStart, localViewEnd, width, fps);
       }
 
-      if (subtitleId) {
+      if (dragRef.current.dragged && subtitleId && Math.abs(newTime - dragRef.current.originalTime) > 1) {
         moveKeyframe(subtitleId, dragRef.current.property, dragRef.current.originalTime, newTime);
       }
 
@@ -251,6 +270,19 @@ const KeyframePanel: React.FC = () => {
   const handleCancelKeyframe = () => {
     setCreatingKeyframe(null);
   };
+
+  // Delete 키 입력으로 선택된 키프레임 삭제
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Delete' && selectedKeyframe && subtitleId) {
+        deleteKeyframe(subtitleId, selectedKeyframe.property, selectedKeyframe.time);
+        setSelectedKeyframe(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [selectedKeyframe, subtitleId, deleteKeyframe]);
 
   // Empty state when no subtitle is selected
   if (!subtitle) {
@@ -367,13 +399,18 @@ const KeyframePanel: React.FC = () => {
                   width: KEYFRAME_SIZE,
                   height: KEYFRAME_SIZE,
                   background: kf.easing ? '#00caff' : '#ffcc00',
+                  border: selectedKeyframe && selectedKeyframe.property === anim.property && selectedKeyframe.time === kf.time ? '2px solid #ffffff' : '1px solid rgba(0,0,0,0.3)',
                   transform: 'translate(-50%, -50%) rotate(45deg)',
                   cursor: 'pointer',
-                  border: '1px solid rgba(0,0,0,0.3)',
                   zIndex: 2,
                   transition: 'transform 0.1s ease',
                 }}
-                onMouseDown={(e) => handleKfMouseDown(e, anim.property, kf.time)}
+                onMouseDown={(e) => {
+                  handleKfMouseDown(e, anim.property, kf.time);
+                }}
+                onClick={() => {
+                  setSelectedKeyframe({ property: anim.property, time: kf.time });
+                }}
                 onDragOver={(e) => {
                   e.preventDefault();
                   e.dataTransfer.dropEffect = 'copy';

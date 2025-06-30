@@ -125,14 +125,14 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
           )}
           
           <div className="flex items-center gap-2">
-            <CustomRangeInput
-              min={0}
-              max={255}
-              value={textOpacity}
-              onChange={setTextOpacity}
+          <CustomRangeInput
+            min={0}
+            max={255}
+            value={textOpacity}
+            onChange={setTextOpacity}
               label="Text Opacity"
-              unit=""
-            />
+            unit=""
+          />
             <KeyframeButton property="fo" getCurrentValue={() => textOpacity} />
           </div>
         </div>
@@ -163,14 +163,14 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
           )}
           
           <div className="flex items-center gap-2">
-            <CustomRangeInput
-              min={0}
-              max={255}
-              value={backgroundOpacity}
-              onChange={setBackgroundOpacity}
+          <CustomRangeInput
+            min={0}
+            max={255}
+            value={backgroundOpacity}
+            onChange={setBackgroundOpacity}
               label="Background Opacity"
-              unit=""
-            />
+            unit=""
+          />
             <KeyframeButton property="bo" getCurrentValue={() => backgroundOpacity} />
           </div>
         </div>

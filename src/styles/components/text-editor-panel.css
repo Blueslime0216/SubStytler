@@ -17,60 +17,64 @@
 }
 
 /* 커스텀 레인지 입력 스타일 */
-.custom-range-input input[type="range"] {
+input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 5px;
+  height: 6px;
   border-radius: 5px;
   background: var(--bg-color);
   outline: none;
-  opacity: 0.7;
+  opacity: 0.8;
   transition: opacity 0.2s;
 }
 
-.custom-range-input input[type="range"]:hover {
+input[type="range"]:hover {
   opacity: 1;
 }
 
-.custom-range-input input[type="range"]::-webkit-slider-thumb {
+input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--primary-color);
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.custom-range-input input[type="range"]::-moz-range-thumb {
-  width: 15px;
-  height: 15px;
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--primary-color);
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.custom-range-input input[type="range"]::-webkit-slider-thumb:hover {
+input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.2);
 }
 
-.custom-range-input input[type="range"]::-moz-range-thumb:hover {
+input[type="range"]::-moz-range-thumb:hover {
   transform: scale(1.2);
 }
 
-/* 접을 수 있는 섹션 스타일 */
-.collapsible-section .collapsible-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
+/* 탭 스타일 */
+[role="tab"] {
+  position: relative;
+  transition: all 0.2s ease;
 }
 
-.collapsible-section.open .collapsible-content {
-  max-height: 1000px;
-  transition: max-height 0.5s ease-in;
+[role="tab"][aria-selected="true"]::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--primary-color);
 }
 
 /* 색상 피커 스타일 */
@@ -86,23 +90,120 @@
 }
 
 /* 입력 필드 포커스 스타일 */
-.text-editor-panel-root input:focus,
-.text-editor-panel-root textarea:focus,
-.text-editor-panel-root select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px var(--primary-color-transparent);
 }
 
 /* 버튼 호버 효과 */
-.text-editor-panel-root button:not(:disabled):hover {
+button:not(:disabled):hover {
   filter: brightness(1.1);
 }
 
 /* 미리보기 영역 */
-.text-editor-preview {
+.preview-area {
   background-color: var(--bg-color);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 앵커 포인트 그리드 */
+.anchor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.anchor-point {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.anchor-point.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* 효과 카드 */
+.effect-card {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  transition: all 0.2s ease;
+}
+
+.effect-card:hover {
+  border-color: var(--primary-color);
+  background-color: var(--bg-hover);
+}
+
+.effect-card.active {
+  border-color: var(--primary-color);
+  background-color: var(--primary-color-transparent);
+}
+
+/* 색상 프리셋 */
+.color-preset {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.color-preset:hover {
+  transform: scale(1.2);
+}
+
+.color-preset.active {
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+/* 위치 미리보기 */
+.position-preview {
+  position: relative;
+  height: 200px;
+  background-color: var(--bg-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.position-indicator {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 접을 수 있는 섹션 스타일 */
+.collapsible-section {
+  margin-bottom: 16px;
+}
+
+.collapsible-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.collapsible-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.collapsible-section.closed .collapsible-content {
+  max-height: 0;
 } 

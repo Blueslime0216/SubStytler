@@ -12,6 +12,7 @@ import { useClipboardStore } from '../stores/clipboardStore';
 import { useSelectedSubtitleStore } from '../stores/selectedSubtitleStore';
 import { useSubtitleHighlightStore } from '../stores/subtitleHighlightStore';
 import { SubtitleBlock } from '../types/project';
+import { useSelectedTrackStore } from '../stores/selectedTrackStore';
 
 export const useKeyboardShortcuts = () => {
   const { 
@@ -153,19 +154,24 @@ export const useKeyboardShortcuts = () => {
   // Paste subtitle at playhead (Ctrl+V / Cmd+V)
   useHotkeys('ctrl+v, meta+v', (e) => {
     e.preventDefault();
+
     const clipboardSubtitle = useClipboardStore.getState().copiedSubtitle;
     if (!clipboardSubtitle) return;
 
     const { currentProject, addSubtitle } = useProjectStore.getState();
     if (!currentProject) return;
 
+    // 선택된 트랙 ID를 가져온다. 없으면 붙여넣기를 중단한다.
+    const { selectedTrackId } = useSelectedTrackStore.getState();
+    if (!selectedTrackId) return;
+
     const { currentTime, snapToFrame } = useTimelineStore.getState();
     const newStart = snapToFrame(currentTime);
     const duration = clipboardSubtitle.endTime - clipboardSubtitle.startTime;
     const newEnd = newStart + duration;
-    const targetTrackId = clipboardSubtitle.trackId;
+    const targetTrackId = selectedTrackId;
 
-    // 중첩 검사
+    // 중첩 검사 (선택된 트랙 기준)
     const overlapping = currentProject.subtitles.find(
       sub =>
         sub.trackId === targetTrackId &&

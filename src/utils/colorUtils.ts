@@ -19,6 +19,12 @@ export function rgbToHex(r: number, g: number, b: number): string {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
+export function isColor(str: any): boolean {
+  if (typeof str !== 'string') return false;
+  // 간단한 색상 문자열 형식 확인 (hex, rgb, rgba)
+  return /^#([0-9a-f]{3,8})$/i.test(str) || /^rgba?\(/.test(str);
+}
+
 export function interpolateColor(
   startHex: string,
   endHex: string,

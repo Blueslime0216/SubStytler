@@ -58,8 +58,9 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
     closeAllContextMenus();
   };
 
-  const handleAddSubtitle = (trackId: string, time: number) => {
-    if (!trackId || time === null) return;
+  const handleAddSubtitle = (trackId: string) => {
+    if (!trackId) return;
+    const time = useTimelineStore.getState().currentTime;  // 재생 헤드 위치 사용
     
     // Check if the track is locked
     const track = tracks.find(t => t.id === trackId);
@@ -363,7 +364,7 @@ export const TrackContextMenus: React.FC<TrackContextMenusProps> = ({
         {trackContentContextMenu.trackId && trackContentContextMenu.time !== null && (
           <ContextMenuItem 
             icon={<Type />}
-            onClick={() => handleAddSubtitle(trackContentContextMenu.trackId!, trackContentContextMenu.time!)}
+            onClick={() => handleAddSubtitle(trackContentContextMenu.trackId!)}
             disabled={tracks.find(t => t.id === trackContentContextMenu.trackId)?.locked}
           >
             Add Subtitle
