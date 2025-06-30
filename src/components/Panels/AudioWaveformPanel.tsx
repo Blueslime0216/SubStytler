@@ -2,8 +2,6 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
 import { Waves, BarChart3, Layers } from 'lucide-react';
-import WaveSurfer from 'wavesurfer.js';
-import Spectrogram from 'wavesurfer.js/dist/plugins/spectrogram.esm.js';
 
 type WaveformMode = 'waveform' | 'spectrogram' | 'mixed';
 
@@ -33,9 +31,14 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
   const [localViewStart, setLocalViewStart] = useState(0);
   const [localViewEnd, setLocalViewEnd] = useState(60000);
   
-  // 패닝 상태
+  // 패널 패닝 상태
   const [isPanning, setIsPanning] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const isPanningRef = useRef(false);
+  const panStartXRef = useRef(0);
+  const panStartViewRef = useRef(0);
+
+  // 인디케이터(재생 헤드) 드래그 상태
+  const [isDraggingIndicator, setIsDraggingIndicator] = useState(false);
   
   // 마지막 애니메이션 프레임 ID 참조
   const rafRef = useRef<number | null>(null);
@@ -50,7 +53,7 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     if (videoElement) {
       videoRef.current = videoElement;
     }
-  }, [currentProject?.videoMeta?.url]);
+  }, [currentProject?.videoMeta]);
 
   // 뷰 범위 초기화
   useEffect(() => {
@@ -59,91 +62,200 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     }
   }, [duration]);
 
-  // 최초 분석 및 precompute
+  // localViewStart/localViewEnd 보정 함수
+  const clampViewRange = (start: number, end: number) => {
+    let s = Math.max(0, Math.min(start, duration));
+    let e = Math.max(s + 1, Math.min(end, duration));
+    if (!isFinite(s) || !isFinite(e) || s >= e) {
+      s = 0;
+      e = duration;
+    }
+    return [s, e];
+  };
+
+  // decodeAudioData Promise/Callback 호환 래퍼
+  function decodeAudioDataCompat(audioContext: AudioContext, arrayBuffer: ArrayBuffer): Promise<AudioBuffer> {
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('decodeAudioData가 30초 후 시간 초과되었습니다. 파일이 너무 크거나 손상되었을 수 있습니다.'));
+      }, 30000); // 30초 타임아웃
+
+      // 최신 브라우저는 Promise 지원
+      const p = (audioContext as any).decodeAudioData(arrayBuffer);
+      if (p && typeof p.then === 'function') {
+        p.then((buffer: AudioBuffer) => {
+          clearTimeout(timeout);
+          resolve(buffer);
+        }).catch((err: any) => {
+          clearTimeout(timeout);
+          reject(err);
+        });
+      } else {
+        // 구형 브라우저: 콜백 방식
+        (audioContext as any).decodeAudioData(
+          arrayBuffer,
+          (buffer: AudioBuffer) => {
+            clearTimeout(timeout);
+            resolve(buffer);
+          },
+          (err: any) => {
+            clearTimeout(timeout);
+            reject(err);
+          }
+        );
+      }
+    });
+  }
+
   const analyzeAudio = useCallback(async () => {
-    if (!currentProject?.videoMeta?.url || isAnalyzing) return;
+    if (!currentProject?.videoMeta) {
+      return;
+    }
+    if (isAnalyzing) {
+      return;
+    }
+    
+    const { file } = currentProject.videoMeta as any;
+    const url = (currentProject.videoMeta as any).url as string | undefined;
+    
+    if (!file && !url) {
+      return;
+    }
+
     setIsAnalyzing(true);
     try {
       if (!audioContextRef.current) {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       }
       const audioContext = audioContextRef.current;
-      const response = await fetch(currentProject.videoMeta.url);
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      
+      let arrayBuffer: ArrayBuffer;
+      if (file) {
+        arrayBuffer = await file.arrayBuffer();
+      } else if (url) {
+        const response = await fetch(url);
+        arrayBuffer = await response.arrayBuffer();
+      } else {
+        throw new Error('No valid audio source');
+      }
+
+      let audioBuffer: AudioBuffer;
+      try {
+        audioBuffer = await decodeAudioDataCompat(audioContext, arrayBuffer);
+      } catch (err) {
+        setPrecomputedWaveform(null);
+        setPrecomputedSpectrogram(null);
+        setAudioDuration(0);
+        throw new Error('decodeAudioData 실패: ' + String(err));
+      }
+      
+
+      if (audioBuffer.length === 0) {
+        setPrecomputedWaveform(null);
+        setPrecomputedSpectrogram(null);
+        throw new Error('오디오 데이터가 비어 있습니다.');
+      }
       audioBufferRef.current = audioBuffer;
       setAudioDuration(audioBuffer.duration * 1000);
-      // 진폭 파형 precompute
-      const channelData = audioBuffer.getChannelData(0);
-      const waveform = downsampleWaveform(channelData, PRECOMPUTED_WAVEFORM_RESOLUTION);
+      const waveform = downsampleWaveform(audioBuffer, PRECOMPUTED_WAVEFORM_RESOLUTION);
       setPrecomputedWaveform(waveform);
-      // 스펙트로그램 precompute
+      
       const spectrogram = await generateOptimizedSpectrogram(audioBuffer, PRECOMPUTED_SPECTROGRAM_RESOLUTION);
       setPrecomputedSpectrogram(spectrogram);
+
     } catch (error) {
-      console.error('오디오 분석 실패:', error);
+      setPrecomputedWaveform(null);
+      setPrecomputedSpectrogram(null);
+      setAudioDuration(0);
+      console.error('오디오 분석 실패:', error); // 이 로그는 유지하여 실제 에러를 파악합니다.
     } finally {
       setIsAnalyzing(false);
     }
-  }, [currentProject?.videoMeta?.url, isAnalyzing]);
+  }, [currentProject?.videoMeta]);
 
-  // 다운샘플링 함수 (RMS)
-  const downsampleWaveform = useCallback((data: Float32Array, targetLength: number): Float32Array => {
-    if (data.length <= targetLength) return data;
+  // 모든 채널을 합산하여 RMS 파형 생성
+  const downsampleWaveform = useCallback((audioBuffer: AudioBuffer, targetLength: number): Float32Array => {
+    const numChannels = audioBuffer.numberOfChannels;
+    const length = audioBuffer.length;
     const result = new Float32Array(targetLength);
-    const ratio = data.length / targetLength;
+    const ratio = length / targetLength;
+    let max = 0;
     for (let i = 0; i < targetLength; i++) {
       const start = Math.floor(i * ratio);
       const end = Math.floor((i + 1) * ratio);
       let sum = 0;
-      for (let j = start; j < end; j++) {
-        sum += data[j] * data[j];
+      for (let ch = 0; ch < numChannels; ch++) {
+        const channelData = audioBuffer.getChannelData(ch);
+        for (let j = start; j < end; j++) {
+          sum += channelData[j] * channelData[j];
+        }
       }
-      result[i] = Math.sqrt(sum / (end - start));
+      const n = (end - start) * numChannels;
+      result[i] = n > 0 ? Math.sqrt(sum / n) : 0;
+      if (result[i] > max) max = result[i];
+    }
+    // 정규화
+    if (max > 0) {
+      for (let i = 0; i < result.length; i++) {
+        result[i] /= max;
+      }
     }
     return result;
   }, []);
 
-  // 스펙트로그램 precompute (최적화)
+  // 스펙트로그램 precompute (실제 구현)
   const generateOptimizedSpectrogram = useCallback(async (audioBuffer: AudioBuffer, resolution: number): Promise<Uint8Array[]> => {
-    const offlineContext = new OfflineAudioContext({
-      numberOfChannels: 1,
-      length: audioBuffer.length,
-      sampleRate: audioBuffer.sampleRate
-    });
-    const source = offlineContext.createBufferSource();
-    source.buffer = audioBuffer;
-    const analyser = offlineContext.createAnalyser();
-    analyser.fftSize = 1024;
-    analyser.smoothingTimeConstant = 0.8;
-    source.connect(analyser);
-    analyser.connect(offlineContext.destination);
-    const spectrogramData: Uint8Array[] = [];
-    const totalSamples = audioBuffer.length;
-    const sampleInterval = Math.max(1, Math.floor(totalSamples / resolution));
-    source.start(0);
-    for (let i = 0; i < totalSamples; i += sampleInterval) {
-      offlineContext.suspend(i / audioBuffer.sampleRate).then(() => {
-        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-        analyser.getByteFrequencyData(dataArray);
-        spectrogramData.push(dataArray);
-        offlineContext.resume();
-      });
+    // resolution: 시간축(가로) 샘플 개수
+    const fftSize = 256; // 주파수 해상도 (2의 제곱수)
+    const hopSize = Math.floor(audioBuffer.length / resolution);
+    const channelData = audioBuffer.getChannelData(0); // 모노만 사용
+    const spectrogram: Uint8Array[] = [];
+    const analyser = new window.OfflineAudioContext(1, fftSize, audioBuffer.sampleRate);
+    // FFT용 버퍼
+    const fftBuffer = new Float32Array(fftSize);
+    for (let i = 0; i < resolution; i++) {
+      const start = i * hopSize;
+      for (let j = 0; j < fftSize; j++) {
+        fftBuffer[j] = channelData[start + j] || 0;
+      }
+      // FFT 수행 (간단한 DFT)
+      const re = new Float32Array(fftSize / 2);
+      const im = new Float32Array(fftSize / 2);
+      for (let k = 0; k < fftSize / 2; k++) {
+        let sumRe = 0, sumIm = 0;
+        for (let n = 0; n < fftSize; n++) {
+          const angle = (2 * Math.PI * k * n) / fftSize;
+          sumRe += fftBuffer[n] * Math.cos(angle);
+          sumIm -= fftBuffer[n] * Math.sin(angle);
+        }
+        re[k] = sumRe;
+        im[k] = sumIm;
+      }
+      // 크기(magnitude) 계산 및 정규화
+      const mag = new Uint8Array(fftSize / 2);
+      let max = 0;
+      for (let k = 0; k < fftSize / 2; k++) {
+        const v = Math.sqrt(re[k] * re[k] + im[k] * im[k]);
+        if (v > max) max = v;
+        mag[k] = v;
+      }
+      // 정규화
+      if (max > 0) {
+        for (let k = 0; k < fftSize / 2; k++) {
+          mag[k] = Math.min(255, Math.round((mag[k] / max) * 255));
+        }
+      }
+      spectrogram.push(mag);
     }
-    try {
-      await offlineContext.startRendering();
-    } catch (error) {
-      console.error('스펙트로그램 렌더링 실패:', error);
-    }
-    return spectrogramData;
+    return spectrogram;
   }, []);
 
-  // 비디오 변경시 오디오 분석
+  // 비디오 메타 변경 시 오디오 재분석
   useEffect(() => {
-    if (currentProject?.videoMeta?.url) {
+    if (currentProject?.videoMeta) {
       analyzeAudio();
     }
-  }, [currentProject?.videoMeta?.url, analyzeAudio]);
+  }, [currentProject?.videoMeta, analyzeAudio]);
 
   // 리샘플링 함수 (선형 보간)
   function resampleArray<T extends number | Uint8Array>(data: ArrayLike<T>, targetLength: number): T[] {
@@ -216,9 +328,12 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     return localViewStart + (pixel / width) * viewDuration;
   }, [localViewStart, localViewEnd]);
 
+  // vertical zoom 상태 추가
+  const [verticalZoom, setVerticalZoom] = useState(1);
+
   // 웨이브폼 그리기
   const drawWaveform = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, data: number[]) => {
-    if (!data.length) return;
+    if (!data || !data.length || data.some(v => !isFinite(v))) return;
     const centerY = height / 2;
     ctx.strokeStyle = '#3B82F6';
     ctx.fillStyle = 'rgba(59, 130, 246, 0.3)';
@@ -229,7 +344,8 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     const lowerPoints: [number, number][] = [];
     
     for (let i = 0; i < width; i++) {
-      const amplitude = Math.min(data[i] * 2, 1);
+      // verticalZoom 적용, 클램핑
+      const amplitude = Math.min(data[i] * 2 * verticalZoom, 1);
       const upperY = centerY - amplitude * centerY * 0.9;
       const lowerY = centerY + amplitude * centerY * 0.9;
       upperPoints.push([i, upperY]);
@@ -269,11 +385,11 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
       ctx.lineTo(lowerPoints[i][0], lowerPoints[i][1]);
     }
     ctx.stroke();
-  }, []);
+  }, [verticalZoom]);
 
   // 스펙트로그램 그리기
   const drawSpectrogram = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, data: Uint8Array[]) => {
-    if (!data.length) return;
+    if (!data || !data.length || !data[0] || data.some(arr => !arr || arr.length === 0)) return;
     const binCount = data[0].length;
     const binHeight = height / binCount;
     for (let x = 0; x < width; x++) {
@@ -315,52 +431,45 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
   const renderVisualization = useCallback(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
-    if (!canvas || !container) return;
-
+    if (!canvas || !container) {
+      return;
+    }
     const ctx = canvas.getContext('2d', { alpha: false });
-    if (!ctx) return;
-
+    if (!ctx) {
+      return;
+    }
     const rect = container.getBoundingClientRect();
     canvas.width = rect.width;
     canvas.height = rect.height;
-
     const width = rect.width;
     const height = rect.height;
-
-    // 배경 지우기
-    ctx.fillStyle = '#1A202C'; // 어두운 배경
+    ctx.fillStyle = '#1A202C';
     ctx.fillRect(0, 0, width, height);
-
-    if (!precomputedWaveform || !precomputedSpectrogram || !audioDuration) {
-      // 로딩 또는 데이터 없음 메시지 표시
+    if (isAnalyzing) {
       ctx.fillStyle = '#E2E8F0';
       ctx.font = '14px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(
-        isAnalyzing ? '오디오 분석 중...' : '오디오 데이터 없음',
-        width / 2,
-        height / 2
-      );
+      ctx.fillText('오디오 분석 중...', width / 2, height / 2);
       return;
     }
-
-    // 현재 뷰에 대한 데이터 가져오기
+    if (!precomputedWaveform || !precomputedWaveform.length || !audioDuration) {
+      ctx.fillStyle = '#E2E8F0';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('오디오 데이터 없음 또는 분석 실패', width / 2, height / 2);
+      return;
+    }
     const waveformData = getViewWaveformData(width);
-    const spectrogramData = getViewSpectrogramData(width);
-
-    // 모드에 따라 그리기
     if (mode === 'spectrogram') {
-      drawSpectrogram(ctx, width, height, spectrogramData);
+      drawSpectrogram(ctx, width, height, getViewSpectrogramData(width));
     } 
     else if (mode === 'mixed') {
-      // 일부 투명도로 스펙트로그램 먼저 그리기
-      drawSpectrogram(ctx, width, height, spectrogramData);
+      drawSpectrogram(ctx, width, height, getViewSpectrogramData(width));
       ctx.globalAlpha = 0.7;
       drawWaveform(ctx, width, height, waveformData);
       ctx.globalAlpha = 1.0;
     }
     else {
-      // 기본 파형 그리기
       drawWaveform(ctx, width, height, waveformData);
     }
 
@@ -417,49 +526,59 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     setCurrentTime(snapToFrame(clickTime));
   }, [pixelToTime, setCurrentTime, snapToFrame]);
 
-  // 마우스 다운 처리
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button === 1) { // 마우스 가운데 버튼
-      setIsPanning(true);
-      setDragStart({ x: e.clientX, y: e.clientY });
-      e.preventDefault();
-      return;
-    }
-    
-    if (e.button === 0) { // 마우스 왼쪽 버튼 - 시간 이동
-      handleCanvasClick(e);
-    }
-  }, [handleCanvasClick]);
-
-  // 마우스 이동 처리
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (isPanning && containerRef.current) {
-      const dx = e.clientX - dragStart.x;
-      setDragStart({ x: e.clientX, y: e.clientY });
-
+  // 패널 패닝 글로벌 리스너
+  useEffect(() => {
+    if (!isPanning) return;
+    isPanningRef.current = true;
+    const onMove = (e: MouseEvent) => {
+      if (!isPanningRef.current || !containerRef.current) return;
+      const dx = e.clientX - panStartXRef.current;
       const containerWidth = containerRef.current.clientWidth;
       const viewDuration = localViewEnd - localViewStart;
       const timeDelta = (dx / containerWidth) * viewDuration;
-
-      // 뷰 범위 이동
-      let newStart = Math.max(0, localViewStart - timeDelta);
-      let newEnd = Math.min(duration, localViewEnd - timeDelta);
-      
-      // 뷰 길이 유지
-      if (newEnd - newStart < viewDuration) {
-        if (newStart === 0) {
-          newEnd = Math.min(duration, newStart + viewDuration);
-        } else if (newEnd === duration) {
-          newStart = Math.max(0, newEnd - viewDuration);
-        }
-      }
-      
+      let newStart = panStartViewRef.current - timeDelta;
+      let newEnd = newStart + viewDuration;
+      [newStart, newEnd] = clampViewRange(newStart, newEnd);
       setLocalViewStart(newStart);
       setLocalViewEnd(newEnd);
+    };
+    const onUp = (e: MouseEvent) => {
+      if (e.button === 1) {
+        setIsPanning(false);
+        isPanningRef.current = false;
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+      }
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+  }, [isPanning, localViewEnd, localViewStart, duration]);
+
+  // 마우스 다운 처리 (패널 패닝/재생 헤드 클릭)
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (isDraggingIndicator) return; // 인디케이터 드래그 중이면 무시
+    if (e.button === 1) { // 휠 버튼(패닝)
+      setIsPanning(true);
+      isPanningRef.current = true;
+      panStartXRef.current = e.clientX;
+      panStartViewRef.current = localViewStart;
+      e.preventDefault();
       return;
     }
-    
-    // 왼쪽 버튼 드래그로 재생 헤더 이동
+    if (e.button === 0) { // 좌클릭(재생 헤드 이동)
+      handleCanvasClick(e);
+    }
+  }, [isDraggingIndicator, localViewStart, handleCanvasClick]);
+
+  // 마우스 이동 처리 (패널 패닝/재생 헤드 드래그)
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (isDraggingIndicator) return; // 인디케이터 드래그 중이면 패널 패닝 무시
+    // 패널 패닝은 글로벌 리스너에서 처리
+    // 재생 헤드 드래그(좌클릭+드래그)
     if (e.buttons === 1 && containerRef.current && !isPanning) {
       const rect = containerRef.current.getBoundingClientRect();
       let x = e.clientX - rect.left;
@@ -467,37 +586,39 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
       const time = pixelToTime(x);
       setCurrentTime(snapToFrame(time));
     }
-  }, [isPanning, dragStart, localViewStart, localViewEnd, duration, pixelToTime, setCurrentTime, snapToFrame]);
+  }, [isDraggingIndicator, isPanning, pixelToTime, setCurrentTime, snapToFrame]);
 
   // 마우스 업 처리
   const handleMouseUp = useCallback((e: React.MouseEvent) => {
     if (e.button === 1) {
       setIsPanning(false);
+      isPanningRef.current = false;
       e.preventDefault();
     }
   }, []);
 
-  // 휠 처리 (줌)
+  // 휠(줌) 처리 (타임라인 패널과 동일하게)
   const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (e.cancelable) e.preventDefault();
     if (!containerRef.current) return;
-
+    // Ctrl+휠: 세로 zoom
+    if (e.ctrlKey) {
+      let nextZoom = verticalZoom * (e.deltaY > 0 ? 1/1.1 : 1.1);
+      nextZoom = Math.max(0.2, Math.min(10, nextZoom));
+      setVerticalZoom(nextZoom);
+      return;
+    }
     const rect = containerRef.current.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const timeAtCursor = pixelToTime(mouseX);
-    
-    // 휠 델타에 따른 줌 인/아웃
-    const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9;
-    
-    // 새 뷰 길이
+    const minViewDuration = 100; // 최소 100ms
+    const maxViewDuration = duration;
     const viewDuration = localViewEnd - localViewStart;
-    const newViewDuration = Math.max(100, Math.min(duration, viewDuration * zoomFactor));
-    
-    // 커서 위치 기준 줌
+    let newViewDuration = viewDuration * (e.deltaY > 0 ? 1.1 : 0.9);
+    newViewDuration = Math.max(minViewDuration, Math.min(maxViewDuration, newViewDuration));
     const ratio = (timeAtCursor - localViewStart) / viewDuration;
     let newStart = timeAtCursor - ratio * newViewDuration;
     let newEnd = newStart + newViewDuration;
-    
-    // 제한
     if (newStart < 0) {
       newStart = 0;
       newEnd = newViewDuration;
@@ -506,13 +627,34 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
       newEnd = duration;
       newStart = duration - newViewDuration;
     }
-    
-    // 업데이트
     setLocalViewStart(newStart);
     setLocalViewEnd(newEnd);
-    
-    e.preventDefault();
-  }, [pixelToTime, localViewStart, localViewEnd, duration]);
+  }, [pixelToTime, localViewStart, localViewEnd, duration, verticalZoom]);
+
+  // 인디케이터(재생 헤드) 드래그 핸들
+  const handleIndicatorMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    setIsDraggingIndicator(true);
+    e.stopPropagation();
+  }, []);
+  useEffect(() => {
+    if (!isDraggingIndicator) return;
+    const handleMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      x = Math.max(0, Math.min(x, rect.width));
+      const time = pixelToTime(x);
+      setCurrentTime(snapToFrame(time));
+    };
+    const handleUp = () => setIsDraggingIndicator(false);
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleUp);
+    };
+  }, [isDraggingIndicator, pixelToTime, setCurrentTime, snapToFrame]);
 
   // 모드 변경 처리
   const handleModeChange = (newMode: WaveformMode) => {
@@ -543,128 +685,50 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     return () => container.removeEventListener('wheel', handler);
   }, [handleWheel]);
 
-  // 인디케이터 드래그 조작
-  const [isDraggingIndicator, setIsDraggingIndicator] = useState(false);
-  const handleIndicatorMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button !== 0) return;
-    setIsDraggingIndicator(true);
-    e.stopPropagation();
-  }, []);
-  useEffect(() => {
-    if (!isDraggingIndicator) return;
-    const handleMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      let x = e.clientX - rect.left;
-      x = Math.max(0, Math.min(x, rect.width));
-      const time = pixelToTime(x);
-      setCurrentTime(snapToFrame(time));
-    };
-    const handleUp = () => setIsDraggingIndicator(false);
-    window.addEventListener('mousemove', handleMove);
-    window.addEventListener('mouseup', handleUp);
-    return () => {
-      window.removeEventListener('mousemove', handleMove);
-      window.removeEventListener('mouseup', handleUp);
-    };
-  }, [isDraggingIndicator, pixelToTime, setCurrentTime, snapToFrame]);
-
-  // WaveSurfer 관련 ref -------------------------------------------------
-  const waveformRef = useRef<HTMLDivElement>(null); // 파형 컨테이너
-  const spectrogramRef = useRef<HTMLDivElement>(null); // 스펙트로그램 컨테이너
-  const waveSurferRef = useRef<any>(null); // WaveSurfer 인스턴스
-  
-  // WaveSurfer 인스턴스 및 플러그인 생성/파기 (비디오 URL이 바뀔 때만)
-  useEffect(() => {
-    if (!currentProject?.videoMeta?.url || !waveformRef.current || !spectrogramRef.current) return;
-    if (waveSurferRef.current) {
-      waveSurferRef.current.destroy();
-      waveSurferRef.current = null;
-    }
-    const ws = WaveSurfer.create({
-      container: waveformRef.current,
-      waveColor: '#3B82F6',
-      progressColor: '#1D4ED8',
-      cursorColor: '#EF4444',
-      height: 120,
-      barWidth: 2,
-      normalize: true,
-      url: currentProject.videoMeta.url as string
-    });
-    ws.registerPlugin(
-      Spectrogram.create({
-        container: spectrogramRef.current,
-        labels: true,
-        height: 120
-      })
-    );
-    waveSurferRef.current = ws;
-    return () => {
-      ws.destroy();
-      waveSurferRef.current = null;
-    };
-  }, [currentProject?.videoMeta?.url]);
-
   return (
-    <div className="neu-audio-waveform-panel h-full neu-bg-base p-3 flex flex-col">
-      {/* 모드 토글 버튼 */}
+    <div className="neu-audio-waveform-panel h-full min-w-0 min-h-0 neu-bg-base p-3 flex flex-col">
       <div className="flex gap-2 mb-2">
         <button 
           className={`p-2 rounded-md flex items-center justify-center ${mode === 'waveform' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-          onClick={() => setMode('waveform')}
+          onClick={() => handleModeChange('waveform')}
           title="파형 뷰"
         >
           <Waves size={16} />
         </button>
         <button 
           className={`p-2 rounded-md flex items-center justify-center ${mode === 'spectrogram' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-          onClick={() => setMode('spectrogram')}
+          onClick={() => handleModeChange('spectrogram')}
           title="스펙트로그램 뷰"
         >
           <BarChart3 size={16} />
         </button>
         <button 
           className={`p-2 rounded-md flex items-center justify-center ${mode === 'mixed' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-          onClick={() => setMode('mixed')}
+          onClick={() => handleModeChange('mixed')}
           title="혼합 뷰"
         >
           <Layers size={16} />
         </button>
       </div>
-
-      {/* 캔버스 영역 */}
       <div 
         ref={containerRef}
-        className="flex-1 relative cursor-pointer rounded-lg neu-shadow-inset overflow-hidden"
+        className="flex-1 min-w-0 min-h-0 relative cursor-pointer rounded-lg neu-shadow-inset overflow-hidden"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => setIsPanning(false)}
       >
-        {/* WaveSurfer 컨테이너 (항상 DOM에 남겨두고, display만 조절) */}
-        <div
-          ref={waveformRef}
-          className="absolute inset-0"
-          style={{ opacity: mode === 'waveform' || mode === 'mixed' ? 1 : 0, transition: 'opacity 0.2s' }}
-        />
-        {/* Spectrogram 컨테이너 (항상 DOM에 남겨두고, display만 조절) */}
-        <div
-          ref={spectrogramRef}
-          className="absolute inset-0"
-          style={{ opacity: mode === 'spectrogram' || mode === 'mixed' ? 1 : 0, pointerEvents: 'none', transition: 'opacity 0.2s' }}
-        />
-        {/* 인디케이터 드래그 핸들 */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none">
+          <canvas
+            ref={canvasRef}
+            className="w-full h-full"
+          />
+        </div>
         {(() => {
-          // accurateTime, playheadX 계산
           const width = containerRef.current?.clientWidth || 0;
-          const accurateTime = (() => {
-            if (videoRef.current && isPlaying) {
-              return videoRef.current.currentTime * 1000;
-            }
-            return currentTime;
-          })();
+          const accurateTime = videoRef.current && isPlaying ? videoRef.current.currentTime * 1000 : currentTime;
           if (accurateTime < localViewStart || accurateTime > localViewEnd || width === 0) return null;
-          const playheadX = timeToPixel(accurateTime);
+          const playheadX = ((accurateTime - localViewStart) / (localViewEnd - localViewStart)) * width;
           return (
             <div
               style={{

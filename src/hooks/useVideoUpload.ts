@@ -262,12 +262,11 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
       // Apply metadata to stores
       setVideoMeta({
         filename: file.name,
-        duration: metadata.duration,
+        duration: metadata.duration * 1000,
         width: metadata.width,
         height: metadata.height,
         fps: metadata.fps,
-        file: file,
-        url: url
+        file: file
       });
       setDuration(metadata.duration * 1000);
       setFPS(metadata.fps);

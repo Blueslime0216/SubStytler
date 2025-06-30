@@ -152,7 +152,10 @@ export function useAreaDrag(
           const a = newAreas.find(x => x.id === id);
           if (!a) continue;
           
-          const capacity = isHorizontal ? a.width - (a.minWidth || 15) : a.height - (a.minHeight || 20);
+          const minSize = isHorizontal ? (a.minWidth || 5) : (a.minHeight || 5);
+          const currentSize = isHorizontal ? a.width : a.height;
+          const capacity = currentSize - minSize;
+
           if (isHorizontal) {
             if (moveDir === 'left') limitPos = Math.min(limitPos, capacity);
             else limitNeg = Math.min(limitNeg, capacity);
@@ -166,8 +169,11 @@ export function useAreaDrag(
         limitNeg = Math.max(0, limitNeg - EPSILON);
         
         let move = 0;
-        if (isHorizontal) move = dxRaw < 0 ? clamp(dxRaw, -limitNeg, 0) : clamp(dxRaw, 0, limitPos);
-        else move = dyRaw < 0 ? clamp(dyRaw, -limitNeg, 0) : clamp(dyRaw, 0, limitPos);
+        if (isHorizontal) {
+          move = clamp(dxRaw, -limitNeg, limitPos);
+        } else {
+          move = clamp(dyRaw, -limitNeg, limitPos);
+        }
 
         // 🧲 스냅 로직: 근처 경계에 자동 정렬
         if (Math.abs(move) > 0.001) {
@@ -223,8 +229,8 @@ export function useAreaDrag(
             } else if (moveDir === 'top') {
               a.y += move;
               a.height -= move;
-            } else {
-              a.height += move; // bottom
+            } else { // bottom
+              a.height += move;
             }
           }
 
