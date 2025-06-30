@@ -31,9 +31,8 @@ export const useProjectHandlers = () => {
         // Load project directly (no video info)
         loadProjectWithVideo(result.project);
       }
-      return true;
     }
-    return false;
+    // 반환값 없음 (void)
   }, [loadProjectFromFileSystem, loadProjectWithVideo]);
 
   // 🆕 Handle video selection from dialog

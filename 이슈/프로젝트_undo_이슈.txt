@@ -1,0 +1,50 @@
+[문제 상황]
+- 프로젝트 이름을 변경한 뒤 Ctrl+Z(Undo)를 눌러도 이전 이름으로 되돌아가지 않음
+
+[원인 분석]
+1. Undo/Redo 히스토리에 '이전 상태(before)'와 '변경 후 상태(after)'가 모두 기록되어야 하는데,
+   기존에는 변경 후 상태만 기록되어 있었음.
+2. 이로 인해 Undo를 해도 변경 전 상태로 돌아갈 수 없었음.
+
+[해결 방법]
+- updateProject 함수에서
+  1) 변경 전 상태를 internal=true로 먼저 기록 (Before)
+  2) 실제 프로젝트 상태를 변경
+  3) 변경 후 상태를 internal=false로 기록 (After)
+- 이렇게 하면 Ctrl+Z를 누를 때 항상 'Before'로 돌아가고, Ctrl+Y로 'After'로 복원됨
+
+[실제 적용 코드 예시]
+
+updateProject: (updates: Partial<Project>) => {
+  const { currentProject } = get();
+  if (!currentProject) return;
+
+  // 1. 변경 전 상태 기록
+  useHistoryStore.getState().record(
+    { project: { ...currentProject } },
+    'Before project update',
+    true
+  );
+
+  // 2. 상태 변경
+  const updatedProject = {
+    ...currentProject,
+    ...updates,
+    updatedAt: Date.now(),
+  };
+  set({ currentProject: updatedProject, isModified: true });
+
+  // 3. 변경 후 상태 기록
+  setTimeout(() => {
+    useHistoryStore.getState().record(
+      { project: { ...updatedProject } },
+      'Project updated'
+    );
+  }, 0);
+},
+
+[앞으로 이런 문제가 생겼을 때 대처법]
+- Undo/Redo가 안 되는 상태 변경이 있다면,
+  1) 변경 전(before)과 후(after) 상태가 모두 히스토리에 기록되는지 확인
+  2) applySnapshot 등 복원 함수가 해당 상태를 제대로 반영하는지 확인
+- 특히, setTimeout 등 비동기 기록이 필요한 경우도 있음에 유의 

@@ -4,6 +4,8 @@ import { shallow } from 'zustand/shallow';
 import { useHistoryStore } from './stores/historyStore';
 import { useToast } from './hooks/useToast';
 import { useThemeStore } from './stores/themeStore';
+import { useProjectStore } from './stores/projectStore';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 // Import component parts
 import { AppHeader } from './components/App/AppHeader';
@@ -25,6 +27,7 @@ export default function App() {
   const { isDarkMode } = useThemeStore();
 
   // Register global keyboard shortcuts
+  useKeyboardShortcuts();
   const { toasts, removeToast } = useToast();
 
   // Project handlers
@@ -51,6 +54,9 @@ export default function App() {
   // Panel renderer
   const renderPanel = usePanelRenderer();
 
+  // Project store
+  const { currentProject, createProject } = useProjectStore();
+
   // Set theme on mount
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
@@ -66,6 +72,13 @@ export default function App() {
       }, 100); // Small delay to ensure all stores are initialized
     }
   }, [areas]);
+
+  // 초기 프로젝트가 없으면 기본 프로젝트 생성
+  useEffect(() => {
+    if (!currentProject) {
+      createProject('Untitled Project');
+    }
+  }, [currentProject, createProject]);
 
   return (
     <div className="min-h-screen flex flex-col bg-bg text-text-primary">

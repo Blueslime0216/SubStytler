@@ -9,7 +9,7 @@ interface TrackHeadersSectionProps {
   tracks: SubtitleTrack[];
   selectedTrackId: string | null;
   setSelectedTrackId: (id: string | null) => void;
-  handleTrackHeaderContextMenu: (e: React.MouseEvent) => void;
+  handleTrackHeaderContextMenu: (e: React.MouseEvent, trackId: string) => void;
 }
 
 export const TrackHeadersSection: React.FC<TrackHeadersSectionProps> = ({
@@ -65,6 +65,7 @@ export const TrackHeadersSection: React.FC<TrackHeadersSectionProps> = ({
           onUpdateDetail={() => {}}
           onToggleVisibility={() => {}}
           onToggleLock={() => {}}
+          onContextMenu={(e) => handleTrackHeaderContextMenu(e, track.id)}
         />
       ))}
     </div>

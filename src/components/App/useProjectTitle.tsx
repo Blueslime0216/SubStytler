@@ -12,7 +12,7 @@ export const useProjectTitle = () => {
     if (currentProject) {
       setTitleValue(currentProject.name);
     }
-  }, [currentProject]);
+  }, [currentProject?.name]);
   
   return {
     isEditingTitle,

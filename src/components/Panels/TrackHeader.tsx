@@ -20,6 +20,7 @@ interface TrackHeaderProps {
   onUpdateDetail: (id: string, detail: string) => void;
   onToggleVisibility: (id: string, visible: boolean) => void;
   onToggleLock: (id: string, locked: boolean) => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
 }
 
 export const TrackHeader = forwardRef<TrackHeaderRef, TrackHeaderProps>(({
@@ -31,6 +32,7 @@ export const TrackHeader = forwardRef<TrackHeaderRef, TrackHeaderProps>(({
   onUpdateDetail,
   onToggleVisibility,
   onToggleLock,
+  onContextMenu
 }, ref) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [nameValue, setNameValue] = React.useState(track.name);
@@ -144,6 +146,7 @@ export const TrackHeader = forwardRef<TrackHeaderRef, TrackHeaderProps>(({
       <motion.div 
         className={`neu-track-header-redesigned ${isActive ? 'active' : ''}`}
         onClick={onSelect}
+        onContextMenu={onContextMenu}
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}

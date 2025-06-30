@@ -56,7 +56,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   const subtitles = currentProject?.subtitles || [];
 
   const { selectedTrackId, setSelectedTrackId } = useSelectedTrackStore();
-  const { setSelectedSubtitleId } = useSelectedSubtitleStore();
+  const { selectedSubtitleId, setSelectedSubtitleId } = useSelectedSubtitleStore();
   const { flashIds, setHighlightedIds } = useSubtitleHighlightStore();
 
   // Context menu state
@@ -260,32 +260,15 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   }, [sidebarWidth, onSidebarWidthChange]);
 
   // Context menu handlers
-  const handleTrackHeaderContextMenu = (e: React.MouseEvent) => {
+  const handleTrackHeaderContextMenu = (e: React.MouseEvent, trackId: string | null) => {
     e.preventDefault();
-    
-    // Find the track header element that was right-clicked
-    const trackHeader = (e.target as HTMLElement).closest('.neu-track-header-redesigned');
-    if (!trackHeader) {
-      // Clicked on the header area but not on a specific track
-      setTrackHeaderContextMenu({
-        isOpen: true,
-        x: e.clientX,
-        y: e.clientY,
-        trackId: null
-      });
-      return;
-    }
-    
-    // Get the track ID from the data attribute
-    const trackId = trackHeader.getAttribute('data-track-id');
-    if (trackId) {
-      setTrackHeaderContextMenu({
-        isOpen: true,
-        x: e.clientX,
-        y: e.clientY,
-        trackId
-      });
-    }
+    if (!trackId) return;
+    setTrackHeaderContextMenu({
+      isOpen: true,
+      x: e.clientX,
+      y: e.clientY,
+      trackId
+    });
   };
 
   const handleTrackContentContextMenu = (e: React.MouseEvent) => {
@@ -548,7 +531,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
         }}
         ref={headerRef}
         onScroll={handleHeaderScroll}
-        onContextMenu={handleTrackHeaderContextMenu}
+        onContextMenu={(e) => handleTrackHeaderContextMenu(e, selectedTrackId)}
       >
         {/* Spacer to align with Ruler */}
         <div className="h-10 flex-shrink-0" />

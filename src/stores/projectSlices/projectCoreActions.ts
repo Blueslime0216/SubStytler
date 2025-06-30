@@ -116,14 +116,29 @@ export const projectCoreActions: StateCreator<any> = (set, get, _store) => ({
     const { currentProject } = get();
     if (!currentProject) return;
     
-    set({
-      currentProject: {
-        ...currentProject,
-        ...updates,
-        updatedAt: Date.now()
-      },
-      isModified: true
-    });
+    // 변경 전 상태 기록 (internal=true) ➜ 히스토리 패널에 표시하지 않음
+    useHistoryStore.getState().record(
+      { project: { ...currentProject } },
+      'Before project update',
+      true
+    );
+
+    // 적용 후 상태 계산
+    const updatedProject = {
+      ...currentProject,
+      ...updates,
+      updatedAt: Date.now(),
+    };
+
+    set({ currentProject: updatedProject, isModified: true });
+
+    // 변경 후 상태 기록 (internal=false) ➜ 사용자에게 보임, undo/redo 대상
+    setTimeout(() => {
+      useHistoryStore.getState().record(
+        { project: { ...updatedProject } },
+        'Project updated'
+      );
+    }, 0);
   },
 
   setVideoMeta: (meta: VideoMeta) => {

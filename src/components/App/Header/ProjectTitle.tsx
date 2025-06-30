@@ -26,8 +26,8 @@ export const ProjectTitle: React.FC<ProjectTitleProps> = ({
 
   // Handle title input blur
   const handleTitleBlur = () => {
-    if (!currentProject) return;
-    updateProject({ name: titleValue });
+    // 이름 변경 취소: 입력값을 원래 이름으로 되돌리고 편집 모드 종료
+    setTitleValue(currentProject?.name || 'Untitled Project');
     setIsEditingTitle(false);
   };
 
@@ -42,6 +42,14 @@ export const ProjectTitle: React.FC<ProjectTitleProps> = ({
       setIsEditingTitle(false);
     }
   };
+
+  // 편집 모드 진입 시 input에 포커스
+  React.useEffect(() => {
+    if (isEditingTitle && titleInputRef.current) {
+      titleInputRef.current.focus();
+      titleInputRef.current.select();
+    }
+  }, [isEditingTitle, titleInputRef]);
 
   return (
     <div className="flex-1 flex justify-center">

@@ -270,7 +270,23 @@ function applySnapshot(snapshot: Snapshot) {
       return;
     }
 
-    // Track snapshot
+    // --- Refactored Snapshot Logic ---
+
+    // 1. Full Project Snapshot (must be checked first)
+    if (snapshot?.project?.name && snapshot.project.tracks) {
+      useProjectStore.setState({ currentProject: snapshot.project });
+      
+      // Restore selections if they exist in the snapshot
+      if (snapshot.project.selectedTrackId !== undefined) {
+        useSelectedTrackStore.getState().setSelectedTrackId(snapshot.project.selectedTrackId);
+      }
+      if (snapshot.project.selectedSubtitleId !== undefined) {
+        useSelectedSubtitleStore.getState().setSelectedSubtitleId(snapshot.project.selectedSubtitleId);
+      }
+      return;
+    }
+
+    // 2. Track-only snapshot
     if (snapshot && Array.isArray(snapshot.tracks)) {
       const { currentProject } = useProjectStore.getState();
       if (currentProject) {
@@ -281,16 +297,14 @@ function applySnapshot(snapshot: Snapshot) {
           },
         });
       }
-
-      // Selection
       if (snapshot.selectedTrackId !== undefined) {
         useSelectedTrackStore.getState().setSelectedTrackId(snapshot.selectedTrackId);
       }
       return;
     }
 
-    // 🆕 Subtitle snapshot
-    if (snapshot && snapshot.project && snapshot.project.subtitles) {
+    // 3. Subtitle-only snapshot
+    if (snapshot?.project?.subtitles) {
       const { currentProject } = useProjectStore.getState();
       if (currentProject) {
         useProjectStore.setState({
@@ -300,16 +314,14 @@ function applySnapshot(snapshot: Snapshot) {
           },
         });
       }
-
-      // Selection
       if (snapshot.project.selectedSubtitleId !== undefined) {
         useSelectedSubtitleStore.getState().setSelectedSubtitleId(snapshot.project.selectedSubtitleId);
       }
       return;
     }
     
-    // 🆕 Style snapshot
-    if (snapshot && snapshot.project && snapshot.project.styles) {
+    // 4. Style-only snapshot
+    if (snapshot?.project?.styles) {
       const { currentProject } = useProjectStore.getState();
       if (currentProject) {
         useProjectStore.setState({
@@ -319,13 +331,12 @@ function applySnapshot(snapshot: Snapshot) {
           },
         });
       }
-
-      // Selection for style if needed
       if (snapshot.project.selectedStyleId !== undefined) {
-        // If you have a style selection store, update it here
+        // Handle style selection if needed
       }
       return;
     }
+
   } finally {
     isApplyingSnapshot = false;
   }
