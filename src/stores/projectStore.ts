@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Project, SubtitleBlock, SubtitleStyle, VideoMeta, SubtitleTrack } from '../types/project';
+import { Project, SubtitleBlock, VideoMeta, SubtitleTrack } from '../types/project';
 import { createProjectActions } from './projectActions';
 
 interface ProjectState {
@@ -15,9 +15,6 @@ interface ProjectState {
   addSubtitle: (subtitle: SubtitleBlock) => void;
   updateSubtitle: (id: string, updates: Partial<SubtitleBlock>, recordHistory?: boolean) => void;
   deleteSubtitle: (id: string) => void;
-  addStyle: (style: SubtitleStyle) => void;
-  updateStyle: (id: string, updates: Partial<SubtitleStyle>) => void;
-  deleteStyle: (id: string) => void;
   
   // Track management
   addTrack: (name: string) => string | null;

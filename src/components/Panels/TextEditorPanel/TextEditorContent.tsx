@@ -12,6 +12,8 @@ interface TextEditorContentProps {
   outlineColor: string;
   outlineType: number;
   anchorPoint: number;
+  positionX: number;
+  positionY: number;
   printDirection: string;
   setTextColor: (value: string) => void;
   setTextOpacity: (value: number) => void;
@@ -23,6 +25,8 @@ interface TextEditorContentProps {
   setOutlineType: (value: number) => void;
   setAnchorPoint: (value: number) => void;
   setPrintDirection: (value: string) => void;
+  setPositionX: (value: number) => void;
+  setPositionY: (value: number) => void;
 }
 
 const TextEditorContent: React.FC<TextEditorContentProps> = ({
@@ -37,6 +41,8 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
   outlineColor,
   outlineType,
   anchorPoint,
+  positionX,
+  positionY,
   printDirection,
   setTextColor,
   setTextOpacity,
@@ -47,7 +53,9 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
   setOutlineColor,
   setOutlineType,
   setAnchorPoint,
-  setPrintDirection
+  setPrintDirection,
+  setPositionX,
+  setPositionY
 }) => {
   return (
     <>
@@ -87,15 +95,19 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
           </div>
           <div className="mt-1">
             <label className="block text-xs font-medium text-text-secondary mb-1">
-              Opacity: {Math.round(textOpacity * 100)}%
+              불투명도: {(() => {
+                const v = Math.round(textOpacity);
+                const pct = Math.round((v / 255) * 100);
+                return `${v} (${pct}%)`;
+              })()}
             </label>
             <input
               type="range"
               min="0"
-              max="1"
-              step="0.01"
+              max="255"
+              step="1"
               value={textOpacity}
-              onChange={(e) => setTextOpacity(parseFloat(e.target.value))}
+              onChange={(e) => setTextOpacity(parseInt(e.target.value))}
               className="w-full"
             />
           </div>
@@ -121,15 +133,19 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
           </div>
           <div className="mt-1">
             <label className="block text-xs font-medium text-text-secondary mb-1">
-              Opacity: {Math.round(backgroundOpacity * 100)}%
+              불투명도: {(() => {
+                const v = Math.round(backgroundOpacity);
+                const pct = Math.round((v / 255) * 100);
+                return `${v} (${pct}%)`;
+              })()}
             </label>
             <input
               type="range"
               min="0"
-              max="1"
-              step="0.01"
+              max="255"
+              step="1"
               value={backgroundOpacity}
-              onChange={(e) => setBackgroundOpacity(parseFloat(e.target.value))}
+              onChange={(e) => setBackgroundOpacity(parseInt(e.target.value))}
               className="w-full"
             />
           </div>
@@ -262,6 +278,40 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
             <option value="30">Rotated 90° CCW, LTR</option>
             <option value="31">Rotated 90° CCW, RTL</option>
           </select>
+        </div>
+      </div>
+      
+      {/* X / Y Position Sliders */}
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label className="block text-xs font-medium text-text-secondary mb-1">
+            Horizontal Position (X%)
+          </label>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            value={positionX}
+            onChange={(e)=> setPositionX(parseInt(e.target.value))}
+            className="w-full"
+          />
+          <div className="text-xs text-text-secondary mt-1">{positionX}%</div>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-text-secondary mb-1">
+            Vertical Position (Y%)
+          </label>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            value={positionY}
+            onChange={(e)=> setPositionY(parseInt(e.target.value))}
+            className="w-full"
+          />
+          <div className="text-xs text-text-secondary mt-1">{positionY}%</div>
         </div>
       </div>
     </>

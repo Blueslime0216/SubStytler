@@ -35,7 +35,7 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
         endTime: Math.round(subtitle.endTime),
         spans: subtitle.spans.map(span => ({
           ...span,
-          styleId: span.styleId || 'default',
+          // 스타일 ID는 더 이상 사용하지 않음
           isBold: span.isBold || false,
           isItalic: span.isItalic || false,
           isUnderline: span.isUnderline || false,

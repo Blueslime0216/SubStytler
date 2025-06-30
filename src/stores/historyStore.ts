@@ -320,22 +320,7 @@ function applySnapshot(snapshot: Snapshot) {
       return;
     }
     
-    // 4. Style-only snapshot
-    if (snapshot?.project?.styles) {
-      const { currentProject } = useProjectStore.getState();
-      if (currentProject) {
-        useProjectStore.setState({
-          currentProject: {
-            ...currentProject,
-            styles: snapshot.project.styles,
-          },
-        });
-      }
-      if (snapshot.project.selectedStyleId !== undefined) {
-        // Handle style selection if needed
-      }
-      return;
-    }
+    // 스타일 전용 스냅샷 로직은 제거됨
 
   } finally {
     isApplyingSnapshot = false;

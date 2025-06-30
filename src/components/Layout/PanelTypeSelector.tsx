@@ -32,7 +32,6 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
       'text-editor',
       'audio-waveform',
       'effects-library',
-      'style-manager',
       'script-viewer',
       'history',
       'notes',

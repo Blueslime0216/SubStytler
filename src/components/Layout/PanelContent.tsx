@@ -4,7 +4,6 @@ import { VideoPreviewPanel } from '../Panels/VideoPreviewPanel';
 import { SubtitleTimelinePanel } from '../Panels/SubtitleTimelinePanel';
 import { AudioWaveformPanel } from '../Panels/AudioWaveformPanel';
 import { TextEditorPanel } from '../Panels/TextEditorPanel';
-import { StyleManagerPanel } from '../Panels/StyleManagerPanel';
 import { ScriptViewerPanel } from '../Panels/ScriptViewerPanel';
 import { EffectsLibraryPanel } from '../Panels/EffectsLibraryPanel';
 import { HistoryPanel } from '../Panels/HistoryPanel';
@@ -16,12 +15,11 @@ interface PanelContentProps {
   type: PanelType;
 }
 
-const panelComponents: Record<PanelType, React.ComponentType> = {
+const panelComponents: Partial<Record<PanelType, React.ComponentType>> = {
   'video-preview': VideoPreviewPanel,
   'subtitle-timeline': SubtitleTimelinePanel,
   'audio-waveform': AudioWaveformPanel,
   'text-editor': TextEditorPanel,
-  'style-manager': StyleManagerPanel,
   'script-viewer': ScriptViewerPanel,
   'effects-library': EffectsLibraryPanel,
   'history': HistoryPanel,

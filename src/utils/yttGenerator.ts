@@ -96,19 +96,43 @@ export function generateYTTContent(project: Project): string {
   const resolvedList: ResolvedEntry[] = [];
 
   for (const sub of subtitles) {
-    // ① 스타일 객체 찾기 (없으면 기본값)
+    // 자막(span)이 직접 보유한 스타일 속성을 사용한다.
+    // 기존 코드처럼 Project.styles 배열을 조회하지 않고, span 안에 포함된 속성을 바로 읽는다.
+
     const span: SubtitleSpan = sub.spans[0] || { text: '' } as any;
-    const style: SubtitleStyle |
-      undefined = project.styles.find(s => s.id === span.styleId) || undefined;
-    const effStyle: SubtitleStyle = style || {
-      id: 'default',
-      name: 'Default',
-      fc: '#FFFFFF',
-      fo: 255,
-      bc: '#000000',
-      bo: 0,
-      ju: 3,
-      ap: 4,
+
+    // "기본값" 정의 – span 에 해당 속성이 없을 경우 사용
+    const DEFAULT_STYLE: Partial<SubtitleStyle> = {
+      fc: '#FFFFFF', // 글자색(흰색)
+      fo: 255,       // 글자 투명도
+      bc: '#000000', // 배경색(검정)
+      bo: 255,       // 배경 투명도
+      ju: 3,         // 정렬 (가운데)
+      ap: 4,         // 앵커 포인트 (중앙)
+      ah: 50,        // X 좌표
+      av: 50,        // Y 좌표
+    };
+
+    // span 안에 존재할 수 있는 pen/ws/wp 관련 속성을 추려서 객체로 만든다.
+    const effStyle: SubtitleStyle = {
+      id: 'inline',   // 더 이상 고유 ID 필요 없음
+      name: 'inline',
+      fc: (span as any).fc ?? DEFAULT_STYLE.fc,
+      fo: (span as any).fo ?? DEFAULT_STYLE.fo,
+      bc: (span as any).bc ?? DEFAULT_STYLE.bc,
+      bo: (span as any).bo ?? DEFAULT_STYLE.bo,
+      ec: (span as any).ec,
+      et: (span as any).et,
+      fs: (span as any).fs,
+      sz: (span as any).sz,
+      rb: (span as any).rb,
+      of: (span as any).of,
+      ju: (span as any).ju ?? DEFAULT_STYLE.ju,
+      pd: (span as any).pd,
+      sd: (span as any).sd,
+      ap: (span as any).ap ?? DEFAULT_STYLE.ap,
+      ah: (span as any).ah ?? DEFAULT_STYLE.ah,
+      av: (span as any).av ?? DEFAULT_STYLE.av,
     } as SubtitleStyle;
 
     /* -------- pen 처리 -------- */

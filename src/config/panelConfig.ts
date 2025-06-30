@@ -6,7 +6,6 @@ export const panelConfig: Record<PanelType, { title: string; icon: React.Compone
   'subtitle-timeline': { title: 'Timeline', icon: Clock, description: 'Subtitle timeline editor' },
   'audio-waveform': { title: 'Audio Waveform', icon: Waveform, description: 'Audio waveform visualization' },
   'text-editor': { title: 'Text Editor', icon: Type, description: 'Subtitle text editing' },
-  'style-manager': { title: 'Style Manager', icon: Palette, description: 'Subtitle style management' },
   'script-viewer': { title: 'Script Viewer', icon: FileText, description: 'Script and subtitle list' },
   'effects-library': { title: 'Effects Library', icon: Zap, description: 'Animation effects library' },
   'history': { title: 'History', icon: History, description: 'Undo/redo history' },

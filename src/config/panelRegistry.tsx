@@ -15,7 +15,6 @@ export const basePanelRegistry = {
   'subtitle-timeline': createPanelComponent('subtitle-timeline'),
   'audio-waveform': createPanelComponent('audio-waveform'),
   'text-editor': createPanelComponent('text-editor'),
-  'style-manager': createPanelComponent('style-manager'),
   'script-viewer': createPanelComponent('script-viewer'),
   'effects-library': createPanelComponent('effects-library'),
   'history': createPanelComponent('history'),

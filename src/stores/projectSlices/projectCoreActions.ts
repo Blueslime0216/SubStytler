@@ -18,23 +18,6 @@ export const projectCoreActions: StateCreator<any> = (set, get, _store) => ({
         },
       ],
       subtitles: [],
-      styles: [
-        {
-          id: 'default',
-          name: 'Default',
-          fc: '#FFFFFF',
-          fo: 1,
-          bc: '#000000',
-          bo: 0.5,
-          fs: '0',
-          sz: '100%',
-          ju: 3,
-          ap: 4,
-          pd: '00',
-          et: 0,
-          ec: '#000000'
-        }
-      ],
       timeline: {
         currentTime: 0,
         zoom: 1,
@@ -58,25 +41,6 @@ export const projectCoreActions: StateCreator<any> = (set, get, _store) => ({
   },
 
   loadProject: (project: Project) => {
-    // Ensure default style exists
-    if (!project.styles.find(s => s.id === 'default')) {
-      project.styles.push({
-        id: 'default',
-        name: 'Default',
-        fc: '#FFFFFF',
-        fo: 1,
-        bc: '#000000',
-        bo: 0.5,
-        fs: '0',
-        sz: '100%',
-        ju: 3,
-        ap: 4,
-        pd: '00',
-        et: 0,
-        ec: '#000000'
-      });
-    }
-    
     // Ensure at least one track exists
     if (!project.tracks || project.tracks.length === 0) {
       project.tracks = [
@@ -170,23 +134,6 @@ export const projectCoreActions: StateCreator<any> = (set, get, _store) => ({
           },
         ],
         subtitles: [],
-        styles: [
-          {
-            id: 'default',
-            name: 'Default',
-            fc: '#FFFFFF',
-            fo: 1,
-            bc: '#000000',
-            bo: 0.5,
-            fs: '0',
-            sz: '100%',
-            ju: 3,
-            ap: 4,
-            pd: '00',
-            et: 0,
-            ec: '#000000'
-          }
-        ],
         timeline: {
           currentTime: 0,
           zoom: 1,

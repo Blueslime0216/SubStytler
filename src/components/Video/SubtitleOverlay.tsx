@@ -14,15 +14,16 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
     if (!containerRef?.current) return;
     const updateFontSize = () => {
       const h = containerRef.current?.clientHeight || 319;
-      setDynamicFontSize(h * 0.0345); // 3.45% 비율
+      setDynamicFontSize(h * 0.055); // 5.5% 비율 (YouTube 기준 자막 높이 약 5.5%)
     };
     updateFontSize();
     window.addEventListener('resize', updateFontSize);
     return () => window.removeEventListener('resize', updateFontSize);
   }, [containerRef]);
 
-  // Find current subtitle
-  const subtitleSource = parsed?.subtitles.length ? parsed : currentProject;
+  // 프로젝트 편집 중엔 currentProject 가 가장 최신 데이터를 보유하므로 우선 사용한다.
+  // 외부 YTT 파일만 로드된 상태(프로젝트 없음)라면 parsed 값을 사용.
+  const subtitleSource = currentProject?.subtitles?.length ? currentProject : parsed;
 
   const currentSubtitle = subtitleSource?.subtitles?.find(
     sub => currentTime >= sub.startTime && currentTime <= sub.endTime
@@ -30,10 +31,8 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
 
   if (!currentSubtitle) return null;
 
-  // Get style for the subtitle
-  const style = subtitleSource?.styles?.find(
-    s => s.id === (currentSubtitle?.spans[0]?.styleId || 'default')
-  );
+  // 자막의 첫 span에 포함된 스타일 속성을 직접 사용한다.
+  const style = currentSubtitle?.spans[0] as any;
 
   // Get text and styling properties
   const span = currentSubtitle.spans[0] || { text: '' };
@@ -45,10 +44,14 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
   // Calculate position based on anchor point
   const getPositionStyle = () => {
     const ap = style?.ap ?? 4; // anchor point 0-8
-    const ah = style?.ah ?? 50; // X 좌표 (0-100)
-    const av = style?.av ?? 90; // Y 좌표 (0-100)
+    const ahRaw = style?.ah ?? 50; // 지정 X (0-100)
+    const avRaw = style?.av ?? 50; // 지정 Y (0-100)
 
-    // Transform 기반 offset 계산
+    // YouTube 실제 좌표 보정 공식: effective = (specified * 0.96) + 2
+    const ah = ahRaw * 0.96 + 2;
+    const av = avRaw * 0.96 + 2;
+
+    // Transform 기반 offset 계산 (ap 기준점 보정)
     const offsetXMap = [0, -50, -100, 0, -50, -100, 0, -50, -100];
     const offsetYMap = [0, 0, 0, -50, -50, -50, -100, -100, -100];
 
@@ -163,7 +166,7 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
   const fgColorHex = style?.fc || '#FFFFFF';
   const fgOpacity = (style?.fo ?? 255) / 255;
   const bgColorHex = style?.bc || '#080808';
-  const bgOpacity = (style?.bo ?? 127) / 255;
+  const bgOpacity = (style?.bo ?? 255) / 255;
 
   const colorCss = hexToRgba(fgColorHex, fgOpacity);
   const backgroundCss = hexToRgba(bgColorHex, bgOpacity);
@@ -174,14 +177,12 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
         <motion.div 
           style={{
             position: 'absolute',
+            ...positionStyle,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             pointerEvents: 'none',
             zIndex: 30,
-            width: 'auto',
-            height: 'auto',
-            ...positionStyle,
           }}
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
@@ -189,20 +190,16 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
         >
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
               width: 'auto',
               height: 'auto',
-              padding: 0,
               backgroundColor: backgroundCss,
               color: colorCss,
               fontFamily: fontFamily,
-              fontSize: fontSize === '100%' ? dynamicFontSize : fontSize,
+              fontSize: '1.2em', // height 기준 상대값, 필요시 조정
               fontWeight: isBold ? 'bold' : 'normal',
               fontStyle: isItalic ? 'italic' : 'normal',
               textDecoration: isUnderline ? 'underline' : 'none',
-              textAlign: 'center',
+              textAlign: positionStyle.textAlign,
               whiteSpace: 'nowrap',
               lineHeight: 1,
               overflow: 'hidden',

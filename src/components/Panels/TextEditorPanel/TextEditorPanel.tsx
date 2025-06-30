@@ -11,17 +11,18 @@ import '../../../styles/components/text-editor-panel.css';
 
 export const TextEditorPanel: React.FC = () => {
   const [selectedText, setSelectedText] = useState('');
-  const [selectedStyleId, setSelectedStyleId] = useState('default');
   const [textColor, setTextColor] = useState('#FFFFFF');
-  const [textOpacity, setTextOpacity] = useState(1);
+  const [textOpacity, setTextOpacity] = useState(255);
   const [backgroundColor, setBackgroundColor] = useState('#000000');
-  const [backgroundOpacity, setBackgroundOpacity] = useState(0.5);
+  const [backgroundOpacity, setBackgroundOpacity] = useState(255);
   const [fontSize, setFontSize] = useState('100%');
   const [fontFamily, setFontFamily] = useState('0');
   const [textAlignment, setTextAlignment] = useState(3);
   const [outlineColor, setOutlineColor] = useState('#000000');
   const [outlineType, setOutlineType] = useState(0);
   const [anchorPoint, setAnchorPoint] = useState(4);
+  const [positionX, setPositionX] = useState(50);
+  const [positionY, setPositionY] = useState(50);
   const [printDirection, setPrintDirection] = useState('00');
   
   // Text formatting states
@@ -29,7 +30,7 @@ export const TextEditorPanel: React.FC = () => {
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   
-  const { currentProject, updateSubtitle, updateStyle } = useProjectStore();
+  const { currentProject, updateSubtitle } = useProjectStore();
   const { currentTime } = useTimelineStore();
   const { selectedSubtitleId } = useSelectedSubtitleStore();
 
@@ -49,23 +50,20 @@ export const TextEditorPanel: React.FC = () => {
         setIsItalic(span.isItalic || false);
         setIsUnderline(span.isUnderline || false);
         
-        const styleId = span.styleId || 'default';
-        setSelectedStyleId(styleId);
-        
-        const style = currentProject?.styles.find(s => s.id === styleId);
-        if (style) {
-          setTextColor(style.fc || '#FFFFFF');
-          setTextOpacity(style.fo !== undefined ? style.fo : 1);
-          setBackgroundColor(style.bc || '#000000');
-          setBackgroundOpacity(style.bo !== undefined ? style.bo : 0.5);
-          setFontSize(style.sz || '100%');
-          setFontFamily(style.fs || '0');
-          setTextAlignment(style.ju || 3);
-          setOutlineColor(style.ec || '#000000');
-          setOutlineType(style.et || 0);
-          setAnchorPoint(style.ap || 4);
-          setPrintDirection(style.pd || '00');
-        }
+        // span 자체에 포함된 스타일 속성을 그대로 읽는다
+        setTextColor((span as any).fc || '#FFFFFF');
+        setTextOpacity((span as any).fo !== undefined ? (span as any).fo : 255);
+        setBackgroundColor((span as any).bc || '#000000');
+        setBackgroundOpacity((span as any).bo !== undefined ? (span as any).bo : 255);
+        setFontSize((span as any).sz || '100%');
+        setFontFamily((span as any).fs || '0');
+        setTextAlignment((span as any).ju || 3);
+        setOutlineColor((span as any).ec || '#000000');
+        setOutlineType((span as any).et || 0);
+        setAnchorPoint((span as any).ap || 4);
+        setPositionX((span as any).ah ?? 50);
+        setPositionY((span as any).av ?? 50);
+        setPrintDirection((span as any).pd || '00');
       }
     }
   }, [currentSubtitle, currentProject]);
@@ -121,9 +119,26 @@ export const TextEditorPanel: React.FC = () => {
   };
 
   const handleStyleChange = (property: string, value: any) => {
-    if (selectedStyleId) {
-      updateStyle(selectedStyleId, { [property]: value });
+    if (!currentSubtitle) return;
+
+    // 상태 기록 (Undo용)
+    const { currentProject } = useProjectStore.getState();
+    if (currentProject) {
+      useHistoryStore.getState().record(
+        { project: { subtitles: [...currentProject.subtitles] } },
+        `Before changing style (${property})`,
+        true
+      );
     }
+
+    const updatedSpans = [...currentSubtitle.spans];
+    if (updatedSpans[0]) {
+      updatedSpans[0] = {
+        ...updatedSpans[0],
+        [property]: value,
+      } as any;
+    }
+    updateSubtitle(currentSubtitle.id, { spans: updatedSpans });
   };
 
   // New toggle-based text formatting
@@ -225,6 +240,8 @@ export const TextEditorPanel: React.FC = () => {
           outlineType={outlineType}
           anchorPoint={anchorPoint}
           printDirection={printDirection}
+          positionX={positionX}
+          positionY={positionY}
           setTextColor={(value) => {
             setTextColor(value);
             handleStyleChange('fc', value);
@@ -264,6 +281,14 @@ export const TextEditorPanel: React.FC = () => {
           setPrintDirection={(value) => {
             setPrintDirection(value);
             handleStyleChange('pd', value);
+          }}
+          setPositionX={(value: number)=>{
+            setPositionX(value);
+            handleStyleChange('ah', value);
+          }}
+          setPositionY={(value: number)=>{
+            setPositionY(value);
+            handleStyleChange('av', value);
           }}
         />
         <TextEditorPreview

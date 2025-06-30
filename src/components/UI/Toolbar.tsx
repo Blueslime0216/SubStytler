@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Save, Download, Settings, Sparkles } from 'lucide-react';
 import { useProjectStore } from '../../stores/projectStore';
+import { generateYTTContent } from '../../utils/yttGenerator';
 
 export const Toolbar: React.FC = () => {
   const { saveProject, currentProject } = useProjectStore();
@@ -23,38 +24,6 @@ export const Toolbar: React.FC = () => {
     a.click();
     
     URL.revokeObjectURL(url);
-  };
-
-  const generateYTTContent = (project: any) => {
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<timedtext format="3">
-  <head>
-    <wp id="0"/>
-    <ws id="0" ju="2" pd="0"/>
-`;
-
-    project.styles.forEach((style: any, index: number) => {
-      xml += `    <pen id="${index}" fc="${style.fc}" fo="${style.fo || 1}" bc="${style.bc}" bo="${style.bo || 0.8}" fs="${style.fs}" sz="${style.sz}"/>\n`;
-    });
-
-    xml += `  </head>
-  <body>
-`;
-
-    project.subtitles.forEach((subtitle: any) => {
-      const startTime = Math.floor(subtitle.startTime);
-      const duration = Math.floor(subtitle.endTime - subtitle.startTime);
-      
-      xml += `    <p t="${startTime}" d="${duration}" wp="0" ws="0">
-      <s p="0">${subtitle.spans[0]?.text || ''}</s>
-    </p>
-`;
-    });
-
-    xml += `  </body>
-</timedtext>`;
-
-    return xml;
   };
 
   return (

@@ -86,7 +86,6 @@ export const SubtitlePreviewPanel: React.FC = () => {
     <div className="h-full flex flex-col bg-surface min-h-0">
       <SubtitlePreviewList 
         subtitles={trackSubtitles}
-        styles={currentProject?.styles || []}
       />
     </div>
   );

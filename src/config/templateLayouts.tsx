@@ -114,7 +114,6 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     areas: [
       { id: 'video-preview', x: 0, y: 0, width: 66, height: 60 },
       { id: 'audio-waveform', x: 66, y: 0, width: 34, height: 30 },
-      { id: 'style-manager', x: 66, y: 30, width: 34, height: 30 },
       { id: 'script-viewer', x: 66, y: 60, width: 34, height: 40 },
       { id: 'subtitle-timeline', x: 0, y: 60, width: 66, height: 40 },
     ]
@@ -129,7 +128,6 @@ export const templateLayouts: Record<string, TemplateLayout> = {
       { id: 'audio-waveform', x: 33, y: 0, width: 67, height: 60 },
       { id: 'text-editor', x: 0, y: 60, width: 33, height: 40 },
       { id: 'subtitle-preview', x: 33, y: 60, width: 33, height: 40 },
-      { id: 'style-manager', x: 66, y: 60, width: 34, height: 40 },
     ]
   },
   

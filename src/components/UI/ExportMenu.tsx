@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FileText } from 'lucide-react';
 import { useProjectStore } from '../../stores/projectStore';
 import { useToast } from '../../hooks/useToast';
+import { generateYTTContent } from '../../utils/yttGenerator';
 
 interface ExportMenuProps {
   isOpen: boolean;
@@ -76,56 +77,6 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
     } finally {
       setIsExporting(false);
     }
-  };
-
-  const generateYTTContent = (project: any): string => {
-    // Escape XML special chars
-    const escapeXml = (unsafe: string) => unsafe
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&apos;');
-    
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<timedtext format="3">
-  <head>
-`;
-
-    // Add styles as pens
-    project.styles.forEach((style: any, index: number) => {
-      xml += `    <pen id="${index}" fc="${style.fc || '#FFFFFF'}" fo="${style.fo || 1}" bc="${style.bc || '#000000'}" bo="${style.bo || 0.5}"`;
-      
-      if (style.fs) xml += ` fs="${style.fs}"`;
-      if (style.sz) xml += ` sz="${style.sz}"`;
-      if (style.et) xml += ` et="${style.et}"`;
-      if (style.ec) xml += ` ec="${style.ec}"`;
-      if (style.ju) xml += ` ju="${style.ju}"`;
-      if (style.pd) xml += ` pd="${style.pd}"`;
-      if (style.ap) xml += ` ap="${style.ap}"`;
-      
-      xml += `/>\n`;
-    });
-
-    xml += `  </head>
-  <body>
-`;
-
-    // Add subtitles
-    project.subtitles.forEach((subtitle: any) => {
-      const startTime = Math.floor(subtitle.startTime);
-      const duration = Math.floor(subtitle.endTime - subtitle.startTime);
-      const span = subtitle.spans[0] || { text: '' };
-      const text = escapeXml(span.text || '');
-      const styleId = span.styleId ? project.styles.findIndex((s: any) => s.id === span.styleId) : 0;
-      
-      xml += `    <p t="${startTime}" d="${duration}"${styleId !== undefined ? ` p="${styleId}"` : ''}>${text}</p>\n`;
-    });
-
-    xml += `  </body>
-</timedtext>`;
-
-    return xml;
   };
 
   if (!isOpen) return null;
