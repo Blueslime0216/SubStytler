@@ -171,7 +171,7 @@ export const VideoPreviewPanel: React.FC = () => {
   const handleRetry = () => {
     setVideoError(null);
     setIsVideoLoaded(false);
-    if (videoRef.current && currentProject?.videoMeta?.file) {
+    if (videoRef.current && currentProject?.videoMeta?.file instanceof Blob) {
       videoRef.current.src = URL.createObjectURL(currentProject.videoMeta.file);
       videoRef.current.load();
     }
@@ -183,7 +183,7 @@ export const VideoPreviewPanel: React.FC = () => {
     open();
   }, [uploadState.isUploading, open]);
 
-  const hasVideo = !!(currentProject?.videoMeta && currentProject.videoMeta.file);
+  const hasVideo = !!(currentProject?.videoMeta?.file instanceof Blob);
   const [forceRender, setForceRender] = useState(0);
 
   // 비디오 메타가 바뀔 때마다 강제로 리렌더링하고 isVideoLoaded를 초기화
@@ -191,7 +191,7 @@ export const VideoPreviewPanel: React.FC = () => {
     setForceRender(f => f + 1);
     setIsVideoLoaded(false);
     
-    if (videoRef.current && currentProject?.videoMeta?.file) {
+    if (videoRef.current && currentProject?.videoMeta?.file instanceof Blob) {
       videoRef.current.src = URL.createObjectURL(currentProject.videoMeta.file);
       videoRef.current.load();
     }
@@ -241,7 +241,7 @@ export const VideoPreviewPanel: React.FC = () => {
 
   useEffect(() => {
     const file = currentProject?.videoMeta?.file;
-    if (!file) {
+    if (!file || !(file instanceof Blob)) {
       setVideoUrl(undefined);
       return;
     }

@@ -726,6 +726,17 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
         y={trackContentContextMenu.y}
         onClose={() => setTrackContentContextMenu(prev => ({ ...prev, isOpen: false }))}
       >
+        {/* Add Subtitle should be top if applicable */}
+        {trackContentContextMenu.trackId && trackContentContextMenu.time !== null && (
+          <ContextMenuItem 
+            icon={<Type />}
+            onClick={() => handleAddSubtitle(trackContentContextMenu.trackId!, trackContentContextMenu.time!)}
+            disabled={tracks.find(t => t.id === trackContentContextMenu.trackId)?.locked}
+          >
+            Add Subtitle
+          </ContextMenuItem>
+        )}
+
         <ContextMenuItem 
           icon={<Plus />}
           onClick={handleAddTrack}
@@ -745,16 +756,6 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
           {snapEnabled ? 'Disable Snapping' : 'Enable Snapping'}
         </ContextMenuItem>
 
-        {trackContentContextMenu.trackId && trackContentContextMenu.time !== null && (
-          <ContextMenuItem 
-            icon={<Type />}
-            onClick={() => handleAddSubtitle(trackContentContextMenu.trackId!, trackContentContextMenu.time!)}
-            disabled={tracks.find(t => t.id === trackContentContextMenu.trackId)?.locked}
-          >
-            Add Subtitle
-          </ContextMenuItem>
-        )}
-        
         {trackContentContextMenu.subtitleId && (
           <>
             <ContextMenuDivider />

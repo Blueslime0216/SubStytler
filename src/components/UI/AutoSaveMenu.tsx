@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Save, Clock, Database, Trash2, RotateCcw } from 'lucide-react';
 import { useAutoSave } from '../../hooks/useAutoSave';
 import { formatFileSize } from '../../utils/videoUtils';
+import { ClearBackupsConfirmationModal } from './ClearBackupsConfirmationModal';
 
 interface AutoSaveMenuProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export const AutoSaveMenu: React.FC<AutoSaveMenuProps> = ({
 }) => {
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [showRestoreConfirm, setShowRestoreConfirm] = useState<string | null>(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   
   const { 
     isEnabled, 
@@ -64,6 +66,16 @@ export const AutoSaveMenu: React.FC<AutoSaveMenuProps> = ({
   const handleRestoreBackup = (timestamp: string) => {
     restoreBackup(timestamp);
     setShowRestoreConfirm(null);
+    onClose();
+  };
+
+  const handleClearAllClick = () => {
+    setShowClearConfirm(true);
+  };
+
+  const handleConfirmClearAll = () => {
+    clearAllBackups();
+    setShowClearConfirm(false);
     onClose();
   };
 
@@ -194,7 +206,7 @@ export const AutoSaveMenu: React.FC<AutoSaveMenuProps> = ({
                 <h4 className="text-sm font-medium text-text-primary">Recent Backups</h4>
                 {backups.length > 0 && (
                   <button 
-                    onClick={clearAllBackups}
+                    onClick={handleClearAllClick}
                     className="text-xs text-error-color flex items-center"
                     title="Clear all backups"
                   >
@@ -270,6 +282,15 @@ export const AutoSaveMenu: React.FC<AutoSaveMenuProps> = ({
           </div>
         </motion.div>
       </AnimatePresence>
+
+      {/* Clear All Confirmation Modal */}
+      <ClearBackupsConfirmationModal
+        isOpen={showClearConfirm}
+        onClose={() => setShowClearConfirm(false)}
+        onConfirm={handleConfirmClearAll}
+        totalCount={backups.length}
+        totalSize={formatFileSize(totalStorageUsed)}
+      />
     </>
   );
 };

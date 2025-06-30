@@ -121,10 +121,17 @@ export const useAutoSave = () => {
     
     try {
       // Prepare data for saving
+      // 🔑 File 객체는 JSON 직렬화가 불가능하며, 복원 시 createObjectURL 오류를 유발한다.
+      //    따라서 백업 시에는 videoMeta.file 을 제외한 나머지 정보만 보존한다.
+      const projectForBackup = JSON.parse(JSON.stringify(currentProject));
+      if (projectForBackup?.videoMeta) {
+        delete projectForBackup.videoMeta.file;
+      }
+
       const backupData = {
         version: '1.0.0',
         timestamp: Date.now(),
-        project: currentProject,
+        project: projectForBackup,
         layout: areas,
         timeline: {
           currentTime: timelineState.currentTime,
@@ -212,8 +219,11 @@ export const useAutoSave = () => {
       
       const backup = JSON.parse(backupData);
       
-      // Restore project
+      // Restore project (remove any non-serialisable File stubs)
       if (backup.project) {
+        if (backup.project.videoMeta) {
+          delete backup.project.videoMeta.file;
+        }
         useProjectStore.getState().loadProject(backup.project);
       }
       
