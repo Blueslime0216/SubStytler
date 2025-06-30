@@ -29,6 +29,7 @@ export const MoreOptionsButton: React.FC<MoreOptionsButtonProps> = ({
 
   const handleButtonClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent default browser context menu
     if (contextMenu.isOpen) {
       setContextMenu({ ...contextMenu, isOpen: false });
     } else {

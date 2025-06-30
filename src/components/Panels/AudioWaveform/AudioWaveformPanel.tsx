@@ -1,9 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useTimelineStore } from '../../../stores/timelineStore';
 import { useProjectStore } from '../../../stores/projectStore';
-import { Waves, BarChart3, Layers } from 'lucide-react';
-import { AudioWaveformToolbar } from './AudioWaveformToolbar';
-import { AudioWaveformContent } from './AudioWaveformContent';
 import { AudioWaveformContextMenu } from './AudioWaveformContextMenu';
 import { WaveformMode } from './types';
 
@@ -73,25 +70,18 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
 
   return (
     <div className="neu-audio-waveform-panel h-full min-w-0 min-h-0 neu-bg-base p-3 flex flex-col">
-      <AudioWaveformToolbar 
-        mode={mode} 
-        onModeChange={handleModeChange} 
-      />
-      
-      <AudioWaveformContent
-        canvasRef={canvasRef}
-        containerRef={containerRef}
-        mode={mode}
-        verticalZoom={verticalZoom}
-        setVerticalZoom={setVerticalZoom}
-        localZoom={localZoom}
-        setLocalZoom={setLocalZoom}
-        localViewStart={localViewStart}
-        setLocalViewStart={setLocalViewStart}
-        localViewEnd={localViewEnd}
-        setLocalViewEnd={setLocalViewEnd}
+      <div 
+        ref={containerRef}
+        className="flex-1 min-w-0 min-h-0 relative cursor-pointer rounded-lg neu-shadow-inset overflow-hidden"
         onContextMenu={handleContextMenu}
-      />
+      >
+        <div className="absolute inset-0 w-full h-full pointer-events-none">
+          <canvas
+            ref={canvasRef}
+            className="w-full h-full"
+          />
+        </div>
+      </div>
 
       <AudioWaveformContextMenu
         contextMenu={contextMenu}
