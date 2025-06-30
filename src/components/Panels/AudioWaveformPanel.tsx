@@ -1,7 +1,8 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
 import { Waves, BarChart3, Layers } from 'lucide-react';
+import { AudioWaveformContextMenu } from '../UI/ContextMenu/AudioWaveformContextMenu';
 
 type WaveformMode = 'waveform' | 'spectrogram' | 'mixed';
 
@@ -45,6 +46,17 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
   
   const { currentTime, duration, isPlaying, setCurrentTime, snapToFrame } = useTimelineStore();
   const { currentProject } = useProjectStore();
+  
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState<{
+    isOpen: boolean;
+    x: number;
+    y: number;
+  }>({
+    isOpen: false,
+    x: 0,
+    y: 0
+  });
   
   // 비디오 요소 직접 참조
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -496,7 +508,7 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
       ctx.stroke();
       ctx.restore();
     }
-  }, [localViewStart, localViewEnd, mode, timeToPixel, precomputedWaveform, precomputedSpectrogram, audioDuration, isAnalyzing, getViewWaveformData, getViewSpectrogramData, drawWaveform, drawSpectrogram, getAccurateTime]);
+  }, [localViewStart, localViewEnd, mode, timeToPixel, precomputedWaveform, precomputedSpectrogram, audioDuration, isAnalyzing, getViewWaveformData, getViewSpectrogramData, drawWaveform, drawSpectrogram, getAccurateTime, isDraggingIndicator]);
 
   // 애니메이션 프레임을 사용한 지속적인 업데이트
   useEffect(() => {
@@ -661,6 +673,23 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     setMode(newMode);
   };
 
+  // 줌 초기화 처리
+  const handleResetZoom = useCallback(() => {
+    setLocalViewStart(0);
+    setLocalViewEnd(duration);
+    setVerticalZoom(1);
+  }, [duration]);
+
+  // 컨텍스트 메뉴 처리
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenu({
+      isOpen: true,
+      x: e.clientX,
+      y: e.clientY
+    });
+  }, []);
+
   // 오디오가 없을 때 placeholder 보여주기
   if (!currentProject?.videoMeta) {
     return (
@@ -717,6 +746,7 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => setIsPanning(false)}
+        onContextMenu={handleContextMenu}
       >
         <div className="absolute inset-0 w-full h-full pointer-events-none">
           <canvas
@@ -747,6 +777,17 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
           );
         })()}
       </div>
+
+      {/* Context Menu */}
+      <AudioWaveformContextMenu
+        isOpen={contextMenu.isOpen}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        onClose={() => setContextMenu({ ...contextMenu, isOpen: false })}
+        currentMode={mode}
+        onModeChange={handleModeChange}
+        onResetZoom={handleResetZoom}
+      />
     </div>
   );
 };

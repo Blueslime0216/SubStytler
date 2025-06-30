@@ -4,12 +4,13 @@ import TrackHeader, { TrackHeaderRef } from './TrackHeader';
 import SubtitleBlock from './SubtitleBlock';
 import TimelineRuler from './TimelineRuler';
 import { useTimelineInteraction } from '../../hooks/useTimelineInteraction';
-import { Plus, Eye, EyeOff, Lock, Unlock, Trash2, Edit, Type, FileText } from 'lucide-react';
+import { Plus, Eye, EyeOff, Lock, Unlock, Trash2, Edit, Type, FileText, ZoomOut } from 'lucide-react';
 import { useSelectedTrackStore } from '../../stores/selectedTrackStore';
 import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
 import { ContextMenu, ContextMenuItem, ContextMenuDivider, ContextMenuSectionTitle } from '../UI/ContextMenu';
 import { useHistoryStore } from '../../stores/historyStore';
 import { useSubtitleHighlightStore } from '../../stores/subtitleHighlightStore';
+import { TimelineContentContextMenu } from '../UI/ContextMenu/TimelineContentContextMenu';
 
 interface TracksContainerProps {
   currentTime: number;
@@ -23,6 +24,7 @@ interface TracksContainerProps {
   isHovered: boolean;
   setIsHovered: React.Dispatch<React.SetStateAction<boolean>>;
   onSidebarWidthChange?: (width: number) => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
 }
 
 export const TracksContainer: React.FC<TracksContainerProps> = ({
@@ -36,7 +38,8 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   setViewRange,
   isHovered,
   setIsHovered,
-  onSidebarWidthChange
+  onSidebarWidthChange,
+  onContextMenu
 }) => {
   const {
     currentProject,
@@ -190,7 +193,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   const TRACK_HEIGHT = 50;
 
   // Sidebar width state for resizable track header
-  const [sidebarWidth, setSidebarWidth] = useState(180);
+  const [sidebarWidth, setSidebarWidth] = useState<number>(180);
   const isResizingRef = useRef(false);
   const startXRef = useRef(0);
   const startWidthRef = useRef(180);
@@ -289,6 +292,11 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
   };
 
   const handleTrackContentContextMenu = (e: React.MouseEvent) => {
+    if (onContextMenu) {
+      onContextMenu(e);
+      return;
+    }
+    
     e.preventDefault();
     
     // Find if a subtitle block was right-clicked
@@ -522,6 +530,12 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
     closeAllContextMenus();
   };
 
+  const handleResetZoom = () => {
+    setZoom(1);
+    setViewRange(0, duration);
+    closeAllContextMenus();
+  };
+
   const closeAllContextMenus = () => {
     setTrackHeaderContextMenu(prev => ({ ...prev, isOpen: false }));
     setTrackContentContextMenu(prev => ({ ...prev, isOpen: false }));
@@ -682,7 +696,7 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
               return (
                 <ContextMenuItem 
                   icon={track?.locked ? <Unlock /> : <Lock />}
-                  onClick={() => handleToggleTrackLock(trackHeaderContextMenu.trackId!)}
+                  onClick={() => handleToggleLock(trackHeaderContextMenu.trackId!)}
                 >
                   {track?.locked ? 'Unlock Track' : 'Lock Track'}
                 </ContextMenuItem>
@@ -713,6 +727,15 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
             </ContextMenuItem>
           </>
         )}
+        
+        <ContextMenuDivider />
+        
+        <ContextMenuItem 
+          icon={<ZoomOut />}
+          onClick={handleResetZoom}
+        >
+          Reset Zoom
+        </ContextMenuItem>
       </ContextMenu>
 
       {/* Track Content Context Menu */}
@@ -752,6 +775,15 @@ export const TracksContainer: React.FC<TracksContainerProps> = ({
             </ContextMenuItem>
           </>
         )}
+        
+        <ContextMenuDivider />
+        
+        <ContextMenuItem 
+          icon={<ZoomOut />}
+          onClick={handleResetZoom}
+        >
+          Reset Zoom
+        </ContextMenuItem>
       </ContextMenu>
     </div>
   );

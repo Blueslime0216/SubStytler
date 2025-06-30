@@ -10,6 +10,7 @@ import { useSelectedTrackStore } from '../../stores/selectedTrackStore';
 import { useSelectedSubtitleStore } from '../../stores/selectedSubtitleStore';
 import { useSubtitleHighlightStore } from '../../stores/subtitleHighlightStore';
 import { useHistoryStore } from '../../stores/historyStore';
+import { TimelineContentContextMenu } from '../UI/ContextMenu/TimelineContentContextMenu';
 
 export const SubtitleTimelinePanel: React.FC = () => {
   const interactionRef = useRef<HTMLDivElement>(null);
@@ -40,6 +41,17 @@ export const SubtitleTimelinePanel: React.FC = () => {
 
   const [sidebarWidth, setSidebarWidth] = useState<number>(180);
 
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState<{
+    isOpen: boolean;
+    x: number;
+    y: number;
+  }>({
+    isOpen: false,
+    x: 0,
+    y: 0
+  });
+
   // Sync local state with global state on mount and when global state changes
   useEffect(() => {
     if (!isInitialized) {
@@ -60,6 +72,22 @@ export const SubtitleTimelinePanel: React.FC = () => {
   const setZoom = (z: number) => {
     setLocalZoom(z);
     setGlobalZoom(z);
+  };
+
+  // Reset zoom function
+  const handleResetZoom = () => {
+    setZoom(1);
+    setViewRange(0, duration);
+  };
+
+  // Context menu handler
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenu({
+      isOpen: true,
+      x: e.clientX,
+      y: e.clientY
+    });
   };
 
   const addNewSubtitle = () => {
@@ -259,6 +287,7 @@ export const SubtitleTimelinePanel: React.FC = () => {
             isHovered={isHovered}
             setIsHovered={setIsHovered}
             onSidebarWidthChange={setSidebarWidth}
+            onContextMenu={handleContextMenu}
           />
         </div>
         
@@ -272,6 +301,15 @@ export const SubtitleTimelinePanel: React.FC = () => {
           sidebarOffset={sidebarWidth}
         />
       </div>
+
+      {/* Context Menu */}
+      <TimelineContentContextMenu
+        isOpen={contextMenu.isOpen}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        onClose={() => setContextMenu({ ...contextMenu, isOpen: false })}
+        onResetZoom={handleResetZoom}
+      />
     </div>
   );
 };
