@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { useProjectStore } from '../../../stores/projectStore';
-import { HeaderContextMenu } from '../../UI/ContextMenu/HeaderContextMenu';
 
 interface ProjectTitleProps {
   isEditingTitle: boolean;
@@ -18,15 +17,6 @@ export const ProjectTitle: React.FC<ProjectTitleProps> = ({
   titleInputRef
 }) => {
   const { currentProject, updateProject } = useProjectStore();
-  const [contextMenu, setContextMenu] = useState<{
-    isOpen: boolean;
-    x: number;
-    y: number;
-  }>({
-    isOpen: false,
-    x: 0,
-    y: 0
-  });
 
   // Handle title double click
   const handleTitleDoubleClick = () => {
@@ -53,16 +43,6 @@ export const ProjectTitle: React.FC<ProjectTitleProps> = ({
     }
   };
 
-  // Handle context menu
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setContextMenu({
-      isOpen: true,
-      x: e.clientX,
-      y: e.clientY
-    });
-  };
-
   return (
     <div className="flex-1 flex justify-center">
       {isEditingTitle ? (
@@ -79,21 +59,11 @@ export const ProjectTitle: React.FC<ProjectTitleProps> = ({
         <div 
           className="text-base opacity-80 font-medium cursor-pointer hover:opacity-100 transition-opacity duration-200"
           onDoubleClick={handleTitleDoubleClick}
-          onContextMenu={handleContextMenu}
           title="Double-click to edit project name"
         >
           {currentProject?.name || "Untitled Project"}
         </div>
       )}
-
-      {/* Context Menu */}
-      <HeaderContextMenu
-        isOpen={contextMenu.isOpen}
-        x={contextMenu.x}
-        y={contextMenu.y}
-        onClose={() => setContextMenu({ ...contextMenu, isOpen: false })}
-        onEditTitle={() => setIsEditingTitle(true)}
-      />
     </div>
   );
 };
