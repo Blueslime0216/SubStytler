@@ -44,7 +44,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     };
   }, [isOpen, onClose]);
 
-  // Adjust position to ensure menu stays within viewport
+  // Adjust position to ensure menu stays within viewport (오른쪽/아래로 넘치면 왼쪽/위로 붙임)
   const adjustPosition = () => {
     if (!menuRef.current) return { x, y };
 
@@ -55,15 +55,19 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     let adjustedX = x;
     let adjustedY = y;
 
-    // Adjust X if menu would go off right edge
+    // 오른쪽으로 넘치면 왼쪽 정렬
     if (x + menuRect.width > viewportWidth) {
-      adjustedX = viewportWidth - menuRect.width - 8;
+      adjustedX = Math.max(viewportWidth - menuRect.width - 8, 8);
     }
+    // 왼쪽으로도 넘치면 0에 고정
+    if (adjustedX < 0) adjustedX = 8;
 
-    // Adjust Y if menu would go off bottom edge
+    // 아래로 넘치면 위로 붙임
     if (y + menuRect.height > viewportHeight) {
-      adjustedY = viewportHeight - menuRect.height - 8;
+      adjustedY = Math.max(y - menuRect.height, 8);
     }
+    // 위로도 넘치면 0에 고정
+    if (adjustedY < 0) adjustedY = 8;
 
     return { x: adjustedX, y: adjustedY };
   };

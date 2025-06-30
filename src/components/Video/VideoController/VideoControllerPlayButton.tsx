@@ -37,7 +37,7 @@ const VideoControllerPlayButton: React.FC<VideoControllerPlayButtonProps> = ({
         disabled={!isVideoLoaded}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        title={isPlaying ? '일시정지' : '재생'}
+        title={isPlaying ? 'Pause' : 'Play'}
       >
         {isPlaying ? (
           <svg 
@@ -80,7 +80,7 @@ const VideoControllerPlayButton: React.FC<VideoControllerPlayButtonProps> = ({
               zIndex: 9999
             }}
           >
-            {isPlaying ? '일시정지' : '재생'}
+            {isPlaying ? 'Pause' : 'Play'}
           </div>
         </Portal>
       )}

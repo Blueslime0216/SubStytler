@@ -56,7 +56,7 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
           onClick={handleSubtitleToggle}
           onMouseEnter={() => handleMouseEnter('subtitle')}
           onMouseLeave={handleMouseLeave}
-          title={isSubtitleOn ? '자막 끄기' : '자막 켜기'}
+          title={isSubtitleOn ? 'Hide subtitles' : 'Show subtitles'}
         >
           <svg className="video-controller-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="2" />
@@ -90,7 +90,7 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
           className="video-controller-button"
           onMouseEnter={() => handleMouseEnter('mobile')}
           onMouseLeave={handleMouseLeave}
-          title="모바일 모드"
+          title="Mobile mode"
         >
           <Smartphone className="video-controller-icon" width={20} height={20} />
         </button>
@@ -121,7 +121,7 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
           onClick={onPinToggle}
           onMouseEnter={() => handleMouseEnter('pin')}
           onMouseLeave={handleMouseLeave}
-          title="컨트롤러 고정/해제"
+          title="Toggle controller lock"
         >
           {isPinned ? (
             <PinOff className="video-controller-icon" width={20} height={20} />

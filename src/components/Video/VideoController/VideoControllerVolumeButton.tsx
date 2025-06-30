@@ -55,10 +55,10 @@ const VideoControllerVolumeButton: React.FC<VideoControllerVolumeButtonProps> = 
   };
   
   const getVolumeTooltipText = () => {
-    if (isMuted) return '음소거 해제';
-    if (volume === 0) return '음소거';
-    if (volume < 0.5) return '낮은 볼륨';
-    return '높은 볼륨';
+    if (isMuted) return 'Unmute';
+    if (volume === 0) return 'Mute';
+    if (volume < 0.5) return 'Low volume';
+    return 'High volume';
   };
   
   // 볼륨 컨트롤러 토글

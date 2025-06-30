@@ -35,9 +35,13 @@ export const MoreOptionsButton: React.FC<MoreOptionsButtonProps> = ({
     } else {
       const rect = buttonRef.current?.getBoundingClientRect();
       if (rect) {
+        // 기본은 left 기준, 오른쪽이 화면 밖으로 나가면 right 기준으로 열기
+        const viewportWidth = window.innerWidth;
+        // 항상 페이지 오른쪽 모서리에서 20px 떨어진 곳에 메뉴가 뜨도록
+        const x = viewportWidth - 190;
         setContextMenu({
           isOpen: true,
-          x: rect.left,
+          x,
           y: rect.bottom + 5
         });
       }

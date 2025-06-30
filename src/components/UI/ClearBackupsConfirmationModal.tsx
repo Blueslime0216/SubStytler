@@ -12,7 +12,7 @@ interface ClearBackupsConfirmationModalProps {
 }
 
 /**
- * 모든 자동-저장 백업을 삭제하기 전에 경고를 표시하는 모달 컴포넌트
+ * Modal component that warns before deleting all auto-save backups
  */
 export const ClearBackupsConfirmationModal: React.FC<ClearBackupsConfirmationModalProps> = ({
   isOpen,
@@ -50,8 +50,8 @@ export const ClearBackupsConfirmationModal: React.FC<ClearBackupsConfirmationMod
                 <Trash2 className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-text-primary">모든 백업 삭제</h2>
-                <p className="text-sm text-text-secondary">이 작업은 되돌릴 수 없습니다.</p>
+                <h2 className="text-lg font-semibold text-text-primary">Delete All Backups</h2>
+                <p className="text-sm text-text-secondary">This action cannot be undone.</p>
               </div>
             </div>
           </div>
@@ -61,12 +61,12 @@ export const ClearBackupsConfirmationModal: React.FC<ClearBackupsConfirmationMod
             <div className="flex items-center gap-3 text-text-secondary text-sm">
               <Database className="w-4 h-4" />
               <span>
-                총 <span className="font-semibold text-text-primary">{totalCount}</span>개의 백업,{' '}
-                <span className="font-semibold text-text-primary">{totalSize}</span> 사용 중
+                Total <span className="font-semibold text-text-primary">{totalCount}</span> backups,{' '}
+                <span className="font-semibold text-text-primary">{totalSize}</span> in use
               </span>
             </div>
             <p className="text-sm text-text-secondary">
-              모든 자동-저장 백업을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.
+              Are you sure you want to delete all auto-save backups? This action cannot be undone.
             </p>
           </div>
 
@@ -76,13 +76,13 @@ export const ClearBackupsConfirmationModal: React.FC<ClearBackupsConfirmationMod
               onClick={onClose}
               className="px-4 py-2 rounded-lg border border-border-color text-text-secondary hover:bg-mid-color/30 transition-colors"
             >
-              취소
+              Cancel
             </button>
             <button
               onClick={onConfirm}
               className="px-4 py-2 rounded-lg bg-error-color text-white hover:bg-error-color/90 transition-colors"
             >
-              모두 삭제
+              Delete All
             </button>
           </div>
         </motion.div>

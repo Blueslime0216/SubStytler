@@ -6,6 +6,7 @@ import { useProjectStore } from './projectStore';
 import { useSelectedTrackStore } from './selectedTrackStore';
 import { useSelectedSubtitleStore } from './selectedSubtitleStore';
 import { useTimelineStore } from './timelineStore';
+import { useSnapStore } from './snapStore';
 
 /*
  * Lightweight undo/redo implementation inspired by zustand's
@@ -319,8 +320,12 @@ function applySnapshot(snapshot: Snapshot) {
       }
       return;
     }
-    
-    // 스타일 전용 스냅샷 로직은 제거됨
+
+    // 4. Snap Enabled 상태 스냅샷
+    if (typeof snapshot?.snapEnabled === 'boolean') {
+      useSnapStore.getState().setEnabled(snapshot.snapEnabled, false);
+      return;
+    }
 
   } finally {
     isApplyingSnapshot = false;
