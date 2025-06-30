@@ -113,9 +113,10 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     icon: AdvancedEditingIcon,
     areas: [
       { id: 'video-preview', x: 0, y: 0, width: 66, height: 60 },
-      { id: 'audio-waveform', x: 66, y: 0, width: 34, height: 30 },
-      { id: 'script-viewer', x: 66, y: 60, width: 34, height: 40 },
-      { id: 'subtitle-timeline', x: 0, y: 60, width: 66, height: 40 },
+      { id: 'graph-library', x: 66, y: 0, width: 34, height: 30 },
+      { id: 'subtitle-timeline', x: 66, y: 60, width: 34, height: 40 },
+      { id: 'keyframe', x: 0, y: 60, width: 66, height: 40 },
+      { id: 'text-editor', x: 66, y: 30, width: 34, height: 30 },
     ]
   },
   

@@ -21,6 +21,9 @@ export const basePanelRegistry = {
   'notes': createPanelComponent('notes'),
   'empty': createPanelComponent('empty'),
   'subtitle-preview': createPanelComponent('subtitle-preview'),
+  'keyframe': createPanelComponent('keyframe'),
+  'graph-editor': createPanelComponent('graph-editor'),
+  'graph-library': createPanelComponent('graph-library'),
 } as const;
 
 // 🎯 동적 패널 레지스트리 - 패턴 매칭 지원

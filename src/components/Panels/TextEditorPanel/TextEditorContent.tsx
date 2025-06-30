@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Palette, Type, Sliders, Layout, Pipette } from 'lucide-react';
+import KeyframeButton from '../../UI/KeyframeButton';
 import CollapsibleSection from '../../UI/CollapsibleSection';
 import CustomRangeInput from '../../UI/CustomRangeInput';
 import ColorPicker from '../../UI/ColorPicker';
@@ -61,14 +62,14 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
   setPositionX,
   setPositionY
 }) => {
-  // 색상 피커 표시 상태
+  // Color picker display state
   const [showTextColorPicker, setShowTextColorPicker] = useState(false);
   const [showBgColorPicker, setShowBgColorPicker] = useState(false);
   const [showOutlineColorPicker, setShowOutlineColorPicker] = useState(false);
 
-  // 폰트 크기 직접 입력 핸들러
+  // Font size direct input handler
   const handleFontSizeChange = (value: string) => {
-    // 숫자만 추출하고 '%' 추가
+    // Extract numbers and add '%'
     const numericValue = value.replace(/[^0-9]/g, '');
     if (numericValue) {
       setFontSize(`${numericValue}%`);
@@ -80,33 +81,34 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
       {/* Text Editor */}
       <div className="mb-4">
         <label className="block text-xs font-medium text-text-secondary mb-1">
-          자막 텍스트
+          Subtitle Text
         </label>
         <textarea
           value={selectedText}
           onChange={(e) => handleTextChange(e.target.value)}
           className="w-full bg-bg shadow-inset rounded-lg p-3 text-sm text-text-primary resize-none"
-          placeholder="자막 텍스트를 입력하세요..."
+          placeholder="Enter subtitle text..."
           rows={3}
         />
       </div>
       
-      {/* 색상 및 스타일 섹션 */}
+      {/* Color & Style Section */}
       <CollapsibleSection 
-        title="색상 및 불투명도" 
+        title="Color & Opacity" 
         defaultOpen={true}
         icon={<Palette className="w-4 h-4 text-primary" />}
       >
-        {/* 텍스트 색상 */}
+        {/* Text Color */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-1">
-            <label className="text-xs font-medium text-text-secondary">텍스트 색상</label>
+            <label className="text-xs font-medium text-text-secondary">Text Color</label>
             <div className="flex items-center gap-1">
               <div 
                 className="w-4 h-4 rounded cursor-pointer border border-border-color"
                 style={{ backgroundColor: textColor }}
                 onClick={() => setShowTextColorPicker(!showTextColorPicker)}
               />
+              <KeyframeButton property="fc" getCurrentValue={() => textColor}/>
             </div>
           </div>
           
@@ -122,20 +124,23 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
             </div>
           )}
           
-          <CustomRangeInput
-            min={0}
-            max={255}
-            value={textOpacity}
-            onChange={setTextOpacity}
-            label="텍스트 불투명도"
-            unit=""
-          />
+          <div className="flex items-center gap-2">
+            <CustomRangeInput
+              min={0}
+              max={255}
+              value={textOpacity}
+              onChange={setTextOpacity}
+              label="Text Opacity"
+              unit=""
+            />
+            <KeyframeButton property="fo" getCurrentValue={() => textOpacity} />
+          </div>
         </div>
         
-        {/* 배경 색상 */}
+        {/* Background Color */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-1">
-            <label className="text-xs font-medium text-text-secondary">배경 색상</label>
+            <label className="text-xs font-medium text-text-secondary">Background Color</label>
             <div className="flex items-center gap-1">
               <div 
                 className="w-4 h-4 rounded cursor-pointer border border-border-color"
@@ -157,34 +162,37 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
             </div>
           )}
           
-          <CustomRangeInput
-            min={0}
-            max={255}
-            value={backgroundOpacity}
-            onChange={setBackgroundOpacity}
-            label="배경 불투명도"
-            unit=""
-          />
+          <div className="flex items-center gap-2">
+            <CustomRangeInput
+              min={0}
+              max={255}
+              value={backgroundOpacity}
+              onChange={setBackgroundOpacity}
+              label="Background Opacity"
+              unit=""
+            />
+            <KeyframeButton property="bo" getCurrentValue={() => backgroundOpacity} />
+          </div>
         </div>
       </CollapsibleSection>
       
-      {/* 글꼴 및 크기 섹션 */}
+      {/* Font & Size Section */}
       <CollapsibleSection 
-        title="글꼴 및 크기" 
+        title="Font & Size" 
         defaultOpen={true}
         icon={<Type className="w-4 h-4 text-primary" />}
       >
-        {/* 글꼴 선택 */}
+        {/* Font Select */}
         <div className="mb-4">
           <label className="block text-xs font-medium text-text-secondary mb-1">
-            글꼴
+            Font
           </label>
           <select
             value={fontFamily}
             onChange={(e) => setFontFamily(e.target.value)}
             className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
-            <option value="0">Roboto (기본)</option>
+            <option value="0">Roboto (Default)</option>
             <option value="1">Courier New</option>
             <option value="2">Times New Roman</option>
             <option value="3">Lucida Console</option>
@@ -195,48 +203,40 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
           </select>
         </div>
         
-        {/* 글꼴 크기 */}
+        {/* Font Size */}
         <div className="mb-4">
           <label className="block text-xs font-medium text-text-secondary mb-1">
-            글꼴 크기
+            Font Size
           </label>
           <div className="flex items-center gap-2">
             <input
               type="text"
               value={fontSize}
               onChange={(e) => handleFontSizeChange(e.target.value)}
-              className="w-16 bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
-            />
-            <select
-              value={fontSize}
-              onChange={(e) => setFontSize(e.target.value)}
               className="flex-1 bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
-            >
-              <option value="75%">75% (작게)</option>
-              <option value="100%">100% (기본)</option>
-              <option value="125%">125% (조금 크게)</option>
-              <option value="150%">150% (크게)</option>
-              <option value="200%">200% (매우 크게)</option>
-            </select>
+              placeholder="e.g., 150%"
+            />
+            <KeyframeButton property="sz" getCurrentValue={() => fontSize} />
           </div>
         </div>
       </CollapsibleSection>
       
-      {/* 윤곽선 및 효과 섹션 */}
+      {/* Outline & Effects Section */}
       <CollapsibleSection 
-        title="윤곽선 및 효과" 
+        title="Outline & Effects" 
         icon={<Sliders className="w-4 h-4 text-primary" />}
       >
-        {/* 윤곽선 색상 */}
+        {/* Outline Color */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-1">
-            <label className="text-xs font-medium text-text-secondary">윤곽선 색상</label>
+            <label className="text-xs font-medium text-text-secondary">Outline Color</label>
             <div className="flex items-center gap-1">
               <div 
                 className="w-4 h-4 rounded cursor-pointer border border-border-color"
                 style={{ backgroundColor: outlineColor }}
                 onClick={() => setShowOutlineColorPicker(!showOutlineColorPicker)}
               />
+              <KeyframeButton property="ec" getCurrentValue={() => outlineColor} />
             </div>
           </div>
           
@@ -253,92 +253,102 @@ const TextEditorContent: React.FC<TextEditorContentProps> = ({
           )}
         </div>
         
-        {/* 윤곽선 스타일 */}
+        {/* Outline Style */}
         <div className="mb-4">
           <label className="block text-xs font-medium text-text-secondary mb-1">
-            윤곽선 스타일
+            Outline Style
           </label>
           <select
             value={outlineType}
             onChange={(e) => setOutlineType(parseInt(e.target.value))}
             className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
-            <option value={0}>없음</option>
-            <option value={1}>하드 그림자</option>
-            <option value={2}>베벨</option>
-            <option value={3}>글로우/외곽선</option>
-            <option value={4}>부드러운 그림자</option>
+            <option value={0}>None</option>
+            <option value={1}>Hard Shadow</option>
+            <option value={2}>Bevel</option>
+            <option value={3}>Glow/Outline</option>
+            <option value={4}>Soft Shadow</option>
           </select>
         </div>
       </CollapsibleSection>
       
-      {/* 위치 및 방향 섹션 */}
+      {/* Position & Direction Section */}
       <CollapsibleSection 
-        title="위치 및 방향" 
+        title="Position & Direction" 
         icon={<Layout className="w-4 h-4 text-primary" />}
       >
-        {/* 앵커 포인트 */}
+        {/* Anchor Point */}
         <div className="mb-4">
           <label className="block text-xs font-medium text-text-secondary mb-1">
-            기준점
+            Anchor Point
           </label>
           <select
             value={anchorPoint}
             onChange={(e) => setAnchorPoint(parseInt(e.target.value))}
             className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
-            <option value={0}>좌상단</option>
-            <option value={1}>상단 중앙</option>
-            <option value={2}>우상단</option>
-            <option value={3}>좌측 중앙</option>
-            <option value={4}>중앙 (기본)</option>
-            <option value={5}>우측 중앙</option>
-            <option value={6}>좌하단</option>
-            <option value={7}>하단 중앙</option>
-            <option value={8}>우하단</option>
+            <option value={0}>Top Left</option>
+            <option value={1}>Top Center</option>
+            <option value={2}>Top Right</option>
+            <option value={3}>Middle Left</option>
+            <option value={4}>Middle Center (Default)</option>
+            <option value={5}>Middle Right</option>
+            <option value={6}>Bottom Left</option>
+            <option value={7}>Bottom Center</option>
+            <option value={8}>Bottom Right</option>
           </select>
         </div>
         
-        {/* 텍스트 방향 */}
+        {/* Text Direction */}
         <div className="mb-4">
           <label className="block text-xs font-medium text-text-secondary mb-1">
-            텍스트 방향
+            Text Direction
           </label>
           <select
             value={printDirection}
             onChange={(e) => setPrintDirection(e.target.value)}
             className="w-full bg-bg shadow-inset rounded p-2 text-xs text-text-primary"
           >
-            <option value="00">가로 왼쪽→오른쪽 (기본)</option>
-            <option value="20">세로 오른쪽→왼쪽</option>
-            <option value="21">세로 왼쪽→오른쪽</option>
-            <option value="30">90° 회전, 왼쪽→오른쪽</option>
-            <option value="31">90° 회전, 오른쪽→왼쪽</option>
+            <option value="00">Horizontal LTR (Default)</option>
+            <option value="20">Vertical RTL</option>
+            <option value="21">Vertical LTR</option>
+            <option value="30">Rotated 90°, LTR</option>
+            <option value="31">Rotated 90°, RTL</option>
           </select>
         </div>
         
-        {/* 수평 위치 */}
+        {/* Horizontal Position */}
         <div className="mb-4">
           <CustomRangeInput
             min={0}
             max={100}
             value={positionX}
-            onChange={setPositionX}
-            label="수평 위치 (X%)"
+            onChange={(value: number)=>{
+              const intVal = Math.round(value);
+              setPositionX(intVal);
+              handleStyleChange('ah', intVal);
+            }}
+            label="Horizontal Position (X%)"
             unit="%"
           />
+          <KeyframeButton property="ah" getCurrentValue={() => positionX} />
         </div>
         
-        {/* 수직 위치 */}
+        {/* Vertical Position */}
         <div className="mb-4">
           <CustomRangeInput
             min={0}
             max={100}
             value={positionY}
-            onChange={setPositionY}
-            label="수직 위치 (Y%)"
+            onChange={(value: number)=>{
+              const intVal = Math.round(value);
+              setPositionY(intVal);
+              handleStyleChange('av', intVal);
+            }}
+            label="Vertical Position (Y%)"
             unit="%"
           />
+          <KeyframeButton property="av" getCurrentValue={() => positionY} />
         </div>
       </CollapsibleSection>
     </div>

@@ -98,9 +98,31 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
         roundedUpdates.endTime = Math.round(updates.endTime);
       }
 
-      const updatedSubtitles = currentProject.subtitles.map((sub: SubtitleBlock) =>
-        sub.id === id ? { ...sub, ...roundedUpdates } : sub
-      );
+      // 이동 시 키프레임 시간도 같이 이동
+      const updatedSubtitles = currentProject.subtitles.map((sub: SubtitleBlock) => {
+        if (sub.id !== id) return sub;
+
+        // 계산할 업데이트를 적용하기 전에 복사본을 만듭니다.
+        const newSub: SubtitleBlock = { ...sub, ...roundedUpdates } as SubtitleBlock;
+
+        // startTime 변경이 있는 경우 키프레임 시간 보정
+        if (roundedUpdates.startTime !== undefined && roundedUpdates.startTime !== sub.startTime) {
+          const delta = Math.round(roundedUpdates.startTime - sub.startTime);
+          if (delta !== 0) {
+            const spansCopy = newSub.spans.map((sp) => {
+              if (!sp.animations) return sp;
+              const animCopy = sp.animations.map((anim: any) => {
+                const kfs = anim.keyframes.map((kf: any) => ({ ...kf, time: Math.max(0, kf.time + delta) }));
+                return { ...anim, keyframes: kfs };
+              });
+              return { ...sp, animations: animCopy };
+            });
+            newSub.spans = spansCopy as any;
+          }
+        }
+
+        return newSub;
+      });
 
       // Update the project
       set({
@@ -187,5 +209,163 @@ export const projectSubtitleActions: StateCreator<any> = (set, get, _store) => (
         useSelectedSubtitleStore.getState().setSelectedSubtitleId(null);
       }
     }
+  },
+
+  /**
+   * Add a keyframe to a subtitle's animation for given property.
+   */
+  addKeyframe: (
+    subtitleId: string,
+    property: string,
+    keyframe: { time: number; value: any; easingId?: string },
+  ) => {
+    const { currentProject } = get();
+    if (!currentProject) return;
+
+    const updatedSubtitles = currentProject.subtitles.map((sub: SubtitleBlock) => {
+      if (sub.id !== subtitleId) return sub;
+
+      // Clone spans to avoid mutating original directly
+      const spansCopy = sub.spans.map((s) => ({ ...s }));
+      const firstSpan = spansCopy[0];
+      const animations: any[] = firstSpan.animations ? [...firstSpan.animations] : [];
+
+      let animIndex = animations.findIndex((a) => a.property === property);
+      if (animIndex === -1) {
+        animations.push({ id: property, property, keyframes: [], duration: 0 });
+        animIndex = animations.length - 1;
+      }
+
+      const anim = animations[animIndex];
+      anim.keyframes = [...anim.keyframes, keyframe].sort((a: any, b: any) => a.time - b.time);
+
+      firstSpan.animations = animations;
+
+      return {
+        ...sub,
+        spans: spansCopy,
+      };
+    });
+
+    // Record history
+    const historyStore = useHistoryStore.getState();
+    historyStore.record(
+      { project: { subtitles: currentProject.subtitles } },
+      'Add keyframe',
+      true,
+    );
+
+    set({
+      currentProject: { ...currentProject, subtitles: updatedSubtitles },
+      isModified: true,
+    });
+
+    historyStore.record(
+      { project: { subtitles: updatedSubtitles } },
+      `Added keyframe (${property})`,
+    );
+  },
+
+  /**
+   * Move a keyframe to new time (and optionally change easing).
+   */
+  moveKeyframe: (
+    subtitleId: string,
+    property: string,
+    oldTime: number,
+    newTime: number,
+  ) => {
+    const { currentProject } = get();
+    if (!currentProject) return;
+
+    const updatedSubtitles = currentProject.subtitles.map((sub: SubtitleBlock) => {
+      if (sub.id !== subtitleId) return sub;
+
+      const spansCopy = sub.spans.map((s) => ({ ...s }));
+      const firstSpan = spansCopy[0];
+      const animations: any[] = firstSpan.animations ? [...firstSpan.animations] : [];
+      const anim = animations.find((a) => a.property === property);
+      if (!anim) return sub;
+
+      const kfIndex = anim.keyframes.findIndex((k: any) => k.time === oldTime);
+      if (kfIndex === -1) return sub;
+      const kf = { ...anim.keyframes[kfIndex], time: newTime };
+      anim.keyframes[kfIndex] = kf;
+      anim.keyframes.sort((a: any, b: any) => a.time - b.time);
+
+      firstSpan.animations = animations;
+      return { ...sub, spans: spansCopy };
+    });
+
+    const historyStore = useHistoryStore.getState();
+    historyStore.record({ project: { subtitles: currentProject.subtitles } }, 'Move keyframe', true);
+
+    set({ currentProject: { ...currentProject, subtitles: updatedSubtitles }, isModified: true });
+
+    historyStore.record({ project: { subtitles: updatedSubtitles } }, 'Keyframe moved');
+  },
+
+  /**
+   * Update easingId of a keyframe.
+   */
+  setKeyframeEasing: (
+    subtitleId: string,
+    property: string,
+    time: number,
+    easingId: string,
+  ) => {
+    const { currentProject } = get();
+    if (!currentProject) return;
+
+    const updatedSubtitles = currentProject.subtitles.map((sub: SubtitleBlock) => {
+      if (sub.id !== subtitleId) return sub;
+
+      const spansCopy = sub.spans.map((s) => ({ ...s }));
+      const firstSpan = spansCopy[0];
+      const animations: any[] = firstSpan.animations ? [...firstSpan.animations] : [];
+      const anim = animations.find((a) => a.property === property);
+      if (!anim) return sub;
+
+      const kf = anim.keyframes.find((k: any) => k.time === time);
+      if (!kf) return sub;
+      kf.easingId = easingId;
+
+      firstSpan.animations = animations;
+      return { ...sub, spans: spansCopy };
+    });
+
+    const historyStore = useHistoryStore.getState();
+    historyStore.record({ project: { subtitles: currentProject.subtitles } }, 'Change keyframe easing', true);
+
+    set({ currentProject: { ...currentProject, subtitles: updatedSubtitles }, isModified: true });
+
+    historyStore.record({ project: { subtitles: updatedSubtitles } }, 'Keyframe easing changed');
+  },
+
+  deleteKeyframe: (
+    subtitleId: string,
+    property: string,
+    time: number,
+  ) => {
+    const { currentProject } = get();
+    if (!currentProject) return;
+
+    const prev = currentProject.subtitles;
+    const updatedSubtitles = currentProject.subtitles.map((sub: SubtitleBlock) => {
+      if (sub.id !== subtitleId) return sub;
+      const spansCopy = sub.spans.map((s) => ({ ...s }));
+      const firstSpan = spansCopy[0];
+      const animations: any[] = firstSpan.animations ? [...firstSpan.animations] : [];
+      const anim = animations.find((a) => a.property === property);
+      if (!anim) return sub;
+      anim.keyframes = anim.keyframes.filter((k: any) => k.time !== time);
+      firstSpan.animations = animations;
+      return { ...sub, spans: spansCopy };
+    });
+
+    const historyStore = useHistoryStore.getState();
+    historyStore.record({ project: { subtitles: prev } }, 'Delete keyframe', true);
+    set({ currentProject: { ...currentProject, subtitles: updatedSubtitles }, isModified: true });
+    historyStore.record({ project: { subtitles: updatedSubtitles } }, 'Keyframe deleted');
   },
 });

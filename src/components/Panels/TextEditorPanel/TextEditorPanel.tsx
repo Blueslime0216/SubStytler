@@ -9,7 +9,7 @@ import TextEditorEmptyState from './TextEditorEmptyState';
 import '../../../styles/components/text-editor-panel.css';
 
 export const TextEditorPanel: React.FC = () => {
-  // 스타일 상태
+  // Style states
   const [selectedText, setSelectedText] = useState('');
   const [textColor, setTextColor] = useState('#FFFFFF');
   const [textOpacity, setTextOpacity] = useState(255);
@@ -25,34 +25,34 @@ export const TextEditorPanel: React.FC = () => {
   const [positionY, setPositionY] = useState(50);
   const [printDirection, setPrintDirection] = useState('00');
   
-  // 텍스트 서식 상태
+  // Text format states
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   
-  // 스토어 훅
+  // Store hooks
   const { currentProject, updateSubtitle } = useProjectStore();
   const { currentTime } = useTimelineStore();
   const { selectedSubtitleId } = useSelectedSubtitleStore();
 
-  // 현재 자막: 선택된 자막 우선, 없으면 현재 시간 위치의 자막
+  // Current subtitle: priority to selected, otherwise by current time
   const currentSubtitle = selectedSubtitleId
     ? currentProject?.subtitles.find(sub => sub.id === selectedSubtitleId)
     : currentProject?.subtitles.find(sub => currentTime >= sub.startTime && currentTime <= sub.endTime);
 
-  // 자막 변경 시 상태 업데이트
+  // Update state on subtitle change
   useEffect(() => {
     if (currentSubtitle) {
       const span = currentSubtitle.spans[0];
       if (span) {
         setSelectedText(span.text || '');
         
-        // 스타일 플래그
+        // Style flags
         setIsBold(span.isBold || false);
         setIsItalic(span.isItalic || false);
         setIsUnderline(span.isUnderline || false);
         
-        // span 자체에 포함된 스타일 속성
+        // Style properties from span itself
         setTextColor((span as any).fc || '#FFFFFF');
         setTextOpacity((span as any).fo !== undefined ? (span as any).fo : 255);
         setBackgroundColor((span as any).bc || '#000000');
@@ -70,11 +70,11 @@ export const TextEditorPanel: React.FC = () => {
     }
   }, [currentSubtitle, currentProject]);
 
-  // 텍스트 변경 핸들러
+  // Text change handler
   const handleTextChange = (text: string) => {
     if (!currentSubtitle) return;
     
-    // 변경 전 상태 기록
+    // Record state before change
     const { currentProject } = useProjectStore.getState();
     if (currentProject) {
       useHistoryStore.getState().record(
@@ -100,7 +100,7 @@ export const TextEditorPanel: React.FC = () => {
       }
       updateSubtitle(currentSubtitle.id, { spans: updatedSpans });
       
-      // 변경 후 상태 기록
+      // Record state after change
       if (currentProject) {
         setTimeout(() => {
           const { currentProject } = useProjectStore.getState();
@@ -120,11 +120,11 @@ export const TextEditorPanel: React.FC = () => {
     }
   };
 
-  // 스타일 변경 핸들러
+  // Style change handler
   const handleStyleChange = (property: string, value: any) => {
     if (!currentSubtitle) return;
 
-    // 변경 전 상태 기록
+    // Record state before change
     const { currentProject } = useProjectStore.getState();
     if (currentProject) {
       useHistoryStore.getState().record(
@@ -136,19 +136,20 @@ export const TextEditorPanel: React.FC = () => {
 
     const updatedSpans = [...currentSubtitle.spans];
     if (updatedSpans[0]) {
+      const newVal = (property === 'ah' || property === 'av') ? Math.round(value) : value;
       updatedSpans[0] = {
         ...updatedSpans[0],
-        [property]: value,
+        [property]: newVal,
       } as any;
     }
     updateSubtitle(currentSubtitle.id, { spans: updatedSpans });
   };
 
-  // 텍스트 스타일 토글
+  // Toggle text style
   const toggleTextStyle = (style: 'bold' | 'italic' | 'underline') => {
     if (!currentSubtitle) return;
     
-    // 변경 전 상태 기록
+    // Record state before change
     const { currentProject } = useProjectStore.getState();
     if (currentProject) {
       useHistoryStore.getState().record(
@@ -180,7 +181,7 @@ export const TextEditorPanel: React.FC = () => {
         break;
     }
     
-    // 자막 업데이트
+    // Update subtitle
     if (currentSubtitle) {
       const updatedSpans = [...currentSubtitle.spans];
       if (updatedSpans[0]) {
@@ -191,7 +192,7 @@ export const TextEditorPanel: React.FC = () => {
       }
       updateSubtitle(currentSubtitle.id, { spans: updatedSpans });
       
-      // 변경 후 상태 기록
+      // Record state after change
       if (currentProject) {
         setTimeout(() => {
           const { currentProject } = useProjectStore.getState();
@@ -211,14 +212,14 @@ export const TextEditorPanel: React.FC = () => {
     }
   };
 
-  // 자막이 없는 경우 빈 상태 표시
+  // Display empty state if no subtitle is selected
   if (!currentSubtitle) {
     return <TextEditorEmptyState />;
   }
 
   return (
     <div className="h-full flex flex-col bg-surface">
-      {/* 헤더: 텍스트 서식 도구 */}
+      {/* Header: Text formatting tools */}
       <TextEditorHeader 
         toggleTextStyle={toggleTextStyle}
         isBold={isBold}
@@ -233,7 +234,7 @@ export const TextEditorPanel: React.FC = () => {
       
       <div className="flex flex-col flex-1 min-h-0 overflow-auto">
         <div className="flex-1 overflow-y-auto">
-          {/* 콘텐츠: 스타일 편집기 */}
+          {/* Content: Style editor */}
           <TextEditorContent
             selectedText={selectedText}
             handleTextChange={handleTextChange}

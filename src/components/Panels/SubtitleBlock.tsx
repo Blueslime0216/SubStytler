@@ -8,6 +8,7 @@ import { useSnapHighlightStore } from '../../stores/snapHighlightStore';
 import { useSnapStore } from '../../stores/snapStore';
 import { SubtitleBlock as SubtitleBlockType } from '../../types/project';
 import { useHistoryStore } from '../../stores/historyStore';
+import { snapToTimelineGrid } from '../../utils/timeUtils';
 
 interface SubtitleBlockProps {
   subtitle: SubtitleBlockType;
@@ -49,7 +50,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   } | null>(null);
   
   const { updateSubtitle } = useProjectStore();
-  const { snapToFrame, duration } = useTimelineStore();
+  const { snapToFrame, duration, fps } = useTimelineStore();
   const { selectedSubtitleId, setSelectedSubtitleId } = useSelectedSubtitleStore();
   const { highlightedIds, setHighlightedIds } = useSubtitleHighlightStore();
   const { snapIds, setSnapIds, clear: clearSnapIds } = useSnapHighlightStore();
@@ -191,7 +192,12 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     const pointerOffsetX = dragStartData.current.pointerOffsetX;
     const newStartPx = e.clientX - containerNow.getBoundingClientRect().left - pointerOffsetX;
 
-    let tempStartTime = snapToFrame(viewStart + newStartPx * timePerPixel);
+    let tempStartTime = viewStart + newStartPx * timePerPixel;
+    if (isSnapEnabled && containerNow) {
+      tempStartTime = snapToTimelineGrid(tempStartTime, viewStart, viewEnd, containerNow.clientWidth, fps);
+    } else {
+      tempStartTime = snapToFrame(tempStartTime);
+    }
     tempStartTime = Math.max(0, Math.min(duration - subtitleDuration, tempStartTime));
     const tempEndTime = tempStartTime + subtitleDuration;
 
@@ -224,7 +230,6 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     // -------------------------------------------------------------
     // Snap Handling (position)
     // -------------------------------------------------------------
-    const { fps } = useTimelineStore.getState();
     const thresholdMs = (() => {
       const pixelsPerSecond = (1000 / viewDuration) * containerRect.width;
       const pixelsPerFrame = pixelsPerSecond / fps;
@@ -488,13 +493,23 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       const MIN_DURATION = 33.33; // ~1 frame at 30fps
 
       if (resizeSide === 'left') {
-        newStart = snapToFrame(startTime + deltaTime);
+        newStart = startTime + deltaTime;
+        if(isSnapEnabled && containerRef.current){
+          newStart = snapToTimelineGrid(newStart, viewStart, viewEnd, containerRef.current.clientWidth, fps);
+        } else {
+          newStart = snapToFrame(newStart);
+        }
         // Ensure start time doesn't exceed end time minus minimum duration
         newStart = Math.min(newStart, endTime - MIN_DURATION);
         // Ensure start time isn't negative
         newStart = Math.max(0, newStart);
       } else {
-        newEnd = snapToFrame(endTime + deltaTime);
+        newEnd = endTime + deltaTime;
+        if(isSnapEnabled && containerRef.current){
+          newEnd = snapToTimelineGrid(newEnd, viewStart, viewEnd, containerRef.current.clientWidth, fps);
+        } else {
+          newEnd = snapToFrame(newEnd);
+        }
         // Ensure end time isn't less than start time plus minimum duration
         newEnd = Math.max(newEnd, startTime + MIN_DURATION);
         // Ensure end time doesn't exceed duration
@@ -528,7 +543,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       // 빨간색 표시만 실시간으로
       updateSubtitle(subtitle.id, fullCover ? { startTime, endTime } : { startTime: newStart, endTime: newEnd }, false);
     },
-    [resizeSide, containerRef, duration, subtitle.id, updateSubtitle, subtitle.trackId]
+    [resizeSide, containerRef, duration, subtitle.id, updateSubtitle, subtitle.trackId, isSnapEnabled, fps]
   );
 
   const handleResizeUp = useCallback(() => {

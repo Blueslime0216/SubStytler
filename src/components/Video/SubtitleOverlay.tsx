@@ -3,6 +3,8 @@ import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
 import { useYTTStore } from '../../stores/yttStore';
 import SingleSubtitle from './SingleSubtitle';
+import { applyAnimationsToSpan } from '../../utils/animationRuntime';
+import { SubtitleBlock } from '../../types/project';
 
 // ResizeObserver 타입 지원을 위해 전역 타입이 없는 경우를 대비한 선언
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -56,7 +58,7 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
 
   const projectTracks = (subtitleSource as any)?.tracks as any[] | undefined;
 
-  const currentSubtitles = subtitleSource?.subtitles?.filter(sub => {
+  const currentSubtitlesRaw = subtitleSource?.subtitles?.filter(sub => {
     if (!(currentTime >= sub.startTime && currentTime <= sub.endTime)) return false;
     // 숨김 트랙은 미표시
     if (projectTracks) {
@@ -65,6 +67,13 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
     }
     return true;
   }) || [];
+
+  // 애니메이션 평가 – 렌더용 SubtitleBlock 생성
+  const currentSubtitles = currentSubtitlesRaw.map((sub): SubtitleBlock => {
+    if (!sub.spans[0]?.animations?.length) return sub as SubtitleBlock;
+    const animatedSpan = applyAnimationsToSpan(sub.spans[0], currentTime);
+    return { ...sub, spans: [animatedSpan] } as SubtitleBlock;
+  });
 
   if (currentSubtitles.length === 0) return null;
 

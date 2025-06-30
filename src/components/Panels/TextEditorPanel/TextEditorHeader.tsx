@@ -21,16 +21,16 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
 }) => {
   return (
     <div className="p-3 border-b border-border-color bg-surface">
-      {/* 텍스트 서식 툴바 */}
+      {/* Text Formatting Toolbar */}
       <div className="flex items-center justify-between">
-        {/* 왼쪽: 텍스트 스타일 버튼 */}
+        {/* Left: Text style buttons */}
         <div className="flex space-x-1">
           <motion.button
             onClick={() => toggleTextStyle('bold')}
             className={`p-1.5 rounded-md ${isBold ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            title="굵게"
+            title="Bold"
           >
             <Bold className="w-4 h-4" />
           </motion.button>
@@ -40,7 +40,7 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
             className={`p-1.5 rounded-md ${isItalic ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            title="기울임"
+            title="Italic"
           >
             <Italic className="w-4 h-4" />
           </motion.button>
@@ -50,20 +50,20 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
             className={`p-1.5 rounded-md ${isUnderline ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            title="밑줄"
+            title="Underline"
           >
             <Underline className="w-4 h-4" />
           </motion.button>
         </div>
         
-        {/* 오른쪽: 정렬 버튼 */}
+        {/* Right: Alignment buttons */}
         <div className="flex space-x-1">
           <motion.button
             onClick={() => setTextAlignment(1)}
             className={`p-1.5 rounded-md ${textAlignment === 1 ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            title="왼쪽 정렬"
+            title="Align Left"
           >
             <AlignLeft className="w-4 h-4" />
           </motion.button>
@@ -73,7 +73,7 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
             className={`p-1.5 rounded-md ${textAlignment === 3 ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            title="가운데 정렬"
+            title="Align Center"
           >
             <AlignCenter className="w-4 h-4" />
           </motion.button>
@@ -83,7 +83,7 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
             className={`p-1.5 rounded-md ${textAlignment === 2 ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            title="오른쪽 정렬"
+            title="Align Right"
           >
             <AlignRight className="w-4 h-4" />
           </motion.button>

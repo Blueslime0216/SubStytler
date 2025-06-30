@@ -4,6 +4,8 @@ import { FileText } from 'lucide-react';
 import { useProjectStore } from '../../stores/projectStore';
 import { useToast } from '../../hooks/useToast';
 import { generateYTTContent } from '../../utils/yttGenerator';
+import { FpsConfirmationModal } from './FpsConfirmationModal';
+import { expandProjectForAnimations } from '../../utils/animationExpander';
 
 interface ExportMenuProps {
   isOpen: boolean;
@@ -18,6 +20,8 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
 }) => {
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [isExporting, setIsExporting] = useState(false);
+  const [fpsModalOpen, setFpsModalOpen] = useState(false);
+  const [fpsForExport, setFpsForExport] = useState<number | null>(null);
   
   const { currentProject } = useProjectStore();
   const { success, error } = useToast();
@@ -44,13 +48,12 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
     }
   }, [isOpen, triggerRef]);
 
-  const handleExportYTT = async () => {
+  const startExport = async (fpsValue: number) => {
     if (!currentProject || isExporting) return;
-    
     setIsExporting(true);
     try {
-      // Generate YTT content
-      const yttContent = generateYTTContent(currentProject);
+      const expanded = expandProjectForAnimations(currentProject, fpsValue);
+      const yttContent = generateYTTContent(expanded);
       
       // Create blob and download
       const blob = new Blob([yttContent], { type: 'application/xml' });
@@ -77,6 +80,13 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
     } finally {
       setIsExporting(false);
     }
+  };
+
+  const handleExportClick = () => {
+    // Open fps modal
+    const defaultFps = currentProject?.videoMeta?.fps || 30;
+    setFpsForExport(defaultFps);
+    setFpsModalOpen(true);
   };
 
   if (!isOpen) return null;
@@ -111,7 +121,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
           <div className="py-2">
             {/* Export YTT */}
             <motion.button
-              onClick={handleExportYTT}
+              onClick={handleExportClick}
               disabled={!currentProject || isExporting || !currentProject.subtitles.length}
               className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 disabled:opacity-50"
               whileHover={{ x: 2 }}
@@ -134,6 +144,16 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
           </div>
         </motion.div>
       </AnimatePresence>
+
+      <FpsConfirmationModal
+        isOpen={fpsModalOpen}
+        detectedFps={fpsForExport || 30}
+        onClose={() => setFpsModalOpen(false)}
+        onConfirm={(fps) => {
+          setFpsModalOpen(false);
+          startExport(fps);
+        }}
+      />
     </>
   );
 };

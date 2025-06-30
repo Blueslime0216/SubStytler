@@ -143,8 +143,8 @@ export function generateYTTContent(project: Project): string {
       pd: (span as any).pd,
       sd: (span as any).sd,
       ap: (span as any).ap ?? DEFAULT_STYLE.ap,
-      ah: (span as any).ah ?? DEFAULT_STYLE.ah,
-      av: (span as any).av ?? DEFAULT_STYLE.av,
+      ah: Math.round((span as any).ah ?? DEFAULT_STYLE.ah),
+      av: Math.round((span as any).av ?? DEFAULT_STYLE.av),
     } as SubtitleStyle;
 
     /* -------- pen 처리 -------- */

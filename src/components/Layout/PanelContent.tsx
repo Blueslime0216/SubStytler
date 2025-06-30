@@ -10,6 +10,9 @@ import { HistoryPanel } from '../Panels/HistoryPanel';
 import { NotesPanel } from '../Panels/NotesPanel';
 import { EmptyPanel } from '../Panels/EmptyPanel'; // 🆕 빈 패널 추가
 import { SubtitlePreviewPanel } from '../Panels/SubtitlePreviewPanel/SubtitlePreviewPanel';
+import KeyframePanel from '../Panels/KeyframePanel/KeyframePanel';
+import GraphEditorPanel from '../Panels/GraphEditorPanel/GraphEditorPanel';
+import GraphLibraryPanel from '../Panels/GraphLibraryPanel/GraphLibraryPanel';
 
 interface PanelContentProps {
   type: PanelType;
@@ -26,6 +29,9 @@ const panelComponents: Partial<Record<PanelType, React.ComponentType>> = {
   'notes': NotesPanel,
   'empty': EmptyPanel, // 🆕 빈 패널 컴포넌트 등록
   'subtitle-preview': SubtitlePreviewPanel,
+  'keyframe': KeyframePanel,
+  'graph-editor': GraphEditorPanel,
+  'graph-library': GraphLibraryPanel,
 };
 
 export const PanelContent: React.FC<PanelContentProps> = ({ type }) => {

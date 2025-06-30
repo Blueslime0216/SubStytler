@@ -1,19 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SubtitleBlock } from '../../../types/project';
-import { generateYTTContent } from '../../../utils/yttGenerator';
-
-// utils/yttGenerator 의 함수를 그대로 사용하여 YTT 문자 생성
-const generateYtt = (subtitles: SubtitleBlock[]) => {
-  return generateYTTContent({ subtitles } as any);
-};
 
 interface SubtitlePreviewListProps {
-  subtitles: SubtitleBlock[];
+  yttContent: string;
 }
 
-export const SubtitlePreviewList: React.FC<SubtitlePreviewListProps> = ({ subtitles }) => {
-  const yttContent = generateYtt(subtitles);
+export const SubtitlePreviewList: React.FC<SubtitlePreviewListProps> = ({ yttContent }) => {
   const placeholder = 'Add subtitles to generate YTT preview.';
   const [copied, setCopied] = useState(false);
 

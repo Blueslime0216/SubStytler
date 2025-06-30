@@ -7,3 +7,6 @@ export { EffectsLibraryPanel } from './EffectsLibraryPanel';
 export { HistoryPanel } from './HistoryPanel';
 export { NotesPanel } from './NotesPanel';
 export { EmptyPanel } from './EmptyPanel';
+export { default as KeyframePanel } from './KeyframePanel/KeyframePanel';
+export { default as GraphEditorPanel } from './GraphEditorPanel/GraphEditorPanel';
+export { default as GraphLibraryPanel } from './GraphLibraryPanel/GraphLibraryPanel';

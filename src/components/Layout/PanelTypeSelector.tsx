@@ -31,6 +31,9 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
       'subtitle-timeline',
       'text-editor',
       'audio-waveform',
+      'keyframe',
+      'graph-editor',
+      'graph-library',
       'effects-library',
       'script-viewer',
       'history',
@@ -282,6 +285,7 @@ export const PanelTypeSelector: React.FC<PanelTypeSelectorProps> = ({
                 }}
               >
                 {panelTypes.map((panelType, index) => {
+                  if (panelType === 'notes') return null; // Hide notes panel from selector
                   const config = panelConfig[panelType];
                   const Icon = config.icon;
                   const isSelected = index === selectedIndex;

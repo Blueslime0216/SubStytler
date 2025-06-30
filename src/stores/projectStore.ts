@@ -26,6 +26,12 @@ interface ProjectState {
   
   // Project update
   updateProject: (updates: Partial<Project>) => void;
+
+  // Keyframe actions
+  addKeyframe: (subtitleId: string, property: string, keyframe: { time: number; value: any; easingId?: string }) => void;
+  moveKeyframe: (subtitleId: string, property: string, oldTime: number, newTime: number) => void;
+  setKeyframeEasing: (subtitleId: string, property: string, time: number, easingId: string) => void;
+  deleteKeyframe: (subtitleId: string, property: string, time: number) => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({

@@ -66,6 +66,8 @@ export interface Animation {
 export interface Keyframe {
   time: number;
   value: any;
+  /** ID of the easing curve used to interpolate to the next keyframe. If omitted, linear interpolation will be used. */
+  easingId?: string;
 }
 
 export interface VideoMeta {
@@ -131,4 +133,7 @@ export type PanelType =
   | 'history'
   | 'notes'
   | 'empty'
-  | 'subtitle-preview'; // 새로운 자막 미리보기 패널 타입 추가
+  | 'subtitle-preview'
+  | 'keyframe'
+  | 'graph-editor'
+  | 'graph-library';

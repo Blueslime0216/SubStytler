@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useTimelineStore } from '../stores/timelineStore';
+import { useSnapStore } from '../stores/snapStore';
+import { snapToTimelineGrid } from '../utils/timeUtils';
 
 interface InteractionConfig {
   zoom: number;
@@ -13,7 +15,8 @@ export const useTimelineInteraction = (
   containerRef: React.RefObject<HTMLDivElement>,
   {zoom, setZoom, viewStart, viewEnd, setViewRange}: InteractionConfig
 ) => {
-  const { duration, setCurrentTime, snapToFrame, getMaxZoom } = useTimelineStore();
+  const { duration, setCurrentTime, snapToFrame, getMaxZoom, fps } = useTimelineStore();
+  const snapEnabled = useSnapStore((s)=>s.enabled);
 
   const [isPanning, setIsPanning] = useState(false);
   const isPanningRef = useRef(false);
@@ -96,7 +99,12 @@ export const useTimelineInteraction = (
       const x = e.clientX - rect.left;
       const time = pixelToTime(x);
       
-      setCurrentTime(snapToFrame(time));
+      if(snapEnabled && containerRef.current){
+        const snapped = snapToTimelineGrid(time, viewStart, viewEnd, containerRef.current.clientWidth, fps);
+        setCurrentTime(snapped);
+      } else {
+        setCurrentTime(time);
+      }
       // This part is for playhead dragging, which we can keep simple
     }
   };
@@ -113,7 +121,12 @@ export const useTimelineInteraction = (
       let x = e.clientX - rect.left;
       x = Math.max(0, Math.min(x, rect.width));
       const time = pixelToTime(x);
-      setCurrentTime(snapToFrame(time));
+      if(snapEnabled && containerRef.current){
+        const snapped = snapToTimelineGrid(time, viewStart, viewEnd, containerRef.current.clientWidth, fps);
+        setCurrentTime(snapped);
+      } else {
+        setCurrentTime(time);
+      }
     }
   };
 
