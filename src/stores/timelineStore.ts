@@ -37,11 +37,11 @@ export const useTimelineStore = create<TimelineState>()(
   subscribeWithSelector((set, get) => ({
     currentTime: 0,
     isPlaying: false,
-    duration: 60000,
+    duration: 60000, // Default to 60 seconds even without video
     fps: 30,
     zoom: 1,
     viewStart: 0,
-    viewEnd: 60000,
+    viewEnd: 60000, // Default to 60 seconds even without video
     frameDuration: 1000 / 30,
     
     // Dragging state
@@ -56,11 +56,13 @@ export const useTimelineStore = create<TimelineState>()(
     setPlaying: (playing: boolean) => set({ isPlaying: playing }),
 
     setDuration: (duration: number) => {
+      // Use a minimum duration of 60 seconds if no video is loaded
+      const effectiveDuration = duration > 0 ? duration : 60000;
       set({
-        duration,
+        duration: effectiveDuration,
         zoom: 1,
         viewStart: 0,
-        viewEnd: duration,
+        viewEnd: effectiveDuration,
       });
     },
 

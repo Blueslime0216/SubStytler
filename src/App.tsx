@@ -63,7 +63,7 @@ export default function App() {
   }));
   
   // Project state
-  const { currentProject, updateProject } = useProjectStore();
+  const { currentProject, updateProject, createProject } = useProjectStore();
   
   // Project title editing state
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -85,6 +85,13 @@ export default function App() {
       }, 100); // Small delay to ensure all stores are initialized
     }
   }, [areas]);
+  
+  // Create default project if none exists
+  useEffect(() => {
+    if (!currentProject) {
+      createProject('Untitled Project');
+    }
+  }, [currentProject, createProject]);
   
   // Update title value when project changes
   useEffect(() => {

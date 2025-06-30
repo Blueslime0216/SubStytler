@@ -155,7 +155,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
             {/* Save Project */}
             <motion.button
               onClick={handleSave}
-              disabled={!canSave || isSaving}
+              disabled={isSaving}
               className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 disabled:opacity-50"
               whileHover={{ x: 2 }}
             >
@@ -165,7 +165,7 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
                   {isSaving ? 'Saving...' : 'Save Project'}
                 </div>
                 <div className="text-xs text-text-secondary">
-                  {canSave ? 'Save as .ssp file' : 'No project to save'}
+                  Save as .ssp file
                 </div>
               </div>
             </motion.button>
@@ -176,35 +176,16 @@ export const ProjectFileMenu: React.FC<ProjectFileMenuProps> = ({
             {/* Upload Video */}
             <motion.button
               onClick={handleUploadVideo}
-              disabled={hasVideo}
-              className={`w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 ${hasVideo ? 'opacity-50 cursor-not-allowed' : ''}`}
-              whileHover={!hasVideo ? { x: 2 } : undefined}
+              className="w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3"
+              whileHover={{ x: 2 }}
             >
-              <Upload className={`w-4 h-4 ${hasVideo ? 'text-text-muted' : 'text-text-secondary'}`} />
+              <Upload className="w-4 h-4 text-text-secondary" />
               <div>
-                <div className={`text-sm font-medium ${hasVideo ? 'text-text-muted' : 'text-text-primary'}`}>
-                  Upload Video
+                <div className="text-sm font-medium text-text-primary">
+                  {hasVideo ? 'Change Video' : 'Upload Video'}
                 </div>
-                <div className={`text-xs ${hasVideo ? 'text-text-muted' : 'text-text-secondary'}`}>
-                  {hasVideo ? 'Video already uploaded' : 'Add a video to your project'}
-                </div>
-              </div>
-            </motion.button>
-
-            {/* Change Video */}
-            <motion.button
-              onClick={handleUploadVideo}
-              disabled={!hasVideo}
-              className={`w-full px-4 py-3 text-left hover:bg-bg transition-colors flex items-center gap-3 ${!hasVideo ? 'opacity-50 cursor-not-allowed' : ''}`}
-              whileHover={hasVideo ? { x: 2 } : undefined}
-            >
-              <RefreshCw className={`w-4 h-4 ${!hasVideo ? 'text-text-muted' : 'text-text-secondary'}`} />
-              <div>
-                <div className={`text-sm font-medium ${!hasVideo ? 'text-text-muted' : 'text-text-primary'}`}>
-                  Change Video
-                </div>
-                <div className={`text-xs ${!hasVideo ? 'text-text-muted' : 'text-text-secondary'}`}>
-                  {hasVideo ? 'Replace current video' : 'No video to replace'}
+                <div className="text-xs text-text-secondary">
+                  {hasVideo ? 'Replace current video' : 'Add a video to your project'}
                 </div>
               </div>
             </motion.button>

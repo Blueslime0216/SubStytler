@@ -77,6 +77,19 @@ export const projectCoreActions: StateCreator<any> = (set, get, _store) => ({
       });
     }
     
+    // Ensure at least one track exists
+    if (!project.tracks || project.tracks.length === 0) {
+      project.tracks = [
+        {
+          id: 'default',
+          name: 'Default Track',
+          detail: '',
+          visible: true,
+          locked: false,
+        }
+      ];
+    }
+    
     set({ currentProject: project, isModified: false });
     
     // 🔧 Record loaded project state as initial undo point
