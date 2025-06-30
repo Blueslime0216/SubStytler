@@ -286,6 +286,7 @@ export function useAreaDrag(
     // 🔧 passive 이벤트 리스너로 성능 최적화
     window.addEventListener('mousemove', onMouseMove, { passive: true });
     window.addEventListener('mouseup', onMouseUp as EventListener);
+    window.addEventListener('blur', onMouseUp as EventListener);
     
     return () => {
       if (animationFrameId.current) {
@@ -299,6 +300,7 @@ export function useAreaDrag(
       document.body.classList.remove('dragging-active');
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp as EventListener);
+      window.removeEventListener('blur', onMouseUp as EventListener);
     };
   }, [dragging, batchUpdateAreas, setHoveredBorder]);
 
