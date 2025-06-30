@@ -1,0 +1,10 @@
+export { AudioWaveformPanel } from './AudioWaveform';
+export { VideoPreviewPanel } from './VideoPreviewPanel';
+export { SubtitleTimelinePanel } from './SubtitleTimelinePanel';
+export { TextEditorPanel } from './TextEditorPanel';
+export { StyleManagerPanel } from './StyleManagerPanel';
+export { ScriptViewerPanel } from './ScriptViewerPanel';
+export { EffectsLibraryPanel } from './EffectsLibraryPanel';
+export { HistoryPanel } from './HistoryPanel';
+export { NotesPanel } from './NotesPanel';
+export { EmptyPanel } from './EmptyPanel';

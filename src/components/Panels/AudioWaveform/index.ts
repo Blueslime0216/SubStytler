@@ -1,0 +1,1 @@
+export { AudioWaveformPanel } from './AudioWaveformPanel';
