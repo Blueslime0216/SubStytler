@@ -28,7 +28,7 @@ const VideoControllerProgressBar: React.FC<VideoControllerProgressBarProps> = ({
   const tooltipRef = useRef<HTMLDivElement>(null);
   
   // 진행률 계산
-  const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const progressPercentage = duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
   
   // 마우스 위치에서 시간 계산
   const getTimeFromPosition = (clientX: number): number => {

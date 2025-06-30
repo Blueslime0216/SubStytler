@@ -191,12 +191,6 @@ export const VideoController: React.FC<VideoControllerProps> = ({
                 isVideoLoaded={isVideoLoaded}
                 onToggle={handlePlayPause}
               />
-              
-              <VideoControllerSkipForwardButton
-                isVideoLoaded={isVideoLoaded}
-                onSkip={handleSkipForward}
-              />
-              
               <VideoControllerVolumeButton 
                 volume={volume}
                 isMuted={isMuted}
@@ -205,7 +199,6 @@ export const VideoController: React.FC<VideoControllerProps> = ({
                 onInteractionStart={handleInteractionStart}
                 onInteractionEnd={handleInteractionEnd}
               />
-              
               <VideoControllerTimeDisplay 
                 currentTime={currentTime}
                 duration={duration}

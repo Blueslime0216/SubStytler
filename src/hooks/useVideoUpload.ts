@@ -266,9 +266,10 @@ export const useVideoUpload = (videoRef: React.RefObject<HTMLVideoElement>) => {
         width: metadata.width,
         height: metadata.height,
         fps: metadata.fps,
-        file: file
+        file: file,
+        url: url
       });
-      setDuration(metadata.duration);
+      setDuration(metadata.duration * 1000);
       setFPS(metadata.fps);
       setCurrentTime(0);
 

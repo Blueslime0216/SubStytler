@@ -59,6 +59,7 @@ export interface VideoMeta {
   width: number;
   height: number;
   file: File;
+  url?: string;
 }
 
 export interface SubtitleTrack {

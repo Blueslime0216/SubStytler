@@ -105,6 +105,8 @@
   border-radius: 3px;
   cursor: pointer;
   overflow: visible;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .video-controller-progress-track {

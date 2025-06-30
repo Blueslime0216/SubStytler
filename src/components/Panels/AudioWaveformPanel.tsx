@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { useProjectStore } from '../../stores/projectStore';
 import { Waves, BarChart3, Layers } from 'lucide-react';
+import WaveSurfer from 'wavesurfer.js';
+import Spectrogram from 'wavesurfer.js/dist/plugins/spectrogram.esm.js';
 
 type WaveformMode = 'waveform' | 'spectrogram' | 'mixed';
 
@@ -567,27 +569,63 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     };
   }, [isDraggingIndicator, pixelToTime, setCurrentTime, snapToFrame]);
 
+  // WaveSurfer 관련 ref -------------------------------------------------
+  const waveformRef = useRef<HTMLDivElement>(null); // 파형 컨테이너
+  const spectrogramRef = useRef<HTMLDivElement>(null); // 스펙트로그램 컨테이너
+  const waveSurferRef = useRef<any>(null); // WaveSurfer 인스턴스
+  
+  // WaveSurfer 인스턴스 및 플러그인 생성/파기 (비디오 URL이 바뀔 때만)
+  useEffect(() => {
+    if (!currentProject?.videoMeta?.url || !waveformRef.current || !spectrogramRef.current) return;
+    if (waveSurferRef.current) {
+      waveSurferRef.current.destroy();
+      waveSurferRef.current = null;
+    }
+    const ws = WaveSurfer.create({
+      container: waveformRef.current,
+      waveColor: '#3B82F6',
+      progressColor: '#1D4ED8',
+      cursorColor: '#EF4444',
+      height: 120,
+      barWidth: 2,
+      normalize: true,
+      url: currentProject.videoMeta.url as string
+    });
+    ws.registerPlugin(
+      Spectrogram.create({
+        container: spectrogramRef.current,
+        labels: true,
+        height: 120
+      })
+    );
+    waveSurferRef.current = ws;
+    return () => {
+      ws.destroy();
+      waveSurferRef.current = null;
+    };
+  }, [currentProject?.videoMeta?.url]);
+
   return (
     <div className="neu-audio-waveform-panel h-full neu-bg-base p-3 flex flex-col">
       {/* 모드 토글 버튼 */}
       <div className="flex gap-2 mb-2">
         <button 
           className={`p-2 rounded-md flex items-center justify-center ${mode === 'waveform' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-          onClick={() => handleModeChange('waveform')}
+          onClick={() => setMode('waveform')}
           title="파형 뷰"
         >
           <Waves size={16} />
         </button>
         <button 
           className={`p-2 rounded-md flex items-center justify-center ${mode === 'spectrogram' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-          onClick={() => handleModeChange('spectrogram')}
+          onClick={() => setMode('spectrogram')}
           title="스펙트로그램 뷰"
         >
           <BarChart3 size={16} />
         </button>
         <button 
           className={`p-2 rounded-md flex items-center justify-center ${mode === 'mixed' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'}`}
-          onClick={() => handleModeChange('mixed')}
+          onClick={() => setMode('mixed')}
           title="혼합 뷰"
         >
           <Layers size={16} />
@@ -603,9 +641,17 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
         onMouseUp={handleMouseUp}
         onMouseLeave={() => setIsPanning(false)}
       >
-        <canvas
-          ref={canvasRef}
-          className="w-full h-full"
+        {/* WaveSurfer 컨테이너 (항상 DOM에 남겨두고, display만 조절) */}
+        <div
+          ref={waveformRef}
+          className="absolute inset-0"
+          style={{ opacity: mode === 'waveform' || mode === 'mixed' ? 1 : 0, transition: 'opacity 0.2s' }}
+        />
+        {/* Spectrogram 컨테이너 (항상 DOM에 남겨두고, display만 조절) */}
+        <div
+          ref={spectrogramRef}
+          className="absolute inset-0"
+          style={{ opacity: mode === 'spectrogram' || mode === 'mixed' ? 1 : 0, pointerEvents: 'none', transition: 'opacity 0.2s' }}
         />
         {/* 인디케이터 드래그 핸들 */}
         {(() => {
