@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { Pin, PinOff, Smartphone } from 'lucide-react';
 import { Portal } from '../../UI/Portal';
+import { useSubtitleVisibilityStore } from '../../../stores/subtitleVisibilityStore';
+import { useUIStore } from '../../../stores/uiStore';
 
 interface VideoControllerAdditionalButtonsProps {
   onSettings: () => void;
@@ -13,7 +15,8 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
   onPinToggle,
   isPinned
 }) => {
-  const [isSubtitleOn, setIsSubtitleOn] = useState(false);
+  const { isSubtitleVisible, toggleSubtitleVisibility } = useSubtitleVisibilityStore();
+  const { isMobileMode, toggleMobileMode } = useUIStore();
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{left: number, top: number} | null>(null);
   const subtitleBtnRef = useRef<HTMLButtonElement>(null);
@@ -22,10 +25,13 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
   
   // 자막 토글
   const handleSubtitleToggle = () => {
-    setIsSubtitleOn(!isSubtitleOn);
-    // 여기에 자막 토글 기능 구현 (아직 구현하지 않음)
+    toggleSubtitleVisibility();
   };
   
+  const handleMobileModeToggle = () => {
+    toggleMobileMode();
+  };
+
   // 툴팁 표시 관리
   const handleMouseEnter = (tooltipType: string) => {
     setShowTooltip(tooltipType);
@@ -52,11 +58,11 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
       <div className="video-controller-button-wrapper">
         <button 
           ref={subtitleBtnRef}
-          className={`video-controller-button ${isSubtitleOn ? 'active' : ''}`}
+          className={`video-controller-button ${isSubtitleVisible ? 'active' : ''}`}
           onClick={handleSubtitleToggle}
           onMouseEnter={() => handleMouseEnter('subtitle')}
           onMouseLeave={handleMouseLeave}
-          title={isSubtitleOn ? 'Hide subtitles' : 'Show subtitles'}
+          title={isSubtitleVisible ? 'Hide subtitles' : 'Show subtitles'}
         >
           <svg className="video-controller-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="2" />
@@ -77,7 +83,7 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
                 zIndex: 9999
               }}
             >
-              {isSubtitleOn ? '자막 끄기' : '자막 켜기'}
+              {isSubtitleVisible ? '자막 끄기' : '자막 켜기'}
             </div>
           </Portal>
         )}
@@ -87,7 +93,8 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
       <div className="video-controller-button-wrapper">
         <button 
           ref={mobileBtnRef}
-          className="video-controller-button"
+          className={`video-controller-button ${isMobileMode ? 'active' : ''}`}
+          onClick={handleMobileModeToggle}
           onMouseEnter={() => handleMouseEnter('mobile')}
           onMouseLeave={handleMouseLeave}
           title="Mobile mode"
@@ -107,7 +114,7 @@ const VideoControllerAdditionalButtons: React.FC<VideoControllerAdditionalButton
                 zIndex: 9999
               }}
             >
-              모바일 모드
+              {isMobileMode ? '모바일 모드 (활성)' : '모바일 모드'}
             </div>
           </Portal>
         )}

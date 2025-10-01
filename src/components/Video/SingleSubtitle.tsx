@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { SubtitleBlock } from '../../types/project';
+import { useUIStore } from '../../stores/uiStore';
 
 interface Props {
   subtitle: SubtitleBlock;
@@ -9,6 +10,7 @@ interface Props {
 
 // 렌더링에 필요한 모든 계산을 컴포넌트 내부에서 수행한다.
 const SingleSubtitle: React.FC<Props> = ({ subtitle, containerRef }) => {
+  const { isMobileMode } = useUIStore();
   const span = subtitle.spans[0] || { text: '' } as any;
   const style = span as any;
 
@@ -38,6 +40,7 @@ const SingleSubtitle: React.FC<Props> = ({ subtitle, containerRef }) => {
     const ju = style?.ju;
     if (ju === 0) textAlign = 'left';
     if (ju === 1) textAlign = 'right';
+    if (ju === 2) textAlign = 'center';
 
     return {
       left: `${ah}%`,
@@ -50,16 +53,22 @@ const SingleSubtitle: React.FC<Props> = ({ subtitle, containerRef }) => {
   // 크기 계산
   const getSizing = () => {
     const videoH = getVideoHeight();
-    const baseBoxH = (videoH / 1080) * 55; // 55 고정(요구사항)
-    const szNum = parseFloat(style?.sz || '100%');
+    const baseBoxH = (videoH / 1080) * 50; // 55 고정(요구사항)
+    const szNum = isMobileMode ? 100 : parseFloat(style?.sz || '100%');
     const scale = (100 + (szNum - 100) / 4) / 100;
     const boxH = baseBoxH * scale;
     const fontPx = boxH * 0.9;
     return { boxH, fontPx };
   };
 
+  // 텍스트를 줄별로 분리하는 함수
+  const getTextLines = (text: string): string[] => {
+    return text.split('\n').filter(line => line.trim() !== '');
+  };
+
   // 기타 스타일
   const getFontFamily = () => {
+    if (isMobileMode) return 'Roboto, sans-serif';
     const fs = style?.fs || '0';
     switch (fs) {
       case '1': return 'Courier New, monospace';
@@ -74,17 +83,19 @@ const SingleSubtitle: React.FC<Props> = ({ subtitle, containerRef }) => {
   };
 
   const getOutlineStyle = () => {
+    if (isMobileMode) return {};
     const et = style?.et;
     const ec = style?.ec || '#000000';
     if (!et) return {};
     if (et === 1) return { textShadow: `2px 2px 0 ${ec}` };
-    if (et === 2) return { textShadow: `1px 1px 0 ${ec}, -1px -1px 0 ${ec.replace('#', '#66')}` };
+    if (et === 2) return { textShadow: `-1px -1px 0 ${ec}, 1px 1px 0 ${ec}` };
     if (et === 3) return { textShadow: `0 0 3px ${ec}, 0 0 3px ${ec}` };
     if (et === 4) return { textShadow: `2px 2px 4px ${ec}` };
     return {};
   };
 
   const getVerticalStyle = () => {
+    if (isMobileMode) return { writingMode: 'horizontal-tb' as const };
     const pd = style?.pd || '00';
     if (pd === '20') return { writingMode: 'vertical-rl' as const };
     if (pd === '21') return { writingMode: 'vertical-lr' as const };
@@ -104,14 +115,17 @@ const SingleSubtitle: React.FC<Props> = ({ subtitle, containerRef }) => {
   };
 
   /* ---------------- 렌더링 ---------------- */
-  const { boxH, fontPx } = getSizing();
+  const { fontPx } = getSizing();
   const posStyle = getPositionStyle();
   const fontFamily = getFontFamily();
   const outlineStyle = getOutlineStyle();
   const verticalStyle = getVerticalStyle();
 
   const fg = hexToRgba(style?.fc || '#FFFFFF', (style?.fo ?? 255) / 255);
-  const bg = hexToRgba(style?.bc || '#080808', (style?.bo ?? 255) / 255);
+  const bg = isMobileMode ? hexToRgba('#080808', 191 / 255) : hexToRgba(style?.bc || '#080808', (style?.bo ?? 255) / 255);
+
+  // 텍스트를 줄별로 분리
+  const textLines = getTextLines(span.text || '');
 
   return (
     <motion.div
@@ -119,32 +133,74 @@ const SingleSubtitle: React.FC<Props> = ({ subtitle, containerRef }) => {
         position: 'absolute',
         ...posStyle,
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         pointerEvents: 'none',
         zIndex: 30,
       }}
     >
-      <div
+      {/* captions-text 컨테이너 */}
+      <span
         style={{
-          height: `${boxH}px`,
-          backgroundColor: bg,
-          color: fg,
-          fontFamily,
-          fontSize: `${fontPx}px`,
-          fontWeight: span.isBold ? 'bold' : 'normal',
-          fontStyle: span.isItalic ? 'italic' : 'normal',
-          textDecoration: span.isUnderline ? 'underline' : 'none',
-          whiteSpace: 'nowrap',
-          lineHeight: 1,
-          overflow: 'hidden',
-          padding: `0 ${fontPx * 0.2}px`,
-          ...outlineStyle,
-          ...verticalStyle,
+          overflowWrap: 'normal',
+          display: 'block',
+          textAlign: posStyle.textAlign,
+          lineHeight: 0,
+          fontSize: 0,
+          padding: 0,
+          margin: 0,
         }}
       >
-        {span.text}
-      </div>
+        {textLines.map((line, index) => (
+          <span
+            key={index}
+            style={{
+              display: 'inline-block',
+              lineHeight: 0,
+              fontSize: 0,
+              padding: 0,
+              margin: 0,
+            }}
+          >
+            {/* caption-visual-line 컨테이너 */}
+            <span
+              style={{
+                display: 'inline-block',
+                lineHeight: 0,
+                fontSize: 0,
+                padding: 0,
+                margin: 0,
+              }}
+            >
+              {/* ytp-caption-segment (실제 텍스트와 배경) */}
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  whiteSpace: 'pre',
+                  backgroundColor: bg,
+                  color: fg,
+                  fontFamily,
+                  fontSize: `${fontPx}px`,
+                  fontWeight: span.isBold ? 'bold' : 'normal',
+                  fontStyle: span.isItalic ? 'italic' : 'normal',
+                  textDecoration: span.isUnderline ? 'underline' : 'none',
+                  lineHeight: 1,
+                  padding: `0 ${fontPx * 0.3}px`,
+                  height: `${fontPx * 1.3}px`,
+                  verticalAlign: 'top',
+                  ...outlineStyle,
+                  ...verticalStyle,
+                }}
+              >
+                {line}
+              </span>
+            </span>
+          </span>
+        ))}
+      </span>
     </motion.div>
   );
 };

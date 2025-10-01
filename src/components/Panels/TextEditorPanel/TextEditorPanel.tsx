@@ -140,7 +140,7 @@ export const TextEditorPanel: React.FC = () => {
   const [backgroundOpacity, setBackgroundOpacity] = useState(255);
   const [fontSize, setFontSize] = useState('100%');
   const [fontFamily, setFontFamily] = useState('0');
-  const [textAlignment, setTextAlignment] = useState(3);
+  const [textAlignment, setTextAlignment] = useState(2);
   const [outlineColor, setOutlineColor] = useState('#000000');
   const [outlineType, setOutlineType] = useState(0);
   const [anchorPoint, setAnchorPoint] = useState(4);
@@ -182,7 +182,7 @@ export const TextEditorPanel: React.FC = () => {
         setBackgroundOpacity((span as any).bo !== undefined ? (span as any).bo : 255);
         setFontSize((span as any).sz || '100%');
         setFontFamily((span as any).fs || '0');
-        setTextAlignment((span as any).ju ?? 3);
+        setTextAlignment((span as any).ju ?? 2);
         setOutlineColor((span as any).ec ?? '#000000');
         setOutlineType((span as any).et ?? 0);
         setAnchorPoint((span as any).ap ?? 4);
@@ -257,7 +257,15 @@ export const TextEditorPanel: React.FC = () => {
       );
     }
 
-    const updatedSpans = [...currentSubtitle.spans];
+    // Get the latest subtitle data from the store
+    const { currentProject: latestProject } = useProjectStore.getState();
+    const latestSubtitle = latestProject?.subtitles.find(sub => sub.id === currentSubtitle.id);
+    
+    if (!latestSubtitle) {
+      return;
+    }
+
+    const updatedSpans = [...latestSubtitle.spans];
     if (updatedSpans[0]) {
       const newVal = (property === 'ah' || property === 'av') ? Math.round(value) : value;
       updatedSpans[0] = {
@@ -265,7 +273,8 @@ export const TextEditorPanel: React.FC = () => {
         [property]: newVal,
       } as any;
     }
-    updateSubtitle(currentSubtitle.id, { spans: updatedSpans }, false);
+    
+    updateSubtitle(latestSubtitle.id, { spans: updatedSpans }, false);
 
     // After 기록
     if (currentProject) {

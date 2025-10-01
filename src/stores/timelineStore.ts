@@ -14,6 +14,7 @@ interface TimelineState {
   // Dragging state for real-time sync
   isDragging: boolean;
   draggedSubtitleId: string | null;
+  draggedSubtitleDelta: number; // 드래그 중인 자막의 시간 변화량
   
   // Actions
   setCurrentTime: (time: number) => void;
@@ -27,7 +28,7 @@ interface TimelineState {
   snapToFrame: (time: number) => number;
   
   // Dragging actions
-  setDragging: (isDragging: boolean, subtitleId?: string) => void;
+  setDragging: (isDragging: boolean, subtitleId?: string, delta?: number) => void;
   
   // New function to calculate max zoom based on duration and container width
   getMaxZoom: (containerWidth?: number) => number;
@@ -47,6 +48,7 @@ export const useTimelineStore = create<TimelineState>()(
     // Dragging state
     isDragging: false,
     draggedSubtitleId: null,
+    draggedSubtitleDelta: 0,
 
     setCurrentTime: (time: number) => {
       const { snapToFrame } = get();
@@ -99,10 +101,11 @@ export const useTimelineStore = create<TimelineState>()(
       return (frame * 1000) / fps;
     },
     
-    setDragging: (isDragging: boolean, subtitleId?: string) => {
+    setDragging: (isDragging: boolean, subtitleId?: string, delta?: number) => {
       set({ 
         isDragging, 
-        draggedSubtitleId: isDragging ? subtitleId || null : null 
+        draggedSubtitleId: isDragging ? subtitleId || null : null,
+        draggedSubtitleDelta: isDragging ? delta || 0 : 0
       });
     },
     

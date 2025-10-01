@@ -50,9 +50,13 @@ const TextTab: React.FC<TextTabProps> = ({
       {/* 텍스트 입력 영역 - 더 크고 중요하게 표시 */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
-          <label className="text-sm font-medium text-text-primary">
-            Subtitle Text
-          </label>
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-text-primary">
+              Subtitle Text
+            </label>
+            {/* 텍스트 키프레임 추가 버튼 (둥근 정사각형) */}
+            <KeyframeButton property="text" getCurrentValue={() => selectedText} variant="square" />
+          </div>
           <div className="text-xs text-text-secondary">
             {selectedText.length} chars
           </div>

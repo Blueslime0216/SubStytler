@@ -32,6 +32,8 @@
   will-change: transform, padding;
   /* paint containment을 제거하여 그림자 클리핑 방지 */
   contain: layout style;
+  /* 🔧 드래그 중 트랜지션 완전 비활성화 */
+  transition: none !important;
 }
 
 .area-border {
@@ -67,6 +69,11 @@ body.dragging-active {
   user-select: none !important;
   /* 🔧 성능 최적화: 불필요한 레이아웃 계산 방지 */
   overflow: visible;
+}
+
+/* 🔧 드래그 중 모든 트랜지션 비활성화 */
+body.dragging-active * {
+  transition: none !important;
 }
 
 body.dragging-active * {

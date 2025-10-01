@@ -33,8 +33,23 @@ export const SubtitlePreviewPanel: React.FC = () => {
       
       setTrackSubtitles(sortedSubtitles);
 
-      // 애니메이션 확장 → YTT 문자열 생성
+      // 애니메이션 확장 → YTT 문자열 생성 (with duration optimization)
       const expanded = expandProjectForAnimations(currentProject, fps);
+      
+      // Debug: Show optimization results
+      const originalCount = currentProject.subtitles.length;
+      const expandedCount = expanded.subtitles.length;
+      const hasAnimations = currentProject.subtitles.some(sub => 
+        sub.spans.some(span => span.animations && span.animations.length > 0)
+      );
+      
+      if (hasAnimations) {
+        console.log(`🎯 Duration Optimization Results:`);
+        console.log(`  Original subtitles: ${originalCount}`);
+        console.log(`  Expanded subtitles: ${expandedCount}`);
+        console.log(`  Optimization ratio: ${(expandedCount / originalCount).toFixed(2)}x`);
+      }
+      
       const ytt = generateYTTContent(expanded);
       setYttContent(ytt);
     } catch (err) {

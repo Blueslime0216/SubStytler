@@ -2,9 +2,10 @@ import { useEffect, useRef } from 'react';
 import { useTimelineStore } from '../stores/timelineStore';
 
 export const useVideoSync = (videoRef: React.RefObject<HTMLVideoElement>, isVideoLoaded: boolean) => {
-  const { currentTime, isPlaying, setCurrentTime, setPlaying } = useTimelineStore();
+  const { currentTime, isPlaying, setCurrentTime, setPlaying, fps } = useTimelineStore();
   const lastSyncTime = useRef<number>(0);
-  const syncThreshold = 200; // milliseconds
+  const syncThreshold = 1000 / fps; // 프레임 간격에 맞춤 (30fps = ~33ms)
+  const rafRef = useRef<number | null>(null);
 
   // Sync timeline time to video
   useEffect(() => {
@@ -51,8 +52,9 @@ export const useVideoSync = (videoRef: React.RefObject<HTMLVideoElement>, isVide
       // Only update timeline if we're playing and it's been a while since manual sync
       if (isPlaying && Date.now() - lastSyncTime.current > syncThreshold) {
         const newTime = video.currentTime * 1000;
-        // Only update if there's a significant difference to avoid loops
-        if (Math.abs(newTime - currentTime) > 100) {
+        // 프레임 간격보다 작은 차이도 허용하여 부드러운 재생 보장
+        const frameDuration = 1000 / fps;
+        if (Math.abs(newTime - currentTime) > frameDuration / 2) {
           setCurrentTime(newTime);
         }
       }
@@ -88,5 +90,40 @@ export const useVideoSync = (videoRef: React.RefObject<HTMLVideoElement>, isVide
       video.removeEventListener('waiting', handleWaiting);
       video.removeEventListener('error', handleError);
     };
-  }, [setCurrentTime, isPlaying, currentTime, setPlaying, videoRef]);
+  }, [setCurrentTime, isPlaying, currentTime, setPlaying, videoRef, fps]);
+
+  // requestAnimationFrame을 사용한 부드러운 동기화
+  useEffect(() => {
+    if (!isPlaying || !videoRef.current) {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      return;
+    }
+
+    const updateTime = () => {
+      const video = videoRef.current;
+      if (!video || !isPlaying) return;
+
+      const newTime = video.currentTime * 1000;
+      const frameDuration = 1000 / fps;
+      
+      // 프레임 간격의 절반 이상 차이날 때만 업데이트
+      if (Math.abs(newTime - currentTime) > frameDuration / 2) {
+        setCurrentTime(newTime);
+      }
+      
+      rafRef.current = requestAnimationFrame(updateTime);
+    };
+
+    rafRef.current = requestAnimationFrame(updateTime);
+
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+  }, [isPlaying, currentTime, setCurrentTime, fps]);
 };

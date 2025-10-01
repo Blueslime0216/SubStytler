@@ -44,6 +44,12 @@ export function applyAnimationsToSpan(span: SubtitleSpan, timeMs: number): Subti
       return;
     }
 
+    // 텍스트는 스텝(보간 없음): 경계 전까지 이전 값을 유지, 경계 시점에 즉시 전환
+    if (property === 'text') {
+      (result as any)[property] = timeMs < after.time ? before.value : after.value;
+      return;
+    }
+
     const localT = (timeMs - before.time) / (after.time - before.time);
     const curveId = before.easingId || 'linear';
     const curve = curves[curveId] || curves['linear'];
@@ -57,7 +63,7 @@ export function applyAnimationsToSpan(span: SubtitleSpan, timeMs: number): Subti
     } else if (isColor(before.value) && isColor(after.value)) {
       value = interpolateColor(before.value, after.value, easedT);
     } else {
-      // 보간할 수 없는 타입이면 시작 값 사용
+      // 그 외 타입은 스텝 처리
       value = before.value;
     }
 

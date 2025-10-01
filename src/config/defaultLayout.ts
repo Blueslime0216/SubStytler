@@ -26,7 +26,7 @@ export const createDefaultLayout = (): AreaConfig[] => [
             id: 'timeline-panel',
             type: 'panel',
             panelType: 'subtitle-timeline',
-            size: 60,
+            size: 30,
             minSize: 20,
             maxSize: 80
           },
@@ -34,7 +34,7 @@ export const createDefaultLayout = (): AreaConfig[] => [
             id: 'editor-panel',
             type: 'panel',
             panelType: 'text-editor',
-            size: 40,
+            size: 70,
             minSize: 20,
             maxSize: 80
           }

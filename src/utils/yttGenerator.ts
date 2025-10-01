@@ -130,7 +130,7 @@ export function generateYTTContent(project: Project): string {
       fo: 255,       // 글자 투명도
       bc: '#000000', // 배경색(검정)
       bo: 255,       // 배경 투명도
-      ju: 3,         // 정렬 (가운데)
+      ju: 2,         // 정렬 (가운데)
       ap: 4,         // 앵커 포인트 (중앙)
       ah: 50,        // X 좌표
       av: 50,        // Y 좌표

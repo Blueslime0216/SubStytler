@@ -68,10 +68,46 @@ export const SubtitleOverlay: React.FC<{ containerRef?: React.RefObject<HTMLDivE
     return true;
   }) || [];
 
-  // 애니메이션 평가 – 렌더용 SubtitleBlock 생성
+  // 애니메이션 평가 – 렌더용 SubtitleBlock 생성 (항상 평가; 내부에서 animations 없으면 원본 유지)
   const currentSubtitles = currentSubtitlesRaw.map((sub): SubtitleBlock => {
-    if (!sub.spans[0]?.animations?.length) return sub as SubtitleBlock;
-    const animatedSpan = applyAnimationsToSpan(sub.spans[0], currentTime);
+    const baseSpan = sub.spans[0];
+    
+    // 디버깅: 텍스트 키프레임 확인
+    const textAnim = baseSpan?.animations?.find((a: any) => a.property === 'text');
+    if (textAnim && textAnim.keyframes?.length) {
+      console.log('🔍 Text keyframes found:', {
+        subtitleId: sub.id,
+        currentTime,
+        keyframes: textAnim.keyframes,
+        originalText: baseSpan.text
+      });
+    }
+    
+    let animatedSpan = applyAnimationsToSpan(baseSpan, currentTime);
+
+    // 텍스트 키프레임 강제 스텝 처리
+    if (textAnim && textAnim.keyframes?.length) {
+      const kfs = textAnim.keyframes as Array<{ time: number; value: any }>;
+      // before/after 계산
+      let before = kfs[0];
+      let after = kfs[kfs.length - 1];
+      for (let i = 0; i < kfs.length; i++) {
+        const kf = kfs[i];
+        if (kf.time === currentTime) { before = after = kf; break; }
+        if (kf.time < currentTime) { before = kf; }
+        else if (kf.time > currentTime) { after = kf; break; }
+      }
+      const stepped = before === after ? before.value : (currentTime < after.time ? before.value : after.value);
+      animatedSpan = { ...(animatedSpan as any), text: stepped } as any;
+      
+      console.log('🎯 Text step applied:', {
+        before: before.value,
+        after: after.value,
+        stepped,
+        currentTime
+      });
+    }
+
     return { ...sub, spans: [animatedSpan] } as SubtitleBlock;
   });
 

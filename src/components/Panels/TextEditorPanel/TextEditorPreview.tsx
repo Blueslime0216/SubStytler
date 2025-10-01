@@ -66,7 +66,7 @@ const TextEditorPreview: React.FC<TextEditorPreviewProps> = ({
       case 1: // Hard shadow
         return { textShadow: `2px 2px 0 ${outlineColor}` };
       case 2: // Bevel
-        return { textShadow: `1px 1px 0 ${outlineColor}, -1px -1px 0 ${outlineColor.replace('#', '#66')}` };
+        return { textShadow: `-1px -1px 0 ${outlineColor}, 1px 1px 0 ${outlineColor}` };
       case 3: // Glow/Outline
         return { textShadow: `0 0 3px ${outlineColor}, 0 0 3px ${outlineColor}, 0 0 3px ${outlineColor}, 0 0 3px ${outlineColor}` };
       case 4: // Soft shadow

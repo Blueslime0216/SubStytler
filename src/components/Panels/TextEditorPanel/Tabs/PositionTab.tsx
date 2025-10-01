@@ -138,15 +138,15 @@ const PositionTab: React.FC<PositionTabProps> = ({
         
         <div className="grid grid-cols-3 gap-2">
           {[
-            { name: 'Top', x: 50, y: 10, anchor: 1 },
-            { name: 'Center', x: 50, y: 50, anchor: 4 },
-            { name: 'Bottom', x: 50, y: 90, anchor: 7 },
-            { name: 'Left', x: 10, y: 50, anchor: 3 },
-            { name: 'Right', x: 90, y: 50, anchor: 5 },
-            { name: 'Top Left', x: 10, y: 10, anchor: 0 },
-            { name: 'Top Right', x: 90, y: 10, anchor: 2 },
-            { name: 'Bottom Left', x: 10, y: 90, anchor: 6 },
-            { name: 'Bottom Right', x: 90, y: 90, anchor: 8 },
+            { name: 'Top-Left', x: 0, y: 0 },
+            { name: 'Top-Center', x: 50, y: 0 },
+            { name: 'Top-Right', x: 100, y: 0 },
+            { name: 'Middle-Left', x: 0, y: 50 },
+            { name: 'Middle-Center', x: 50, y: 50 },
+            { name: 'Middle-Right', x: 100, y: 50 },
+            { name: 'Bottom-Left', x: 0, y: 100 },
+            { name: 'Bottom-Center', x: 50, y: 100 },
+            { name: 'Bottom-Right', x: 100, y: 100 },
           ].map((preset, index) => (
             <button
               key={index}
@@ -154,7 +154,6 @@ const PositionTab: React.FC<PositionTabProps> = ({
               onClick={() => {
                 setPositionX(preset.x);
                 setPositionY(preset.y);
-                setAnchorPoint(preset.anchor);
               }}
             >
               {preset.name}

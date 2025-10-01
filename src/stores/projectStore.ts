@@ -29,9 +29,12 @@ interface ProjectState {
 
   // Keyframe actions
   addKeyframe: (subtitleId: string, property: string, keyframe: { time: number; value: any; easingId?: string }) => void;
+  replaceKeyframe: (subtitleId: string, property: string, keyframe: { time: number; value: any; easingId?: string }) => void;
   moveKeyframe: (subtitleId: string, property: string, oldTime: number, newTime: number) => void;
+  moveKeyframeWithCollision: (subtitleId: string, property: string, oldTime: number, newTime: number) => void;
   setKeyframeEasing: (subtitleId: string, property: string, time: number, easingId: string) => void;
   deleteKeyframe: (subtitleId: string, property: string, time: number) => void;
+  updateKeyframesForDrag: (subtitleId: string, deltaTime: number) => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({

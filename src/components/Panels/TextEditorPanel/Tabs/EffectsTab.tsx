@@ -33,9 +33,9 @@ const EffectsTab: React.FC<EffectsTabProps> = ({
       case 1: // Hard shadow
         return { textShadow: `2px 2px 0 ${color}` };
       case 2: // Bevel
-        return { textShadow: `1px 1px 0 ${color}, -1px -1px 0 ${color.replace('#', '#66')}` };
+        return { textShadow: `-1px -1px 0 ${color}, 1px 1px 0 ${color}` };
       case 3: // Glow/Outline
-        return { textShadow: `0 0 3px ${color}, 0 0 3px ${color}, 0 0 3px ${color}, 0 0 3px ${color}` };
+        return { textShadow: `0 0 2px ${color}, 0 0 2px ${color}, 0 0 2px ${color}, 0 0 2px ${color}` };
       case 4: // Soft shadow
         return { textShadow: `2px 2px 4px ${color}` };
       default:

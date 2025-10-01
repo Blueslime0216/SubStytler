@@ -50,7 +50,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
   } | null>(null);
   
   const { updateSubtitle } = useProjectStore();
-  const { snapToFrame, duration, fps } = useTimelineStore();
+  const { snapToFrame, duration, fps, setDragging } = useTimelineStore();
   const { selectedSubtitleId, setSelectedSubtitleId } = useSelectedSubtitleStore();
   const { highlightedIds, setHighlightedIds } = useSubtitleHighlightStore();
   const { snapIds, setSnapIds, clear: clearSnapIds } = useSnapHighlightStore();
@@ -161,6 +161,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
       // Start drag
       setIsDragging(true);
       onDragStart(subtitle.id, subtitle.trackId);
+      setDragging(true, subtitle.id, 0);
       
       // 🆕 Record initial state for undo
       recordInitialState();
@@ -200,6 +201,10 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     }
     tempStartTime = Math.max(0, Math.min(duration - subtitleDuration, tempStartTime));
     const tempEndTime = tempStartTime + subtitleDuration;
+
+    // 드래그 중인 자막의 시간 변화량을 타임라인 스토어에 업데이트
+    const deltaTime = tempStartTime - dragStartData.current.startTime;
+    setDragging(true, subtitle.id, deltaTime);
 
     // For visual offset relative to current zoom/time mapping
     const leftCurrent = timeToPixel(dragStartData.current.startTime);
@@ -438,6 +443,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
     setDragOffset({ x: 0, y: 0 });
     dragStartData.current = null;
     setMouseDown(false);
+    setDragging(false); // 타임라인 스토어 리셋
     onDragEnd();
     setIsDropInvalid(false);
     setHighlightedIds([]);
@@ -634,7 +640,7 @@ export const SubtitleBlock: React.FC<SubtitleBlockProps> = ({
         scale: isDragging ? 1.05 : 1,
         boxShadow: isDragging ? "0 8px 25px rgba(0,0,0,0.3)" : "var(--shadow-outset-subtle)",
       }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0 }}
     >
       <AnimatePresence>
         {isHighlighted && (

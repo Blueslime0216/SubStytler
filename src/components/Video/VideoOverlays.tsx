@@ -4,6 +4,7 @@ import { VideoProgressOverlay } from './VideoProgressOverlay';
 import { VideoLoadingOverlay } from './VideoLoadingOverlay';
 import { VideoErrorOverlay } from './VideoErrorOverlay';
 import { SubtitleOverlay } from './SubtitleOverlay';
+import { useSubtitleVisibilityStore } from '../../stores/subtitleVisibilityStore';
 
 interface VideoOverlaysProps {
   isLoading: boolean;
@@ -28,6 +29,7 @@ export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
   isVideoLoaded = false,
   containerRef
 }) => {
+  const { isSubtitleVisible } = useSubtitleVisibilityStore();
   return (
     <div className="absolute inset-0 z-20 pointer-events-none video-overlay">
       {/* 비디오가 없거나 에러가 있을 때 표시할 오버레이 */}
@@ -54,8 +56,8 @@ export const VideoOverlays: React.FC<VideoOverlaysProps> = ({
             </div>
       )}
       
-      {/* 자막 오버레이 - 비디오가 로드되었을 때 표시 */}
-      {hasVideo && !videoError && isVideoLoaded && <SubtitleOverlay containerRef={containerRef} />}
+      {/* 자막 오버레이 - 비디오가 로드되었고 자막이 켜져 있을 때만 표시 */}
+      {hasVideo && !videoError && isVideoLoaded && isSubtitleVisible && <SubtitleOverlay containerRef={containerRef} />}
     </div>
   );
 };

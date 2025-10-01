@@ -3,6 +3,7 @@ import { useSelectedSubtitleStore } from '../../../stores/selectedSubtitleStore'
 import { useProjectStore } from '../../../stores/projectStore';
 import { useTimelineStore } from '../../../stores/timelineStore';
 import { useSnapStore } from '../../../stores/snapStore';
+import { useLayoutStore } from '../../../stores/layoutStore';
 import { ContextMenu } from '../../UI/ContextMenu/ContextMenu';
 import { ContextMenuItem } from '../../UI/ContextMenu/ContextMenuItem';
 import { ContextMenuDivider } from '../../UI/ContextMenu/ContextMenuItem';
@@ -34,6 +35,7 @@ const KeyframePanel: React.FC = () => {
 
   // Get selected subtitle data
   const subtitleId = useSelectedSubtitleStore((s) => s.selectedSubtitleId);
+  const { selectedKeyframe, setSelectedKeyframe } = useSelectedSubtitleStore();
   const subtitles = useProjectStore((s) => s.currentProject?.subtitles, shallow);
   const subtitle = useMemo(() => {
     if (!subtitles || !subtitleId) return null;
@@ -50,12 +52,15 @@ const KeyframePanel: React.FC = () => {
     fps,
     currentTime,
     setCurrentTime,
+    isDragging,
+    draggedSubtitleId,
+    draggedSubtitleDelta,
   } = useTimelineStore();
 
   // Project store actions
-  const moveKeyframe = useProjectStore((s: any) => s.moveKeyframe);
+  const moveKeyframeWithCollision = useProjectStore((s: any) => s.moveKeyframeWithCollision);
   const deleteKeyframe = useProjectStore((s: any) => s.deleteKeyframe);
-  const addKeyframe = useProjectStore((s: any) => s.addKeyframe);
+  const replaceKeyframe = useProjectStore((s: any) => s.replaceKeyframe);
 
   // Container dimensions
   const [containerWidth, setContainerWidth] = useState(0);
@@ -70,8 +75,7 @@ const KeyframePanel: React.FC = () => {
   const [localViewStart, setLocalViewStart] = useState(timeline.viewStart);
   const [localViewEnd, setLocalViewEnd] = useState(timeline.viewEnd);
 
-  // 선택된 키프레임 (Delete 키로 삭제하기 위함)
-  const [selectedKeyframe, setSelectedKeyframe] = useState<{ property: string; time: number } | null>(null);
+  // 선택된 키프레임 (Delete 키로 삭제하기 위함) - 로컬 상태 제거하고 전역 상태 사용
 
   // Update container dimensions on resize
   useEffect(() => {
@@ -132,6 +136,7 @@ const KeyframePanel: React.FC = () => {
     element: HTMLElement | null;
     startX: number;
     dragged: boolean;
+    currentTime: number; // 드래그 중인 현재 시간
   } | null>(null);
 
   // Row highlight when dragging a curve over it
@@ -139,6 +144,9 @@ const KeyframePanel: React.FC = () => {
   
   // Keyframe being created
   const [creatingKeyframe, setCreatingKeyframe] = useState<{property: string, time: number} | null>(null);
+  
+  // 드래그 중일 때 컴포넌트 리렌더링을 위한 상태
+  const [dragUpdate, setDragUpdate] = useState(0);
 
   const getWidth = () => containerRef.current?.clientWidth || 0;
 
@@ -171,6 +179,7 @@ const KeyframePanel: React.FC = () => {
       element: e.currentTarget,
       startX: e.clientX,
       dragged: false,
+      currentTime: time, // 초기 현재 시간 설정
     };
     
     // Add visual feedback class
@@ -194,9 +203,17 @@ const KeyframePanel: React.FC = () => {
         dragRef.current.dragged = true;
       }
 
+      // 드래그 중인 현재 시간 업데이트
+      dragRef.current.currentTime = newTime;
+
       // 드래그가 실제로 발생한 경우에만 style.left를 조작
       if (dragRef.current.dragged && dragRef.current.element) {
         dragRef.current.element.style.left = `${timeToPixel(newTime)}px`;
+      }
+      
+      // 드래그 중일 때마다 컴포넌트 리렌더링을 위한 상태 업데이트
+      if (dragRef.current.dragged) {
+        setDragUpdate(prev => prev + 1);
       }
     };
 
@@ -222,16 +239,38 @@ const KeyframePanel: React.FC = () => {
       }
 
       if (dragRef.current.dragged && subtitleId && Math.abs(newTime - dragRef.current.originalTime) > 1) {
-        moveKeyframe(subtitleId, dragRef.current.property, dragRef.current.originalTime, newTime);
+        // 충돌 처리 포함 이동을 단일 히스토리 단계로 처리
+        moveKeyframeWithCollision(subtitleId, dragRef.current.property, dragRef.current.originalTime, newTime);
+        // 키프레임 이동 후 연결선 재계산을 위한 강제 리렌더링
+        setDragUpdate(prev => prev + 1);
       }
 
       dragRef.current = null;
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('contextmenu', onContextMenuCancel);
+    };
+
+    // 우클릭으로 드래그 취소
+    const onContextMenuCancel = (ev: MouseEvent) => {
+      ev.preventDefault();
+      if (!dragRef.current) return;
+      
+      // 원래 위치로 되돌리기
+      if (dragRef.current.element) {
+        dragRef.current.element.classList.remove('dragging');
+        dragRef.current.element.style.left = '';
+      }
+      
+      dragRef.current = null;
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('contextmenu', onContextMenuCancel);
     };
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('contextmenu', onContextMenuCancel);
   };
 
   // Handle row click to add keyframe
@@ -259,8 +298,11 @@ const KeyframePanel: React.FC = () => {
     // Get current value from subtitle (dynamic property access)
     const value = subtitle?.spans[0] ? (subtitle.spans[0] as any)[property] ?? 0 : 0;
     
-    // Add keyframe (store expects keyframe object)
-    addKeyframe(subtitleId, property, { time, value });
+    // 동일 위치 충돌 제거 + 추가를 단일 히스토리 단계로 처리
+    replaceKeyframe(subtitleId, property, { time, value });
+    
+    // 키프레임 추가 후 연결선 재계산을 위한 강제 리렌더링
+    setDragUpdate(prev => prev + 1);
     
     // Reset creation state
     setCreatingKeyframe(null);
@@ -277,12 +319,26 @@ const KeyframePanel: React.FC = () => {
       if (e.key === 'Delete' && selectedKeyframe && subtitleId) {
         deleteKeyframe(subtitleId, selectedKeyframe.property, selectedKeyframe.time);
         setSelectedKeyframe(null);
+        // 키프레임 삭제 후 연결선 재계산을 위한 강제 리렌더링
+        setDragUpdate(prev => prev + 1);
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [selectedKeyframe, subtitleId, deleteKeyframe]);
+
+  // 전역 컨텍스트 메뉴 차단 (Hook 순서 보장을 위해 early return 전에 위치)
+  useEffect(() => {
+    const suppressContextMenu = (e: MouseEvent) => {
+      if (dragRef.current) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    document.addEventListener('contextmenu', suppressContextMenu, true);
+    return () => document.removeEventListener('contextmenu', suppressContextMenu, true);
+  }, []);
 
   // Empty state when no subtitle is selected
   if (!subtitle) {
@@ -298,6 +354,11 @@ const KeyframePanel: React.FC = () => {
       className="h-full w-full flex flex-col"
       style={{ overflow: 'hidden' }}
       ref={containerRef}
+      tabIndex={0}
+      onFocus={() => {
+        // 키프레임 패널에 포커스가 있을 때 레이아웃 스토어 업데이트
+        useLayoutStore.getState().setFocusedArea('keyframe');
+      }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -338,6 +399,8 @@ const KeyframePanel: React.FC = () => {
             }}
             onClick={(e) => handleRowClick(e, anim.property)}
             onDragOver={(e)=>{
+              // 텍스트 속성은 이징 적용 불가
+              if (anim.property === 'text') return;
               if (!e.dataTransfer.types.includes('curve-id')) return;
               e.preventDefault();
               e.dataTransfer.dropEffect = 'copy';
@@ -347,6 +410,8 @@ const KeyframePanel: React.FC = () => {
               setHighlightRow((prev)=> prev===anim.property ? null : prev);
             }}
             onDrop={(e)=>{
+              // 텍스트 속성은 이징 적용 불가
+              if (anim.property === 'text') return;
               const curveId = e.dataTransfer.getData('curve-id');
               if (!curveId || !subtitleId) return;
               setHighlightRow(null);
@@ -387,23 +452,37 @@ const KeyframePanel: React.FC = () => {
             </div>
 
             {/* Keyframes */}
-            {anim.keyframes.map((kf: any, kfIdx: number) => (
-              <div
-                key={`${kf.time}-${kfIdx}`}
-                className="keyframe-diamond"
-                title={`${kf.time}ms - ${formatTime(kf.time, fps, 'seconds')} - Value: ${kf.value}`}
-                style={{
-                  position: 'absolute',
-                  top: ROW_HEIGHT / 2,
-                  left: timeToPixel(kf.time),
-                  width: KEYFRAME_SIZE,
-                  height: KEYFRAME_SIZE,
-                  background: kf.easing ? '#00caff' : '#ffcc00',
+            {anim.keyframes.map((kf: any, kfIdx: number) => {
+              // 드래그 중인 자막의 키프레임 위치를 실시간으로 계산
+              let displayTime = kf.time;
+              if (isDragging && draggedSubtitleId === subtitleId) {
+                displayTime = Math.max(0, kf.time + draggedSubtitleDelta);
+              }
+              
+              // 키프레임 드래그 중인 경우 실시간 위치 계산
+              if (dragRef.current && dragRef.current.property === anim.property && dragRef.current.originalTime === kf.time) {
+                displayTime = dragRef.current.currentTime;
+              }
+              
+              const isText = anim.property === 'text';
+              return (
+                <div
+                  key={`${kf.time}-${kfIdx}`}
+                  className="keyframe-diamond"
+                  title={`${displayTime}ms - ${formatTime(displayTime, fps, 'seconds')} - Value: ${kf.value}`}
+                  style={{
+                    position: 'absolute',
+                    top: ROW_HEIGHT / 2,
+                    left: timeToPixel(displayTime),
+                    width: KEYFRAME_SIZE,
+                    height: KEYFRAME_SIZE,
+                  background: isText ? '#9999ff' : (kf.easingId && kf.easingId !== 'linear' ? '#00d4aa' : '#ffcc00'),
                   border: selectedKeyframe && selectedKeyframe.property === anim.property && selectedKeyframe.time === kf.time ? '2px solid #ffffff' : '1px solid rgba(0,0,0,0.3)',
-                  transform: 'translate(-50%, -50%) rotate(45deg)',
+                  transform: isText ? 'translate(-50%, -50%)' : 'translate(-50%, -50%) rotate(45deg)',
+                  borderRadius: isText ? 3 : undefined,
                   cursor: 'pointer',
                   zIndex: 2,
-                  transition: 'transform 0.1s ease',
+                  transition: dragRef.current && dragRef.current.property === anim.property && dragRef.current.originalTime === kf.time ? 'none' : 'transform 0.1s ease',
                 }}
                 onMouseDown={(e) => {
                   handleKfMouseDown(e, anim.property, kf.time);
@@ -412,10 +491,13 @@ const KeyframePanel: React.FC = () => {
                   setSelectedKeyframe({ property: anim.property, time: kf.time });
                 }}
                 onDragOver={(e) => {
+                  // 텍스트 키프레임은 이징 드롭 비활성화
+                  if (isText) return;
                   e.preventDefault();
                   e.dataTransfer.dropEffect = 'copy';
                 }}
                 onDrop={(e) => {
+                  if (isText) return;
                   const curveId = e.dataTransfer.getData('curve-id');
                   if (curveId && subtitleId) {
                     useProjectStore.getState().setKeyframeEasing(subtitleId, anim.property, kf.time, curveId);
@@ -424,6 +506,12 @@ const KeyframePanel: React.FC = () => {
                 onContextMenu={(e)=>{
                   e.preventDefault();
                   e.stopPropagation();
+                  
+                  // 드래그 중이면 컨텍스트 메뉴 표시하지 않음
+                  if (dragRef.current) {
+                    return;
+                  }
+                  
                   setKfMenu({
                     open: true, 
                     x: e.clientX, 
@@ -433,32 +521,58 @@ const KeyframePanel: React.FC = () => {
                   });
                 }}
               />
-            ))}
-            
-            {/* Keyframe connections */}
-            {anim.keyframes.length > 1 && anim.keyframes.slice(0, -1).map((kf: any, i: number) => {
-              const nextKf = anim.keyframes[i + 1];
-              const x1 = timeToPixel(kf.time);
-              const x2 = timeToPixel(nextKf.time);
-              
-              return (
-                <div 
-                  key={`conn-${i}`}
-                  className="keyframe-connection"
-                  style={{
-                    position: 'absolute',
-                    top: ROW_HEIGHT / 2,
-                    left: x1,
-                    width: x2 - x1,
-                    height: 2,
-                    background: kf.easing ? '#00caff' : '#ffcc00',
-                    opacity: 0.5,
-                    zIndex: 1,
-                    transform: 'translateY(-50%)',
-                  }}
-                />
               );
             })}
+            
+            {/* Keyframe connections - 값이 변할 때만 표시 */}
+            {(() => {
+              // 키프레임들의 표시 위치 계산 (드래그/자막 이동 고려)
+              const kfsDisp = anim.keyframes.map((k: any) => {
+                let t = k.time;
+                if (isDragging && draggedSubtitleId === subtitleId) {
+                  t = Math.max(0, t + draggedSubtitleDelta);
+                }
+                if (
+                  dragRef.current &&
+                  dragRef.current.property === anim.property &&
+                  dragRef.current.originalTime === k.time
+                ) {
+                  t = dragRef.current.currentTime;
+                }
+                return { ...k, displayTime: t };
+              });
+
+              // 표시 시간을 기준으로 정렬
+              kfsDisp.sort((a, b) => a.displayTime - b.displayTime);
+
+              return kfsDisp.slice(0, -1).map((kf, idx) => {
+                const next = kfsDisp[idx + 1];
+                if (!next) return null;
+                if (kf.value === next.value) return null;
+
+                const x1 = timeToPixel(kf.displayTime);
+                const x2 = timeToPixel(next.displayTime);
+                if (Math.abs(x2 - x1) < 2) return null;
+
+                return (
+                  <div
+                    key={`conn-${idx}-${dragUpdate}`}
+                    className="keyframe-connection"
+                    style={{
+                      position: 'absolute',
+                      top: ROW_HEIGHT / 2,
+                      left: x1,
+                      width: x2 - x1,
+                      height: 2,
+                      background: kf.easingId && kf.easingId !== 'linear' ? '#00d4aa' : '#ffcc00',
+                      opacity: 0.5,
+                      zIndex: 1,
+                      transform: 'translateY(-50%)',
+                    }}
+                  />
+                );
+              });
+            })()}
             
             {/* Creating keyframe indicator */}
             {creatingKeyframe && creatingKeyframe.property === anim.property && (
@@ -626,6 +740,8 @@ const KeyframePanel: React.FC = () => {
               const sid = subtitleId ?? '';
               if (sid) {
                 deleteKeyframe(sid, kfMenu.property, kfMenu.time);
+                // 키프레임 삭제 후 연결선 재계산을 위한 강제 리렌더링
+                setDragUpdate(prev => prev + 1);
               }
               setKfMenu(null);
             }}

@@ -693,15 +693,6 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     });
   }, []);
 
-  // 오디오가 없을 때 placeholder 보여주기
-  if (!currentProject?.videoMeta) {
-    return (
-      <div className="neu-audio-waveform-panel h-full flex items-center justify-center neu-text-secondary">
-        <p className="text-sm">오디오 파형을 보려면 비디오를 로드하세요</p>
-      </div>
-    );
-  }
-
   // wheel 이벤트 passive: false로 등록
   useEffect(() => {
     const container = containerRef.current;
@@ -716,6 +707,15 @@ export const AudioWaveformPanel: React.FC<AudioWaveformPanelProps> = ({ areaId }
     container.addEventListener('wheel', handler, { passive: false });
     return () => container.removeEventListener('wheel', handler);
   }, [handleWheel]);
+
+  // 오디오가 없을 때 placeholder 보여주기
+  if (!currentProject?.videoMeta) {
+    return (
+      <div className="neu-audio-waveform-panel h-full flex items-center justify-center neu-text-secondary">
+        <p className="text-sm">오디오 파형을 보려면 비디오를 로드하세요</p>
+      </div>
+    );
+  }
 
   return (
     <div className="neu-audio-waveform-panel h-full min-w-0 min-h-0 neu-bg-base p-3 flex flex-col">

@@ -4,10 +4,10 @@ import { Area } from '../types/area';
 // Template layout icons (simplified visual representations)
 const StandardIcon = (
   <div className="w-full h-full p-1 flex">
-    <div className="w-3/5 h-full bg-primary/30 rounded-sm"></div>
+    <div className="w-3/5 h-full rounded-sm" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)' }}></div>
     <div className="w-2/5 h-full flex flex-col ml-1">
-      <div className="h-1/2 bg-primary/30 rounded-sm mb-1"></div>
-      <div className="h-1/2 bg-primary/30 rounded-sm"></div>
+      <div className="rounded-sm mb-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '30%' }}></div>
+      <div className="rounded-sm" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '70%' }}></div>
     </div>
   </div>
 );
@@ -15,53 +15,73 @@ const StandardIcon = (
 const EditingFocusIcon = (
   <div className="w-full h-full p-1 flex flex-col">
     <div className="h-1/2 flex">
-      <div className="w-1/2 bg-primary/30 rounded-sm mr-1"></div>
-      <div className="w-1/2 bg-primary/30 rounded-sm"></div>
+      <div className="w-1/2 rounded-sm mr-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)' }}></div>
+      <div className="w-1/2 rounded-sm" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)' }}></div>
     </div>
-    <div className="h-1/2 bg-primary/30 rounded-sm mt-1"></div>
+    <div className="h-1/2 rounded-sm mt-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)' }}></div>
   </div>
 );
 
 const TimelineFirstIcon = (
   <div className="w-full h-full p-1 flex flex-col">
     <div className="h-2/5 flex">
-      <div className="w-1/2 bg-primary/30 rounded-sm mr-1"></div>
-      <div className="w-1/2 bg-primary/30 rounded-sm"></div>
+      <div className="w-1/2 rounded-sm mr-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)' }}></div>
+      <div className="w-1/2 rounded-sm" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)' }}></div>
     </div>
-    <div className="h-3/5 bg-primary/30 rounded-sm mt-1"></div>
+    <div className="h-3/5 rounded-sm mt-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)' }}></div>
   </div>
 );
 
-const AdvancedEditingIcon = (
-  <div className="w-full h-full p-1 grid grid-cols-3 grid-rows-3 gap-1">
-    <div className="col-span-2 row-span-2 bg-primary/30 rounded-sm"></div>
-    <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
-    <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
-    <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
-    <div className="col-span-3 row-span-1 bg-primary/30 rounded-sm"></div>
+const KeyframeStudioIcon = (
+  <div className="w-full h-full p-1 flex">
+    {/* 왼쪽 66% 영역 - 2개 패널 */}
+    <div className="h-full flex flex-col mr-1" style={{ width: '66%' }}>
+      <div className="rounded-sm mb-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '60%' }}></div>
+      <div className="rounded-sm" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '40%' }}></div>
+    </div>
+    {/* 오른쪽 34% 영역 - 3개 패널 */}
+    <div className="h-full flex flex-col" style={{ width: '34%' }}>
+      <div className="rounded-sm mb-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '20%' }}></div>
+      <div className="rounded-sm mb-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '50%' }}></div>
+      <div className="rounded-sm" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '30%' }}></div>
+    </div>
   </div>
 );
 
 const AudioFocusedIcon = (
-  <div className="w-full h-full p-1 grid grid-cols-3 grid-rows-3 gap-1">
-    <div className="col-span-1 row-span-2 bg-primary/30 rounded-sm"></div>
-    <div className="col-span-2 row-span-2 bg-primary/30 rounded-sm"></div>
-    <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
-    <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
-    <div className="col-span-1 row-span-1 bg-primary/30 rounded-sm"></div>
+  <div className="w-full h-full p-1 flex">
+    {/* 왼쪽 33% 영역 - 2개 패널 */}
+    <div className="h-full flex flex-col" style={{ width: '33%' }}>
+      <div className="rounded-sm mb-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '60%' }}></div>
+      <div className="rounded-sm" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '40%' }}></div>
+    </div>
+    {/* 오른쪽 67% 영역 - 3개 패널 */}
+    <div className="h-full flex flex-col ml-1" style={{ width: '67%' }}>
+      <div className="rounded-sm mb-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '60%' }}></div>
+      <div className="flex" style={{ height: '40%' }}>
+        <div className="rounded-sm mr-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', width: '49%', height: '100%' }}></div>
+        <div className="rounded-sm" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', width: '51%', height: '100%' }}></div>
+      </div>
+    </div>
   </div>
 );
 
 const VerticalEditingIcon = (
   <div className="w-full h-full p-1 flex flex-col">
-    <div className="h-7/10 flex">
-      <div className="w-3/5 bg-primary/30 rounded-sm mr-1"></div>
-      <div className="w-2/5 flex flex-col">
-        <div className="h-1/2 bg-primary/30 rounded-sm mb-1"></div>
-        <div className="h-1/2 bg-primary/30 rounded-sm"></div>
+    {/* 상단 70% 영역 */}
+    <div className="flex" style={{ height: '70%' }}>
+      {/* video-preview: 왼쪽 60% */}
+      <div className="rounded-sm mr-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', width: '60%', height: '100%' }}></div>
+      {/* 오른쪽 40% 영역 - 2개 패널 */}
+      <div className="flex flex-col" style={{ width: '40%', height: '100%' }}>
+        {/* text-editor: 위쪽 50% */}
+        <div className="rounded-sm mb-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '50%' }}></div>
+        {/* subtitle-timeline: 아래쪽 50% */}
+        <div className="rounded-sm" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '50%' }}></div>
       </div>
     </div>
-    <div className="h-3/10 bg-primary/30 rounded-sm mt-1"></div>
+    {/* subtitle-preview: 하단 30% 전체 */}
+    <div className="rounded-sm mt-1" style={{ backgroundColor: 'rgba(94, 129, 172, 0.3)', height: '30%' }}></div>
   </div>
 );
 
@@ -80,8 +100,8 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     icon: StandardIcon,
     areas: [
       { id: 'video-preview', x: 0, y: 0, width: 60, height: 100 },
-      { id: 'subtitle-timeline', x: 60, y: 0, width: 40, height: 55 },
-      { id: 'text-editor', x: 60, y: 55, width: 40, height: 45 },
+      { id: 'subtitle-timeline', x: 60, y: 0, width: 40, height: 30 },
+      { id: 'text-editor', x: 60, y: 30, width: 40, height: 70 },
     ]
   },
   
@@ -91,8 +111,8 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     icon: EditingFocusIcon,
     areas: [
       { id: 'video-preview', x: 0, y: 0, width: 50, height: 50 },
-      { id: 'subtitle-timeline', x: 50, y: 0, width: 50, height: 50 },
-      { id: 'text-editor', x: 0, y: 50, width: 100, height: 50 },
+      { id: 'script-viewer', x: 50, y: 0, width: 50, height: 50 },
+      { id: 'subtitle-timeline', x: 0, y: 50, width: 100, height: 50 },
     ]
   },
   
@@ -107,16 +127,16 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     ]
   },
   
-  advancedEditing: {
-    name: "Advanced Editing",
-    description: "Five specialized panels layout",
-    icon: AdvancedEditingIcon,
+  keyframeStudio: {
+    name: "Keyframe Studio",
+    description: "Animation and keyframe editing",
+    icon: KeyframeStudioIcon,
     areas: [
       { id: 'video-preview', x: 0, y: 0, width: 66, height: 60 },
-      { id: 'graph-library', x: 66, y: 0, width: 34, height: 30 },
-      { id: 'subtitle-timeline', x: 66, y: 60, width: 34, height: 40 },
+      { id: 'graph-library', x: 66, y: 0, width: 34, height: 20 },
+      { id: 'subtitle-timeline', x: 66, y: 70, width: 34, height: 30 },
       { id: 'keyframe', x: 0, y: 60, width: 66, height: 40 },
-      { id: 'text-editor', x: 66, y: 30, width: 34, height: 30 },
+      { id: 'text-editor', x: 66, y: 20, width: 34, height: 50 },
     ]
   },
   
@@ -127,8 +147,9 @@ export const templateLayouts: Record<string, TemplateLayout> = {
     areas: [
       { id: 'video-preview', x: 0, y: 0, width: 33, height: 60 },
       { id: 'audio-waveform', x: 33, y: 0, width: 67, height: 60 },
-      { id: 'text-editor', x: 0, y: 60, width: 33, height: 40 },
+      { id: 'subtitle-timeline', x: 0, y: 60, width: 33, height: 40 },
       { id: 'subtitle-preview', x: 33, y: 60, width: 33, height: 40 },
+      { id: 'text-editor', x: 66, y: 60, width: 34, height: 40 },
     ]
   },
   

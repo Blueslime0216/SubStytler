@@ -59,8 +59,8 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
         {/* Right: Alignment buttons */}
         <div className="flex space-x-1">
           <motion.button
-            onClick={() => setTextAlignment(1)}
-            className={`p-1.5 rounded-md ${textAlignment === 1 ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
+            onClick={() => setTextAlignment(0)}
+            className={`p-1.5 rounded-md ${textAlignment === 0 ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             title="Align Left"
@@ -69,8 +69,8 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
           </motion.button>
           
           <motion.button
-            onClick={() => setTextAlignment(3)}
-            className={`p-1.5 rounded-md ${textAlignment === 3 ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
+            onClick={() => setTextAlignment(2)}
+            className={`p-1.5 rounded-md ${textAlignment === 2 ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             title="Align Center"
@@ -79,8 +79,8 @@ const TextEditorHeader: React.FC<TextEditorHeaderProps> = ({
           </motion.button>
           
           <motion.button
-            onClick={() => setTextAlignment(2)}
-            className={`p-1.5 rounded-md ${textAlignment === 2 ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
+            onClick={() => setTextAlignment(1)}
+            className={`p-1.5 rounded-md ${textAlignment === 1 ? 'bg-primary text-white shadow-inset' : 'bg-bg hover:bg-bg-hover shadow-outset-subtle'}`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             title="Align Right"

@@ -134,10 +134,84 @@ export const useKeyboardShortcuts = () => {
   }, [focusedAreaId, coverArea]);
 
   // ──────────────────────────────────
+  // Keyframe Copy / Paste
+
+  // Copy selected keyframe (Ctrl+C / Cmd+C) - Only in keyframe panel
+  useHotkeys('ctrl+c, meta+c', (e) => {
+    // 키프레임 패널에 포커스가 있을 때만 작동
+    const { focusedAreaId } = useLayoutStore.getState();
+    if (!focusedAreaId || !focusedAreaId.includes('keyframe')) {
+      return; // 키프레임 패널이 아닌 경우 기본 동작 허용
+    }
+    
+    e.preventDefault();
+    const { selectedSubtitleId, selectedKeyframe } = useSelectedSubtitleStore.getState();
+    const { currentProject } = useProjectStore.getState();
+    if (!selectedSubtitleId || !currentProject || !selectedKeyframe) return;
+
+    const subtitle = currentProject.subtitles.find(sub => sub.id === selectedSubtitleId);
+    if (!subtitle || !subtitle.spans[0]?.animations) return;
+
+    // 선택된 키프레임 찾기
+    const anim = subtitle.spans[0].animations.find((a: any) => a.property === selectedKeyframe.property);
+    if (!anim) return;
+
+    const keyframe = anim.keyframes.find((kf: any) => kf.time === selectedKeyframe.time);
+    if (!keyframe) return;
+
+    // 키프레임 복사
+    useClipboardStore.getState().setCopiedKeyframe({
+      property: selectedKeyframe.property,
+      time: keyframe.time,
+      value: keyframe.value,
+      easingId: keyframe.easingId
+    });
+  }, []);
+
+  // Paste keyframe at playhead (Ctrl+V / Cmd+V) - Only in keyframe panel
+  useHotkeys('ctrl+v, meta+v', (e) => {
+    // 키프레임 패널에 포커스가 있을 때만 작동
+    const { focusedAreaId } = useLayoutStore.getState();
+    if (!focusedAreaId || !focusedAreaId.includes('keyframe')) {
+      return; // 키프레임 패널이 아닌 경우 기본 동작 허용
+    }
+    
+    e.preventDefault();
+    const clipboardKeyframe = useClipboardStore.getState().copiedKeyframe;
+    if (!clipboardKeyframe) return;
+
+    const { selectedSubtitleId } = useSelectedSubtitleStore.getState();
+    const { currentProject, addKeyframe } = useProjectStore.getState();
+    if (!selectedSubtitleId || !currentProject) return;
+
+    const { currentTime, snapToFrame } = useTimelineStore.getState();
+    const newTime = snapToFrame(currentTime);
+
+    // 키프레임 추가
+    addKeyframe(selectedSubtitleId, clipboardKeyframe.property, {
+      time: newTime,
+      value: clipboardKeyframe.value,
+      easingId: clipboardKeyframe.easingId
+    });
+
+    // 새로 추가된 키프레임을 선택 상태로 설정
+    useSelectedSubtitleStore.getState().setSelectedKeyframe({
+      property: clipboardKeyframe.property,
+      time: newTime
+    });
+  }, []);
+
+  // ──────────────────────────────────
   // Subtitle Copy / Paste
 
-  // Copy selected subtitle (Ctrl+C / Cmd+C)
+  // Copy selected subtitle (Ctrl+C / Cmd+C) - Only in timeline panel
   useHotkeys('ctrl+c, meta+c', (e) => {
+    // 타임라인 패널에 포커스가 있을 때만 작동
+    const { focusedAreaId } = useLayoutStore.getState();
+    if (!focusedAreaId || !focusedAreaId.includes('timeline')) {
+      return; // 타임라인 패널이 아닌 경우 기본 동작 허용
+    }
+    
     e.preventDefault();
     const { selectedSubtitleId } = useSelectedSubtitleStore.getState();
     const { currentProject } = useProjectStore.getState();
@@ -151,8 +225,14 @@ export const useKeyboardShortcuts = () => {
     }
   }, []);
 
-  // Paste subtitle at playhead (Ctrl+V / Cmd+V)
+  // Paste subtitle at playhead (Ctrl+V / Cmd+V) - Only in timeline panel
   useHotkeys('ctrl+v, meta+v', (e) => {
+    // 타임라인 패널에 포커스가 있을 때만 작동
+    const { focusedAreaId } = useLayoutStore.getState();
+    if (!focusedAreaId || !focusedAreaId.includes('timeline')) {
+      return; // 타임라인 패널이 아닌 경우 기본 동작 허용
+    }
+    
     e.preventDefault();
 
     const clipboardSubtitle = useClipboardStore.getState().copiedSubtitle;
